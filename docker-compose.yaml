@@ -1,0 +1,12 @@
+
+services:
+  pwa-viaja-ya:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pwa-viaja-ya
+    container_name: pwa-viaja-ya
+    ports:
+      - "9443:443"
+    environment:
+      - NODE_ENV=production
