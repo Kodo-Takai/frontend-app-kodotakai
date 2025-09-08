@@ -1,40 +1,30 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { VitePWA } from 'vite-plugin-pwa'; // Agregar el plugin PWA
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  server: {
-    https: true, // Habilitar HTTPS
-    // Si necesitas especificar los certificados, descomenta y configura las rutas adecuadas
-    // https: {
-    //   key: fs.readFileSync('path/to/localhost-key.pem'),
-    //   cert: fs.readFileSync('path/to/localhost-cert.pem')
-    // }
-  },
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate', // Registra el Service Worker con auto actualización
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico','icons/icon-192x192.png','icons/icon-512x512.png'],
       manifest: {
-        name: 'My PWA App', // Nombre completo de la aplicación
-        short_name: 'PWA', // Nombre corto de la aplicación (se muestra en la pantalla de inicio)
-        description: 'An awesome Progressive Web App', // Descripción de la PWA
-        theme_color: '#ffffff', // Color del tema (para el navegador)
-        background_color: '#ffffff', // Color de fondo de la PWA
+        name: 'My PWA App',
+        short_name: 'PWA',
+        description: 'An awesome Progressive Web App',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        start_url: '/',
         icons: [
-          {
-            src: 'icons/icon-192x192.png', // Ruta del ícono en formato PNG
-            sizes: '192x192', // Tamaño del ícono
-            type: 'image/png', // Tipo de archivo
-          },
-          {
-            src: 'icons/icon-512x512.png', // Ruta del ícono grande
-            sizes: '512x512', // Tamaño del ícono
-            type: 'image/png', // Tipo de archivo
-          },
-        ],
+          { src: 'icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icons/icon-512x512.png', sizes: '512x512', type: 'image/png' }
+        ]
       },
-    }),
-  ],
-});
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        navigateFallback: '/index.html'
+      }
+    })
+  ]
+})
