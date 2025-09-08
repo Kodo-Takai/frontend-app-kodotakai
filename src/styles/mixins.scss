@@ -1,0 +1,53 @@
+// src/styles/_mixins.scss
+@mixin card {
+  background: $color-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+}
+
+@mixin btn($bg, $bgHover, $text: #fff) {
+  background: $bg;
+  color: $text;
+  border: none;
+  border-radius: $radius-lg;
+  padding: 12px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease-in-out, opacity .2s ease-in-out;
+
+  &:hover { background: $bgHover; }
+  &:disabled { opacity: .6; cursor: not-allowed; }
+}
+
+@mixin input {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  outline: none;
+  background: #fff;
+  color: inherit;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+  }
+}
+
+/* Extras para tu landing */
+@mixin text-gradient-red {
+  background: linear-gradient(180deg, $color-primary-light 0%, $color-primary 60%, $color-primary-hover 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@mixin bar-gradient-red {
+  background: linear-gradient(90deg, $color-primary 0%, $color-primary-light 60%, $color-primary-hover 100%);
+  border-radius: 999px;
+}
+
+@mixin hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,.2), transparent);
+}
