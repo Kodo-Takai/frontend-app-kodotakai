@@ -1,35 +1,89 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import SplashScreen from './components/SplashScreen'
+import Login from './components/Login'
+import Register from './components/Register'
+import Home from './components/Home'
+import ApiService from './services/apiService'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const APP_STATES = {
+  SPLASH: 'splash',
+  LOGIN: 'login',
+  REGISTER: 'register',
+  HOME: 'home'
+} as const
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+type AppState = typeof APP_STATES[keyof typeof APP_STATES]
+
+function App() {
+  const [currentState, setCurrentState] = useState<AppState>(APP_STATES.SPLASH)
+
+  // No useEffect needed - splash screen will handle the initial state
+
+  const handleSplashComplete = async () => {
+    const token = localStorage.getItem('auth_token')
+    if (token) {
+      const result = await ApiService.verifyToken(token)
+      if (result.success) {
+        setCurrentState(APP_STATES.HOME)
+      } else {
+        // Invalid token, clear storage
+        localStorage.removeItem('auth_token')
+        localStorage.removeItem('userEmail')
+        localStorage.removeItem('user')
+        setCurrentState(APP_STATES.LOGIN)
+      }
+    } else {
+      setCurrentState(APP_STATES.LOGIN)
+    }
+  }
+
+  const handleLoginSuccess = () => {
+    setCurrentState(APP_STATES.HOME)
+  }
+
+  const handleNavigateToRegister = () => {
+    setCurrentState(APP_STATES.REGISTER)
+  }
+
+  const handleNavigateToLogin = () => {
+    setCurrentState(APP_STATES.LOGIN)
+  }
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem('auth_token')
+    if (token) {
+      await ApiService.logout(token)
+    }
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('userEmail')
+    localStorage.removeItem('user')
+    setCurrentState(APP_STATES.LOGIN)
+  }
+
+  const renderCurrentState = () => {
+    switch (currentState) {
+      case APP_STATES.SPLASH:
+        return (
+          <SplashScreen 
+            onComplete={handleSplashComplete}
+            duration={3000}
+            logo="/kodotakai-logo.svg"
+            appName="Kodotakai"
+          />
+        )
+      case APP_STATES.LOGIN:
+        return <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegister={handleNavigateToRegister} />
+      case APP_STATES.REGISTER:
+        return <Register onNavigateToLogin={handleNavigateToLogin} />
+      case APP_STATES.HOME:
+        return <Home onLogout={handleLogout} />
+      default:
+        return <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegister={handleNavigateToRegister} />
+    }
+  }
+
+  return renderCurrentState()
 }
 
 export default App
