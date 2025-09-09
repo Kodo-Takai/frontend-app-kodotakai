@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
 import Login from './pages/Login';
 import { useSplashScreen } from './hooks/useSplashScreen';
 import SplashScreen from './components/common/splashScreen';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
 
 export default function App() {
   const isLoading = useSplashScreen();
