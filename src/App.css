@@ -38,4 +38,6 @@
 
 .read-the-docs {
   color: #888;
+body {
+    font-family: 'SF Pro', sans-serif;
 }

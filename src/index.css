@@ -89,3 +89,5 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+@import "tailwindcss";
+@import './assets//fonts/SF-Pro-Display-Regular.woff2'
