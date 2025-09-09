@@ -22,7 +22,7 @@ export default function Login() {
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg justify-center">
       <div
-        className="mb-6 cursor-pointer text-gray-500"
+        className="cursor-pointer text-gray-500"
         onClick={() => window.history.back()}
         aria-label="Regresar"
       >
