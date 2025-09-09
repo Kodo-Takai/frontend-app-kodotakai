@@ -1,4 +1,42 @@
-# React + TypeScript + Vite
+# Kodotakai - Professional Authentication App
+
+A modern, professional authentication system built with React, TypeScript, and Vite.
+
+## 🚀 Quick Start
+
+For detailed installation instructions, please see [INSTALLATION.md](./INSTALLATION.md)
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm run dev
+
+# Open browser to http://localhost:5173/
+```
+
+## ✨ Features
+
+- **Professional Splash Screen** with branding
+- **Complete Authentication System** (Login/Register)
+- **Session Management** with localStorage
+- **Form Validation** with real-time feedback
+- **Responsive Design** for all devices
+- **TypeScript** for type safety
+- **Modern React 19** with hooks
+
+## 🏗️ Technical Stack
+
+- **React 19** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **CSS3** - Styling and animations
+- **localStorage** - Data persistence
+
+---
+
+# Original Vite Template Documentation
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

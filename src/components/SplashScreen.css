@@ -1,0 +1,256 @@
+/* Professional Splash Screen Styles */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(145deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999; /* Increased z-index to ensure it's on top */
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.splash-screen.fade-in {
+  opacity: 1;
+  animation: professionalFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  animation: professionalFadeOut 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.splash-content {
+  text-align: center;
+  color: #ffffff;
+  position: relative;
+  max-width: 400px;
+  padding: 0 2rem;
+}
+
+.logo-container {
+  margin-bottom: 3rem;
+  position: relative;
+  display: inline-block;
+}
+
+.splash-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.8rem;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: subtleFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.app-name {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1.2;
+  animation: titleSlideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+.app-subtitle {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 3rem;
+  letter-spacing: 0.02em;
+  animation: titleSlideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+}
+
+.loading-indicator {
+  margin-top: 2.5rem;
+  animation: titleSlideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
+}
+
+.progress-bar {
+  width: 200px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1px;
+  margin: 0 auto 1rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  border-radius: 1px;
+  animation: progressLoad 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.loading-text {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  animation: textPulse 2s ease-in-out infinite;
+}
+
+/* Professional Animations */
+@keyframes professionalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes professionalFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes titleSlideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes progressLoad {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes textPulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .splash-logo {
+    width: 64px;
+    height: 64px;
+    padding: 1rem;
+  }
+
+  .app-name {
+    font-size: 1.75rem;
+  }
+
+  .app-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .progress-bar {
+    width: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .splash-content {
+    padding: 0 1.5rem;
+  }
+
+  .splash-logo {
+    width: 56px;
+    height: 56px;
+    padding: 0.875rem;
+  }
+
+  .app-name {
+    font-size: 1.5rem;
+  }
+
+  .app-subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .progress-bar {
+    width: 140px;
+  }
+
+  .loading-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .splash-screen {
+    background: #000000;
+  }
+  
+  .app-name {
+    color: #ffffff;
+  }
+  
+  .progress-fill {
+    background: #ffffff;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .splash-logo {
+    animation: none;
+  }
+  
+  .app-name,
+  .app-subtitle,
+  .loading-indicator {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .progress-fill {
+    animation: none;
+    width: 100%;
+  }
+  
+  .loading-text {
+    animation: none;
+    opacity: 0.7;
+  }
+}
