@@ -6,7 +6,7 @@ import App from './App'
 
 import './index.css'
 // ✅ Estilos globales (Sass). Cambia la ruta si usas otra.
-import './styles/index.scss'
+import './styles/_index.scss'
 
 // (Opcional) Si ya tienes Tailwind en index.css, déjalo también.
 // import './index.css'

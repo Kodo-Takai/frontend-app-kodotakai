@@ -1,9 +1,9 @@
 import React from 'react';
-import '../../styles/index.scss'
+import '../../styles/_index.scss'
 
 
 interface Props {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   title?: string;
   helper?: string;
 }

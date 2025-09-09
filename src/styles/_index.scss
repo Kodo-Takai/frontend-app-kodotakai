@@ -1,0 +1,72 @@
+@use './_variables.scss' as *;
+@use './_mixins.scss' as *;
+
+/* ===== Botones ===== */
+/* —— Rojo Claro —— */
+.btn--red-light {
+  @include btn-filled($btn-red, $btn-red-hover, $txt-white);
+  box-shadow: $btn-shadow;
+
+  &:disabled,
+  &.is-disabled {
+    @include btn-disabled;
+  }
+}
+
+/* —— Rojo Oscuro —— */
+.btn--red-dark {
+  @include btn-filled($btn-red-hover, $btn-red, $txt-white);
+  box-shadow: $btn-shadow;
+
+  &:disabled,
+  &.is-disabled {
+    @include btn-disabled;
+  }
+}
+
+/* —— Rojo con Borde —— */
+.btn--red-outline {
+  @include btn-outline($btn-red, $btn-red, $txt-white);
+
+  &:disabled,
+  &.is-disabled {
+    @include btn-disabled;
+  }
+}
+/* —— Azul Claro —— */
+.btn--blue-light {
+  @include btn-filled($btn-blue, $btn-blue-hover, $txt-white);
+  box-shadow: $btn-shadow;
+
+  &:disabled,
+  &.is-disabled {
+    @include btn-disabled;
+  }
+}
+
+/* —— Azul Oscuro —— */
+.btn--blue-dark {
+  @include btn-filled($btn-blue-hover, $btn-blue, $txt-white);
+  box-shadow: $btn-shadow;
+
+  &:disabled,
+  &.is-disabled {
+    @include btn-disabled;
+  }
+}
+
+/* —— Azul con Borde —— */
+.btn--blue-outline {
+  @include btn-outline($btn-blue, $btn-blue, $txt-white);
+
+  &:disabled,
+  &.is-disabled {
+    @include btn-disabled;
+  }
+}
+/* —— Deshabilitado (común para todos los botones) —— */
+.btn--disabled,
+button[disabled].btn {
+  @include btn-disabled;
+}
+
