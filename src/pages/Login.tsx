@@ -82,7 +82,7 @@ export default function Login() {
 
         <div className="mt-4 text-center">
           <a
-            href="#"
+            href="forgot-password"
             className="text-sm text-[#6D7178] hover:underline text-right"
           >
             Olvidaste tu contraseña?
