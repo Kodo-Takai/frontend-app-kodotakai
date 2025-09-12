@@ -49,7 +49,7 @@ export default function Input({
           onBlur={onBlur}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className={`block w-full px-4 py-2 pr-10 text-sm rounded-md border focus:outline-none ${invalid ? 'border-red-500' : 'border-gray-100'} bg-gray-100 text-[#AEAEAE]`}  // Fondo gris y texto blanco
+          className={`block w-full px-4 py-4 pr-10 text-sm rounded-2xl border focus:outline-none ${invalid ? 'border-red-500' : 'border-[#DEDEDE]'} bg-[#EEEEEE] text-[#AEAEAE]`}  // Fondo gris y texto blanco
           aria-invalid={invalid}
           aria-describedby={invalid ? `${inputId}-error` : undefined}
         />
