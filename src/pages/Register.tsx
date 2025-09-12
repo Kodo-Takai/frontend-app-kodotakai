@@ -103,22 +103,6 @@ export default function Register() {
                 Crear cuenta <LuBookCheck />
                 </Button>
 
-                <div className="mt-4 text-center">
-                    <div className="my-4 text-sm text-gray-500">O ingresa con</div>
-                    
-                    <div className="flex justify-between gap-6">
-                        <button className="w-32 h-15 bg-white text-[#4092FF] border border-[#E8ECF4] rounded-xl flex items-center justify-center cursor-pointer">
-                            <FaFacebookF className="h-7 w-7" />
-                        </button>
-                        <button className="w-32 h-15 bg-white text-white border border-[#E8ECF4] rounded-xl flex items-center justify-center cursor-pointer">
-                            <FcGoogle className="h-7 w-7" />
-                        </button>
-                        <button className="w-32 h-15 bg-white text-black border border-[#E8ECF4] rounded-xl flex items-center justify-center cursor-pointer">
-                            <FaApple className="h-7 w-7" />
-                        </button>
-                    </div>
-                </div>
-
                 <p className="mt-4 text-sm text-gray-600 text-center">
                 ¿Ya tienes cuenta?{" "}
                 <Link to="/login" className="text-blue-600 hover:underline">
