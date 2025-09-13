@@ -15,8 +15,6 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/register" element={<div style={{ padding: 24 }}>Registro</div>} />
-        <Route path="/forgot-password" element={<div style={{ padding: 24 }}>Recuperar contraseña</div>} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>

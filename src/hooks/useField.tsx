@@ -36,10 +36,3 @@ export function useField(initial = '', validators: Validator[] = []) {
 
   return { value, onChange, onBlur, error, touched, isValid, setValue, setError };
 }
-
-export function useInput() {
-  const email = useField('', [required, emailValidator]);
-  const password = useField('', [required]);
-  const isValid = email.isValid && password.isValid;
-  return { email, password, isValid };
-}
