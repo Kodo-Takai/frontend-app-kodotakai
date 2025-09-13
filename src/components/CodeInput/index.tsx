@@ -100,7 +100,7 @@ export default function CodeInput({
         </label>
       )}
       
-      <div className="flex gap-3 justify-center">
+      <div className="flex gap-2 justify-center">
         {digits.map((digit, index) => (
           <input
             key={index}
@@ -116,7 +116,7 @@ export default function CodeInput({
             onBlur={onBlur}
             onFocus={() => handleFocus(index)}
             className={`
-              w-14 h-14 text-center text-xl font-bold rounded-xl border-2
+              w-12 h-12 text-center text-xl font-bold rounded-xl border-2
               focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all duration-200
               ${disabled 
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
@@ -134,7 +134,6 @@ export default function CodeInput({
 
       {invalid && (
         <p className="text-sm text-red-500 text-center mt-3 flex items-center justify-center gap-1">
-          <span>⚠️</span>
           {error}
         </p>
       )}
