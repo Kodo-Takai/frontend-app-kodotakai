@@ -1,13 +1,18 @@
 import React from 'react';
+import './index.scss';
+
+type ButtonVariant = 'red' | 'blue' | 'neutral';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
+  variant?: ButtonVariant;
 };
 
 export default function Button({
   loading = false,
   disabled,
-  className = 'btn btn--red',
+  variant = 'red', // Por defecto usa el estilo rojo
+  className = '',
   children,
   ...rest
 }: ButtonProps) {
@@ -16,16 +21,12 @@ export default function Button({
   return (
     <button
       disabled={isDisabled}
-      className={`w-full py-3 text-white font-semibold rounded-lg transition-all duration-300 ${
-        isDisabled
-          ? 'bg-gray-400 cursor-not-allowed'
-          : 'bg-red-600 hover:bg-red-700'
-      } ${className}`}
+      className={`btn btn--${variant} w-full py-3 text-white font-semibold rounded-lg transition-all duration-300 ${className}`}
       aria-busy={loading}
       {...rest}
     >
       {loading ? (
-        <span>Cargando...</span> // O podrías usar un ícono de carga aquí
+        <span>Cargando...</span>
       ) : (
         children
       )}

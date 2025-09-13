@@ -21,7 +21,6 @@ export function usePasswordRecovery() {
       setError('Las contraseñas no coinciden');
       return;
     }
-    // Aquí iría la lógica para enviar la nueva contraseña a la API
     alert('Contraseña actualizada correctamente');
   };
 
