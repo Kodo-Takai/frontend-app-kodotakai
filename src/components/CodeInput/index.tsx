@@ -24,7 +24,7 @@ export default function CodeInput({
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const invalid = !!error;
 
-  // Divide el valor en un array de caracteres
+
   const digits = value.split('').slice(0, length);
   while (digits.length < length) {
     digits.push('');
@@ -37,7 +37,7 @@ export default function CodeInput({
     if (!/^\d*$/.test(newValue)) return;
 
     const newDigits = [...digits];
-    newDigits[index] = newValue.slice(-1); // Solo el último carácter
+    newDigits[index] = newValue.slice(-1);
 
     const newCode = newDigits.join('');
     onChange(newCode);
@@ -64,7 +64,7 @@ export default function CodeInput({
     else if (e.key === 'ArrowRight' && index < length - 1) {
       inputsRef.current[index + 1]?.focus();
     }
-    // Enter: trigger onBlur para validación
+
     else if (e.key === 'Enter') {
       onBlur?.();
     }
@@ -84,7 +84,6 @@ export default function CodeInput({
     inputsRef.current[index]?.select();
   };
 
-  // Auto-focus al primer input vacío cuando el componente se monta
   useEffect(() => {
     if (autoFocus) {
       const firstEmptyIndex = digits.findIndex(digit => !digit);

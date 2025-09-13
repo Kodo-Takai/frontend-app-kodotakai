@@ -3,7 +3,7 @@ import { RiMailSendLine } from "react-icons/ri";
 import { IoLockClosedOutline } from "react-icons/io5";
 import Button from "../../Button";
 import Input from "../../input";
-import CodeInput from "../../CodeInput"; // ← NUEVO IMPORT
+import CodeInput from "../../CodeInput"; 
 
 export default function PasswordRecoveryForm() {
   const {
