@@ -1,6 +1,8 @@
 @use './_variables.scss' as *;
 @use './_mixins.scss' as *;
 
+
+
 /* ===== Botones ===== */
 /* —— Rojo Claro —— */
 .btn--red-light {
@@ -68,4 +70,11 @@
 .btn--disabled,
 button[disabled].btn {
   @include btn-disabled;
+}
+
+:root {
+  --color-blueDark: #{$txt-blueDark};
+  --color-white:    #{$txt-white};
+  --color-btn-blue:       #{$btn-blue};
+  --color-btn-blue-hover: #{$btn-blue-hover};
 }

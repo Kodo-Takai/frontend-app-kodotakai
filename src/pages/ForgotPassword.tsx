@@ -1,4 +1,4 @@
-import PasswordRecoveryForm from "../components/Forms/FormPasswordRecovery"
+import PasswordRecoveryForm from "../components/form/passwordRecoveryForm"
 import { FaArrowLeft } from "react-icons/fa"; 
 
 function ForgotPassword() {

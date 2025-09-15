@@ -2,8 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { LuBookCheck } from "react-icons/lu";
 import { useRegisterForm } from "../../../hooks/useRegisterForm";
-import Input from "../../input";
-import Button from "../../Button";
+import Input from "../../ui/input";
+import Button from "../../ui/button";
 
 interface RegisterFormProps {
     onSubmit: (e: React.FormEvent) => Promise<void>;

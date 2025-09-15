@@ -1,8 +1,8 @@
 import React from "react";
 import { RiLock2Line } from "react-icons/ri";
-import Input from "../../../components/input";
-import Button from "../../../components/Button";
-import { useLoginForm } from "../../../hooks/useLoginForm"; // Importación corregida
+import Input from "../../ui/input";
+import Button from "../../ui/button";
+import { useLoginForm } from "../../../hooks/useLoginForm"; 
 
 interface LoginFormProps {
   onSubmit?: (data: { email: string; password: string }) => void;
@@ -11,7 +11,7 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ onSubmit, loading = false, error }: LoginFormProps) {
-  const { email, password, isValid } = useLoginForm(); // Hook corregido
+  const { email, password, isValid } = useLoginForm(); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +71,6 @@ export default function LoginForm({ onSubmit, loading = false, error }: LoginFor
         >
           ¿Olvidaste tu contraseña?
         </a>
-        <div className="my-4 text-sm text-gray-500">O ingresa con</div>
       </div>
 
       <p className="mt-6 text-center text-sm">

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import FormLogin from "../components/Forms/FormLogin";
+import FormLogin from "../components/form/loginForm";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +40,7 @@ export default function Login() {
       {/* Logo y título */}
       <div className="flex flex-col items-center mb-6">
         <img
-          src="/icons/SplashMobil.png"
+          src="/icons/colombiaIcon.svg"
           alt="Logo"
           className="mb-6 w-32 h-32 object-contain"
         />

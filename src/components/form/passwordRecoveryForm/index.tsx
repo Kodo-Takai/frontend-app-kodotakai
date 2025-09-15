@@ -1,9 +1,9 @@
 import { usePasswordRecovery } from "../../../hooks/usePasswordRecovery";
 import { RiMailSendLine } from "react-icons/ri";
 import { IoLockClosedOutline } from "react-icons/io5";
-import Button from "../../Button";
-import Input from "../../input";
-import CodeInput from "../../CodeInput"; 
+import Button from "../../ui/button";
+import Input from "../../ui/input";
+import CodeInput from "../../ui/codeInput"; 
 
 export default function PasswordRecoveryForm() {
   const {

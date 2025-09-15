@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { FaArrowLeft } from "react-icons/fa";
-import RegisterForm from "../components/Forms/FormRegister";
+import RegisterForm from "../components/form/registerForm";
 
 export default function Register() {
     const navigate = useNavigate();
