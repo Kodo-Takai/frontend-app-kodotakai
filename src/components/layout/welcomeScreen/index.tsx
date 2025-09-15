@@ -1,105 +1,130 @@
-import  { useState } from 'react';
+import { useState } from "react";
+import { FaArrowLeft } from "react-icons/fa6";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
+import "../../../styles/_index.scss";
 
 
-const WelcomeScreens = () => {
-  const [currentScreen, setCurrentScreen] = useState(0);
+export default function WelcomeScreens() {
+  const [index, setIndex] = useState(0);
 
   const screens = [
     {
       id: 1,
-      image: "/api/placeholder/300/400",
-      title: "¡Hola! Bienvenido a ViajaYA",
-      subtitle: "Comienza tu aventura explorando los destinos más increíbles de Colombia",
-      bgColor: "bg-gradient-to-br from-blue-500 to-teal-600"
+      image: "/MapsScreen.svg",
+      title: "¡Hola!",
+      title1: "Bienvenido a",
+      title3: "ViajaYA",
+      overlayImage: "/icons/pictures.svg", 
+      subtitle:
+        "Sumérgete en los mejores lugares para pasar el momento, desde hospedajes hasta Airbnb",
+      tint: "from-blue-500 to-teal-600",
     },
     {
       id: 2,
-      image: "/api/placeholder/300/400", 
+      image: "/MapsScreen_2.svg",
       title: "Encuentra los mejores destinos",
-      subtitle: "Descubre lugares únicos y experiencias inolvidables en cada rincón del país",
-      bgColor: "bg-gradient-to-br from-teal-500 to-blue-600"
-    }
+      subtitle:
+        "Descubre lugares únicos y experiencias inolvidables en cada rincón del país",
+      tint: "from-teal-500 to-blue-600",
+    },
   ];
 
-  const handleNext = () => {
-    if (currentScreen < screens.length - 1) {
-      setCurrentScreen(currentScreen + 1);
-    } else {
-      // Aquí redirigiría al formulario de registro
-      console.log("Ir al formulario de registro");
-    }
+  const s = screens[index];
+
+  const next = () => {
+    if (index < screens.length - 1) setIndex((i) => i + 1);
+    else console.log("Ir al formulario de registro");
   };
 
-  const handleBack = () => {
-    if (currentScreen > 0) {
-      setCurrentScreen(currentScreen - 1);
-    }
-  };
-
-  const currentScreenData = screens[currentScreen];
+  const back = () => index > 0 && setIndex((i) => i - 1);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
-        {/* Header con imagen de fondo */}
-        <div className={`${currentScreenData.bgColor} h-96 relative flex items-center justify-center p-8`}>
-          {/* Botón de retroceso */}
-          {currentScreen > 0 && (
-            <button 
-              onClick={handleBack}
-              className="absolute top-4 left-4 text-white bg-white/20 rounded-full p-2 backdrop-blur-sm"
-            >
-              <HiMiniArrowRightStartOnRectangle size={20} />
-            </button>
-          )}
-          
-          {/* Indicadores de progreso */}
-          <div className="absolute top-4 right-4 flex space-x-2">
-            {screens.map((_, index) => (
-              <div 
-                key={index}
-                className={`w-2 h-2 rounded-full ${
-                  index === currentScreen ? 'bg-white' : 'bg-white/50'
+    <section className="min-h-screen flex items-center justify-center">
+      <div className="relative w-full max-w-md h-screen overflow-hidden">
+        {/* IMAGEN DE FONDO FIJA */}
+        <div
+          className="fixed inset-0 w-full h-full bg-cover bg-center"
+          style={{ backgroundImage: `url(${s.image})` }}
+        >
+          {/* Tinte (gradiente) para dar look & legibilidad */}
+          <div
+            className={`absolute inset-0 bg-gradient-to-br ${s.tint} opacity-70 mix-blend-multiply`}
+          />
+          {/* Ligero oscurecido extra */}
+          <div className="absolute inset-0 bg-black/10" />
+        </div>
+        {/* IMAGEN SUPERPUESTA  - Solo para el primer screen */}
+        {s.overlayImage && (
+          <div className="absolute bottom-70 inset-0 flex items-center justify-center z-20">
+            <img
+              src={s.overlayImage}
+              alt="Logo ViajaYA"
+              className="w-full h-full drop-shadow-2xl"
+            />
+          </div>
+        )}
+        {/* CONTENIDO SUPERPUESTO */}
+        <div className="relative z-10 h-full flex flex-col">
+          {/* Header con botón atrás */}
+          <div className="p-4">
+            {/* Botón atrás */}
+            {index > 0 && (
+              <div className="flex justify-start">
+                <button
+                  onClick={back}
+                  aria-label="Atrás"
+                  className="rounded-xl bg-white/20 p-3 text-white backdrop-blur-md transition hover:scale-105 hover:bg-white/30"
+                >
+                  <FaArrowLeft size={20} />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Espacio flexible para empujar el contenido hacia abajo */}
+          <div className="flex-1"></div>
+
+          {/* Indicadores centrados - justo arriba del contenido */}
+          <div className="flex justify-center items-center space-x-3 pb-4">
+            {screens.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setIndex(i)}
+                aria-label={`Ir a pantalla ${i + 1}`}
+                aria-current={i === index}
+                className={`h-2 rounded-full transition-all ${
+                  i === index ? "w-6 bg-white" : "w-2 bg-white/60"
                 }`}
               />
             ))}
           </div>
 
-          {/* Imagen/Ilustración placeholder */}
-          <div className="w-64 h-64 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-            <div className="text-white text-6xl">
-              {currentScreen === 0 ? '📸' : '🗺️'}
+          {/* CONTENIDO PRINCIPAL */}
+          <div className="bg-white rounded-t-3xl p-8 shadow-2xl min-h-[45vh]">
+            <div className="flex flex-col gap-4 text-left">
+              <h1 className="flex flex-col items-baseline gap-x-2 text-5xl font-extrabold  text-[var(--color-blueDark)] leading-tight">
+                {s.title && <span>{s.title}</span>}
+                {s.title1 && <span>{s.title1}</span>}
+                {s.title3 && <span className="text-red-600">{s.title3}</span>}
+              </h1>
+
+              <p className="text-sm text-[var(--color-blueLight)] leading-relaxed">
+                {s.subtitle}
+              </p>
             </div>
+
+            <button
+              onClick={next}
+              className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-red-600 py-4 font-semibold text-white transition-colors hover:bg-red-700"
+            >
+              <span>
+                {index === screens.length - 1 ? "Comenzar" : "Siguiente"}
+              </span>
+              <HiMiniArrowRightStartOnRectangle size={20} />
+            </button>
           </div>
-        </div>
-
-        {/* Contenido */}
-        <div className="p-8 space-y-6">
-          <div className="text-center space-y-3">
-            <h1 className="text-2xl font-bold text-gray-800 leading-tight">
-              {currentScreenData.title}
-            </h1>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              {currentScreenData.subtitle}
-            </p>
-          </div>
-
-          {/* Botón Siguiente */}
-          <button 
-            onClick={handleNext}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-4 rounded-2xl flex items-center justify-center space-x-2 transition-colors duration-200"
-          >
-            <span>{currentScreen === screens.length - 1 ? 'Comenzar' : 'Siguiente'}</span>
-            <HiMiniArrowRightStartOnRectangle size={20} />
-          </button>
-
-          {/* Indicador inferior */}
-          <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto"></div>
         </div>
       </div>
-    </div>
+    </section>
   );
-};
-
-export default WelcomeScreens;
+}
