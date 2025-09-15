@@ -1,25 +1,41 @@
+// LoginForm.tsx - Componente actualizado
 import React from "react";
 import { RiLock2Line } from "react-icons/ri";
 import Input from "../../ui/input";
 import Button from "../../ui/button";
-import { useLoginForm } from "../../../hooks/useLoginForm"; 
+import { useLoginForm } from "../../../hooks/useLoginForm";
 
 interface LoginFormProps {
   onSubmit?: (data: { email: string; password: string }) => void;
+  onLoginSuccess?: () => void; // Nueva prop para manejar login exitoso
   loading?: boolean;
   error?: string | null;
 }
 
-export default function LoginForm({ onSubmit, loading = false, error }: LoginFormProps) {
-  const { email, password, isValid } = useLoginForm(); 
+export default function LoginForm({ 
+  onSubmit, 
+  onLoginSuccess, 
+  loading = false, 
+  error 
+}: LoginFormProps) {
+  const { email, password, isValid } = useLoginForm();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isValid && onSubmit) {
-      onSubmit({
-        email: email.value,
-        password: password.value,
-      });
+      try {
+        await onSubmit({
+          email: email.value,
+          password: password.value,
+        });
+        // Si el login fue exitoso, llamar onLoginSuccess
+        if (onLoginSuccess) {
+          onLoginSuccess();
+        }
+      } catch (error) {
+        // El error se manejará en el componente padre
+        console.error('Login failed:', error);
+      }
     }
   };
 
@@ -47,7 +63,6 @@ export default function LoginForm({ onSubmit, loading = false, error }: LoginFor
         placeholder="Contraseña"
       />
 
-      {/* Mostrar error del hook useAuth */}
       {error && (
         <div className="text-red-500 text-sm text-center p-2 bg-red-50 rounded-lg">
           {error}
