@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import FormLogin from "../components/Forms/FormLogin";
+import FormLogin from "../components/form/loginForm";
+import WelcomeScreens from "../components/layout/welcomeScreen";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showWelcomeScreens, setShowWelcomeScreens] = useState(false);
 
   // Manejador personalizado para el submit
   const handleLogin = async (data: { email: string; password: string }) => {
@@ -23,7 +25,14 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+  const handleLoginSuccess = () => {
+    setShowWelcomeScreens(true);
+  };
 
+  // Si debe mostrar las pantallas de bienvenida, renderiza ese componente
+  if (showWelcomeScreens) {
+    return <WelcomeScreens />;
+  }
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg justify-center">
       {/* Header con botón de regresar */}
@@ -40,7 +49,7 @@ export default function Login() {
       {/* Logo y título */}
       <div className="flex flex-col items-center mb-6">
         <img
-          src="/icons/SplashMobil.png"
+          src="/icons/colombiaIcon.svg"
           alt="Logo"
           className="mb-6 w-32 h-32 object-contain"
         />
@@ -56,7 +65,11 @@ export default function Login() {
       </p>
 
       {/* Formulario separado */}
-      <FormLogin onSubmit={handleLogin} loading={isLoading} />
+      <FormLogin
+        onSubmit={handleLogin}
+        onLoginSuccess={handleLoginSuccess}
+        loading={isLoading}
+      />
     </div>
   );
 }

@@ -29,7 +29,7 @@ export default function SplashScreen({ visible, children }: Props) {
           {/* Logo */}
           <div className="splash-screen__logo">
             <img
-              src="/icons/SplashMobil.png"
+              src="/icons/colombiaIcon.svg"
               alt="Logo"
               className="splash-screen__logo-image"
             />
