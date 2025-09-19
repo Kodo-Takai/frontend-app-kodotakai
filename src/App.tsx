@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Welcome from './pages/Welcome';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { useSplashScreen } from './hooks/useSplashScreen';
@@ -12,7 +12,7 @@ export default function App() {
     <BrowserRouter>
       <SplashScreen visible={!isLoading} />
       <Routes>
-        <Route path="/" element={<Welcome />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
