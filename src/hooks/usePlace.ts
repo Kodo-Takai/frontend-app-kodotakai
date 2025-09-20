@@ -7,8 +7,7 @@ declare global {
   }
 }
 
-// API Key - REEMPLAZA CON LA TUYA
-const apiKey = "AIzaSyBSqL5uk0L3Q08rI8BxjB5-WfADJHFuLs0";
+const apiKey = process.env.REACT_APP_API_KEY_MAPS;
 
 export const usePlaces = () => {
   const [places, setPlaces] = useState<any[]>([]);
@@ -41,7 +40,7 @@ export const usePlaces = () => {
       const mapDiv = document.createElement("div");
       document.body.appendChild(mapDiv);
 
-      // Crear mapa simple
+      // Mapa simple
       const map = new window.google.maps.Map(mapDiv, {
         center: { lat: 19.4326, lng: -99.1332 },
         zoom: 12,
@@ -60,7 +59,7 @@ export const usePlaces = () => {
           document.body.removeChild(mapDiv); // Limpiar
 
           if (status === "OK" && results && results.length > 0) {
-            setApiStatus(`✅ API funcional - ${results.length} lugares encontrados`);
+            setApiStatus(`API funcional - ${results.length} lugares encontrados`);
 
             // Filtrar y ordenar los lugares por su calificación
             const sortedPlaces = results
@@ -81,12 +80,12 @@ export const usePlaces = () => {
             setLoading(false);
           } else {
             setLoading(false);
-            setApiStatus("❌ No se encontraron lugares");
+            setApiStatus(" No se encontraron lugares");
           }
         }
       );
     } catch (err) {
-      setApiStatus("❌ Error técnico");
+      setApiStatus(" Error técnico");
       setLoading(false);
     }
   };
@@ -95,5 +94,6 @@ export const usePlaces = () => {
     places,
     loading,
     setPlaces,
+    apiStatus,
   };
 };

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { usePlaces } from "../../../hooks/usePlace"; // Asegúrate de que la ruta sea correcta
+import { usePlaces } from "../../../hooks/usePlace"; 
 
 const WhatsNewCards = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { places, loading } = usePlaces();
+  
 
   // Auto-advance carousel
   useEffect(() => {
