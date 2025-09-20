@@ -2,6 +2,7 @@ import { FaBell } from "react-icons/fa";
 import Search from "../components/ui/search/search";
 import WhatsNewCards from "../components/cards/whatsNewCard";
 import SummaryCard from "../components/cards/summaryCard";
+import DestinationCards from "../components/cards/destinationsCard";
 
 interface HomeProps {
   user: {
@@ -25,12 +26,13 @@ export default function Home() {
           </span>
         </div>
         <div className="bg-white relative mt-6 border border-gray-600 rounded-lg p-2 shadow-sm">
-          <FaBell className=" text-gray-600" size={15} />
+          <FaBell className="text-gray-600" size={15} />
         </div>
       </div>
       <Search />
       <WhatsNewCards />
       <SummaryCard />
+      <DestinationCards />
     </div>
   );
 }
