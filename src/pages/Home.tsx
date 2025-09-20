@@ -2,6 +2,7 @@ import { FaBell } from "react-icons/fa";
 import Search from "../components/ui/search/search";
 import WhatsNewCards from "../components/cards/whatsNewCards";
 import MapsCard from "../components/cards/mapsCard";
+import WeatherCard from "../components/cards/weatherCard";
 
 interface HomeProps {
   user: {
@@ -30,7 +31,10 @@ export default function Home() {
       </div>
       <Search />
       <WhatsNewCards />
-      <MapsCard className="w-full sm:w-1/2" />
+      <div className="grid grid-cols-2 gap-4 w-full">
+        <MapsCard className="w-1/2 grid-cols-1" />
+        <WeatherCard className="w-full grid-cols-2" />
+      </div>
     </div>
   );
 }
