@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { usePlaces } from "../../../hooks/usePlace"; 
+import { usePlaces } from "../../../hooks/usePlaces"; 
 
 const WhatsNewCards = () => {
   const [currentIndex, setCurrentIndex] = useState(0);

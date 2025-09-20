@@ -7,7 +7,10 @@ declare global {
   }
 }
 
-const apiKey = process.env.REACT_APP_API_KEY_MAPS;
+const apiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
+
+
+
 
 export const usePlaces = () => {
   const [places, setPlaces] = useState<any[]>([]);
