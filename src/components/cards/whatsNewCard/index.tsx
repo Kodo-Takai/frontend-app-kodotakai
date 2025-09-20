@@ -1,31 +1,80 @@
 // src/components/cards/WhatsNewCards.tsx
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { usePlaces } from "../../../hooks/usePlaces";
 
 export default function WhatsNewCards() {
   const { places, loading, apiStatus } = usePlaces({
     type: "tourist_attraction",
-    radius: 3000,
+    radius: 20000,
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
+  // Resetear índice cuando cambien los lugares
   useEffect(() => {
     if (places.length === 0) return;
-    setCurrentIndex((i) => (i >= places.length ? 0 : i));
-  }, [places.length]);
+    if (currentIndex >= places.length) {
+      setCurrentIndex(0);
+    }
+  }, [places.length, currentIndex]);
 
   const currentPlace = useMemo(() => places[currentIndex], [places, currentIndex]);
 
-  const prevSlide = () => {
+  // Funciones de navegación con useCallback para evitar re-renders
+  const prevSlide = useCallback((e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!places.length) return;
-    setCurrentIndex((i) => (i - 1 + places.length) % places.length);
-  };
+    
+    setCurrentIndex((prevIndex) => {
+      const newIndex = (prevIndex - 1 + places.length) % places.length;
+      console.log(`Anterior: ${prevIndex} -> ${newIndex}`); // Debug
+      return newIndex;
+    });
+  }, [places.length]);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback((e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!places.length) return;
-    setCurrentIndex((i) => (i + 1) % places.length);
-  };
+    
+    setCurrentIndex((prevIndex) => {
+      const newIndex = (prevIndex + 1) % places.length;
+      console.log(`Siguiente: ${prevIndex} -> ${newIndex}`); // Debug
+      return newIndex;
+    });
+  }, [places.length]);
+
+  const goToSlide = useCallback((index: number) => {
+    if (index >= 0 && index < places.length) {
+      setCurrentIndex(index);
+    }
+  }, [places.length]);
+
+  // Auto-play cada 5 segundos
+  useEffect(() => {
+    if (!places.length || isPaused) return;
+
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [places.length, isPaused, nextSlide]);
+
+  // Pausar auto-play en hover
+  const handleMouseEnter = useCallback(() => {
+    setIsPaused(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsPaused(false);
+  }, []);
 
   // Loading skeleton con el mismo layout
   if (loading) {
@@ -44,7 +93,7 @@ export default function WhatsNewCards() {
   if (!places.length || !currentPlace) {
     return (
       <div className="w-full">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Novedades</h2>
+        <h2 className="text-lg font-bold mb-4">Novedades</h2>
         <div className="rounded-xl border border-dashed p-6 text-center text-sm text-gray-600">
           No encontramos lugares cercanos en este momento.
         </div>
@@ -57,13 +106,22 @@ export default function WhatsNewCards() {
     <div className="w-full">
       <h2 className="text-xl font-bold text-gray-900 mb-4">Novedades</h2>
 
-      <div className="relative rounded-xl overflow-hidden shadow-lg group cursor-pointer">
+      <div 
+        className="relative rounded-xl overflow-hidden shadow-lg group cursor-pointer"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         <div className="h-48 relative overflow-hidden">
           <img
             src={currentPlace.photo_url}
             alt={currentPlace.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
+            onError={(e) => {
+              // Fallback si la imagen no carga
+              const target = e.target as HTMLImageElement;
+              target.src = "https://via.placeholder.com/400x200/3B82F6/ffffff?text=📍+Sin+Imagen";
+            }}
           />
 
           {/* Gradiente */}
@@ -98,8 +156,9 @@ export default function WhatsNewCards() {
           {/* Flecha izquierda */}
           <button
             onClick={prevSlide}
-            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-all"
+            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-all z-10 opacity-0 group-hover:opacity-100"
             aria-label="Anterior"
+            type="button"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -109,13 +168,25 @@ export default function WhatsNewCards() {
           {/* Flecha derecha */}
           <button
             onClick={nextSlide}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-all"
+            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-all z-10 opacity-0 group-hover:opacity-100"
             aria-label="Siguiente"
+            type="button"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
+
+          {/* Indicador de pausa */}
+          {isPaused && (
+            <div className="absolute bottom-3 left-3">
+              <div className="bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Texto inferior sobre la imagen */}
@@ -127,21 +198,22 @@ export default function WhatsNewCards() {
       </div>
 
       {/* Bullets de navegación */}
-      <div className="flex justify-center gap-2 mt-4">
-        {places.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            aria-label={`Ir al slide ${index + 1}`}
-            className={`w-2 h-2 rounded-full transition-all duration-200 ${
-              index === currentIndex ? "bg-blue-500 w-6" : "bg-gray-300 hover:bg-gray-400"
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Estado API */}
-{/*       <p className="text-xs text-gray-500 mt-2">{apiStatus}</p> */}
+      {places.length > 1 && (
+        <div className="flex justify-center gap-2 mt-4">
+          {places.map((_, index) => (
+            <button
+              key={`bullet-${index}`}
+              onClick={() => goToSlide(index)}
+              aria-label={`Ir al slide ${index + 1}`}
+              className={`transition-all duration-300 rounded-full ${
+                index === currentIndex 
+                  ? "bg-blue-500 w-6 h-2" 
+                  : "bg-gray-300 hover:bg-gray-400 w-2 h-2"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
