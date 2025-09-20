@@ -38,10 +38,10 @@ export default function CalendarCard() {
 
         {/* Contenido principal */}
         <div className=" bg-white flex flex-col py-1 justify-center items-center ">
-             <p className="text-md font-extrabold text-blue-900 text-center ">
+             <p className="text-md font-bold text-blue-900 text-center ">
               {capitalizedDay}
             </p>
-            <span className="text-3xl font-extrabold text-red-500 leading-none">
+            <span className="text-4xl font-extrabold text-red-500 leading-none">
               {dayNumber}
             </span>
         
