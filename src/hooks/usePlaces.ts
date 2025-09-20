@@ -1,102 +1,146 @@
-import { useState, useEffect } from "react";
+// src/hooks/usePlaces.ts
+import { useEffect, useState } from "react";
 
 declare global {
   interface Window {
-    initMap: () => void;
     google: any;
   }
 }
 
-const apiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
+type LatLng = { lat: number; lng: number };
+
+const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY ;
 
 
+// ---- Loader singleton (evita cargar el script más de una vez) ----
+let gmapsLoader: Promise<void> | null = null;
 
+function loadGoogleMaps(): Promise<void> {
+  if (window.google?.maps?.places) return Promise.resolve();
+  if (gmapsLoader) return gmapsLoader;
 
-export const usePlaces = () => {
+  gmapsLoader = new Promise<void>((resolve, reject) => {
+    const existing = document.getElementById("gmaps-sdk");
+    if (existing) {
+      existing.addEventListener("load", () => resolve());
+      existing.addEventListener("error", () =>
+        reject(new Error("Failed to load Google Maps"))
+      );
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "gmaps-sdk";
+    script.async = true;
+    script.defer = true;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
+
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Failed to load Google Maps"));
+    document.head.appendChild(script);
+  });
+
+  return gmapsLoader;
+}
+
+// ---- Hook compartido ----
+export function usePlaces(opts?: {
+  type?: string; // p.ej. "tourist_attraction"
+  radius?: number; // metros
+  fallback?: LatLng; // centro si no hay geolocalización
+}) {
   const [places, setPlaces] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiStatus, setApiStatus] = useState("Inicializando...");
 
+  const type = opts?.type ?? "tourist_attraction";
+  const radius = opts?.radius ?? 5000;
+  const fallback = opts?.fallback ?? { lat: 19.4326, lng: -99.1332 }; // CDMX de ejemplo
+
   useEffect(() => {
-    window.initMap = () => {
-      setApiStatus("Google Maps cargado - Probando API key...");
-      testApiKey();
-    };
+    let cancelled = false;
 
-    // Crear script de Google Maps
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initMap`;
-    script.async = true;
-    script.defer = true;
+    async function run() {
+      try {
+        setApiStatus("Cargando Google Maps...");
+        await loadGoogleMaps();
+        if (cancelled) return;
 
-    document.head.appendChild(script);
+        // 1) Ubicación del usuario (con fallback)
+        const userPosition = await new Promise<LatLng>((resolve) => {
+          if (!("geolocation" in navigator)) return resolve(fallback);
+          navigator.geolocation.getCurrentPosition(
+            ({ coords }) =>
+              resolve({ lat: coords.latitude, lng: coords.longitude }),
+            () => resolve(fallback),
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 300000 }
+          );
+        });
 
-    return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
-    };
-  }, []);
+        if (cancelled) return;
 
-  const testApiKey = () => {
-    try {
-      const mapDiv = document.createElement("div");
-      document.body.appendChild(mapDiv);
+        setApiStatus("Probando Places API...");
+        // 2) Necesitamos un Map “headless” para instanciar PlacesService
+        const phantom = document.createElement("div");
+        phantom.style.width = "0";
+        phantom.style.height = "0";
+        phantom.style.overflow = "hidden";
+        document.body.appendChild(phantom);
 
-      // Mapa simple
-      const map = new window.google.maps.Map(mapDiv, {
-        center: { lat: 19.4326, lng: -99.1332 },
-        zoom: 12,
-      });
+        const map = new window.google.maps.Map(phantom, {
+          center: userPosition,
+          zoom: 12,
+        });
+        const service = new window.google.maps.places.PlacesService(map);
 
-      const service = new window.google.maps.places.PlacesService(map);
-      setApiStatus("Probando Places API...");
+        service.nearbySearch(
+          { location: userPosition, radius, type },
+          (results: any[], status: string) => {
+            document.body.removeChild(phantom);
 
-      service.nearbySearch(
-        {
-          location: { lat: 19.4326, lng: -99.1332 },
-          radius: 5000,
-          type: "tourist_attraction",
-        },
-        (results: any, status: string) => {
-          document.body.removeChild(mapDiv); // Limpiar
+            if (cancelled) return;
 
-          if (status === "OK" && results && results.length > 0) {
-            setApiStatus(`API funcional - ${results.length} lugares encontrados`);
+            if (
+              status === window.google.maps.places.PlacesServiceStatus.OK &&
+              results?.length
+            ) {
+              const top = results
+                .filter((p) => (p.rating ?? 0) >= 4)
+                .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+                .slice(0, 5)
+                .map((p) => ({
+                  name: p.name ?? "Sin nombre",
+                  rating: p.rating,
+                  vicinity: p.vicinity,
+                  place_id: p.place_id,
+                  photo_url:
+                    p.photos?.[0]?.getUrl({ maxWidth: 400, maxHeight: 200 }) ??
+                    "https://via.placeholder.com/400x200/3B82F6/ffffff?text=📍+Sin+Imagen",
+                  location: p.geometry?.location?.toJSON?.(),
+                }));
 
-            // Filtrar y ordenar los lugares por su calificación
-            const sortedPlaces = results
-              .filter((place: any) => place.rating >= 4) // Filtrar solo lugares con rating mayor o igual a 4
-              .slice(0, 5) // Limitar a 5 lugares con mejor rating
-              .map((place: any) => ({
-                name: place.name || "Sin nombre",
-                rating: place.rating,
-                vicinity: place.vicinity,
-                place_id: place.place_id,
-                photo_url:
-                  place.photos && place.photos[0]
-                    ? place.photos[0].getUrl({ maxWidth: 400, maxHeight: 200 })
-                    : "https://via.placeholder.com/400x200/3B82F6/ffffff?text=📍+Sin+Imagen",
-              }));
+              setPlaces(top);
+              setApiStatus(`API funcional - ${top.length} lugares`);
+            } else {
+              setApiStatus("Sin resultados");
+            }
 
-            setPlaces(sortedPlaces);
             setLoading(false);
-          } else {
-            setLoading(false);
-            setApiStatus(" No se encontraron lugares");
           }
+        );
+      } catch (e) {
+        if (!cancelled) {
+          setApiStatus("Error al cargar Google Maps/Places");
+          setLoading(false);
         }
-      );
-    } catch (err) {
-      setApiStatus(" Error técnico");
-      setLoading(false);
+      }
     }
-  };
 
-  return {
-    places,
-    loading,
-    setPlaces,
-    apiStatus,
-  };
-};
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [type, radius, fallback.lat, fallback.lng]);
+
+  return { places, loading, apiStatus };
+}
