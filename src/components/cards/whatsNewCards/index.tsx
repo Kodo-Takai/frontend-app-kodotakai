@@ -10,7 +10,6 @@ export default function WhatsNewCards() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Asegura índice válido si cambia la cantidad de lugares
   useEffect(() => {
     if (places.length === 0) return;
     setCurrentIndex((i) => (i >= places.length ? 0 : i));

@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { usePlaces } from "../../../hooks/usePlaces";
 
 type Props = {
-  className?: string; // p.ej. "w-full sm:w-1/2"
+  className?: string; 
 };
 
 const FALLBACK = { lat: 10.3910, lng: -75.4796 }; // Cartagena

@@ -80,7 +80,7 @@ export function usePlaces(opts?: {
         if (cancelled) return;
 
         setApiStatus("Probando Places API...");
-        // 2) Necesitamos un Map “headless” para instanciar PlacesService
+      
         const phantom = document.createElement("div");
         phantom.style.width = "0";
         phantom.style.height = "0";
