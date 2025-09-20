@@ -1,5 +1,6 @@
 import { FaBell } from "react-icons/fa";
 import Search from "../components/ui/search/search";
+import WhatsNewCards from "../components/cards/whatsNewCards";
 
 interface HomeProps {
   user: {
@@ -27,6 +28,7 @@ export default function Home() {
         </div>
       </div>
       <Search />
+      <WhatsNewCards />
     </div>
   );
 }
