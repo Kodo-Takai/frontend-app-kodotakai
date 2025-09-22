@@ -1,0 +1,73 @@
+// src/components/cards/DestinationCard/index.scss
+
+// Estilos para el scroll horizontal del carrusel - Optimizado para móvil
+.destination-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; // Scroll suave en iOS
+  touch-action: pan-x; // Optimización táctil
+  scroll-padding-left: 1rem;
+  scroll-padding-right: 1rem;
+
+  // Ocultar scrollbar en todos los navegadores
+  -ms-overflow-style: none; // IE/Edge
+  scrollbar-width: none; // Firefox
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari/Webkit
+  }
+}
+
+// Ancho fijo para las cards
+.destination-card-width {
+  flex: none;
+  width: 17.5rem; // 280px
+  scroll-snap-align: start;
+}
+
+// Clase utilitaria para line-clamp si Tailwind no lo incluye
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+// Optimizaciones específicas para móvil
+@media (max-width: 768px) {
+  .destination-scroll {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    scroll-padding-left: 1.5rem;
+    scroll-padding-right: 1.5rem;
+  }
+
+  .destination-card-width {
+    width: 16rem; // 256px - Más pequeño para móvil
+  }
+}
+
+// Para pantallas muy pequeñas
+@media (max-width: 480px) {
+  .destination-card-width {
+    width: 14rem; // 224px - Aún más pequeño
+  }
+}
