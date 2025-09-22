@@ -1,0 +1,267 @@
+.beach-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.beach-card-width {
+  min-width: 300px;
+  max-width: 350px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 15px;
+  border: 1px solid #dedede;
+
+  @media (max-width: 640px) {
+    min-width: 280px;
+    max-width: 320px;
+  }
+}
+
+.beach-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.beach-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.beach-card-title-section {
+  margin-top: 5px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.beach-card-experience-text {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 10px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #00324a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  width: fit-content;
+}
+
+.beach-card-compass-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.beach-card-name-section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.beach-card-experience-label {
+  font-size: 10px;
+  font-weight: 400;
+  color: #00324a;
+  text-transform: uppercase;
+  line-height: 5px;
+  letter-spacing: -3%;
+}
+
+.beach-card-beach-name {
+  font-size: 30px;
+  font-weight: 900;
+  color: #00324a;
+  line-height: 40px;
+  letter-spacing: -1px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.beach-card-description-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.3;
+}
+
+.beach-card-image-section {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.beach-card-image-section > button:first-child {
+  justify-self: start;
+}
+
+.beach-card-image-section > button:last-child {
+  justify-self: end;
+}
+
+.beach-card-image-container {
+  position: relative;
+  height: 120px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.beach-card-image {
+  position: absolute;
+  width: 97px;
+  height: 114px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.95) !important;
+  }
+}
+
+.beach-card-image-main {
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.beach-card-image-back {
+  opacity: 0.8;
+  filter: brightness(0.9);
+}
+
+.beach-card-nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  color: white;
+  height: 30px;
+  background-color: #00324a;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #002334;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.beach-card-arrow-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.beach-card-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.beach-card-rating-display {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.beach-card-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.beach-card-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &.active {
+    background-color: #dc1217;
+  }
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.beach-card-visit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background-color: #dc1217;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #b71317;
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 480px) {
+  .beach-scroll {
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+  }
+
+  .beach-card-width {
+    min-width: 280px;
+    max-width: 320px;
+  }
+
+  .beach-card-image-container {
+    height: 100px;
+  }
+
+  .beach-card-nav-button {
+    width: 35px;
+    height: 35px;
+  }
+}
