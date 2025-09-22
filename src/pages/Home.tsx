@@ -3,6 +3,8 @@ import Search from "../components/ui/search/search";
 import WhatsNewCards from "../components/cards/whatsNewCard";
 import SummaryCard from "../components/cards/summaryCard";
 import DestinationCards from "../components/cards/destinationsCard";
+import BeachCards from "../components/cards/beachCard";
+import RestaurantCards from "../components/cards/restaurantCard";
 
 interface HomeProps {
   user: {
@@ -33,6 +35,8 @@ export default function Home() {
       <WhatsNewCards />
       <SummaryCard />
       <DestinationCards />
+      <BeachCards />
+      <RestaurantCards />
     </div>
   );
 }
