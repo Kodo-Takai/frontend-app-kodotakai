@@ -2,10 +2,11 @@ import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
 import "../../../styles/_index.scss";
-
+import { useNavigate } from "react-router-dom";
 
 export default function WelcomeScreens() {
   const [index, setIndex] = useState(0);
+  const navigate = useNavigate();
 
   const screens = [
     {
@@ -14,7 +15,7 @@ export default function WelcomeScreens() {
       title: "¡Hola!",
       title1: "Bienvenido a",
       title3: "ViajaYA",
-      overlayImage: "/icons/pictures.svg", 
+      overlayImage: "/icons/pictures.svg",
       subtitle:
         "Sumérgete en los mejores lugares para pasar el momento, desde hospedajes hasta Airbnb",
       tint: "from-blue-500 to-teal-600",
@@ -33,7 +34,9 @@ export default function WelcomeScreens() {
 
   const next = () => {
     if (index < screens.length - 1) setIndex((i) => i + 1);
-    else console.log("Ir al formulario de registro");
+    else{
+      navigate("/home")
+    };
   };
 
   const back = () => index > 0 && setIndex((i) => i - 1);
