@@ -6,6 +6,8 @@ import Home from "./pages/Home"
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import ForgotPassword from "./pages/ForgotPassword";
+// import { BottomNav } from "./components/layout/BottomNav";
+// import { defaultItems } from "./components/layout/BottomNav";
 
 export default function App() {
   const isLoading = useSplashScreen();
@@ -19,6 +21,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
       </Routes>
+      {/* <BottomNav items={defaultItems} className="Hola"/> */}
     </BrowserRouter>
   );
 }
