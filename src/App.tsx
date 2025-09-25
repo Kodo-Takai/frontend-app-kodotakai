@@ -21,6 +21,7 @@ export default function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/notifications" element={<Notifications />} />
       </Routes>
+      {/* <BottomNav items={defaultItems} className="Hola"/> */}
     </BrowserRouter>
   );
 }
