@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import ForgotPassword from "./pages/ForgotPassword";
+import Notifications from "./pages/Notifications";
 
 export default function App() {
   const isLoading = useSplashScreen();
