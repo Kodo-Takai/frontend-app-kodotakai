@@ -31,7 +31,6 @@ export default function WhatsNewCards() {
     
     setCurrentIndex((prevIndex) => {
       const newIndex = (prevIndex - 1 + places.length) % places.length;
-      console.log(`Anterior: ${prevIndex} -> ${newIndex}`); // Debug
       return newIndex;
     });
   }, [places.length]);
@@ -45,7 +44,6 @@ export default function WhatsNewCards() {
     
     setCurrentIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % places.length;
-      console.log(`Siguiente: ${prevIndex} -> ${newIndex}`); // Debug
       return newIndex;
     });
   }, [places.length]);
