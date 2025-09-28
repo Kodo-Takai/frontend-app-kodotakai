@@ -9,6 +9,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Notifications from "./pages/Notifications";
 import {BottomNav} from "./components/layout/BottomNav";
 import { defaultItems } from "./components/layout/BottomNav";
+import Maps from "./pages/Maps";
 
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/maps" element={<Maps/>}/>
       </Routes>
       <BottomNav items={defaultItems} className="Hola"/>
     </BrowserRouter>
