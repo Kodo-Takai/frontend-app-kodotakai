@@ -2,11 +2,13 @@ import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
 import "../../../styles/_index.scss";
-import { useNavigate } from "react-router-dom";
 
-export default function WelcomeScreens() {
+interface WelcomeScreensProps {
+  onComplete: () => void;
+}
+
+export default function WelcomeScreens({ onComplete }: WelcomeScreensProps) {
   const [index, setIndex] = useState(0);
-  const navigate = useNavigate();
 
   const screens = [
     {
@@ -35,7 +37,7 @@ export default function WelcomeScreens() {
   const next = () => {
     if (index < screens.length - 1) setIndex((i) => i + 1);
     else{
-      navigate("/home")
+      onComplete();
     };
   };
 
