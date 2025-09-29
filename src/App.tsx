@@ -3,6 +3,7 @@ import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Explorar from "./pages/Explorar";
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/explorar" element={<Explorar />} />
         <Route path="/notifications" element={<Notifications />} />
       </Routes>
       <BottomNav items={defaultItems} className="Hola"/>
