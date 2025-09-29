@@ -6,15 +6,15 @@ type Props = {
 
 export default function SegmentedControl({ options, selected, onChange }: Props) {
     const selectedIndex = options.indexOf(selected);
+    const optionWidth = 100 / options.length; // Calcula el ancho dinámicamente
     
     return (
         <div className="relative flex rounded-lg overflow-hidden w-full max-w-md mx-auto bg-[#E6E6E7] ">
             <div
-                className="absolute top-1 bottom-1 w-1/3 bg-white rounded-md shadow transition-transform duration-300 ease-out"
+                className="absolute top-1 bottom-1 bg-white rounded-md shadow transition-transform duration-300 ease-out"
                 style={{
-                    transform: `translateX(${selectedIndex * 98.5}%)`,
-                    marginLeft: "2px",
-                    marginRight: "2px",
+                    width: `calc(${optionWidth}% - 1.4px)`,
+                    transform: `translateX(calc(${selectedIndex * 100}% + 2px))`,
                 }}
             />
 
