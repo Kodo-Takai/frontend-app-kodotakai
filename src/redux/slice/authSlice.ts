@@ -1,12 +1,13 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
-  id: string;
-  userName: string;
-  password: string;
-  status: boolean;
-  createdAt: string;
-  updatedAt: string;
+  id: string | number;
+  username?: string; 
+  email?: string;
+  password?: string;
+  status?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface AuthState {
@@ -15,7 +16,7 @@ interface AuthState {
   token: string | null;
 }
 
-//Obtener el estado inicial desde localStorage
+// Obtener el estado inicial desde localStorage
 const getInitialState = (): AuthState => {
   const token = localStorage.getItem("token");
   const userStr = localStorage.getItem("user");
