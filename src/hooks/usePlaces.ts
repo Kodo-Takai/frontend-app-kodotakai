@@ -11,7 +11,7 @@ type LatLng = { lat: number; lng: number };
 
 const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
 
-export type PlaceCategory = "all" | "beaches" | "restaurants";
+export type PlaceCategory = "all" | "beaches" | "restaurants" | "hotels";
 
 export interface UsePlacesOptions {
   type?: string; 
@@ -91,6 +91,14 @@ const getCategoryConfig = (category: PlaceCategory) => {
         minRating: 4.0,
         enableMultiplePhotos: false,
         radius: 20000,
+      };
+      case "hotels":
+      return {
+        searchQueries: ["hotel", "hospedaje", "hostal", "motel", "lodging"],
+        type: "lodging",
+        minRating: 3.5,
+        enableMultiplePhotos: true,
+        radius: 30000,
       };
     default:
       return {

@@ -17,7 +17,9 @@ interface Hotel {
 
 export default function HotelCards() {
     const { places, loading } = usePlaces({
-        type: "hoteles",
+        category: "hotels",
+        searchMethod: "both",
+        limit: 6, 
         radius: 30000,
     });
 
