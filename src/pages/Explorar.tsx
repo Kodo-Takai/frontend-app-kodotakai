@@ -1,5 +1,6 @@
 import { useState } from "react";
 import SegmentedControl from "../components/ui/segmentedControl";
+import HotelsCard from "../components/cards/hotelsCard";
 
 export default function Explorar() {
   const [selectedOption, setSelectedOption] = useState("Todo");
@@ -44,6 +45,8 @@ export default function Explorar() {
         selected={selectedOption}
         onChange={setSelectedOption}
       />
+
+      <HotelsCard />
     </div>
   );
 }
