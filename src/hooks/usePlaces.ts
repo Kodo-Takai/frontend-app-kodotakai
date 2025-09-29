@@ -14,6 +14,7 @@ const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
 export type PlaceCategory = "all" | "beaches" | "restaurants";
 
 export interface UsePlacesOptions {
+  type?: string; 
   category?: PlaceCategory;
   searchMethod?: "nearby" | "text" | "both";
   radius?: number;
