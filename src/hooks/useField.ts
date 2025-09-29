@@ -7,6 +7,8 @@ export const required: Validator = (v) =>
 
 export const emailValidator: Validator = (v) =>
   /\S+@\S+\.\S+/.test(v) ? undefined : 'Email no válido';
+export const usernameValidator: Validator = (v) =>
+  /\S+@\S+\.\S+/.test(v) ? undefined : 'Email no válido';
 
 export function useField(initial = '', validators: Validator[] = []) {
   const [value, setValue] = useState(initial);
@@ -34,5 +36,11 @@ export function useField(initial = '', validators: Validator[] = []) {
 
   const isValid = useMemo(() => !runValidation(value), [value, runValidation]);
 
-  return { value, onChange, onBlur, error, touched, isValid, setValue, setError };
+  const reset = useCallback(() => {
+    setValue(initial);
+    setTouched(false);
+    setError(undefined);
+  }, [initial]);
+
+  return { value, onChange, onBlur, error, touched, isValid, setValue, setError, reset };
 }

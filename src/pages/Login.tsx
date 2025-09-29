@@ -1,44 +1,23 @@
-import { useState } from "react";
+// pages/Login.tsx
 import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import FormLogin from "../components/form/loginForm";
 import WelcomeScreens from "../components/layout/welcomeScreen";
+import { useAuth } from "../hooks/auth/useAuth";
 
 export default function Login() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showWelcomeScreens, setShowWelcomeScreens] = useState(false);
+  const navigate = useNavigate();
+  const { showWelcomeScreens, completeWelcomeScreens, username, password, isValid, isLoading, errorMessage ,handleFormSubmit } = useAuth();
 
-  // Manejador personalizado para el submit
-  const handleLogin = async (data: { email: string; password: string }) => {
-    setIsLoading(true);
-
-    try {
-      console.log("Iniciando sesión...");
-      console.log("Email:", data.email);
-      console.log("Password:", data.password);
-      // Simula una llamada a una API
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Login exitoso");
-    } catch (error) {
-      console.error("Error en login:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleLoginSuccess = () => {
-    setShowWelcomeScreens(true);
-  };
-
-  // Si debe mostrar las pantallas de bienvenida, renderiza ese componente
   if (showWelcomeScreens) {
-    return <WelcomeScreens />;
+    return <WelcomeScreens onComplete={completeWelcomeScreens} />;
   }
+
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg justify-center">
-      {/* Header con botón de regresar */}
       <div
         className="cursor-pointer text-gray-500 mb-6"
-        onClick={() => window.history.back()}
+        onClick={() => navigate(-1)}
         aria-label="Regresar"
       >
         <div className="w-10 h-10 flex items-center justify-center border border-gray-400 rounded-md hover:bg-gray-100 transition-colors">
@@ -46,7 +25,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Logo y título */}
       <div className="flex flex-col items-center mb-6">
         <img
           src="/icons/colombiaIcon.svg"
@@ -64,11 +42,13 @@ export default function Login() {
         nueva aventura
       </p>
 
-      {/* Formulario separado */}
       <FormLogin
-        onSubmit={handleLogin}
-        onLoginSuccess={handleLoginSuccess}
-        loading={isLoading}
+        username={username}
+        password={password}
+        isValid={isValid}
+        isLoading={isLoading}
+        errorMessage={errorMessage}
+        onSubmit={handleFormSubmit}
       />
     </div>
   );
