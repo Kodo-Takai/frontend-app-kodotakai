@@ -9,8 +9,22 @@ declare global {
 
 type LatLng = { lat: number; lng: number };
 
-const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY ;
+const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
 
+export type PlaceCategory = "all" | "beaches" | "restaurants";
+
+export interface UsePlacesOptions {
+  type?: string; 
+  category?: PlaceCategory;
+  searchMethod?: "nearby" | "text" | "both";
+  radius?: number;
+  limit?: number;
+  minRating?: number;
+  customFilters?: (place: any) => boolean;
+  searchQueries?: string[];
+  fallbackLocation?: LatLng;
+  enableMultiplePhotos?: boolean;
+}
 
 // ---- Loader singleton (evita cargar el script más de una vez) ----
 let gmapsLoader: Promise<void> | null = null;
@@ -43,94 +57,502 @@ function loadGoogleMaps(): Promise<void> {
   return gmapsLoader;
 }
 
-// ---- Hook compartido ----
-export function usePlaces(opts?: {
-  type?: string; // p.ej. "tourist_attraction"
-  radius?: number; // metros
-  fallback?: LatLng; // centro si no hay geolocalización
-}) {
+// ---- Funciones de filtrado por categoría ----
+const isBeach = (place: any): boolean => {
+  const name = place.name?.toLowerCase() || "";
+  return name.startsWith("playa");
+};
+
+const isRestaurant = (place: any): boolean => {
+  const types = place.types || [];
+  return (
+    types.includes("restaurant") ||
+    types.includes("comedor") ||
+    types.includes("fonda") ||
+    types.includes("parador")
+  );
+};
+
+// ---- Configuración por categoría ----
+const getCategoryConfig = (category: PlaceCategory) => {
+  switch (category) {
+    case "beaches":
+      return {
+        searchQueries: ["playa", "beach", "costa", "litoral"],
+        type: "establishment",
+        minRating: 3.0,
+        enableMultiplePhotos: true,
+        radius: 50000,
+      };
+    case "restaurants":
+      return {
+        searchQueries: ["restaurant", "comedor", "menu", "restaurante"],
+        type: "restaurant",
+        minRating: 4.0,
+        enableMultiplePhotos: false,
+        radius: 20000,
+      };
+    default:
+      return {
+        searchQueries: ["lugar", "sitio", "destino"],
+        type: "tourist_attraction",
+        minRating: 4.0,
+        enableMultiplePhotos: false,
+        radius: 5000,
+      };
+  }
+};
+
+// ---- Función para obtener fotos adicionales ----
+async function getPlacePhotos(placeId: string) {
+  if (!window.google?.maps?.places) return [];
+
+  const phantom = document.createElement("div");
+  phantom.style.width = "0";
+  phantom.style.height = "0";
+  phantom.style.overflow = "hidden";
+  document.body.appendChild(phantom);
+
+  const map = new window.google.maps.Map(phantom, {
+    center: { lat: 0, lng: 0 },
+    zoom: 12,
+  });
+
+  const service = new window.google.maps.places.PlacesService(map);
+
+  try {
+    const placeDetails = await new Promise<any>((resolve) => {
+      service.getDetails(
+        {
+          placeId: placeId,
+          fields: ["photos", "name", "rating", "vicinity"],
+        },
+        (place: any, status: string) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+            resolve(place);
+          } else {
+            resolve(null);
+          }
+        }
+      );
+    });
+
+    document.body.removeChild(phantom);
+    return placeDetails?.photos || [];
+  } catch (error) {
+    console.warn(`Error getting photos for place ${placeId}:`, error);
+    document.body.removeChild(phantom);
+    return [];
+  }
+}
+
+// ---- Búsqueda por texto ----
+async function searchWithText(
+  userPosition: LatLng,
+  radius: number,
+  searchQueries: string[],
+  type: string
+) {
+  if (!window.google?.maps?.places) return [];
+
+  const phantom = document.createElement("div");
+  phantom.style.width = "0";
+  phantom.style.height = "0";
+  phantom.style.overflow = "hidden";
+  document.body.appendChild(phantom);
+
+  const map = new window.google.maps.Map(phantom, {
+    center: userPosition,
+    zoom: 12,
+  });
+
+  const service = new window.google.maps.places.PlacesService(map);
+  const allResults: any[] = [];
+
+  for (const query of searchQueries) {
+    try {
+      const results = await new Promise<any[]>((resolve) => {
+        service.textSearch(
+          {
+            query: query,
+            location: userPosition,
+            radius: radius,
+            type: type,
+          },
+          (results: any[], status: string) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+              resolve(results || []);
+            } else {
+              resolve([]);
+            }
+          }
+        );
+      });
+
+      allResults.push(...results);
+    } catch (error) {
+      console.warn(`Error searching for "${query}":`, error);
+    }
+  }
+
+  document.body.removeChild(phantom);
+  return allResults;
+}
+
+// ---- Búsqueda por proximidad ----
+async function searchNearby(
+  userPosition: LatLng,
+  radius: number,
+  type: string
+) {
+  if (!window.google?.maps?.places) return [];
+
+  const phantom = document.createElement("div");
+  phantom.style.width = "0";
+  phantom.style.height = "0";
+  phantom.style.overflow = "hidden";
+  document.body.appendChild(phantom);
+
+  const map = new window.google.maps.Map(phantom, {
+    center: userPosition,
+    zoom: 12,
+  });
+
+  const service = new window.google.maps.places.PlacesService(map);
+
+  try {
+    const results = await new Promise<any[]>((resolve) => {
+      service.nearbySearch(
+        { location: userPosition, radius, type },
+        (results: any[], status: string) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+            resolve(results || []);
+          } else {
+            resolve([]);
+          }
+        }
+      );
+    });
+
+    document.body.removeChild(phantom);
+    return results;
+  } catch (error) {
+    console.warn("Error in nearby search:", error);
+    document.body.removeChild(phantom);
+    return [];
+  }
+}
+
+// ---- Hook principal mejorado ----
+export function usePlaces(options: UsePlacesOptions = {}) {
   const [places, setPlaces] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiStatus, setApiStatus] = useState("Inicializando...");
 
-  const type = opts?.type ?? "tourist_attraction";
-  const radius = opts?.radius ?? 5000;
-  const fallback = opts?.fallback ?? { lat: 19.4326, lng: -99.1332 }; // CDMX de ejemplo
+  const {
+    category = "all",
+    searchMethod = "nearby",
+    radius,
+    limit = 5,
+    minRating,
+    customFilters,
+    searchQueries,
+    fallbackLocation,
+    enableMultiplePhotos = false,
+  } = options;
+
+  // Obtener configuración de la categoría
+  const categoryConfig = getCategoryConfig(category);
+  const finalRadius = radius ?? categoryConfig.radius;
+  const finalMinRating = minRating ?? categoryConfig.minRating;
+  const finalSearchQueries = searchQueries ?? categoryConfig.searchQueries;
+  const finalEnableMultiplePhotos =
+    enableMultiplePhotos || categoryConfig.enableMultiplePhotos;
 
   useEffect(() => {
     let cancelled = false;
 
     async function run() {
       try {
-        setApiStatus("Cargando Google Maps...");
-        await loadGoogleMaps();
-        if (cancelled) return;
+        setApiStatus("Obteniendo ubicación...");
 
-        // 1) Ubicación del usuario (con fallback)
-        const userPosition = await new Promise<LatLng>((resolve) => {
-          if (!("geolocation" in navigator)) return resolve(fallback);
+        // Obtener ubicación del usuario
+        const userPosition = await new Promise<LatLng>((resolve, reject) => {
+          if (!("geolocation" in navigator)) {
+            reject(new Error("Geolocalización no disponible"));
+            return;
+          }
           navigator.geolocation.getCurrentPosition(
             ({ coords }) =>
               resolve({ lat: coords.latitude, lng: coords.longitude }),
-            () => resolve(fallback),
-            { enableHighAccuracy: true, timeout: 8000, maximumAge: 300000 }
+            (error) => {
+              console.error("Error obteniendo ubicación:", error);
+              reject(error);
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
           );
         });
 
         if (cancelled) return;
 
-        setApiStatus("Probando Places API...");
-      
-        const phantom = document.createElement("div");
-        phantom.style.width = "0";
-        phantom.style.height = "0";
-        phantom.style.overflow = "hidden";
-        document.body.appendChild(phantom);
+        setApiStatus("Cargando Google Maps...");
+        await loadGoogleMaps();
+        if (cancelled) return;
 
-        const map = new window.google.maps.Map(phantom, {
-          center: userPosition,
-          zoom: 12,
-        });
-        const service = new window.google.maps.places.PlacesService(map);
+        setApiStatus(`Buscando ${category}...`);
 
-        service.nearbySearch(
-          { location: userPosition, radius, type },
-          (results: any[], status: string) => {
-            document.body.removeChild(phantom);
+        let allResults: any[] = [];
 
-            if (cancelled) return;
+        // Búsqueda por texto si está habilitada
+        if (searchMethod === "text" || searchMethod === "both") {
+          const textResults = await searchWithText(
+            userPosition,
+            finalRadius,
+            finalSearchQueries,
+            categoryConfig.type
+          );
+          allResults.push(...textResults);
+        }
 
-            if (
-              status === window.google.maps.places.PlacesServiceStatus.OK &&
-              results?.length
-            ) {
-              const top = results
-                .filter((p) => (p.rating ?? 0) >= 4)
-                .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-                .slice(0, 5)
-                .map((p) => ({
-                  name: p.name ?? "Sin nombre",
-                  rating: p.rating,
-                  vicinity: p.vicinity,
-                  place_id: p.place_id,
-                  photo_url:
-                    p.photos?.[0]?.getUrl({ maxWidth: 400, maxHeight: 200 }) ??
-                    "https://via.placeholder.com/400x200/3B82F6/ffffff?text=📍+Sin+Imagen",
-                  location: p.geometry?.location?.toJSON?.(),
-                }));
+        // Búsqueda por proximidad si está habilitada
+        if (searchMethod === "nearby" || searchMethod === "both") {
+          const nearbyResults = await searchNearby(
+            userPosition,
+            finalRadius,
+            categoryConfig.type
+          );
+          allResults.push(...nearbyResults);
+        }
 
-              setPlaces(top);
-              setApiStatus(`API funcional - ${top.length} lugares`);
-            } else {
-              setApiStatus("Sin resultados");
-            }
+        if (cancelled) return;
 
-            setLoading(false);
+        // Aplicar filtros específicos por categoría
+        let filteredResults = allResults;
+
+        if (category === "beaches") {
+          filteredResults = allResults.filter(isBeach);
+        } else if (category === "restaurants") {
+          filteredResults = allResults.filter(isRestaurant);
+        }
+
+        // Aplicar filtros adicionales
+        filteredResults = filteredResults
+          .filter((place) => (place.rating ?? 0) >= finalMinRating)
+          .filter((place) => !customFilters || customFilters(place));
+
+        // Eliminar duplicados
+        const uniqueResults = new Map();
+        filteredResults.forEach((place) => {
+          const key = place.place_id || place.name;
+          if (!uniqueResults.has(key)) {
+            uniqueResults.set(key, place);
           }
-        );
-      } catch (e) {
+        });
+
+        const finalResults = Array.from(uniqueResults.values())
+          .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+          .slice(0, limit);
+
+        if (cancelled) return;
+
+        // Procesar resultados según la categoría
+        let processedResults: any[] = [];
+
+        if (category === "beaches" && finalEnableMultiplePhotos) {
+          // Procesamiento especial para playas con múltiples fotos (lógica original)
+          const beachGroups = new Map();
+          finalResults.forEach((place) => {
+            const beachName = place.name;
+            if (!beachGroups.has(beachName)) {
+              beachGroups.set(beachName, []);
+            }
+            beachGroups.get(beachName).push(place);
+          });
+
+          processedResults = await Promise.all(
+            Array.from(beachGroups.entries()).map(async ([name, places]) => {
+              // Tomar el primer lugar como principal
+              const mainPlace = places[0];
+
+              // Obtener fotos adicionales del lugar principal
+              let additionalPhotos: any[] = [];
+              if (mainPlace.place_id) {
+                try {
+                  additionalPhotos = await getPlacePhotos(mainPlace.place_id);
+                } catch (error) {
+                  console.warn(
+                    `Error getting additional photos for ${name}:`,
+                    error
+                  );
+                }
+              }
+
+              const allPhotos = [
+                ...(mainPlace.photos || []),
+                ...additionalPhotos,
+              ];
+
+              const photos = [];
+
+              //Primera foto disponible del lugar
+              if (allPhotos.length > 0) {
+                photos.push({
+                  photo_url:
+                    allPhotos[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
+                    "https://picsum.photos/400/200?random=1",
+                  rating: mainPlace.rating,
+                  vicinity: mainPlace.vicinity,
+                });
+              } else {
+                photos.push({
+                  photo_url: "https://picsum.photos/400/200?random=1",
+                  rating: mainPlace.rating,
+                  vicinity: mainPlace.vicinity,
+                });
+              }
+
+              //Segunda foto del lugar o primera foto de lugar similar
+              if (allPhotos.length > 1) {
+                photos.push({
+                  photo_url:
+                    allPhotos[1]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
+                    "https://picsum.photos/400/200?random=2",
+                  rating: mainPlace.rating,
+                  vicinity: mainPlace.vicinity,
+                });
+              } else if (
+                places.length > 1 &&
+                places[1].photos &&
+                places[1].photos.length > 0
+              ) {
+                // Usar foto de un lugar similar en la misma área
+                photos.push({
+                  photo_url:
+                    places[1].photos[0]?.getUrl?.({
+                      maxWidth: 400,
+                      maxHeight: 200,
+                    }) || "https://picsum.photos/400/200?random=2",
+                  rating: places[1].rating,
+                  vicinity: places[1].vicinity,
+                });
+              } else {
+                // Si no hay fotos disponibles, usar placeholder
+                photos.push({
+                  photo_url: "https://picsum.photos/400/200?random=2",
+                  rating: mainPlace.rating,
+                  vicinity: mainPlace.vicinity,
+                });
+              }
+
+              // Foto 3: Tercera foto del lugar o foto de otro lugar similar
+              if (allPhotos.length > 2) {
+                // Usar tercera foto del mismo lugar
+                photos.push({
+                  photo_url:
+                    allPhotos[2]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
+                    "https://picsum.photos/400/200?random=3",
+                  rating: mainPlace.rating,
+                  vicinity: mainPlace.vicinity,
+                });
+              } else if (
+                places.length > 2 &&
+                places[2].photos &&
+                places[2].photos.length > 0
+              ) {
+                // Usar foto de otro lugar similar en la misma área
+                photos.push({
+                  photo_url:
+                    places[2].photos[0]?.getUrl?.({
+                      maxWidth: 400,
+                      maxHeight: 200,
+                    }) || "https://picsum.photos/400/200?random=3",
+                  rating: places[2].rating,
+                  vicinity: places[2].vicinity,
+                });
+              } else if (
+                places.length > 1 &&
+                places[1].photos &&
+                places[1].photos.length > 1
+              ) {
+                // Usar segunda foto del segundo lugar similar
+                photos.push({
+                  photo_url:
+                    places[1].photos[1]?.getUrl?.({
+                      maxWidth: 400,
+                      maxHeight: 200,
+                    }) || "https://picsum.photos/400/200?random=3",
+                  rating: places[1].rating,
+                  vicinity: places[1].vicinity,
+                });
+              } else {
+                // Si no hay fotos disponibles, usar placeholder
+                photos.push({
+                  photo_url: "https://picsum.photos/400/200?random=3",
+                  rating: mainPlace.rating,
+                  vicinity: mainPlace.vicinity,
+                });
+              }
+
+              return {
+                name,
+                photos,
+                mainPhoto: photos[0],
+                rating: mainPlace.rating,
+                vicinity: mainPlace.vicinity,
+              };
+            })
+          );
+        } else {
+          // Procesamiento estándar para otras categorías
+          processedResults = await Promise.all(
+            finalResults.map(async (place) => {
+              let additionalPhotos: any[] = [];
+
+              if (place.place_id) {
+                try {
+                  additionalPhotos = await getPlacePhotos(place.place_id);
+                } catch (error) {
+                  console.warn(
+                    `Error getting photos for ${place.name}:`,
+                    error
+                  );
+                }
+              }
+
+              const allPhotos = [...(place.photos || []), ...additionalPhotos];
+              const photoUrl =
+                allPhotos.length > 0
+                  ? allPhotos[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
+                    `https://picsum.photos/400/200?random=${category}`
+                  : `https://picsum.photos/400/200?random=${category}`;
+
+              return {
+                name: place.name,
+                photo_url: photoUrl,
+                rating: place.rating,
+                vicinity:
+                  place.vicinity ||
+                  place.formatted_address ||
+                  "Ubicación no disponible",
+                place_id: place.place_id,
+                location: place.geometry?.location?.toJSON?.(),
+              };
+            })
+          );
+        }
+
+        if (cancelled) return;
+
+        setPlaces(processedResults);
+        setApiStatus(`Encontrados ${processedResults.length} ${category}`);
+        setLoading(false);
+      } catch (error) {
         if (!cancelled) {
-          setApiStatus("Error al cargar Google Maps/Places");
+          console.error(`Error searching ${category}:`, error);
+          setApiStatus(
+            `Error: Necesitas permitir la ubicación para buscar ${category} cercanos`
+          );
+          setPlaces([]);
           setLoading(false);
         }
       }
@@ -140,7 +562,31 @@ export function usePlaces(opts?: {
     return () => {
       cancelled = true;
     };
-  }, [type, radius, fallback.lat, fallback.lng]);
+  }, [
+    category,
+    searchMethod,
+    finalRadius,
+    limit,
+    finalMinRating,
+    fallbackLocation?.lat,
+    fallbackLocation?.lng,
+  ]);
 
   return { places, loading, apiStatus };
 }
+
+export const useBeaches = () =>
+  usePlaces({
+    category: "beaches",
+    searchMethod: "text",
+    limit: 10,
+    enableMultiplePhotos: true,
+  });
+
+export const useRestaurants = () =>
+  usePlaces({
+    category: "restaurants",
+    searchMethod: "both",
+    limit: 6,
+    enableMultiplePhotos: false,
+  });

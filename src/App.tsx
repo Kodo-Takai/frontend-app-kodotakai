@@ -7,6 +7,7 @@ import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Explorar from "./pages/Explorar";
 import ForgotPassword from "./pages/ForgotPassword";
 import Notifications from "./pages/Notifications";
 // Import Hooks and Components
@@ -25,6 +26,7 @@ function AppContent() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/explorar" element={<Explorar />} />
         <Route path="/notifications" element={<Notifications />} />
       </Routes>
     </>
