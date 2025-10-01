@@ -1,5 +1,5 @@
-// src/components/cards/WeatherPill.tsx
 import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
 import {
   WiDaySunny,
   WiHot,
@@ -9,31 +9,46 @@ import {
   WiSnowflakeCold,
 } from "react-icons/wi";
 
+// --- Tipos de Datos ---
 type CurrentWeather = {
   temperature: number;   // °C
   windspeed: number;     // km/h
   winddirection: number; // °
   time: string;
-  weathercode?: number;  
+  weathercode?: number;
 };
 
 type LatLng = { lat: number; lng: number };
 
+// --- Tipos para las Propiedades del Componente ---
+type WeatherPillProps = {
+  className?: string;
+  textContainerClassName?: string;
+  showWindInfo?: boolean;
+};
+
+// --- Funciones Auxiliares ---
 function dirToCompass(deg: number) {
   const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
   return dirs[Math.round(((deg % 360) / 22.5)) % 16];
 }
 
 function iconByTemp(t?: number) {
-  if (typeof t !== "number") return <WiThermometer className="h-9 w-9" aria-label="Temperatura" />;
-  if (t >= 30) return <WiHot className="h-9 w-9" aria-label="Caluroso" />;
-  if (t >= 22) return <WiDaySunny className="h-9 w-9" aria-label="Soleado" />;
-  if (t >= 14) return <WiCloud className="h-9 w-9" aria-label="Templado" />;
-  if (t >= 5)  return <WiCloudy className="h-9 w-9" aria-label="Fresco" />;
-  return <WiSnowflakeCold className="h-9 w-9" aria-label="Frío" />;
+  // Se elimina el tamaño fijo para que el ícono lo herede del texto
+  if (typeof t !== "number") return <WiThermometer aria-label="Temperatura" />;
+  if (t >= 30) return <WiHot aria-label="Caluroso" />;
+  if (t >= 22) return <WiDaySunny aria-label="Soleado" />;
+  if (t >= 14) return <WiCloud aria-label="Templado" />;
+  if (t >= 5)  return <WiCloudy aria-label="Fresco" />;
+  return <WiSnowflakeCold aria-label="Frío" />;
 }
 
-export default function WeatherPill({ className = "w-44" }: { className?: string }) {
+// --- Componente Principal ---
+export default function WeatherPill({
+  className,
+  textContainerClassName,
+  showWindInfo = true
+}: WeatherPillProps) {
   const [data, setData] = useState<CurrentWeather | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -107,36 +122,42 @@ export default function WeatherPill({ className = "w-44" }: { className?: string
 
   return (
   <div
-    className={`relative h-16 rounded-2xl overflow-hidden w-full max-w-xs sm:max-w-sm mx-auto ${className}`}
+    className={twMerge(
+      "relative h-16 w-44 rounded-2xl overflow-hidden max-w-xs sm:max-w-sm mx-auto",
+      className
+    )}
     aria-label="Clima actual"
     role="group"
   >
     <div className="absolute inset-0 rounded-2xl bg-[#073247]" />
     <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10" />
     
-    <div className="relative h-full  flex items-center justify-center">
+    <div className="relative h-full flex items-center justify-center">
       <div className="flex flex-col">
-        <div className="text-white leading-none select-none shrink-0 flex items-center gap-1.5">
+        <div className={twMerge(
+          "text-white text-2xl leading-none select-none shrink-0 flex items-center gap-1.5",
+          textContainerClassName
+        )}>
           {loading ? (
             <div className="h-6 w-14 rounded bg-white/20 animate-pulse" />
           ) : error ? (
             <span className="text-sm font-bold text-yellow-300" title={error}>⚠️</span>
           ) : (
             <>
-              <span className="text-2xl font-extrabold">{temp ?? "–"}</span>
-              <span className="text-xl font-semibold">°C</span>
-   
-                {iconByTemp(temp ?? undefined)}
-    
+              <span className="font-extrabold">{temp ?? "–"}</span>
+              <span className="font-semibold">°C</span>
+              {iconByTemp(temp ?? undefined)}
             </>
           )}
         </div>
 
-        <span className="text-[10px] text-white/80 truncate max-w-[12rem]">
-          {loading ? "Cargando…" : error ? (locationStatus === 'denied' ? "Activa el GPS" : "Reintenta") : windStr}
-        </span>
+        {showWindInfo && (
+          <span className="text-[10px] text-white/80 truncate max-w-[12rem]">
+            {loading ? "Cargando…" : error ? (locationStatus === 'denied' ? "Activa el GPS" : "Reintenta") : windStr}
+          </span>
+        )}
       </div>
     </div>
   </div>
-);
+  );
 }

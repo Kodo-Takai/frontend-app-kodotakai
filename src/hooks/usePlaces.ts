@@ -15,7 +15,7 @@ const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY ;
 // ---- Loader singleton (evita cargar el script más de una vez) ----
 let gmapsLoader: Promise<void> | null = null;
 
-function loadGoogleMaps(): Promise<void> {
+export function loadGoogleMaps(): Promise<void> {
   if (window.google?.maps?.places) return Promise.resolve();
   if (gmapsLoader) return gmapsLoader;
 
