@@ -1,2 +1,21 @@
 @import "tailwindcss";
-@import './assets//fonts/SF-Pro-Display-Regular.woff2'
+@import "./assets//fonts/SF-Pro-Display-Regular.woff2";
+
+@keyframes bubble-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-bubble-in {
+  animation: bubble-in 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}

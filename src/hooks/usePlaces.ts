@@ -14,7 +14,7 @@ const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
 export type PlaceCategory = "all" | "beaches" | "restaurants" | "hotels";
 
 export interface UsePlacesOptions {
-  type?: string; 
+  type?: string;
   category?: PlaceCategory;
   searchMethod?: "nearby" | "text" | "both";
   radius?: number;
@@ -86,13 +86,13 @@ const getCategoryConfig = (category: PlaceCategory) => {
       };
     case "restaurants":
       return {
-        searchQueries: ["restaurant", "comedor", "menu", "restaurante"],
+        searchQueries: ["restaurant", "menu", "restaurante"],
         type: "restaurant",
         minRating: 4.0,
-        enableMultiplePhotos: false,
+        enableMultiplePhotos: true,
         radius: 20000,
       };
-      case "hotels":
+    case "hotels":
       return {
         searchQueries: ["hotel", "hospedaje", "hostal", "motel", "lodging"],
         type: "lodging",
@@ -366,19 +366,22 @@ export function usePlaces(options: UsePlacesOptions = {}) {
         // Procesar resultados según la categoría
         let processedResults: any[] = [];
 
-        if (category === "beaches" && finalEnableMultiplePhotos) {
-          // Procesamiento especial para playas con múltiples fotos (lógica original)
-          const beachGroups = new Map();
+        if (
+          (category === "beaches" || category === "restaurants") &&
+          finalEnableMultiplePhotos
+        ) {
+          // Procesamiento especial para playas y restaurantes con múltiples fotos
+          const placeGroups = new Map();
           finalResults.forEach((place) => {
-            const beachName = place.name;
-            if (!beachGroups.has(beachName)) {
-              beachGroups.set(beachName, []);
+            const placeName = place.name;
+            if (!placeGroups.has(placeName)) {
+              placeGroups.set(placeName, []);
             }
-            beachGroups.get(beachName).push(place);
+            placeGroups.get(placeName).push(place);
           });
 
           processedResults = await Promise.all(
-            Array.from(beachGroups.entries()).map(async ([name, places]) => {
+            Array.from(placeGroups.entries()).map(async ([name, places]) => {
               // Tomar el primer lugar como principal
               const mainPlace = places[0];
 
@@ -505,8 +508,9 @@ export function usePlaces(options: UsePlacesOptions = {}) {
                 name,
                 photos,
                 mainPhoto: photos[0],
+                photo_url: photos[0]?.photo_url || "https://picsum.photos/400/200?random=restaurant",
                 rating: mainPlace.rating,
-                vicinity: mainPlace.vicinity,
+                vicinity: mainPlace.vicinity || mainPlace.formatted_address || "Ubicación no disponible",
               };
             })
           );
@@ -596,5 +600,5 @@ export const useRestaurants = () =>
     category: "restaurants",
     searchMethod: "both",
     limit: 6,
-    enableMultiplePhotos: false,
+    enableMultiplePhotos: true,
   });

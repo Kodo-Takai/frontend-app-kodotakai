@@ -176,7 +176,7 @@ export default function RestaurantCards() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mt-10 mb-4">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">
         Restaurantes mejor valorados
       </h2>
       {renderContent()}

@@ -172,7 +172,7 @@ export default function DestinationCards() {
 
   return (
     <div className="w-full ">
-      <h2 className="text-xl font-bold text-gray-900 mt-10 mb-4 ">
+      <h2 className="text-xl font-bold text-gray-900 mb-4 ">
         Lugares que debes visitar
       </h2>
       {renderContent()}

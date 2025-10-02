@@ -291,8 +291,8 @@ export default function BeachCards() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mt-10 mb-4">
-        Playas cercanas
+      <h2 className="text-xl font-bold text-gray-900  mb-4">
+        Visita estas Playas
       </h2>
       {renderContent()}
     </div>
