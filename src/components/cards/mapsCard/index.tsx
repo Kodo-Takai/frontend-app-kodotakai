@@ -4,13 +4,13 @@ import { usePlaces } from "../../../hooks/usePlaces";
 
 type Props = {
   className?: string;
+  height?: string
 };
 
 type LatLng = { lat: number; lng: number };
 
-const FALLBACK = { lat: 10.3910, lng: -75.4796 }; // Cartagena
-
-export default function MapsCard({ className = "w-1/2" }: Props) {
+const FALLBACK = { lat: 10.3000, lng: -75.5000 }; // Parque Nacional Natural de los Corales del Rosario y San Bernardo, Cartagena
+export default function MapsCard({ className = "w-1/2", height= "h-44" }: Props) {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [loadingLocation, setLoadingLocation] = useState<boolean>(false);
@@ -214,7 +214,7 @@ export default function MapsCard({ className = "w-1/2" }: Props) {
         onClick={handleExpand}
       >
         <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden group-hover:shadow-md transition-shadow">
-          <div ref={miniMapRef} className="h-42 w-full" />
+          <div ref={miniMapRef} className={`${height} w-full`}/>
           
           {/* Overlay de hover */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 rounded-2xl flex items-center justify-center pointer-events-none">

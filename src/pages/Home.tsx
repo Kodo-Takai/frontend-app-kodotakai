@@ -31,7 +31,7 @@ export default function Home() {
           <FaBell className="text-gray-600" size={15} />
         </div>
       </div>
-      <Search />
+      <Search/>
       <WhatsNewCards />
       <SummaryCard />
       <DestinationCards />

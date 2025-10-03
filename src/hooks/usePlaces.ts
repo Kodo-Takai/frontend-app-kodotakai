@@ -29,7 +29,7 @@ export interface UsePlacesOptions {
 // ---- Loader singleton (evita cargar el script más de una vez) ----
 let gmapsLoader: Promise<void> | null = null;
 
-function loadGoogleMaps(): Promise<void> {
+export function loadGoogleMaps(): Promise<void> {
   if (window.google?.maps?.places) return Promise.resolve();
   if (gmapsLoader) return gmapsLoader;
 

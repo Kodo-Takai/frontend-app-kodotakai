@@ -54,8 +54,8 @@ export const useAuth = () => {
       };
 
       const result = await loginMutation(loginRequest).unwrap();
-      const apiUser = result?.data?.user || {};
-      const userToken = result?.data?.access_token;
+      const userToken = result?.access_token;
+      const apiUser = result?.user || {};
 
       if (!userToken) {
         return {
