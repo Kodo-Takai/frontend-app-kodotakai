@@ -399,7 +399,6 @@ export function usePlaces(options: UsePlacesOptions = {}) {
               if (mainPlace.place_id) {
                 try {
                   additionalPhotos = await getPlacePhotos(mainPlace.place_id);
-                  console.log(`Got ${additionalPhotos.length} additional photos for ${name}`);
                 } catch (error) {
                   console.warn(
                     `Error getting additional photos for ${name}:`,
@@ -413,10 +412,6 @@ export function usePlaces(options: UsePlacesOptions = {}) {
                 ...additionalPhotos,
               ];
 
-              console.log(`Processing place: ${name} (ID: ${mainPlace.place_id})`);
-              console.log(`Total photos for ${name}: ${allPhotos.length}`);
-              console.log(`Main place photos: ${mainPlace.photos?.length || 0}`);
-              console.log(`Additional photos: ${additionalPhotos.length}`);
 
               const photos = [];
 
@@ -424,7 +419,6 @@ export function usePlaces(options: UsePlacesOptions = {}) {
               if (allPhotos.length > 0) {
                 const photoUrl = allPhotos[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
                     "https://picsum.photos/400/200?random=1";
-                console.log(`Photo URL for ${name}: ${photoUrl}`);
                 photos.push({
                   photo_url: photoUrl,
                   rating: mainPlace.rating,
