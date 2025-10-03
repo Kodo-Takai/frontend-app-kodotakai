@@ -78,6 +78,9 @@ importers:
       '@types/better-sqlite3':
         specifier: ^7.6.13
         version: 7.6.13
+      '@types/google.maps':
+        specifier: ^3.58.1
+        version: 3.58.1
       '@types/react':
         specifier: ^19.1.12
         version: 19.1.12
