@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
-import { useRestaurants } from "../../../hooks/usePlaces";
+import { usePlaces } from "../../../hooks/usePlaces";
 import "./index.scss";
 
 interface Restaurant {
@@ -20,7 +20,12 @@ interface Restaurant {
 }
 
 export default function RestaurantMenuCard() {
-  const { places: restaurants, loading } = useRestaurants();
+  const { places: restaurants, loading } = usePlaces({
+    category: "restaurants",
+    searchMethod: "both",
+    limit: 6,
+    enableMultiplePhotos: true,
+  });
 
   const displayedRestaurants = restaurants.slice(0, 6);
 
@@ -157,7 +162,7 @@ export default function RestaurantMenuCard() {
       return (
         <div className="restaurant-menu-scroll">
           {Array.from({ length: 3 }, (_, i) => (
-            <div key={i} className="restaurant-menu-card-width">
+            <div key={`restaurant-menu-skeleton-${i}`} className="restaurant-menu-card-width">
               <div className="restaurant-menu-card-container animate-pulse">
                 {/* HEADER */}
                 <div className="restaurant-menu-card-header flex items-center justify-between">

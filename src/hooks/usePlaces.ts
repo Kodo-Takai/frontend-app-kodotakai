@@ -11,7 +11,7 @@ type LatLng = { lat: number; lng: number };
 
 const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
 
-export type PlaceCategory = "all" | "beaches" | "restaurants" | "hotels";
+export type PlaceCategory = "all" | "beaches" | "restaurants" | "hotels" | "destinations";
 
 export interface UsePlacesOptions {
   type?: string;
@@ -99,6 +99,14 @@ const getCategoryConfig = (category: PlaceCategory) => {
         minRating: 3.5,
         enableMultiplePhotos: true,
         radius: 30000,
+      };
+    case "destinations":
+      return {
+        searchQueries: ["lugar turístico", "destino", "atracción", "sitio de interés"],
+        type: "tourist_attraction",
+        minRating: 4.0,
+        enableMultiplePhotos: true,
+        radius: 15000,
       };
     default:
       return {
@@ -367,29 +375,31 @@ export function usePlaces(options: UsePlacesOptions = {}) {
         let processedResults: any[] = [];
 
         if (
-          (category === "beaches" || category === "restaurants") &&
+          (category === "beaches" || category === "restaurants" || category === "destinations") &&
           finalEnableMultiplePhotos
         ) {
           // Procesamiento especial para playas y restaurantes con múltiples fotos
           const placeGroups = new Map();
           finalResults.forEach((place) => {
-            const placeName = place.name;
-            if (!placeGroups.has(placeName)) {
-              placeGroups.set(placeName, []);
+            const placeKey = place.place_id || place.name; // Usar place_id como clave única
+            if (!placeGroups.has(placeKey)) {
+              placeGroups.set(placeKey, []);
             }
-            placeGroups.get(placeName).push(place);
+            placeGroups.get(placeKey).push(place);
           });
 
           processedResults = await Promise.all(
-            Array.from(placeGroups.entries()).map(async ([name, places]) => {
+            Array.from(placeGroups.entries()).map(async ([, places]) => {
               // Tomar el primer lugar como principal
               const mainPlace = places[0];
+              const name = mainPlace.name; // Usar el nombre del lugar principal
 
               // Obtener fotos adicionales del lugar principal
               let additionalPhotos: any[] = [];
               if (mainPlace.place_id) {
                 try {
                   additionalPhotos = await getPlacePhotos(mainPlace.place_id);
+                  console.log(`Got ${additionalPhotos.length} additional photos for ${name}`);
                 } catch (error) {
                   console.warn(
                     `Error getting additional photos for ${name}:`,
@@ -403,14 +413,20 @@ export function usePlaces(options: UsePlacesOptions = {}) {
                 ...additionalPhotos,
               ];
 
+              console.log(`Processing place: ${name} (ID: ${mainPlace.place_id})`);
+              console.log(`Total photos for ${name}: ${allPhotos.length}`);
+              console.log(`Main place photos: ${mainPlace.photos?.length || 0}`);
+              console.log(`Additional photos: ${additionalPhotos.length}`);
+
               const photos = [];
 
               //Primera foto disponible del lugar
               if (allPhotos.length > 0) {
+                const photoUrl = allPhotos[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
+                    "https://picsum.photos/400/200?random=1";
+                console.log(`Photo URL for ${name}: ${photoUrl}`);
                 photos.push({
-                  photo_url:
-                    allPhotos[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
-                    "https://picsum.photos/400/200?random=1",
+                  photo_url: photoUrl,
                   rating: mainPlace.rating,
                   vicinity: mainPlace.vicinity,
                 });
@@ -587,18 +603,4 @@ export function usePlaces(options: UsePlacesOptions = {}) {
   return { places, loading, apiStatus };
 }
 
-export const useBeaches = () =>
-  usePlaces({
-    category: "beaches",
-    searchMethod: "text",
-    limit: 10,
-    enableMultiplePhotos: true,
-  });
-
-export const useRestaurants = () =>
-  usePlaces({
-    category: "restaurants",
-    searchMethod: "both",
-    limit: 6,
-    enableMultiplePhotos: true,
-  });
+// Hooks específicos eliminados - usar usePlaces directamente con category

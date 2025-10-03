@@ -17,8 +17,10 @@ interface Place {
 
 export default function DestinationCards() {
   const { places, loading } = usePlaces({
-    type: "tourist_attraction",
-    radius: 15000,
+    category: "destinations",
+    searchMethod: "both",
+    limit: 6,
+    enableMultiplePhotos: true,
   });
 
   const handleVisit = (place: Place) => {
@@ -50,7 +52,7 @@ export default function DestinationCards() {
       const fullStars = Math.floor(rating);
       const stars = Array.from({ length: 5 }, (_, i) => (
         <FaStar
-          key={i}
+          key={`star-${i}`}
           className={`w-3 h-3 ${
             i < fullStars ? "text-yellow-400" : "text-gray-300"
           }`}
@@ -74,7 +76,7 @@ export default function DestinationCards() {
           <img
             src={
               imageError
-                ? "https://via.placeholder.com/280x288/3B82F6/ffffff?text=📍+Sin+Imagen"
+                ? "https://picsum.photos/280/288?random=destination-error"
                 : place.photo_url
             }
             alt={place.name}
@@ -135,7 +137,7 @@ export default function DestinationCards() {
       return (
         <div className="destination-scroll">
           {Array.from({ length: 3 }, (_, i) => (
-            <div key={i} className="destination-card-width">
+            <div key={`skeleton-${i}`} className="destination-card-width">
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
                 <div className="h-72 bg-gray-200" />
               </div>
@@ -163,8 +165,8 @@ export default function DestinationCards() {
 
     return (
       <div className="destination-scroll">
-        {displayedPlaces.map((place) => (
-          <DestinationCard key={place.place_id} place={place} />
+        {displayedPlaces.map((place, index) => (
+          <DestinationCard key={place.place_id || `destination-${index}`} place={place} />
         ))}
       </div>
     );

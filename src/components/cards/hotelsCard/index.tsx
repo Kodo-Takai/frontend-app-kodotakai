@@ -21,7 +21,7 @@ export default function HotelCards() {
           <img
             src={
               imageError
-                ? "https://via.placeholder.com/400x200/3B82F6/ffffff?text=🏨+Sin+Imagen"
+                ? "https://picsum.photos/400/200?random=hotel-error"
                 : hotel.photo_url
             }
             alt={hotel.name}
@@ -89,7 +89,7 @@ export default function HotelCards() {
     return (
       <div className="hotel-scroll">
         {Array.from({ length: 6 }, (_, i) => (
-          <div key={i} className="hotel-card-width">
+          <div key={`hotel-skeleton-${i}`} className="hotel-card-width">
             <div className="rounded-xl overflow-hidden animate-pulse">
               <div className="h-60 bg-gray-200" />
               <div className="p-3 space-y-2">

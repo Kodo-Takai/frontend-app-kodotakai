@@ -21,8 +21,13 @@ export default function Explorar() {
     navigate("/notifications");
   };
 
+  // Función para navegar a categorías
+  const handleCategoryClick = (category: string) => {
+    navigate(`/explorar/${category}`);
+  };
+
   return (
-    <div className="flex flex-col gap-3 max-w-md mx-auto p-6 bg-white min-h-screen">
+    <div className="flex flex-col gap-3 max-w-md mx-auto p-6 bg-white min-h-screen animate-slide-in-right">
       {/* Header */}
       <div className="flex justify-between items-center mt-3">
         <div className="flex flex-col gap-2.5">
@@ -71,7 +76,10 @@ export default function Explorar() {
       {/* Categorías de exploración */}
       <div className="relative w-full h-[250px] overflow-hidden">
         {/* Restaurants */}
-        <div className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[8%] left-[1.3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out">
+        <div 
+          onClick={() => handleCategoryClick('restaurants')}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[8%] left-[1.3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+        >
           <img
             src="./restaurants-image.svg"
             className="object-cover w-full h-full"
@@ -86,6 +94,7 @@ export default function Explorar() {
 
         {/* Playas */}
         <div
+          onClick={() => handleCategoryClick('playas')}
           className="absolute rounded-full overflow-hidden cursor-pointer group w-20 h-20 top-[3%] right-[39%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
           style={{ animationDelay: "0.1s" }}
         >
@@ -103,6 +112,7 @@ export default function Explorar() {
 
         {/* Hoteles */}
         <div
+          onClick={() => handleCategoryClick('hoteles')}
           className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[3%] right-[2%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
           style={{ animationDelay: "0.2s" }}
         >
@@ -120,6 +130,7 @@ export default function Explorar() {
 
         {/* Discos */}
         <div
+          onClick={() => handleCategoryClick('discos')}
           className="absolute rounded-full overflow-hidden cursor-pointer group w-22 h-22 top-[60%] left-[1%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
           style={{ animationDelay: "0.3s" }}
         >
@@ -137,6 +148,7 @@ export default function Explorar() {
 
         {/* Estudiar*/}
         <div
+          onClick={() => handleCategoryClick('estudiar')}
           className="absolute rounded-full overflow-hidden cursor-pointer group w-34 h-34 top-[40%] left-[31%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
           style={{ animationDelay: "0.4s" }}
         >
@@ -154,6 +166,7 @@ export default function Explorar() {
 
         {/* Más */}
         <div
+          onClick={() => handleCategoryClick('parques')}
           className="absolute rounded-full overflow-hidden cursor-pointer group w-19 h-19 top-[55%] right-[3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
           style={{ animationDelay: "0.5s" }}
         >
