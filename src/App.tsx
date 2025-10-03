@@ -12,12 +12,12 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Notifications from "./pages/Notifications";
 import Maps from "./pages/Maps";
 // Import Category Pages
-// import RestaurantsPage from "./pages/categories/RestaurantsPage";
-// import PlayasPage from "./pages/categories/PlayasPage";
-// import HotelesPage from "./pages/categories/HotelesPage";
-// import DiscosPage from "./pages/categories/DiscosPage";
-// import EstudiarPage from "./pages/categories/EstudiarPage";
-// import ParquesPage from "./pages/categories/ParquesPage";
+import RestaurantsPage from "./pages/categories/RestaurantsPage";
+import PlayasPage from "./pages/categories/PlayasPage";
+import HotelesPage from "./pages/categories/HotelesPage";
+import DiscosPage from "./pages/categories/DiscosPage";
+import EstudiarPage from "./pages/categories/EstudiarPage";
+import ParquesPage from "./pages/categories/ParquesPage";
 // Import Hooks and Components
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
@@ -37,11 +37,18 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/explorar" element={<Explorar />} />
+          <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
+          <Route path="/explorar/playas" element={<PlayasPage />} />
+          <Route path="/explorar/hoteles" element={<HotelesPage />} />
+          <Route path="/explorar/discos" element={<DiscosPage />} />
+          <Route path="/explorar/estudiar" element={<EstudiarPage />} />
+          <Route path="/explorar/parques" element={<ParquesPage />} />
         </Route>
+
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Home />} />
-            <Route path="/explorar" element={<Explorar />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/maps" element={<Maps />} />
           </Route>

@@ -6,10 +6,12 @@ import Search from "../components/ui/search/search";
 import BeachCards from "../components/cards/beachCard";
 import DestinationCards from "../components/cards/destinationsCard";
 import RestaurantMenuCard from "../components/cards/restaurantMenuCard";
+import { useNavigationAnimation } from "../hooks/useNavigationAnimation";
 
 export default function Explorar() {
   const [selectedOption, setSelectedOption] = useState("Todo");
   const navigate = useNavigate();
+  const animationClass = useNavigationAnimation();
 
   // Función para manejar la búsqueda
   const handleSearch = (query: string) => {
@@ -27,7 +29,7 @@ export default function Explorar() {
   };
 
   return (
-    <div className="flex flex-col gap-3 max-w-md mx-auto p-6 bg-white min-h-screen animate-slide-in-right">
+    <div className={`flex flex-col gap-3 max-w-md mx-auto p-6 bg-white min-h-screen ${animationClass}`}>
       {/* Header */}
       <div className="flex justify-between items-center mt-3">
         <div className="flex flex-col gap-2.5">

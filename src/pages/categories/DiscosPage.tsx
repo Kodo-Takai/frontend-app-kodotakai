@@ -1,15 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import HeaderNavigationExplore from "../../components/ui/headerNavigationExplore";
+import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 
 export default function DiscosPage() {
   const navigate = useNavigate();
+  const animationClass = useNavigationAnimation();
 
   const handleBackClick = () => {
     navigate("/explorar");
   };
 
   return (
-    <div className="flex flex-col gap-3 max-w-md mx-auto p-6 bg-white min-h-screen animate-slide-in-right">
+    <div className={`flex flex-col gap-3 max-w-md mx-auto p-6 bg-white min-h-screen ${animationClass}`}>
       {/* Header Navigation */}
       <HeaderNavigationExplore />
 
