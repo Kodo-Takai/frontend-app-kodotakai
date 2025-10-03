@@ -1,44 +1,19 @@
 import { useState } from "react";
-import { RiUser3Fill } from "react-icons/ri";
-import { PiDogBold } from "react-icons/pi";
-import { TbGlassCocktail } from "react-icons/tb";
-import { MdTv } from "react-icons/md";
-import { usePlaces } from "../../../hooks/usePlaces";
+import { FaStar } from "react-icons/fa";
+import { RiWheelchairLine } from "react-icons/ri";
+import { BiSolidWine } from "react-icons/bi";
+import { MdOutlineFreeBreakfast } from "react-icons/md";
+import { useHotels } from "../../../hooks/useHotels";
+import type { Hotel } from "../../../hooks/useHotels";
 import "./index.scss";
 
-interface Hotel {
-    name: string;
-    rating?: number;
-    description?: string;
-    place_id: string;
-    photo_url: string;
-    location?: { lat: number; lng: number };
-}
-
 export default function HotelCards() {
-    const { places, loading } = usePlaces({
-        category: "hotels",
-        searchMethod: "both",
-        limit: 6, 
-        radius: 30000,
-    });
-
-    const displayedHotels = places.slice(0, 6);
+    const { hotels, loading } = useHotels({ radius: 30000 });
+    const displayedHotels = hotels.slice(0, 6);
 
     const HotelCard = ({ hotel }: { hotel: Hotel }) => {
         const [imageError, setImageError] = useState(false);
-
         const handleImageError = () => setImageError(true);
-
-        // Datos simulados
-        const mockInfo = {
-        persons: Math.floor(Math.random() * 4) + 1,
-        price: Math.floor(Math.random() * 200000) + 80000,
-        nights: "2 días · 1 noche",
-        pets: Math.random() > 0.5,
-        drinks: Math.random() > 0.5,
-        tv: Math.random() > 0.5,
-        };
 
         return (
         <div className="min-w-[300px] max-w-[350px] flex-shrink-0 bg-white overflow-hidden">
@@ -58,32 +33,37 @@ export default function HotelCards() {
 
                 <div className="absolute top-2 left-2 flex gap-1">
                     <div className="flex items-center gap-0.5 bg-white rounded-lg px-1 py-0.5 text-sm font-medium text-[#00324A]">
-                    <RiUser3Fill className="text-[#00324A]" />
-                    {mockInfo.persons}
+                        <FaStar className="text-[#00324A]" />
+                        {hotel.rating ?? "-"}
                     </div>
                     <div className="flex items-center bg-white rounded-lg  px-1 py-1 text-xs font-medium">
-                    <PiDogBold className={`${mockInfo.pets ? "text-[#00324A]" : "text-gray-400"} text-lg`}/>
-                    {mockInfo.pets}
+                        <RiWheelchairLine 
+                        className={`${
+                        hotel.wheelchair_accessible_entrance ? "text-[#00324A]" : "text-gray-400"} text-lg`}
+                        />
                     </div>
                     <div className="flex items-center bg-white rounded-lg px-1 py-1 text-xs font-medium">
-                    <TbGlassCocktail className={`${mockInfo.drinks ? "text-[#00324A]" : "text-gray-400"} text-lg`} />
-                    {mockInfo.drinks}
+                        <BiSolidWine
+                        className={`${
+                        hotel.serves_wine ? "text-[#00324A]" : "text-gray-400"} text-lg`}
+                        />
                     </div>
                     <div className="flex items-center bg-white rounded-lg px-1 py-1 text-xs font-medium">
-                    <MdTv className={`${mockInfo.tv ? "text-[#00324A]" : "text-gray-400"} text-lg`} />
-                    {mockInfo.tv}
+                        <MdOutlineFreeBreakfast 
+                        className={`${
+                        hotel.serves_breakfast ? "text-[#00324A]" : "text-gray-400"} text-lg`}
+                        />
                     </div>
                 </div>
 
-                <div className="absolute bottom-2 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
+                <div className="absolute bottom-3 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
                     <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
-                        {new Intl.NumberFormat("es-CO", {
-                        style: "currency",
-                        currency: "COP",
-                        minimumFractionDigits: 0,
-                        }).format(mockInfo.price)} COP
+                        {hotel.opening_now === true
+                        ? "Abierto ahora"
+                        : hotel.opening_now === false
+                        ? "Cerrado"
+                        : "Consulta aquí"}
                     </span>
-                    <span className="text-[12px] font-normal">{mockInfo.nights}</span>
                 </div>
             </div>
 
@@ -92,7 +72,7 @@ export default function HotelCards() {
                     {hotel.name}
                 </h3>
                 <p className="text-sm text-black mt-1 line-clamp-2">
-                    {hotel.description ||
+                    {hotel.vicinity ||
                     "Descubre este hotel y disfruta de una experiencia de descanso única."}
                 </p>
             </div>
