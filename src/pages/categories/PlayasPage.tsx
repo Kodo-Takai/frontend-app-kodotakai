@@ -8,11 +8,18 @@ import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 
 export default function PlayasPage() {
   const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
+  const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
   const animationClass = useNavigationAnimation();
 
   // Función para manejar la búsqueda
   const handleSearch = (query: string) => {
     console.log("Buscando:", query);
+  };
+
+  // Función para manejar el click en badges
+  const handleBadgeClick = (badgeId: string) => {
+    setSelectedBadge(selectedBadge === badgeId ? null : badgeId);
+    console.log("Badge seleccionado:", badgeId);
   };
 
   return (
@@ -36,7 +43,7 @@ export default function PlayasPage() {
         <HeaderNavigationExplore />
 
         <div className="justify-center items-center text-center">
-          <h1 className="text-6xl font-black pb-1 text-[#00324A] leading-none">
+          <h1 className="text-[65px] font-black pb-1 text-[#00324A] leading-none">
             PLAYAS
           </h1>
           <p className="text-xl font-extrabold text-[#ffffff]">CERCA DE TI</p>
@@ -56,28 +63,104 @@ export default function PlayasPage() {
         <div className="w-full">
           <div className="flex flex-wrap gap-2">
             <BadgeWithIcon
-              icon={<span className="text-lg">🏖️</span>}
+              id="todo"
+              icon={
+                <img
+                  src="/icons/playas_icons/p-cat_todo_icon.svg"
+                  alt="Todo"
+                  className="w-5 h-5"
+                />
+              }
+              hoverIcon={
+                <img
+                  src="/icons/playas_icons/hover-p-cat_todo_icon.svg"
+                  alt="Todo"
+                  className="w-5 h-5"
+                />
+              }
               label="Todo"
+              isActive={selectedBadge === "todo"}
+              onClick={handleBadgeClick}
             />
             <BadgeWithIcon
-              icon={<span className="text-lg">🌊</span>}
+              id="surf"
+              icon={
+                <img
+                  src="/icons/playas_icons/p-cat_surf_icon.svg"
+                  alt="Surf"
+                  className="w-5 h-5"
+                />
+              }
+              hoverIcon={
+                <img
+                  src="/icons/playas_icons/hover-p-cat_surf_icon.svg"
+                  alt="Surf"
+                  className="w-5 h-5"
+                />
+              }
               label="Surf"
+              isActive={selectedBadge === "surf"}
+              onClick={handleBadgeClick}
             />
             <BadgeWithIcon
-              icon={<span className="text-lg">🏄‍♂️</span>}
+              id="pesca"
+              icon={
+                <img
+                  src="/icons/playas_icons/p-cat_pesca_icon.svg"
+                  alt="Pesca"
+                  className="w-5 h-5"
+                />
+              }
+              hoverIcon={
+                <img
+                  src="/icons/playas_icons/hover-p-cat_pesca_icon.svg"
+                  alt="Pesca"
+                  className="w-5 h-5"
+                />
+              }
               label="Pesca"
+              isActive={selectedBadge === "pesca"}
+              onClick={handleBadgeClick}
             />
             <BadgeWithIcon
-              icon={<span className="text-lg">🏊‍♀️</span>}
+              id="petfriendly"
+              icon={
+                <img
+                  src="/icons/playas_icons/p-cat_pet_icon.svg"
+                  alt="Petfriendly"
+                  className="w-5 h-5"
+                />
+              }
+              hoverIcon={
+                <img
+                  src="/icons/playas_icons/hover-p-cat_pet_icon.svg"
+                  alt="Petfriendly"
+                  className="w-5 h-5"
+                />
+              }
               label="Petfriendly"
+              isActive={selectedBadge === "petfriendly"}
+              onClick={handleBadgeClick}
             />
             <BadgeWithIcon
-              icon={<span className="text-lg">🏖️</span>}
-              label="Camping"
-            />
-            <BadgeWithIcon
-              icon={<span className="text-lg">🌅</span>}
+              id="populares"
+              icon={
+                <img
+                  src="/icons/playas_icons/p-cat_fav_icon.svg"
+                  alt="Populares"
+                  className="w-5 h-5"
+                />
+              }
+              hoverIcon={
+                <img
+                  src="/icons/playas_icons/hover-p-cat_fav_icon.svg"
+                  alt="Populares"
+                  className="w-5 h-5"
+                />
+              }
               label="Populares"
+              isActive={selectedBadge === "populares"}
+              onClick={handleBadgeClick}
             />
           </div>
         </div>

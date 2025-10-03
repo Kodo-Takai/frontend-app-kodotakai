@@ -44,13 +44,13 @@ function AppContent() {
           <Route path="/explorar/discos" element={<DiscosPage />} />
           <Route path="/explorar/estudiar" element={<EstudiarPage />} />
           <Route path="/explorar/parques" element={<ParquesPage />} />
+          <Route path="/maps" element={<Maps />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Home />} />
             <Route path="/notifications" element={<Notifications />} />
-            <Route path="/maps" element={<Maps />} />
           </Route>
         </Route>
       </Routes>
