@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { useBeaches } from "../../../hooks/useBeaches";
+import { useBeaches } from "../../../hooks/usePlaces";
 import "./index.scss";
 
 interface Beach {
@@ -18,7 +18,7 @@ interface Beach {
 }
 
 export default function BeachCards() {
-  const { beaches, loading } = useBeaches();
+  const { places: beaches, loading } = useBeaches();
 
   const handleVisit = (beach: Beach) => {
     console.log("Visitando playa:", beach.name);

@@ -1,21 +1,25 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+// Import Redux
+import { store } from "./redux/store";
+import { Provider } from "react-redux";
+// Import Pages
 import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
-import { useSplashScreen } from "./hooks/useSplashScreen";
-import SplashScreen from "./components/common/splashScreen";
+import Explorar from "./pages/Explorar";
 import ForgotPassword from "./pages/ForgotPassword";
 import Notifications from "./pages/Notifications";
-import {BottomNav} from "./components/layout/BottomNav";
-import { defaultItems } from "./components/layout/BottomNav";
 import Maps from "./pages/Maps";
+// Import Hooks and Components
+import { useSplashScreen } from "./hooks/useSplashScreen";
+import SplashScreen from "./components/common/splashScreen";
 
-
-export default function App() {
+function AppContent() {
   const isLoading = useSplashScreen();
+
   return (
-    <BrowserRouter>
+    <>
       <SplashScreen visible={!isLoading} />
       <Routes>
         <Route path="/" element={<Welcome />} />
@@ -23,10 +27,20 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/explorar" element={<Explorar />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/maps" element={<Maps/>}/>
       </Routes>
-      <BottomNav items={defaultItems} className="Hola"/>
-    </BrowserRouter>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </Provider>
   );
 }

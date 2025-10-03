@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt, FaHeart } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { useRestaurants } from "../../../hooks/useRestaurants";
+import { useRestaurants } from "../../../hooks/usePlaces";
 import "./index.scss";
 
 interface Restaurant {
@@ -13,7 +13,7 @@ interface Restaurant {
 }
 
 export default function RestaurantCards() {
-  const { restaurants, loading } = useRestaurants();
+  const { places: restaurants, loading } = useRestaurants();
 
   const displayedRestaurants = restaurants.slice(0, 6);
 
