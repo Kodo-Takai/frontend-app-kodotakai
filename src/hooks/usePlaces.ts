@@ -11,10 +11,10 @@ type LatLng = { lat: number; lng: number };
 
 const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
 
-export type PlaceCategory = "all" | "beaches" | "restaurants" | "hotels";
+export type PlaceCategory = "all" | "beaches" | "restaurants" | "hotels" | "destinations";
 
 export interface UsePlacesOptions {
-  type?: string; 
+  type?: string;
   category?: PlaceCategory;
   searchMethod?: "nearby" | "text" | "both";
   radius?: number;
@@ -86,19 +86,27 @@ const getCategoryConfig = (category: PlaceCategory) => {
       };
     case "restaurants":
       return {
-        searchQueries: ["restaurant", "comedor", "menu", "restaurante"],
+        searchQueries: ["restaurant", "menu", "restaurante"],
         type: "restaurant",
         minRating: 4.0,
-        enableMultiplePhotos: false,
+        enableMultiplePhotos: true,
         radius: 20000,
       };
-      case "hotels":
+    case "hotels":
       return {
         searchQueries: ["hotel", "hospedaje", "hostal", "motel", "lodging"],
         type: "lodging",
         minRating: 3.5,
         enableMultiplePhotos: true,
         radius: 30000,
+      };
+    case "destinations":
+      return {
+        searchQueries: ["lugar turístico", "destino", "atracción", "sitio de interés"],
+        type: "tourist_attraction",
+        minRating: 4.0,
+        enableMultiplePhotos: true,
+        radius: 15000,
       };
     default:
       return {
@@ -366,21 +374,25 @@ export function usePlaces(options: UsePlacesOptions = {}) {
         // Procesar resultados según la categoría
         let processedResults: any[] = [];
 
-        if (category === "beaches" && finalEnableMultiplePhotos) {
-          // Procesamiento especial para playas con múltiples fotos (lógica original)
-          const beachGroups = new Map();
+        if (
+          (category === "beaches" || category === "restaurants" || category === "destinations") &&
+          finalEnableMultiplePhotos
+        ) {
+          // Procesamiento especial para playas y restaurantes con múltiples fotos
+          const placeGroups = new Map();
           finalResults.forEach((place) => {
-            const beachName = place.name;
-            if (!beachGroups.has(beachName)) {
-              beachGroups.set(beachName, []);
+            const placeKey = place.place_id || place.name; // Usar place_id como clave única
+            if (!placeGroups.has(placeKey)) {
+              placeGroups.set(placeKey, []);
             }
-            beachGroups.get(beachName).push(place);
+            placeGroups.get(placeKey).push(place);
           });
 
           processedResults = await Promise.all(
-            Array.from(beachGroups.entries()).map(async ([name, places]) => {
+            Array.from(placeGroups.entries()).map(async ([, places]) => {
               // Tomar el primer lugar como principal
               const mainPlace = places[0];
+              const name = mainPlace.name; // Usar el nombre del lugar principal
 
               // Obtener fotos adicionales del lugar principal
               let additionalPhotos: any[] = [];
@@ -400,14 +412,15 @@ export function usePlaces(options: UsePlacesOptions = {}) {
                 ...additionalPhotos,
               ];
 
+
               const photos = [];
 
               //Primera foto disponible del lugar
               if (allPhotos.length > 0) {
+                const photoUrl = allPhotos[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
+                    "https://picsum.photos/400/200?random=1";
                 photos.push({
-                  photo_url:
-                    allPhotos[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) ||
-                    "https://picsum.photos/400/200?random=1",
+                  photo_url: photoUrl,
                   rating: mainPlace.rating,
                   vicinity: mainPlace.vicinity,
                 });
@@ -505,8 +518,9 @@ export function usePlaces(options: UsePlacesOptions = {}) {
                 name,
                 photos,
                 mainPhoto: photos[0],
+                photo_url: photos[0]?.photo_url || "https://picsum.photos/400/200?random=restaurant",
                 rating: mainPlace.rating,
-                vicinity: mainPlace.vicinity,
+                vicinity: mainPlace.vicinity || mainPlace.formatted_address || "Ubicación no disponible",
               };
             })
           );
@@ -583,18 +597,4 @@ export function usePlaces(options: UsePlacesOptions = {}) {
   return { places, loading, apiStatus };
 }
 
-export const useBeaches = () =>
-  usePlaces({
-    category: "beaches",
-    searchMethod: "text",
-    limit: 10,
-    enableMultiplePhotos: true,
-  });
-
-export const useRestaurants = () =>
-  usePlaces({
-    category: "restaurants",
-    searchMethod: "both",
-    limit: 6,
-    enableMultiplePhotos: false,
-  });
+// Hooks específicos eliminados - usar usePlaces directamente con category

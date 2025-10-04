@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt, FaHeart } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { useRestaurants } from "../../../hooks/usePlaces";
+import { usePlaces } from "../../../hooks/usePlaces";
 import "./index.scss";
 
 interface Restaurant {
@@ -13,7 +13,12 @@ interface Restaurant {
 }
 
 export default function RestaurantCards() {
-  const { places: restaurants, loading } = useRestaurants();
+  const { places: restaurants, loading } = usePlaces({
+    category: "restaurants",
+    searchMethod: "both",
+    limit: 6,
+    enableMultiplePhotos: true,
+  });
 
   const displayedRestaurants = restaurants.slice(0, 6);
 
@@ -30,7 +35,7 @@ export default function RestaurantCards() {
       const fullStars = Math.floor(rating);
       const stars = Array.from({ length: 5 }, (_, i) => (
         <FaStar
-          key={i}
+          key={`restaurant-star-${i}`}
           className={`w-3 h-3 ${
             i < fullStars ? "text-red-600" : "text-gray-300"
           }`}
@@ -136,7 +141,7 @@ export default function RestaurantCards() {
       return (
         <div className="restaurant-scroll">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="restaurant-card-width">
+            <div key={`restaurant-skeleton-${i}`} className="restaurant-card-width">
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
                 <div className="h-72 bg-gray-200" />
               </div>
@@ -176,7 +181,7 @@ export default function RestaurantCards() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mt-10 mb-4">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">
         Restaurantes mejor valorados
       </h2>
       {renderContent()}

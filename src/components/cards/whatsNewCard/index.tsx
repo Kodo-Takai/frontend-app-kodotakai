@@ -118,7 +118,7 @@ export default function WhatsNewCards() {
             onError={(e) => {
               // Fallback si la imagen no carga
               const target = e.target as HTMLImageElement;
-              target.src = "https://via.placeholder.com/400x200/3B82F6/ffffff?text=📍+Sin+Imagen";
+              target.src = "https://picsum.photos/400/200?random=whatsnew-error";
             }}
           />
 
