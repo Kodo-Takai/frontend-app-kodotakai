@@ -1,4 +1,4 @@
-import { usePlaces } from "./usePlaces";
+import { usePlaces } from "./places";
 
 export interface Hotel {
     name: string;

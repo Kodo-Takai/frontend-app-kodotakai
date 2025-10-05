@@ -8,10 +8,9 @@ import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 
 export default function PlayasPage() {
   const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
-  const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
+  const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
   const animationClass = useNavigationAnimation();
 
-  // Función para manejar la búsqueda
   const handleSearch = (query: string) => {
     console.log("Buscando:", query);
   };
@@ -26,7 +25,6 @@ export default function PlayasPage() {
     <div
       className={`relative flex flex-col max-w-md mx-auto min-h-screen ${animationClass}`}
     >
-      {/* Imagen de fondo pegada al techo */}
       <div
         className="absolute top-0 left-0 w-full h-140 sm:h-40 md:h-48 lg:h-56 bg-center bg-no-repeat"
         style={{
@@ -37,9 +35,7 @@ export default function PlayasPage() {
         }}
       />
 
-      {/* Contenido principal */}
       <div className="relative z-10 flex flex-col gap-3 p-6">
-        {/* Header Navigation */}
         <HeaderNavigationExplore />
 
         <div className="justify-center items-center text-center">
@@ -60,7 +56,7 @@ export default function PlayasPage() {
           placeholder="Buscar playas cerca de ti..."
         />
 
-        <div className="w-full">
+        <div className="w-full mb-3">
           <div className="flex flex-wrap gap-2">
             <BadgeWithIcon
               id="todo"
@@ -82,26 +78,28 @@ export default function PlayasPage() {
               isActive={selectedBadge === "todo"}
               onClick={handleBadgeClick}
             />
+
             <BadgeWithIcon
-              id="surf"
+              id="populares"
               icon={
                 <img
-                  src="/icons/playas_icons/p-cat_surf_icon.svg"
-                  alt="Surf"
+                  src="/icons/playas_icons/p-cat_fav_icon.svg"
+                  alt="Populares"
                   className="w-5 h-5"
                 />
               }
               hoverIcon={
                 <img
-                  src="/icons/playas_icons/hover-p-cat_surf_icon.svg"
-                  alt="Surf"
+                  src="/icons/playas_icons/hover-p-cat_fav_icon.svg"
+                  alt="Populares"
                   className="w-5 h-5"
                 />
               }
-              label="Surf"
-              isActive={selectedBadge === "surf"}
+              label="Populares"
+              isActive={selectedBadge === "populares"}
               onClick={handleBadgeClick}
             />
+
             <BadgeWithIcon
               id="pesca"
               icon={
@@ -121,6 +119,8 @@ export default function PlayasPage() {
               label="Pesca"
               isActive={selectedBadge === "pesca"}
               onClick={handleBadgeClick}
+              activeColor="#00324A"
+              activeBorderColor="#F3F3F3"
             />
             <BadgeWithIcon
               id="petfriendly"
@@ -143,23 +143,23 @@ export default function PlayasPage() {
               onClick={handleBadgeClick}
             />
             <BadgeWithIcon
-              id="populares"
+              id="surf"
               icon={
                 <img
-                  src="/icons/playas_icons/p-cat_fav_icon.svg"
-                  alt="Populares"
+                  src="/icons/playas_icons/p-cat_surf_icon.svg"
+                  alt="Surf"
                   className="w-5 h-5"
                 />
               }
               hoverIcon={
                 <img
-                  src="/icons/playas_icons/hover-p-cat_fav_icon.svg"
-                  alt="Populares"
+                  src="/icons/playas_icons/hover-p-cat_surf_icon.svg"
+                  alt="Surf"
                   className="w-5 h-5"
                 />
               }
-              label="Populares"
-              isActive={selectedBadge === "populares"}
+              label="Surf"
+              isActive={selectedBadge === "surf"}
               onClick={handleBadgeClick}
             />
           </div>

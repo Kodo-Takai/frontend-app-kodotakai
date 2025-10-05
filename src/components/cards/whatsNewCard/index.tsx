@@ -1,10 +1,9 @@
 // src/components/cards/WhatsNewCards.tsx
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { usePlaces } from "../../../hooks/usePlaces";
+import { useDestinations } from "../../../hooks/places";
 
 export default function WhatsNewCards() {
-  const { places, loading, apiStatus } = usePlaces({
-    type: "tourist_attraction",
+  const { places, loading, apiStatus } = useDestinations({
     radius: 20000,
   });
 
