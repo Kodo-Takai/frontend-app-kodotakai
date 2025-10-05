@@ -61,7 +61,6 @@ export class CategoryConfigFactory {
     
     // Validar que la configuración existe
     if (!baseConfig) {
-      console.error(`Category '${category}' not found in CATEGORY_CONFIGS. Available categories:`, Object.keys(CATEGORY_CONFIGS));
       // Fallback a 'all' si la categoría no existe
       const fallbackConfig = CATEGORY_CONFIGS['all'];
       if (!fallbackConfig) {

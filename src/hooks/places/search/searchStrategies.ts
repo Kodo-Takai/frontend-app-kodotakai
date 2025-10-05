@@ -28,14 +28,6 @@ export class NearbySearchStrategy implements SearchStrategy {
             type: options.type || "establishment" 
           },
           (results: any[] | null, status: any) => {
-            console.log('NearbySearch - Google Places API response:', {
-              status,
-              resultsCount: results?.length || 0,
-              firstResult: results?.[0],
-              firstResultGeometry: results?.[0]?.geometry,
-              firstResultLocation: results?.[0]?.geometry?.location
-            });
-            
             if (status === window.google.maps.places.PlacesServiceStatus.OK) {
               resolve(results || []);
             } else {
@@ -48,7 +40,6 @@ export class NearbySearchStrategy implements SearchStrategy {
       document.body.removeChild(phantom);
       return results;
     } catch (error) {
-      console.warn("Error in nearby search:", error);
       document.body.removeChild(phantom);
       return [];
     }
@@ -97,7 +88,7 @@ export class TextSearchStrategy implements SearchStrategy {
 
         allResults.push(...results);
       } catch (error) {
-        console.warn(`Error searching for "${query}":`, error);
+        // Error silencioso
       }
     }
 

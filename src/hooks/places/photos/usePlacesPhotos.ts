@@ -39,7 +39,6 @@ class PhotosService {
       document.body.removeChild(phantom);
       return placeDetails?.photos || [];
     } catch (error) {
-      console.warn(`Error getting photos for place ${placeId}:`, error);
       document.body.removeChild(phantom);
       return [];
     }
@@ -93,16 +92,6 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
     if (!enableMultiple) {
       // Procesamiento simple sin fotos múltiples
       const simpleProcessed = placesToProcess.map(place => {
-        // Debug: Verificar estructura del lugar
-        console.log('Procesando lugar:', {
-          name: place.name,
-          geometry: place.geometry,
-          hasGeometry: !!place.geometry,
-          hasLocation: !!place.geometry?.location,
-          locationType: typeof place.geometry?.location,
-          locationMethods: place.geometry?.location ? Object.getOwnPropertyNames(place.geometry.location) : [],
-          locationKeys: place.geometry?.location ? Object.keys(place.geometry.location) : []
-        });
         
         // Extraer ubicación de manera más robusta
         let location = null;
@@ -122,12 +111,6 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
           }
         }
         
-        console.log('Ubicación extraída:', {
-          name: place.name,
-          geometry: place.geometry,
-          location: location,
-          hasLocation: !!location
-        });
         
         return {
           name: place.name,
@@ -169,7 +152,7 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
             try {
               additionalPhotos = await photosService.getPlacePhotos(mainPlace.place_id);
             } catch (error) {
-              console.warn(`Error getting additional photos for ${name}:`, error);
+              // Error silencioso
             }
           }
 
@@ -186,7 +169,6 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
 
       setProcessedPlaces(processedResults);
     } catch (error) {
-      console.error('Error processing places:', error);
       setProcessedPlaces([]);
     } finally {
       setLoading(false);

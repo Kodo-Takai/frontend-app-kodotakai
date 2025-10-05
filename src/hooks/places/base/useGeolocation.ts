@@ -22,7 +22,6 @@ export function useGeolocation(fallbackLocation?: LatLng) {
         setLoading(false);
       },
       (err) => {
-        console.warn("Geolocation error:", err);
         setLocation(fallbackLocation || FALLBACK_LOCATION);
         setError(err.message);
         setLoading(false);

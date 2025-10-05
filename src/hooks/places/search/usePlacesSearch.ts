@@ -24,14 +24,7 @@ export function usePlacesSearch(options: UsePlacesOptions = {}) {
     let cancelled = false;
 
     async function performSearch() {
-      console.log('usePlacesSearch - performSearch iniciado:', {
-        mapsLoaded,
-        location,
-        options: options.searchMethod
-      });
-      
       if (!mapsLoaded || !location) {
-        console.log('usePlacesSearch - Condiciones no cumplidas:', { mapsLoaded, location });
         return;
       }
 
@@ -46,25 +39,19 @@ export function usePlacesSearch(options: UsePlacesOptions = {}) {
         let results: any[] = [];
 
         // Aplicar estrategia según el método de búsqueda
-        console.log('usePlacesSearch - Aplicando estrategia:', options.searchMethod);
         
         switch (options.searchMethod) {
           case "nearby":
-            console.log('usePlacesSearch - Ejecutando NearbySearchStrategy');
             results = await nearbyStrategy.search(location, options);
             break;
           case "text":
-            console.log('usePlacesSearch - Ejecutando TextSearchStrategy');
             results = await textStrategy.search(location, options);
             break;
           case "both":
           default:
-            console.log('usePlacesSearch - Ejecutando CombinedSearchStrategy');
             results = await combinedStrategy.search(location, options);
             break;
         }
-        
-        console.log('usePlacesSearch - Resultados obtenidos:', results.length);
 
         if (cancelled) return;
 
