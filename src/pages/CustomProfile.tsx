@@ -88,7 +88,8 @@ export default function CustomProfile() {
       const e = err as { status?: number; data?: { message?: unknown } };
       const status = e?.status;
       const dataMsg = e?.data?.message as unknown;
-      const msg = dataMsg || `No se pudo actualizar el perfil (HTTP ${status ?? ""})`;
+      const msg =
+        dataMsg || `No se pudo actualizar el perfil (HTTP ${status ?? ""})`;
       alert(Array.isArray(msg) ? msg.join("\n") : String(msg));
     }
   };
