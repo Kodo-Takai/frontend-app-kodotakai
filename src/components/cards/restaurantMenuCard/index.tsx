@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
-import { usePlaces } from "../../../hooks/usePlaces";
+import { useRestaurants } from "../../../hooks/places";
 import "./index.scss";
 
 interface Restaurant {
@@ -20,8 +20,7 @@ interface Restaurant {
 }
 
 export default function RestaurantMenuCard() {
-  const { places: restaurants, loading } = usePlaces({
-    category: "restaurants",
+  const { places: restaurants, loading } = useRestaurants({
     searchMethod: "both",
     limit: 6,
     enableMultiplePhotos: true,

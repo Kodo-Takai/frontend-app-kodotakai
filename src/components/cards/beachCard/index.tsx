@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { usePlaces } from "../../../hooks/usePlaces";
+import { useBeaches } from "../../../hooks/places";
 import "./index.scss";
 
 interface Beach {
@@ -18,8 +18,7 @@ interface Beach {
 }
 
 export default function BeachCards() {
-  const { places: beaches, loading } = usePlaces({
-    category: "beaches",
+  const { places: beaches, loading } = useBeaches({
     searchMethod: "both",
     limit: 6,
     enableMultiplePhotos: true,

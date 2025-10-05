@@ -1,6 +1,6 @@
 // src/components/cards/MapsCard.tsx
 import { useState, useCallback, useRef, useEffect } from "react";
-import { usePlaces } from "../../../hooks/usePlaces";
+import { usePlaces } from "../../../hooks/places";
 
 type Props = {
   className?: string;

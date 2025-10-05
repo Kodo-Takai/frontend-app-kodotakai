@@ -7,6 +7,8 @@ interface BadgeWithIconProps {
   id: string;
   isActive?: boolean;
   onClick?: (id: string) => void;
+  activeColor?: string;
+  activeBorderColor?: string;
 }
 
 export default function BadgeWithIcon({
@@ -16,6 +18,8 @@ export default function BadgeWithIcon({
   id,
   isActive = false,
   onClick,
+  activeColor = "#00324A",
+  activeBorderColor = "#d7d7d7",
 }: BadgeWithIconProps) {
   const handleClick = () => {
     if (onClick) {
@@ -25,11 +29,19 @@ export default function BadgeWithIcon({
 
   return (
     <div
-      className={`inline-flex items-center gap-2 h-10 rounded-xl shadow-sm px-5 font-medium transition-all duration-200 cursor-pointer ${
+      className={`inline-flex items-center gap-1 h-10 rounded-xl shadow-sm px-4 font-medium transition-all duration-200 cursor-pointer ${
         isActive
-          ? "bg-[#00324A] text-white border-3 border-[#d7d7d7] scale-105"
+          ? "text-white border-3 scale-105"
           : "bg-white text-gray-800 hover:bg-gray-50 hover:scale-105"
       }`}
+      style={
+        isActive
+          ? {
+              backgroundColor: activeColor,
+              borderColor: activeBorderColor,
+            }
+          : {}
+      }
       onClick={handleClick}
     >
       {isActive && hoverIcon ? hoverIcon : icon}
