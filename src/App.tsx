@@ -10,10 +10,20 @@ import Home from "./pages/Home";
 import Explorar from "./pages/Explorar";
 import ForgotPassword from "./pages/ForgotPassword";
 import Notifications from "./pages/Notifications";
-import CustomProfile from "./pages/CustomProfile";
+import Maps from "./pages/Maps";
+// Import Category Pages
+import RestaurantsPage from "./pages/categories/RestaurantsPage";
+import PlayasPage from "./pages/categories/PlayasPage";
+import HotelesPage from "./pages/categories/HotelesPage";
+import DiscosPage from "./pages/categories/DiscosPage";
+import EstudiarPage from "./pages/categories/EstudiarPage";
+import ParquesPage from "./pages/categories/ParquesPage";
 // Import Hooks and Components
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
+import MainLayout from "./components/layout/mainLayout";
+import AuthLayout from "./components/layout/AuthLayout";
+import ProtectedRoute from "./components/layout/protectedRoute";
 
 function AppContent() {
   const isLoading = useSplashScreen();
@@ -23,13 +33,26 @@ function AppContent() {
       <SplashScreen visible={!isLoading} />
       <Routes>
         <Route path="/" element={<Welcome />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/explorar" element={<Explorar />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/custom-profile" element={<CustomProfile />} />
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/explorar" element={<Explorar />} />
+            <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
+            <Route path="/explorar/playas" element={<PlayasPage />} />
+            <Route path="/explorar/hoteles" element={<HotelesPage />} />
+            <Route path="/explorar/discos" element={<DiscosPage />} />
+            <Route path="/explorar/estudiar" element={<EstudiarPage />} />
+            <Route path="/explorar/parques" element={<ParquesPage />} />
+            <Route path="/maps" element={<Maps />} />
+          </Route>
+        </Route>
       </Routes>
     </>
   );

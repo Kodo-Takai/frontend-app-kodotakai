@@ -1,21 +1,15 @@
-import React from 'react';
-import '../../styles/_index.scss'
 
+import { useSelector } from "react-redux";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-interface Props {
-  children?: React.ReactNode;
-  title?: string;
-  helper?: string;
-}
+const AuthLayout : React.FC = () => {
+  const token = useSelector((state: any) => state.auth.token);
+  const location = useLocation();
+    return token? (
+      <Navigate to="/home" state={{ from: location }} replace />
+    ) : (
+      <Outlet />
+    );
+};
 
-export default function AuthLayout({ children, title, helper }: Props) {
-  return (
-    <div className="page-bg">
-      <div className="card">
-        {title && <h1 className="card-title">{title}</h1>}
-        {helper && <p className="helper">{helper}</p>}
-        {children}
-      </div>
-    </div>
-  );
-}
+export default AuthLayout;

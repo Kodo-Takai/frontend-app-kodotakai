@@ -3,7 +3,7 @@ import { useState } from "react";
 import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
-import { usePlaces } from "../../../hooks/usePlaces";
+import { useHotelsTopRated } from "../../../hooks/places";
 import "./index.scss";
 
 interface Place {
@@ -16,9 +16,10 @@ interface Place {
 }
 
 export default function DestinationCards() {
-  const { places, loading } = usePlaces({
-    type: "tourist_attraction",
-    radius: 15000,
+  const { places, loading } = useHotelsTopRated({
+    limit: 6,
+    searchMethod: "both",
+    enableMultiplePhotos: true,
   });
 
   const handleVisit = (place: Place) => {
@@ -50,9 +51,9 @@ export default function DestinationCards() {
       const fullStars = Math.floor(rating);
       const stars = Array.from({ length: 5 }, (_, i) => (
         <FaStar
-          key={i}
+          key={`star-${i}`}
           className={`w-3 h-3 ${
-            i < fullStars ? "text-yellow-400" : "text-gray-300"
+            i < fullStars ? "text-[#FF0C12]" : "text-gray-300"
           }`}
         />
       ));
@@ -68,29 +69,29 @@ export default function DestinationCards() {
     };
 
     return (
-      <div className="relative rounded-xl overflow-hidden shadow-lg group cursor-pointer transition-transform duration-300 hover:scale-105 destination-card-width">
+      <div className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white">
         {/* Imagen de fondo */}
         <div className="relative h-72 w-full overflow-hidden">
           <img
             src={
               imageError
-                ? "https://via.placeholder.com/280x288/3B82F6/ffffff?text=📍+Sin+Imagen"
+                ? "https://picsum.photos/280/288?random=destination-error"
                 : place.photo_url
             }
             alt={place.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
             loading="lazy"
             onError={handleImageError}
           />
 
           {/* Gradiente overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/80 to-transparent group-hover:from-black/85 group-hover:via-black/65 transition-all duration-1500 ease-in-out" />
 
           {/* Badge de rating en esquina superior izquierda */}
           {typeof place.rating === "number" && (
             <div className="absolute top-3 left-3 z-10">
-              <div className="flex items-center gap-1 bg-yellow-500/20 backdrop-blur-md px-2 py-1 rounded-full border border-yellow-400/30">
-                <FaStar className="w-3 h-3 text-yellow-400" />
+              <div className="flex items-center gap-1 bg-[#00324A] px-2 py-1 rounded-full ">
+                <FaStar className="w-3 h-3 text-[#FF0C12]" />
                 <span className="text-xs font-bold text-yellow-100">
                   {place.rating.toFixed(1)}
                 </span>
@@ -119,7 +120,7 @@ export default function DestinationCards() {
             {/* Botón de visitar */}
             <button
               onClick={handleVisitClick}
-              className="w-full bg-white/90 hover:bg-white text-gray-800 font-semibold py-2 px-4 rounded-lg transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-sm"
+              className="w-full bg-white/90 border-4 border-gray-300 hover:bg-white text-gray-800 font-semibold py-1 px-4 rounded-xl transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-lg"
             >
               Visitar <TbLocationFilled className="w-4 h-4" />
             </button>
@@ -135,7 +136,7 @@ export default function DestinationCards() {
       return (
         <div className="destination-scroll">
           {Array.from({ length: 3 }, (_, i) => (
-            <div key={i} className="destination-card-width">
+            <div key={`skeleton-${i}`} className="destination-card-width">
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
                 <div className="h-72 bg-gray-200" />
               </div>
@@ -163,8 +164,11 @@ export default function DestinationCards() {
 
     return (
       <div className="destination-scroll">
-        {displayedPlaces.map((place) => (
-          <DestinationCard key={place.place_id} place={place} />
+        {displayedPlaces.map((place, index) => (
+          <DestinationCard
+            key={place.place_id || `destination-${index}`}
+            place={place}
+          />
         ))}
       </div>
     );
@@ -172,7 +176,7 @@ export default function DestinationCards() {
 
   return (
     <div className="w-full ">
-      <h2 className="text-xl font-bold text-gray-900 mt-10 mb-4 ">
+      <h2 className="text-xl font-bold text-gray-900 mb-4 ">
         Lugares que debes visitar
       </h2>
       {renderContent()}

@@ -45,7 +45,7 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
 
   /** Rutas donde NO se muestra la barra */
   // OJO: quité "/" para que sí se vea en Inicio. Si quieres ocultarla en Home, vuelve a añadir "/".
-  const HIDE_ON: string[] = ["/login", "/register", "/onboarding", "/terms"];
+  const HIDE_ON: string[] = ["/","/login", "/register", "/onboarding", "/terms"];
 
   const hide = useMemo(
     () => HIDE_ON.some((p) => pathname === p || pathname.startsWith(p + "/")),
@@ -97,9 +97,9 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
 
 // Items por defecto
 export const defaultItems: NavItem[] = [
-  { id: "home",     label: "Inicio",    to: "/",         icon: <HomeIcon /> },
+  { id: "home",     label: "Inicio",    to: "/home",         icon: <HomeIcon /> },
   { id: "agenda",   label: "Agenda",    to: "/agenda",   icon: <CalendarIcon /> },
-  { id: "maps",     label: "Mapas",     to: "/mapas",    icon: <PinIcon /> },
+  { id: "maps",     label: "Mapas",     to: "/maps",    icon: <PinIcon /> },
   { id: "explore",  label: "Explorar",  to: "/explorar", icon: <CompassIcon /> },
   { id: "profile",  label: "Mi Perfil", to: "/perfil",   icon: <SmileIcon /> },
 ];
