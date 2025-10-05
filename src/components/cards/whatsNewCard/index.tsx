@@ -1,10 +1,9 @@
 // src/components/cards/WhatsNewCards.tsx
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { usePlaces } from "../../../hooks/usePlaces";
+import { useDestinations } from "../../../hooks/places";
 
 export default function WhatsNewCards() {
-  const { places, loading, apiStatus } = usePlaces({
-    type: "tourist_attraction",
+  const { places, loading, apiStatus } = useDestinations({
     radius: 20000,
   });
 
@@ -118,7 +117,7 @@ export default function WhatsNewCards() {
             onError={(e) => {
               // Fallback si la imagen no carga
               const target = e.target as HTMLImageElement;
-              target.src = "https://via.placeholder.com/400x200/3B82F6/ffffff?text=📍+Sin+Imagen";
+              target.src = "https://picsum.photos/400/200?random=whatsnew-error";
             }}
           />
 

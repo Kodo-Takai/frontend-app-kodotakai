@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { useBeaches } from "../../../hooks/usePlaces";
+import { useBeaches } from "../../../hooks/places";
 import "./index.scss";
 
 interface Beach {
@@ -18,7 +18,11 @@ interface Beach {
 }
 
 export default function BeachCards() {
-  const { places: beaches, loading } = useBeaches();
+  const { places: beaches, loading } = useBeaches({
+    searchMethod: "both",
+    limit: 6,
+    enableMultiplePhotos: true,
+  });
 
   const handleVisit = (beach: Beach) => {
     console.log("Visitando playa:", beach.name);
@@ -57,7 +61,7 @@ export default function BeachCards() {
       const fullStars = Math.floor(rating);
       const stars = Array.from({ length: 5 }, (_, i) => (
         <FaStar
-          key={i}
+          key={`beach-star-${i}`}
           className={`w-3 h-3 ${
             i < fullStars ? "text-red-600" : "text-gray-300"
           }`}
@@ -254,7 +258,7 @@ export default function BeachCards() {
       return (
         <div className="beach-scroll">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="beach-card-width">
+            <div key={`beach-skeleton-${i}`} className="beach-card-width">
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
                 <div className="h-72 bg-gray-200" />
               </div>
@@ -291,8 +295,8 @@ export default function BeachCards() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mt-10 mb-4">
-        Playas cercanas
+      <h2 className="text-xl font-bold text-gray-900  mb-4">
+        Visita estas Playas
       </h2>
       {renderContent()}
     </div>

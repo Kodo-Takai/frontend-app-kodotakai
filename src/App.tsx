@@ -14,6 +14,9 @@ import CustomProfile from "./pages/CustomProfile";
 // Import Hooks and Components
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
+import MainLayout from "./components/layout/mainLayout";
+import AuthLayout from "./components/layout/AuthLayout";
+import ProtectedRoute from "./components/layout/protectedRoute";
 
 function AppContent() {
   const isLoading = useSplashScreen();
