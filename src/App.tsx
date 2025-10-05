@@ -22,7 +22,7 @@ import ParquesPage from "./pages/categories/ParquesPage";
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import MainLayout from "./components/layout/mainLayout";
-import AuthLayout from "./components/layout/authLayout";
+import AuthLayout from "./components/layout/AuthLayout";
 import ProtectedRoute from "./components/layout/protectedRoute";
 
 function AppContent() {

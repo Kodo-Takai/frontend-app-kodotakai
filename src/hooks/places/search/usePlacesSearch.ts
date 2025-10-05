@@ -24,7 +24,9 @@ export function usePlacesSearch(options: UsePlacesOptions = {}) {
     let cancelled = false;
 
     async function performSearch() {
-      if (!mapsLoaded || !location) return;
+      if (!mapsLoaded || !location) {
+        return;
+      }
 
       try {
         setState(prev => ({ ...prev, apiStatus: "Buscando lugares...", loading: true }));
@@ -37,6 +39,7 @@ export function usePlacesSearch(options: UsePlacesOptions = {}) {
         let results: any[] = [];
 
         // Aplicar estrategia según el método de búsqueda
+        
         switch (options.searchMethod) {
           case "nearby":
             results = await nearbyStrategy.search(location, options);

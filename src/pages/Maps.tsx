@@ -4,9 +4,9 @@ import CategoryFilter from "../components/ui/categoryFilter";
 import WeatherPill from "../components/cards/weatherCard";
 import MapFilters from "../components/ui/mapsFilter";
 import { FaSlidersH } from "react-icons/fa";
-import { IoNavigate, IoLocationOutline, IoSync } from "react-icons/io5";
+import { IoLocationOutline, IoSync } from "react-icons/io5";
 import { MapDisplay } from "../components/cards/mapDisplay";
-import { useFilteredPlaces, loadGoogleMapsApi } from "../hooks/useFilteredPlaces";
+import { usePlacesSimple } from "../hooks/places/usePlacesSimple";
 
 const Maps = () => {
   // --- Estados ---
@@ -15,26 +15,27 @@ const Maps = () => {
   
   // Estados para la lógica de búsqueda y filtros
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategories, setActiveCategories] = useState<string>('all');
+  const [activeCategories, setActiveCategories] = useState<'all' | 'beaches' | 'restaurants' | 'hotels' | 'destinations'>('all');
   const [zoom, setZoom] = useState(12);
 
-  // --- Hook de Datos ---
-  const { placesToShow, mapCenter, loading, status } = useFilteredPlaces(
-    searchQuery,
-    activeCategories === 'all' ? [] : [activeCategories]
-  );
+
+  // --- Hook de Datos Simplificado ---
+  const { places, mapCenter, loading, status } = usePlacesSimple(activeCategories, searchQuery);
+  
+  const placesToShow = places;
+
 
   const handleCategoryChange = (newCategory: string) => {
-    setActiveCategories(newCategory);
+    setActiveCategories(newCategory as 'all' | 'beaches' | 'restaurants' | 'hotels' | 'destinations');
     setSearchQuery(''); 
   };
 
   // --- Efectos ---
   useEffect(() => {
-    loadGoogleMapsApi()
-      .then(() => setIsApiReady(true))
-      .catch(err => console.error("Failed to load Google Maps", err));
+    setIsApiReady(true);
   }, []);
+
+  // Obtener ubicación del usuario
 
   useEffect(() => {
     if (searchQuery && placesToShow.length === 1) {

@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import type { Place } from '../../../hooks/useFilteredPlaces'; // Asegúrate que la ruta sea correcta
+import type { Place } from '../../../hooks/places';
 
 interface MapDisplayProps {
   center: { lat: number; lng: number };
@@ -12,6 +12,7 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null); // Para reutilizar la misma ventana
+
 
   // ... (Efecto 1 y 2 se mantienen igual) ...
   useEffect(() => {
@@ -45,7 +46,12 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
       markersRef.current = [];
 
       // 2. Crea los nuevos marcadores
-      markers.forEach(place => {
+      markers.forEach((place) => {
+        // Validar que el lugar tenga ubicación
+        if (!place.location) {
+          return;
+        }
+        
         const marker = new window.google.maps.Marker({
           position: place.location,
           map: map,
@@ -60,9 +66,9 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
             <div style="font-family: sans-serif; max-width: 220px; color: #333;">
               ${
                 // Si el lugar tiene foto, la mostramos
-                place.photoUrl
+                place.photo_url
                 ? `<img 
-                    src="${place.photoUrl}" 
+                    src="${place.photo_url}" 
                     alt="${place.name}" 
                     style="width: 100%; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;" 
                   />`

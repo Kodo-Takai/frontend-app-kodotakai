@@ -27,7 +27,7 @@ export class NearbySearchStrategy implements SearchStrategy {
             radius: options.radius || 5000, 
             type: options.type || "establishment" 
           },
-          (results: any[], status: string) => {
+          (results: any[] | null, status: any) => {
             if (status === window.google.maps.places.PlacesServiceStatus.OK) {
               resolve(results || []);
             } else {
@@ -40,7 +40,6 @@ export class NearbySearchStrategy implements SearchStrategy {
       document.body.removeChild(phantom);
       return results;
     } catch (error) {
-      console.warn("Error in nearby search:", error);
       document.body.removeChild(phantom);
       return [];
     }
@@ -77,7 +76,7 @@ export class TextSearchStrategy implements SearchStrategy {
               radius: options.radius || 5000,
               type: options.type || "establishment",
             },
-            (results: any[], status: string) => {
+            (results: any[] | null, status: any) => {
               if (status === window.google.maps.places.PlacesServiceStatus.OK) {
                 resolve(results || []);
               } else {
@@ -89,7 +88,7 @@ export class TextSearchStrategy implements SearchStrategy {
 
         allResults.push(...results);
       } catch (error) {
-        console.warn(`Error searching for "${query}":`, error);
+        // Error silencioso
       }
     }
 

@@ -24,7 +24,7 @@ export function loadGoogleMaps(): Promise<void> {
     script.id = "gmaps-sdk";
     script.async = true;
     script.defer = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&v=weekly`;
 
     script.onload = () => resolve();
     script.onerror = () => reject(new Error("Failed to load Google Maps"));

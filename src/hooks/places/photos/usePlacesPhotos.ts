@@ -39,7 +39,6 @@ class PhotosService {
       document.body.removeChild(phantom);
       return placeDetails?.photos || [];
     } catch (error) {
-      console.warn(`Error getting photos for place ${placeId}:`, error);
       document.body.removeChild(phantom);
       return [];
     }
@@ -92,15 +91,37 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
 
     if (!enableMultiple) {
       // Procesamiento simple sin fotos múltiples
-      const simpleProcessed = placesToProcess.map(place => ({
-        name: place.name,
-        photo_url: place.photos?.[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) || 
-                  `https://picsum.photos/400/200?random=${place.name}`,
-        rating: place.rating,
-        vicinity: place.vicinity || place.formatted_address || "Ubicación no disponible",
-        place_id: place.place_id,
-        location: place.geometry?.location?.toJSON?.(),
-      }));
+      const simpleProcessed = placesToProcess.map(place => {
+        
+        // Extraer ubicación de manera más robusta
+        let location = null;
+        if (place.geometry?.location) {
+          if (typeof place.geometry.location.toJSON === 'function') {
+            location = place.geometry.location.toJSON();
+          } else if (typeof place.geometry.location.lat === 'function' && typeof place.geometry.location.lng === 'function') {
+            location = {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            };
+          } else if (place.geometry.location.lat && place.geometry.location.lng) {
+            location = {
+              lat: place.geometry.location.lat,
+              lng: place.geometry.location.lng
+            };
+          }
+        }
+        
+        
+        return {
+          name: place.name,
+          photo_url: place.photos?.[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) || 
+                    `https://picsum.photos/400/200?random=${place.name}`,
+          rating: place.rating,
+          vicinity: place.vicinity || place.formatted_address || "Ubicación no disponible",
+          place_id: place.place_id,
+          location: location,
+        };
+      });
       setProcessedPlaces(simpleProcessed);
       return;
     }
@@ -131,7 +152,7 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
             try {
               additionalPhotos = await photosService.getPlacePhotos(mainPlace.place_id);
             } catch (error) {
-              console.warn(`Error getting additional photos for ${name}:`, error);
+              // Error silencioso
             }
           }
 
@@ -148,7 +169,6 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
 
       setProcessedPlaces(processedResults);
     } catch (error) {
-      console.error('Error processing places:', error);
       setProcessedPlaces([]);
     } finally {
       setLoading(false);

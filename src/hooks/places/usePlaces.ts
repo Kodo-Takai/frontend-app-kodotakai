@@ -9,15 +9,17 @@ import type { UsePlacesOptions, PlacesState } from "./types";
 export function usePlaces(options: UsePlacesOptions = {}) {
   // Crear configuración usando Factory Pattern
   const config = CategoryConfigFactory.createConfig(
-    options.category || "all", 
+    options.category || "all",
     options
   );
 
   // Usar hooks base
   const searchResult = usePlacesSearch(config);
+
   const filteredPlaces = usePlacesFilter(searchResult.places, config);
+
   const { processedPlaces, loading: photosLoading } = usePlacesPhotos(
-    filteredPlaces, 
+    filteredPlaces,
     config.enableMultiplePhotos
   );
 
