@@ -27,7 +27,15 @@ export class NearbySearchStrategy implements SearchStrategy {
             radius: options.radius || 5000, 
             type: options.type || "establishment" 
           },
-          (results: any[], status: string) => {
+          (results: any[] | null, status: any) => {
+            console.log('NearbySearch - Google Places API response:', {
+              status,
+              resultsCount: results?.length || 0,
+              firstResult: results?.[0],
+              firstResultGeometry: results?.[0]?.geometry,
+              firstResultLocation: results?.[0]?.geometry?.location
+            });
+            
             if (status === window.google.maps.places.PlacesServiceStatus.OK) {
               resolve(results || []);
             } else {
@@ -77,7 +85,7 @@ export class TextSearchStrategy implements SearchStrategy {
               radius: options.radius || 5000,
               type: options.type || "establishment",
             },
-            (results: any[], status: string) => {
+            (results: any[] | null, status: any) => {
               if (status === window.google.maps.places.PlacesServiceStatus.OK) {
                 resolve(results || []);
               } else {

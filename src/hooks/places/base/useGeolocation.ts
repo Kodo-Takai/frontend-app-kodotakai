@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import type { LatLng } from "../types";
 
-const FALLBACK_LOCATION: LatLng = { lat: 19.4326, lng: -99.1332 }; // Ciudad de México
+const FALLBACK_LOCATION: LatLng = { lat: -12.0464, lng: -77.0428 }; // Lima, Perú
 
 export function useGeolocation(fallbackLocation?: LatLng) {
   const [location, setLocation] = useState<LatLng | null>(null);

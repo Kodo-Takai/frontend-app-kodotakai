@@ -45,12 +45,12 @@ export const CATEGORY_CONFIGS: Record<PlaceCategory, CategoryConfig> = {
     defaultLimit: 6,
   },
   all: {
-    searchQueries: ["lugar", "sitio", "destino"],
-    type: "tourist_attraction",
-    minRating: 4.0,
+    searchQueries: ["restaurant", "hotel", "shopping", "attraction", "tourist"],
+    type: "establishment",
+    minRating: 2.0,
     enableMultiplePhotos: false,
-    radius: 5000,
-    defaultLimit: 5,
+    radius: 15000,
+    defaultLimit: 15,
   },
 };
 
@@ -58,6 +58,28 @@ export const CATEGORY_CONFIGS: Record<PlaceCategory, CategoryConfig> = {
 export class CategoryConfigFactory {
   static createConfig(category: PlaceCategory, customOptions: Partial<UsePlacesOptions> = {}): UsePlacesOptions {
     const baseConfig = CATEGORY_CONFIGS[category];
+    
+    // Validar que la configuración existe
+    if (!baseConfig) {
+      console.error(`Category '${category}' not found in CATEGORY_CONFIGS. Available categories:`, Object.keys(CATEGORY_CONFIGS));
+      // Fallback a 'all' si la categoría no existe
+      const fallbackConfig = CATEGORY_CONFIGS['all'];
+      if (!fallbackConfig) {
+        throw new Error(`Neither '${category}' nor 'all' category found in CATEGORY_CONFIGS`);
+      }
+      return {
+        category: 'all',
+        searchQueries: customOptions.searchQueries || fallbackConfig.searchQueries,
+        type: customOptions.type || fallbackConfig.type,
+        minRating: customOptions.minRating ?? fallbackConfig.minRating,
+        enableMultiplePhotos: customOptions.enableMultiplePhotos ?? fallbackConfig.enableMultiplePhotos,
+        radius: customOptions.radius ?? fallbackConfig.radius,
+        limit: customOptions.limit ?? fallbackConfig.defaultLimit,
+        searchMethod: customOptions.searchMethod || "both",
+        fallbackLocation: customOptions.fallbackLocation,
+        customFilters: customOptions.customFilters,
+      };
+    }
     
     return {
       category,
@@ -68,7 +90,8 @@ export class CategoryConfigFactory {
       radius: customOptions.radius ?? baseConfig.radius,
       limit: customOptions.limit ?? baseConfig.defaultLimit,
       searchMethod: customOptions.searchMethod || "both",
-      ...customOptions,
+      fallbackLocation: customOptions.fallbackLocation,
+      customFilters: customOptions.customFilters,
     };
   }
 }

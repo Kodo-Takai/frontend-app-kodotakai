@@ -3,12 +3,12 @@ import { FaStar } from "react-icons/fa";
 import { RiWheelchairLine } from "react-icons/ri";
 import { BiSolidWine } from "react-icons/bi";
 import { MdOutlineFreeBreakfast } from "react-icons/md";
-import { useHotels } from "../../../hooks/useHotels";
-import type { Hotel } from "../../../hooks/useHotels";
+import { useHotelsTopRated } from "../../../hooks/places";
+import type { Place } from "../../../hooks/places";
 import "./index.scss";
 
 // Componente HotelCard extraído para evitar recreación
-const HotelCard = ({ hotel }: { hotel: Hotel }) => {
+const HotelCard = ({ hotel }: { hotel: Place }) => {
   const [imageError, setImageError] = useState(false);
   const handleImageError = () => setImageError(true);
 
@@ -59,13 +59,13 @@ const HotelCard = ({ hotel }: { hotel: Hotel }) => {
         </div>
 
         <div className="absolute bottom-3 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
-          <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
-            {hotel.opening_now === true
-              ? "Abierto ahora"
-              : hotel.opening_now === false
-              ? "Cerrado"
-              : "Consulta aquí"}
-          </span>
+            <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
+              {hotel.opening_hours?.open_now === true
+                ? "Abierto ahora"
+                : hotel.opening_hours?.open_now === false
+                ? "Cerrado"
+                : "Consulta aquí"}
+            </span>
         </div>
       </div>
 
@@ -83,8 +83,11 @@ const HotelCard = ({ hotel }: { hotel: Hotel }) => {
 };
 
 export default function HotelCards() {
-  const { hotels, loading } = useHotels({ radius: 30000 });
-  const displayedHotels = hotels.slice(0, 6);
+  const { places, loading } = useHotelsTopRated({ 
+    radius: 30000,
+    limit: 6
+  });
+  const displayedHotels = places;
 
   if (loading) {
     return (

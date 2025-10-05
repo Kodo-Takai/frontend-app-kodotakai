@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 
 // --- Tipos y Constantes ---
-
 export interface Place {
   id: string;
   name: string;
   location: { lat: number; lng: number };
   rating?: number;
   photoUrl?: string;
+  photo_url: string;
+  place_id: string;
 }
 
 type LatLng = { lat: number; lng: number };
@@ -35,7 +36,7 @@ export function loadGoogleMapsApi(): Promise<void> {
 
     const script = document.createElement('script');
     script.id = 'google-maps-script';
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&v=weekly`;
     script.async = true;
     script.defer = true;
     script.onload = () => resolve();
@@ -51,21 +52,41 @@ const getUserLocation = (): Promise<LatLng> => {
     if (!navigator.geolocation) return resolve(FALLBACK_LOCATION);
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => resolve(FALLBACK_LOCATION)
+      () => resolve(FALLBACK_LOCATION),
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000
+      }
     );
   });
 };
 
-// --- El Hook Principal ---
+// Mapeo de categorías del UI a tipos de Google Places
+const categoryMapping: Record<string, string> = {
+  'all': 'establishment',
+  'lodging': 'lodging',
+  'shopping_mall': 'shopping_mall',
+  'restaurant': 'restaurant',
+  'point_of_interest': 'point_of_interest',
+  'stadium': 'stadium',
+  'beach': 'natural_feature',
+  'beaches': 'natural_feature',
+  'restaurants': 'restaurant',
+  'hotel': 'lodging',
+  'hotels': 'lodging',
+  'destination': 'tourist_attraction',
+  'destinations': 'tourist_attraction',
+  'tourist_attraction': 'tourist_attraction',
+  'attraction': 'tourist_attraction',
+};
 
-export const useFilteredPlaces = (searchQuery: string, activeCategories: string[]) => {
-  const [placesToShow, setPlacesToShow] = useState<Place[]>([]);
+// --- El Hook Principal Simplificado ---
+export const usePlacesSimple = (activeCategories: string, searchQuery?: string) => {
+  const [places, setPlaces] = useState<Place[]>([]);
   const [mapCenter, setMapCenter] = useState<LatLng>(FALLBACK_LOCATION);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('Inicializando...');
-
-  // Crea una clave a partir de las categorías para usar en el array de dependencias de useEffect
-  const categoriesKey = activeCategories.join(',');
 
   useEffect(() => {
     const fetchAndFilter = async () => {
@@ -85,6 +106,8 @@ export const useFilteredPlaces = (searchQuery: string, activeCategories: string[
             location: p.geometry.location.toJSON(),
             rating: p.rating,
             photoUrl: p.photos?.[0]?.getUrl(),
+            photo_url: p.photos?.[0]?.getUrl() || '',
+            place_id: p.place_id || '',
           };
         };
 
@@ -102,12 +125,12 @@ export const useFilteredPlaces = (searchQuery: string, activeCategories: string[
               if (searchStatus === 'OK' && results?.[0]) {
                 const place = formatPlaceResult(results[0]);
                 if (place) {
-                  setPlacesToShow([place]);
+                  setPlaces([place]);
                   setMapCenter(place.location);
                   setStatus(`Mostrando: ${place.name}`);
                 }
               } else {
-                setPlacesToShow([]);
+                setPlaces([]);
                 setStatus('No se encontraron resultados.');
               }
               setLoading(false);
@@ -115,39 +138,34 @@ export const useFilteredPlaces = (searchQuery: string, activeCategories: string[
           );
         
         // 2. Filtro por categorías (si no hay búsqueda por texto)
-        } else if (activeCategories.length > 0) {
-          setStatus(`Buscando en ${activeCategories.length} categorías...`);
+        } else if (activeCategories && activeCategories !== 'all') {
+          setStatus(`Buscando ${activeCategories}...`);
           const userLocation = await getUserLocation();
           setMapCenter(userLocation);
 
-          // Crea una promesa de búsqueda para cada categoría seleccionada
-          const searchPromises = activeCategories.map(category =>
-            new Promise<Place[]>((resolve) => {
-              service.nearbySearch(
-                { location: userLocation, radius: 5000, type: category },
-                (
-                  results: google.maps.places.PlaceResult[] | null,
-                  searchStatus: google.maps.places.PlacesServiceStatus
-                ) => {
-                  if (searchStatus === 'OK' && results) {
-                    // Formatea y filtra resultados nulos
-                    resolve(results.map(p => formatPlaceResult(p)).filter((p): p is Place => p !== null));
-                  } else {
-                    resolve([]); // Resuelve un array vacío si no hay resultados o hay un error
-                  }
-                }
-              );
-            })
+
+          const googleType = categoryMapping[activeCategories] || 'establishment';
+
+          service.nearbySearch(
+            { location: userLocation, radius: 5000, type: googleType },
+            (
+              results: google.maps.places.PlaceResult[] | null,
+              searchStatus: google.maps.places.PlacesServiceStatus
+            ) => {
+              if (searchStatus === 'OK' && results) {
+                const formattedPlaces = results
+                  .map(p => formatPlaceResult(p))
+                  .filter((p): p is Place => p !== null);
+                
+                setPlaces(formattedPlaces);
+                setStatus(`${formattedPlaces.length} lugares encontrados.`);
+              } else {
+                setPlaces([]);
+                setStatus('No se encontraron lugares.');
+              }
+              setLoading(false);
+            }
           );
-          
-          const resultsByCategory = await Promise.all(searchPromises);
-          const allPlaces = resultsByCategory.flat();
-          // Elimina duplicados usando un Map basado en el ID del lugar
-          const uniquePlaces = Array.from(new Map(allPlaces.map(p => [p.id, p])).values());
-          
-          setPlacesToShow(uniquePlaces);
-          setStatus(`${uniquePlaces.length} lugares encontrados.`);
-          setLoading(false);
 
         // 3. Vista por defecto (si no hay texto ni categorías)
         } else {
@@ -156,18 +174,20 @@ export const useFilteredPlaces = (searchQuery: string, activeCategories: string[
           setMapCenter(userLocation);
 
           service.nearbySearch(
-            { location: userLocation, radius: 5000, type: 'tourist_attraction' },
+            { location: userLocation, radius: 5000, type: 'establishment' },
             (
               results: google.maps.places.PlaceResult[] | null,
               searchStatus: google.maps.places.PlacesServiceStatus
             ) => {
               if (searchStatus === 'OK' && results) {
-                const defaultPlaces = results.map(p => formatPlaceResult(p)).filter((p): p is Place => p !== null);
-                setPlacesToShow(defaultPlaces);
-                setStatus(`${defaultPlaces.length} atracciones cercanas.`);
+                const defaultPlaces = results
+                  .map(p => formatPlaceResult(p))
+                  .filter((p): p is Place => p !== null);
+                setPlaces(defaultPlaces);
+                setStatus(`${defaultPlaces.length} lugares cercanos.`);
               } else {
-                setPlacesToShow([]);
-                setStatus('No se encontraron atracciones cercanas.');
+                setPlaces([]);
+                setStatus('No se encontraron lugares cercanos.');
               }
               setLoading(false);
             }
@@ -175,14 +195,13 @@ export const useFilteredPlaces = (searchQuery: string, activeCategories: string[
         }
       } catch (error) {
         setStatus('Ocurrió un error.');
-        console.error("Error en useFilteredPlaces:", error);
+        console.error("Error en usePlacesSimple:", error);
         setLoading(false);
       }
     };
 
     fetchAndFilter();
+  }, [activeCategories, searchQuery]);
 
-  }, [searchQuery, categoriesKey]); // El efecto se ejecuta si cambia el texto o las categorías
-
-  return { placesToShow, mapCenter, loading, status };
+  return { places, mapCenter, loading, status };
 };

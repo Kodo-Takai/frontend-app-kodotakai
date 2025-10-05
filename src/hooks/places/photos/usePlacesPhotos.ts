@@ -92,15 +92,53 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
 
     if (!enableMultiple) {
       // Procesamiento simple sin fotos múltiples
-      const simpleProcessed = placesToProcess.map(place => ({
-        name: place.name,
-        photo_url: place.photos?.[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) || 
-                  `https://picsum.photos/400/200?random=${place.name}`,
-        rating: place.rating,
-        vicinity: place.vicinity || place.formatted_address || "Ubicación no disponible",
-        place_id: place.place_id,
-        location: place.geometry?.location?.toJSON?.(),
-      }));
+      const simpleProcessed = placesToProcess.map(place => {
+        // Debug: Verificar estructura del lugar
+        console.log('Procesando lugar:', {
+          name: place.name,
+          geometry: place.geometry,
+          hasGeometry: !!place.geometry,
+          hasLocation: !!place.geometry?.location,
+          locationType: typeof place.geometry?.location,
+          locationMethods: place.geometry?.location ? Object.getOwnPropertyNames(place.geometry.location) : [],
+          locationKeys: place.geometry?.location ? Object.keys(place.geometry.location) : []
+        });
+        
+        // Extraer ubicación de manera más robusta
+        let location = null;
+        if (place.geometry?.location) {
+          if (typeof place.geometry.location.toJSON === 'function') {
+            location = place.geometry.location.toJSON();
+          } else if (typeof place.geometry.location.lat === 'function' && typeof place.geometry.location.lng === 'function') {
+            location = {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            };
+          } else if (place.geometry.location.lat && place.geometry.location.lng) {
+            location = {
+              lat: place.geometry.location.lat,
+              lng: place.geometry.location.lng
+            };
+          }
+        }
+        
+        console.log('Ubicación extraída:', {
+          name: place.name,
+          geometry: place.geometry,
+          location: location,
+          hasLocation: !!location
+        });
+        
+        return {
+          name: place.name,
+          photo_url: place.photos?.[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) || 
+                    `https://picsum.photos/400/200?random=${place.name}`,
+          rating: place.rating,
+          vicinity: place.vicinity || place.formatted_address || "Ubicación no disponible",
+          place_id: place.place_id,
+          location: location,
+        };
+      });
       setProcessedPlaces(simpleProcessed);
       return;
     }
