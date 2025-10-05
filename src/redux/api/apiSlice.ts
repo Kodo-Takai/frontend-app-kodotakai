@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 // Configuración base de la API
@@ -10,11 +10,11 @@ export const apiSlice = createApi({
       // Obtener token desde Redux store
       const state = getState() as RootState & { auth?: { token?: string } }
       const token = state.auth?.token
-      
+
       if (token) {
         headers.set('authorization', `Bearer ${token}`)
       }
-      
+
       headers.set('content-type', 'application/json')
       return headers
     },

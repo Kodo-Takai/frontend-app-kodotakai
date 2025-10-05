@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Explorar from "./pages/Explorar";
 import ForgotPassword from "./pages/ForgotPassword";
 import Notifications from "./pages/Notifications";
+import CustomProfile from "./pages/CustomProfile";
 // Import Hooks and Components
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
@@ -28,6 +29,7 @@ function AppContent() {
         <Route path="/home" element={<Home />} />
         <Route path="/explorar" element={<Explorar />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/custom-profile" element={<CustomProfile />} />
       </Routes>
     </>
   );
