@@ -12,20 +12,18 @@ export interface Place {
 
 type LatLng = { lat: number; lng: number };
 
-const FALLBACK_LOCATION: LatLng = { lat: -12.0464, lng: -77.0428 }; // Lima, Perú
+const FALLBACK_LOCATION: LatLng = { lat: -12.0464, lng: -77.0428 };
 const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
 
-// Configuración de búsqueda
-const SEARCH_RADII = [2000, 5000, 10000]; // Radios en metros
+const SEARCH_RADII = [2000, 10000, 15000]; // Radios en metros
 const MIN_RATING = 2.0;
 const MIN_REVIEWS = 3;
-
 
 // Loader de la API de Google Maps para evitar cargas múltiples
 let mapsApiLoaded: Promise<void> | null = null;
 export function loadGoogleMapsApi(): Promise<void> {
   if (mapsApiLoaded) return mapsApiLoaded;
-  
+
   mapsApiLoaded = new Promise((resolve, reject) => {
     // Verificar si la API ya está cargada y disponible
     if (window.google?.maps?.places?.PlacesService) {
@@ -56,13 +54,13 @@ export function loadGoogleMapsApi(): Promise<void> {
     script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&v=weekly`;
     script.async = true;
     script.defer = true;
-    
+
     script.onload = () => {
       console.log("Google Maps script loaded, checking API availability...");
       // Verificar que la API esté completamente cargada con más intentos
       let attempts = 0;
       const maxAttempts = 50; // 5 segundos máximo
-      
+
       const checkApiReady = () => {
         attempts++;
         if (window.google?.maps?.places?.PlacesService) {
@@ -71,21 +69,23 @@ export function loadGoogleMapsApi(): Promise<void> {
         } else if (attempts < maxAttempts) {
           setTimeout(checkApiReady, 100);
         } else {
-          console.error("Google Maps API failed to load after maximum attempts");
+          console.error(
+            "Google Maps API failed to load after maximum attempts"
+          );
           reject(new Error("Google Maps API failed to initialize"));
         }
       };
       checkApiReady();
     };
-    
+
     script.onerror = (err) => {
       console.error("Error loading Google Maps API script:", err);
       reject(new Error("Failed to load Google Maps API script"));
     };
-    
+
     document.head.appendChild(script);
   });
-  
+
   return mapsApiLoaded;
 }
 
@@ -99,17 +99,24 @@ const getUserLocation = (): Promise<LatLng> => {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        console.log("User location obtained:", { lat: pos.coords.latitude, lng: pos.coords.longitude });
+        console.log("User location obtained:", {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
         resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude });
       },
       (error) => {
-        console.warn("Geolocation error:", error.message, "Using fallback location");
+        console.warn(
+          "Geolocation error:",
+          error.message,
+          "Using fallback location"
+        );
         resolve(FALLBACK_LOCATION);
       },
       {
         enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 300000
+        maximumAge: 300000,
       }
     );
   });
@@ -166,10 +173,7 @@ const categoryMapping: Record<string, string> = {
 };
 
 // --- El Hook Principal Simplificado ---
-export const usePlaces = (
-  activeCategories: string,
-  searchQuery?: string
-) => {
+export const usePlaces = (activeCategories: string, searchQuery?: string) => {
   const [places, setPlaces] = useState<Place[]>([]);
   const [mapCenter, setMapCenter] = useState<LatLng>(FALLBACK_LOCATION);
   const [loading, setLoading] = useState(true);
@@ -183,14 +187,14 @@ export const usePlaces = (
       try {
         // Esperar a que Google Maps API esté completamente cargada
         await loadGoogleMapsApi();
-        
+
         // Verificar que la API esté disponible
         if (!window.google?.maps?.places?.PlacesService) {
           throw new Error("Google Maps Places API not available");
         }
-        
+
         setStatus("Inicializando búsqueda...");
-        
+
         // Se crea un PlacesService usando un div temporal que no se añade al DOM
         const service = new window.google.maps.places.PlacesService(
           document.createElement("div")

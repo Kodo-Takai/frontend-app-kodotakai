@@ -342,31 +342,31 @@ export default function HotelesPage() {
         {places.length > 0 && (
           <div className="w-full p-4 bg-green-50 border border-green-200 rounded-lg">
             <p className="text-green-600 text-sm font-semibold">
-              ✅ {places.length} hoteles cargados con datos detallados
+              {places.length} hoteles cargados con datos detallados
             </p>
             
             {/* Mostrar TODOS los destinos */}
-            <div className="mt-3 space-y-2 max-h-60 overflow-y-auto">
+            <div className="mt-3 space-y-2 max-h-80 overflow-y-auto">
               {places.map((place, index) => (
                 <div key={place.place_id || index} className="bg-white p-3 rounded border text-xs">
                   <div className="font-semibold text-gray-800 mb-1">
                     {index + 1}. {place.name}
                   </div>
                   <div className="space-y-1 text-gray-600">
-                    <p>📍 {place.formatted_address || place.vicinity || 'Dirección no disponible'}</p>
-                    <p>🌐 {place.website || 'Sitio web no disponible'}</p>
-                    <p>📞 {place.formatted_phone_number || 'Teléfono no disponible'}</p>
-                    <p>⭐ Rating: {place.rating || 'N/A'} ({place.reviews?.length || 0} reviews disponibles)</p>
+                    <p>Dirección: {place.formatted_address || place.vicinity || 'Dirección no disponible'}</p>
+                    <p>Sitio web: {place.website || 'Sitio web no disponible'}</p>
+                    <p>Teléfono: {place.formatted_phone_number || 'Teléfono no disponible'}</p>
+                    <p>Rating: {place.rating || 'N/A'} ({place.reviews?.length || 0} reviews disponibles)</p>
                     {place.editorial_summary?.overview && (
                       <div className="bg-blue-50 p-2 rounded border-l-2 border-blue-200">
-                        <p className="text-blue-800 font-medium text-xs mb-1">📝 Descripción:</p>
+                        <p className="text-blue-800 font-medium text-xs mb-1">Descripción:</p>
                         <p className="text-blue-700 text-xs leading-relaxed">
                           {place.editorial_summary.overview}
                         </p>
                       </div>
                     )}
                     {place.reviews && place.reviews.length > 0 && (
-                      <p>💬 {place.reviews.length} reviews disponibles</p>
+                      <p>Reviews: {place.reviews.length} disponibles</p>
                     )}
                     
                     {/* Información adicional */}
@@ -377,24 +377,24 @@ export default function HotelesPage() {
                         className="mb-2"
                       />
                       {(place as any).wheelchair_accessible && (
-                        <p>♿ Accesible en silla de ruedas</p>
+                        <p>Accesible en silla de ruedas</p>
                       )}
                       {(place as any).serves_wine && (
-                        <p>🍷 Sirve vino</p>
+                        <p>Sirve vino</p>
                       )}
                       {(place as any).serves_breakfast && (
-                        <p>🍳 Sirve desayuno</p>
+                        <p>Sirve desayuno</p>
                       )}
                       {(place as any).business_status && (
-                        <p>📊 Estado: {(place as any).business_status}</p>
+                        <p>Estado: {(place as any).business_status}</p>
                       )}
                       {place.is_open_now !== undefined && (
                         <p className={place.is_open_now ? "text-green-600" : "text-red-600"}>
-                          {place.is_open_now ? "🟢 Abierto ahora" : "🔴 Cerrado ahora"}
+                          {place.is_open_now ? "Abierto ahora" : "Cerrado ahora"}
                         </p>
                       )}
                       {(place as any).google_maps_url && (
-                        <p>🗺️ <a href={(place as any).google_maps_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        <p><a href={(place as any).google_maps_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                           Ver en Google Maps
                         </a></p>
                       )}

@@ -32,7 +32,15 @@ const Maps = () => {
 
   // --- Efectos ---
   useEffect(() => {
-    setIsApiReady(true);
+    const checkApiReady = () => {
+      if (window.google?.maps) {
+        setIsApiReady(true);
+      } else {
+        // Reintentar en 100ms
+        setTimeout(checkApiReady, 100);
+      }
+    };
+    checkApiReady();
   }, []);
 
   // Obtener ubicación del usuario
