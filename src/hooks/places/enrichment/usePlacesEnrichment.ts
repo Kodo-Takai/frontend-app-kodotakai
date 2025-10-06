@@ -1,180 +1,66 @@
 // src/hooks/places/enrichment/usePlacesEnrichment.ts
 import { useState, useCallback } from "react";
 import type { Place, EnrichedPlace, PlaceCategory } from "../types";
-import { EnrichmentConfigFactory, RATE_LIMIT_CONFIG, CACHE_CONFIG } from "./enrichmentConfigs";
+import { EnrichmentConfigFactory, CACHE_CONFIG } from "./enrichmentConfigs";
 
-// Helper function para determinar si un lugar está abierto
-const isPlaceOpen = (periods: Array<{open: {day: number; time: string}; close: {day: number; time: string}}>): boolean => {
-  const now = new Date();
-  const currentDay = now.getDay(); // 0 = Domingo, 1 = Lunes, etc.
-  const currentTime = now.getHours() * 100 + now.getMinutes(); // HHMM format
-  
-  for (const period of periods) {
-    if (period.open.day === currentDay) {
-      const openTime = parseInt(period.open.time);
-      const closeTime = parseInt(period.close.time);
-      
-      // Si cierra después de medianoche (ej: 23:00 - 02:00)
-      if (closeTime < openTime) {
-        return currentTime >= openTime || currentTime <= closeTime;
-      } else {
-        return currentTime >= openTime && currentTime <= closeTime;
-      }
-    }
-  }
-  
-  return false; // No hay horarios para hoy
-};
 
-// Helper function para inferir precios basado en múltiples factores
-const inferPriceFromData = (place: Place, googleData: any): number | null => {
+// Helper function simplificada para inferir precios
+const inferPriceFromData = (place: Place): number | null => {
   const name = place.name.toLowerCase();
-  const types = googleData.types || [];
   const rating = place.rating || 0;
-  const userRatingsTotal = googleData.user_ratings_total || 0;
   
-  console.log("Inferencia de precio:", { name, types, rating, userRatingsTotal });
-  
-  // Factores para inferir precio
-  const factors = {
-    // Nombres que sugieren lujo
-    luxury: ['lujo', 'luxury', 'premium', 'boutique', 'resort', 'spa', 'grand', 'palace', 'royal'],
-    // Nombres que sugieren económico
-    budget: ['hostal', 'hostel', 'pensión', 'pension', 'económico', 'budget', 'simple', 'básico'],
-    // Nombres que sugieren moderado
-    midRange: ['hotel', 'inn', 'suites', 'plaza', 'center', 'central'],
-    // Tipos de Google que sugieren lujo
-    luxuryTypes: ['lodging', 'spa', 'resort'],
-    // Tipos que sugieren económico
-    budgetTypes: ['lodging']
-  };
-  
-  let score = 0;
-  let confidence = 0;
-  
-  // Análisis del nombre
-  if (factors.luxury.some(keyword => name.includes(keyword))) {
-    score += 3;
-    confidence += 0.8;
-  } else if (factors.budget.some(keyword => name.includes(keyword))) {
-    score += 1;
-    confidence += 0.7;
-  } else if (factors.midRange.some(keyword => name.includes(keyword))) {
-    score += 2;
-    confidence += 0.6;
+  // Lógica simple basada en rating y palabras clave
+  if (rating >= 4.5 || name.includes('lujo') || name.includes('luxury') || name.includes('resort')) {
+    return 4; // Lujo
+  } else if (rating >= 4.0 || name.includes('hotel')) {
+    return 3; // Caro
+  } else if (rating >= 3.5) {
+    return 2; // Moderado
+  } else if (name.includes('hostal') || name.includes('hostel')) {
+    return 1; // Económico
   }
   
-  // Análisis del rating
-  if (rating >= 4.5) {
-    score += 1;
-    confidence += 0.3;
-  } else if (rating <= 3.0) {
-    score -= 1;
-    confidence += 0.2;
-  }
-  
-  // Análisis de reviews (más reviews = más establecido)
-  if (userRatingsTotal > 100) {
-    score += 0.5;
-    confidence += 0.2;
-  }
-  
-  // Análisis de tipos de Google
-  if (types.includes('lodging')) {
-    if (name.includes('resort') || name.includes('spa')) {
-      score += 2;
-      confidence += 0.4;
-    }
-  }
-  
-  // Determinar nivel de precio basado en score
-  let inferredLevel = null;
-  if (confidence >= 0.5) {
-    if (score >= 3) inferredLevel = 4; // Lujo
-    else if (score >= 2) inferredLevel = 3; // Caro
-    else if (score >= 1) inferredLevel = 2; // Moderado
-    else if (score >= 0) inferredLevel = 1; // Económico
-    else inferredLevel = 1; // Por defecto económico
-  }
-  
-  console.log("Inferencia completada:", { score, confidence, inferredLevel });
-  return inferredLevel;
+  return null; // No se puede inferir
 };
 
-// Helper function para interpretar niveles de precios
-const getPriceInfo = (priceLevel: number | undefined, category: string, place?: Place, googleData?: any) => {
-  console.log("Procesando precio:", { priceLevel, category });
-  
+// Helper function simplificada para interpretar niveles de precios
+const getPriceInfo = (priceLevel: number | undefined, place?: Place) => {
   // Si no hay precio de Google, intentar inferir
   if (priceLevel === undefined || priceLevel === null) {
-    if (place && googleData && category === "hotels") {
-      const inferredLevel = inferPriceFromData(place, googleData);
+    if (place) {
+      const inferredLevel = inferPriceFromData(place);
       if (inferredLevel !== null) {
-        console.log("Precio inferido:", inferredLevel);
-        // Usar el precio inferido
         priceLevel = inferredLevel;
       }
     }
     
-    // Si aún no hay precio, mostrar mensaje apropiado
+    // Si aún no hay precio, mostrar mensaje genérico
     if (priceLevel === undefined || priceLevel === null) {
-      if (category === "hotels") {
-        return {
-          level: null,
-          description: "Precio no especificado",
-          symbol: "🏨",
-          color: "text-blue-500"
-        };
-      }
-      
       return {
         level: null,
         description: "Precio no disponible",
-        symbol: "❓",
+        symbol: "",
         color: "text-gray-500"
       };
     }
   }
 
-  const priceInfo = {
-    0: { description: "Gratis", symbol: "🆓", color: "text-green-600" },
-    1: { description: "Económico", symbol: "💰", color: "text-green-500" },
-    2: { description: "Moderado", symbol: "💵", color: "text-yellow-500" },
-    3: { description: "Caro", symbol: "💸", color: "text-orange-500" },
-    4: { description: "Muy caro", symbol: "💎", color: "text-red-500" }
+  // Configuración simple de precios
+  const priceConfig = {
+    0: { description: "Gratis", color: "text-green-600" },
+    1: { description: "Económico", color: "text-green-500" },
+    2: { description: "Moderado", color: "text-yellow-500" },
+    3: { description: "Caro", color: "text-orange-500" },
+    4: { description: "Lujo", color: "text-red-500" }
   };
 
-  const info = priceInfo[priceLevel as keyof typeof priceInfo];
-  
-  // Ajustar descripción según categoría
-  let categorySpecificDescription = info.description;
-  if (category === "hotels") {
-    const hotelDescriptions = {
-      0: "Gratis",
-      1: "Económico ($)",
-      2: "Moderado ($$)",
-      3: "Caro ($$$)",
-      4: "Lujo ($$$$)"
-    };
-    categorySpecificDescription = hotelDescriptions[priceLevel as keyof typeof hotelDescriptions];
-  } else if (category === "restaurants") {
-    const restaurantDescriptions = {
-      0: "Gratis",
-      1: "Económico ($)",
-      2: "Moderado ($$)",
-      3: "Caro ($$$)",
-      4: "Gourmet ($$$$)"
-    };
-    categorySpecificDescription = restaurantDescriptions[priceLevel as keyof typeof restaurantDescriptions];
-  }
-
-  // Determinar si el precio fue inferido
-  const isInferred = place && googleData && (googleData as any).price_level === undefined;
+  const info = priceConfig[priceLevel as keyof typeof priceConfig];
+  const isInferred = place && priceLevel !== undefined;
 
   return {
     level: priceLevel,
-    description: categorySpecificDescription,
-    symbol: info.symbol,
+    description: info.description,
+    symbol: "",
     color: info.color,
     isInferred
   };
@@ -265,7 +151,7 @@ export function usePlacesEnrichment() {
       });
 
       // Procesar datos enriquecidos
-      const enrichedPlace = processEnrichedData(enrichedData, place, category);
+      const enrichedPlace = processEnrichedData(enrichedData, place);
 
       // Guardar en cache
       if (CACHE_CONFIG.enabled) {
@@ -290,39 +176,29 @@ export function usePlacesEnrichment() {
     }
   }, []);
 
-  // Función para enriquecer múltiples lugares
+  // Función simplificada para enriquecer múltiples lugares
   const enrichPlaces = useCallback(async (
     places: Place[],
     category: PlaceCategory = "hotels"
   ): Promise<EnrichedPlace[]> => {
+    if (!places.length) return [];
+
     setLoading(true);
     setError(null);
 
     try {
       const enrichedPlaces: EnrichedPlace[] = [];
       
-      // Procesar lugares en lotes para respetar rate limits
-      const batchSize = Math.floor(RATE_LIMIT_CONFIG.maxRequestsPerSecond);
-      const batches = [];
-      
-      for (let i = 0; i < places.length; i += batchSize) {
-        batches.push(places.slice(i, i + batchSize));
-      }
-
-      // Procesar cada lote con delay
-      for (const batch of batches) {
-        const batchPromises = batch.map(place => enrichPlace(place, category));
-        const batchResults = await Promise.allSettled(batchPromises);
-        
-        batchResults.forEach((result) => {
-          if (result.status === 'fulfilled' && result.value) {
-            enrichedPlaces.push(result.value);
+      // Procesar todos los lugares secuencialmente
+      for (const place of places) {
+        try {
+          const enriched = await enrichPlace(place, category);
+          if (enriched) {
+            enrichedPlaces.push(enriched);
           }
-        });
-
-        // Delay entre lotes para respetar rate limits
-        if (batches.indexOf(batch) < batches.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_CONFIG.retryDelay));
+        } catch (err) {
+          console.warn(`Error enriching place ${place.name}:`, err);
+          // Continuar con el siguiente lugar
         }
       }
 
@@ -340,8 +216,7 @@ export function usePlacesEnrichment() {
   // Función para procesar datos enriquecidos de Google Places
   const processEnrichedData = useCallback((
     googleData: google.maps.places.PlaceResult,
-    originalPlace: Place,
-    category: PlaceCategory = "hotels"
+    originalPlace: Place
   ): EnrichedPlace => {
     const enriched: EnrichedPlace = {
       ...originalPlace,
@@ -349,6 +224,7 @@ export function usePlacesEnrichment() {
       website: googleData.website,
       formatted_phone_number: googleData.formatted_phone_number,
       international_phone_number: googleData.international_phone_number,
+
       // Procesar fotos si están disponibles
       photo_url: googleData.photos?.[0]?.getUrl() || originalPlace.photo_url,
       photos: googleData.photos || originalPlace.photos,
@@ -363,7 +239,7 @@ export function usePlacesEnrichment() {
         relative_time_description: review.relative_time_description || ""
       })) || [],
       opening_hours_detailed: googleData.opening_hours ? {
-        // open_now removido por deprecación - usar isOpen() method en su lugar
+
         periods: (googleData.opening_hours.periods || []).map(period => ({
           open: {
             day: period.open?.day || 0,
@@ -379,12 +255,23 @@ export function usePlacesEnrichment() {
         }>,
         weekday_text: googleData.opening_hours.weekday_text || []
       } : undefined,
-      // Estado de apertura calculado sin usar campo deprecado
-      is_open_now: googleData.opening_hours ? 
-        isPlaceOpen((googleData.opening_hours.periods || []).map(period => ({
-          open: { day: period.open?.day || 0, time: period.open?.time || "0000" },
-          close: { day: period.close?.day || 0, time: period.close?.time || "0000" }
-        })).filter(period => period.close)) : undefined,
+      // Estado de apertura usando el método oficial de Google Maps
+      is_open_now: (() => {
+        const openingHours = googleData.opening_hours;
+        if (!openingHours) return undefined;
+        
+        // Intentar usar el método oficial isOpen()
+        if (openingHours.isOpen && typeof openingHours.isOpen === 'function') {
+          try {
+            return openingHours.isOpen();
+          } catch (error) {
+            console.warn(`Error al llamar isOpen():`, error);
+          }
+        }
+        
+        // Fallback al campo open_now si isOpen() no está disponible
+        return openingHours.open_now;
+      })(),
       contact_info: {
         website: googleData.website,
         phone: googleData.formatted_phone_number,
@@ -398,8 +285,9 @@ export function usePlacesEnrichment() {
       serves_breakfast: (googleData as any).serves_breakfast,
       business_status: (googleData as any).business_status,
       price_level: (googleData as any).price_level,
+
       // Información de precios procesada
-      price_info: getPriceInfo((googleData as any).price_level, category, originalPlace, googleData)
+      price_info: getPriceInfo((googleData as any).price_level, originalPlace)
     };
 
     return enriched;

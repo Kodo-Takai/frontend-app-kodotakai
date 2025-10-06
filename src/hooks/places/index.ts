@@ -27,3 +27,6 @@ export { usePlaces } from "./usePlaces";
 
 // Hook genérico para todas las categorías con filtros
 export { usePlacesWithFilters } from "./usePlacesWithFilters";
+
+// Hook para destinos mejor valorados
+export { useTopRatedPlaces } from "./topRated/useTopRatedPlaces";

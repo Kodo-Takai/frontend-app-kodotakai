@@ -1,6 +1,6 @@
 // src/hooks/places/filters/useIntelligentFilters.ts
 import { useState, useCallback, useMemo } from "react";
-import type { EnrichedPlace, AIAnalysis } from "../types";
+import type { EnrichedPlace } from "../types";
 
 // Interface para configuración de filtros
 export interface FilterConfig {
@@ -178,17 +178,17 @@ export function useIntelligentFilters(config: Partial<FilterConfig> = {}) {
     let filteredPlaces = [...places];
     
     // Filtrar por rating mínimo
-    if (criteria.minRating) {
+    if (criteria.minRating !== undefined) {
       filteredPlaces = filteredPlaces.filter(place => 
-        place.rating && place.rating >= criteria.minRating
+        place.rating && place.rating >= criteria.minRating!
       );
     }
     
     // Filtrar por confianza mínima
-    if (criteria.minConfidence) {
+    if (criteria.minConfidence !== undefined) {
       filteredPlaces = filteredPlaces.filter(place => 
         place.ai_analysis?.overall_confidence && 
-        place.ai_analysis.overall_confidence >= criteria.minConfidence
+        place.ai_analysis.overall_confidence >= criteria.minConfidence!
       );
     }
     

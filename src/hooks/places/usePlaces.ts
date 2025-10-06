@@ -90,20 +90,35 @@ export function loadGoogleMapsApi(): Promise<void> {
 }
 
 // Obtiene la geolocalización del usuario con un fallback
-const getUserLocation = (): Promise<LatLng> => {
-  return new Promise((resolve) => {
-    if (!navigator.geolocation) {
-      console.log("Geolocation not available, using fallback location");
-      return resolve(FALLBACK_LOCATION);
-    }
+  // Cache para evitar múltiples llamadas de geolocalización
+  let locationCache: { location: LatLng; timestamp: number } | null = null;
+  const CACHE_DURATION = 30000; // 30 segundos
+
+  const getUserLocation = (): Promise<LatLng> => {
+    return new Promise((resolve) => {
+      // Verificar cache
+      if (locationCache && (Date.now() - locationCache.timestamp) < CACHE_DURATION) {
+        resolve(locationCache.location);
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        console.log("Geolocation not available, using fallback location");
+        return resolve(FALLBACK_LOCATION);
+      }
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        console.log("User location obtained:", {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-        resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        const location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        
+        // Actualizar cache
+        locationCache = { location, timestamp: Date.now() };
+        
+        // Solo log en desarrollo
+        if (process.env.NODE_ENV === 'development') {
+          console.log("User location obtained:", location);
+        }
+        resolve(location);
       },
       (error) => {
         console.warn(

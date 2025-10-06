@@ -196,19 +196,20 @@ function getHotelPlacesByFilter(places: EnrichedPlace[], filter: string): Enrich
     const lowerVicinity = place.vicinity?.toLowerCase() || "";
     
     switch (filter) {
-      case "petfriendly":
-        return lowerName.includes("pet") || lowerName.includes("mascota") || 
-               lowerVicinity.includes("pet") || lowerVicinity.includes("mascota");
-      case "lujo":
-        return place.rating && place.rating >= 4.5;
-      case "economic":
-        return place.rating && place.rating <= 3.5;
-      case "playa":
-        return lowerName.includes("playa") || lowerName.includes("beach") || 
-               lowerVicinity.includes("playa") || lowerVicinity.includes("beach");
-      case "piscina":
-        return lowerName.includes("piscina") || lowerName.includes("pool") || 
-               lowerVicinity.includes("piscina") || lowerVicinity.includes("pool");
+      case "spa":
+        return lowerName.includes("spa") || lowerName.includes("sauna") || 
+               lowerVicinity.includes("spa") || lowerVicinity.includes("sauna");
+      case "sauna":
+        return lowerName.includes("sauna") || lowerVicinity.includes("sauna");
+      case "cocina":
+        return lowerName.includes("cocina") || lowerName.includes("kitchen") || 
+               lowerVicinity.includes("cocina") || lowerVicinity.includes("kitchen");
+      case "gym":
+        return lowerName.includes("gym") || lowerName.includes("gimnasio") || 
+               lowerVicinity.includes("gym") || lowerVicinity.includes("gimnasio");
+      case "rest":
+        return lowerName.includes("restaurante") || lowerName.includes("restaurant") || 
+               lowerVicinity.includes("restaurante") || lowerVicinity.includes("restaurant");
       default:
         return true;
     }
