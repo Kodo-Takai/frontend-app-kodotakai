@@ -4,8 +4,15 @@ import { RiWheelchairLine } from "react-icons/ri";
 import { BiSolidWine } from "react-icons/bi";
 import { MdOutlineFreeBreakfast } from "react-icons/md";
 import { useHotelsTopRated } from "../../../hooks/places";
-import type { Place } from "../../../hooks/places";
+import type { Place, EnrichedPlace } from "../../../hooks/places";
 import "./index.scss";
+
+// Interface para props del componente
+interface HotelsCardProps {
+  places?: EnrichedPlace[];
+  loading?: boolean;
+  error?: string | null;
+}
 
 // Componente HotelCard extraído para evitar recreación
 const HotelCard = ({ hotel }: { hotel: Place }) => {
@@ -19,11 +26,12 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
           src={
             imageError
               ? "https://picsum.photos/400/200?random=hotel-error"
-              : hotel.photo_url
+              : hotel.photo_url || "https://picsum.photos/400/200?random=hotel-default"
           }
           alt={hotel.name}
           className="w-full h-full rounded-2xl object-cover"
           onError={handleImageError}
+          onLoad={() => console.log("Imagen cargada:", hotel.name, hotel.photo_url)}
         />
 
         <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black to-transparent rounded-b-2xl" />
@@ -60,9 +68,9 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
 
         <div className="absolute bottom-3 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
             <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
-              {hotel.opening_hours?.open_now === true
+              {(hotel as any).is_open_now === true
                 ? "Abierto ahora"
-                : hotel.opening_hours?.open_now === false
+                : (hotel as any).is_open_now === false
                 ? "Cerrado"
                 : "Consulta aquí"}
             </span>
@@ -82,12 +90,17 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
   );
 };
 
-export default function HotelCards() {
-  const { places, loading } = useHotelsTopRated({ 
+export default function HotelCards({ places: propPlaces, loading: propLoading, error: propError }: HotelsCardProps = {}) {
+  // Usar hook interno como fallback si no se proporcionan props
+  const { places: hookPlaces, loading: hookLoading } = useHotelsTopRated({ 
     radius: 30000,
     limit: 6
   });
-  const displayedHotels = places;
+  
+  // Usar props si están disponibles, sino usar hook interno
+  const displayedHotels = propPlaces || hookPlaces;
+  const loading = propLoading !== undefined ? propLoading : hookLoading;
+  const error = propError;
 
   if (loading) {
     return (
@@ -103,6 +116,19 @@ export default function HotelCards() {
             </div>
           </div>
         ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center mx-6">
+        <h3 className="text-lg font-semibold text-red-900 mb-2">
+          Error al cargar hoteles
+        </h3>
+        <p className="text-red-600 text-sm">
+          {error}
+        </p>
       </div>
     );
   }

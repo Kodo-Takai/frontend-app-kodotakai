@@ -3,7 +3,7 @@ import { useState } from "react";
 import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
-import { useHotelsTopRated } from "../../../hooks/places";
+import { useDestinations } from "../../../hooks/places";
 import "./index.scss";
 
 interface Place {
@@ -16,7 +16,7 @@ interface Place {
 }
 
 export default function DestinationCards() {
-  const { places, loading } = useHotelsTopRated({
+  const { places, loading } = useDestinations({
     limit: 6,
     searchMethod: "both",
     enableMultiplePhotos: true,
@@ -33,6 +33,13 @@ export default function DestinationCards() {
   // Componente interno para cada card
   const DestinationCard = ({ place }: { place: Place }) => {
     const [imageError, setImageError] = useState(false);
+
+    // Debug: Log de fotos disponibles
+    console.log("DestinationCard - Fotos disponibles:", {
+      name: place.name,
+      photo_url: place.photo_url,
+      hasPhoto: !!place.photo_url
+    });
 
     const handleImageError = () => {
       setImageError(true);
@@ -76,7 +83,7 @@ export default function DestinationCards() {
             src={
               imageError
                 ? "https://picsum.photos/280/288?random=destination-error"
-                : place.photo_url
+                : place.photo_url || "https://picsum.photos/280/288?random=destination-default"
             }
             alt={place.name}
             className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"

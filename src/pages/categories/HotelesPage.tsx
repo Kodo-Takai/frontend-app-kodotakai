@@ -5,12 +5,58 @@ import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 import BadgeWithIcon from "../../components/ui/badgeWithIcon";
+import { usePlacesWithIA } from "../../hooks/places";
+import PriceDisplay from "../../components/ui/priceDisplay";
 
 export default function HotelesPage() {
   const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
   const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const animationClass = useNavigationAnimation();
+
+  // Hook con datos detallados SIN IA
+  const { places, loading, error } = usePlacesWithIA({
+    category: "hotels",
+    searchQuery: searchQuery,
+    enableEnrichment: true,  // ← ACTIVAR para datos detallados
+    enableAI: false,         // ← Mantener false hasta que IA esté lista
+    requestedFilters: selectedBadge ? [selectedBadge] : []
+  });
+
+  // Funciones básicas de filtrado
+  const getPlacesByFilter = (filter: string) => {
+    if (filter === "todo" || !filter) return places;
+    
+    // Filtros básicos sin IA
+    return places.filter(place => {
+      const lowerName = place.name.toLowerCase();
+      const lowerVicinity = place.vicinity?.toLowerCase() || "";
+      
+      switch (filter) {
+        case "petfriendly":
+          return lowerName.includes("pet") || lowerName.includes("mascota") || 
+                 lowerVicinity.includes("pet") || lowerVicinity.includes("mascota");
+        case "lujo":
+          return place.rating && place.rating >= 4.5;
+        case "economic":
+          return place.rating && place.rating <= 3.5;
+        case "playa":
+          return lowerName.includes("playa") || lowerName.includes("beach") || 
+                 lowerVicinity.includes("playa") || lowerVicinity.includes("beach");
+        case "piscina":
+          return lowerName.includes("piscina") || lowerName.includes("pool") || 
+                 lowerVicinity.includes("piscina") || lowerVicinity.includes("pool");
+        default:
+          return true;
+      }
+    });
+  };
+
+  // Variables para compatibilidad futura con IA
+  // const getFilterStatistics = () => ({});
+  // const activeFilters = selectedBadge ? [selectedBadge] : [];
+  // const updateActiveFilters = () => {};
 
   const carouselData = [
     {
@@ -34,12 +80,12 @@ export default function HotelesPage() {
   ];
 
   const handleSearch = (query: string) => {
-    console.log("Buscando:", query);
+    setSearchQuery(query);
   };
 
   const handleBadgeClick = (badgeId: string) => {
-    setSelectedBadge(selectedBadge === badgeId ? null : badgeId);
-    console.log("Badge seleccionado:", badgeId);
+    const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
+    setSelectedBadge(newSelectedBadge);
   };
 
   useEffect(() => {
@@ -128,7 +174,7 @@ export default function HotelesPage() {
 
         <Search
           onSearch={handleSearch}
-          placeholder="Buscar playas cerca de ti..."
+          placeholder="Buscar hoteles cerca de ti..."
         />
 
         <div className="w-full mb-3">
@@ -273,18 +319,92 @@ export default function HotelesPage() {
           </div>
         </div>
 
-        <HotelsCard />
+        <HotelsCard 
+          places={selectedBadge && selectedBadge !== "todo" ? getPlacesByFilter(selectedBadge) : places}
+          loading={loading}
+          error={error}
+        />
 
-        {/* Agregar más tarjetas de hoteles */}
-
-        <div className=" flex gap-5 justify-between">
-          <div className="w-full h-70 rounded-2xl mt-2 bg-amber-600 relative overflow-hidden mb-1">
-            card1
+        {/* Mostrar estadísticas de filtros si hay error o loading */}
+        {error && (
+          <div className="w-full p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm">Error: {error}</p>
           </div>
-          <div className="w-full h-70 rounded-2xl mt-2 bg-amber-600 relative overflow-hidden mb-1">
-            card2
+        )}
+        
+        {loading && (
+          <div className="w-full p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-blue-600 text-sm">Cargando hoteles con datos detallados...</p>
           </div>
-        </div>
+        )}
+        
+        {/* Debug: Mostrar datos detallados de TODOS los destinos */}
+        {places.length > 0 && (
+          <div className="w-full p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-600 text-sm font-semibold">
+              ✅ {places.length} hoteles cargados con datos detallados
+            </p>
+            
+            {/* Mostrar TODOS los destinos */}
+            <div className="mt-3 space-y-2 max-h-60 overflow-y-auto">
+              {places.map((place, index) => (
+                <div key={place.place_id || index} className="bg-white p-3 rounded border text-xs">
+                  <div className="font-semibold text-gray-800 mb-1">
+                    {index + 1}. {place.name}
+                  </div>
+                  <div className="space-y-1 text-gray-600">
+                    <p>📍 {place.formatted_address || place.vicinity || 'Dirección no disponible'}</p>
+                    <p>🌐 {place.website || 'Sitio web no disponible'}</p>
+                    <p>📞 {place.formatted_phone_number || 'Teléfono no disponible'}</p>
+                    <p>⭐ Rating: {place.rating || 'N/A'} ({place.reviews?.length || 0} reviews disponibles)</p>
+                    {place.editorial_summary?.overview && (
+                      <div className="bg-blue-50 p-2 rounded border-l-2 border-blue-200">
+                        <p className="text-blue-800 font-medium text-xs mb-1">📝 Descripción:</p>
+                        <p className="text-blue-700 text-xs leading-relaxed">
+                          {place.editorial_summary.overview}
+                        </p>
+                      </div>
+                    )}
+                    {place.reviews && place.reviews.length > 0 && (
+                      <p>💬 {place.reviews.length} reviews disponibles</p>
+                    )}
+                    
+                    {/* Información adicional */}
+                    <div className="mt-2 space-y-1">
+                      <PriceDisplay 
+                        priceInfo={place.price_info} 
+                        category="hotels" 
+                        className="mb-2"
+                      />
+                      {(place as any).wheelchair_accessible && (
+                        <p>♿ Accesible en silla de ruedas</p>
+                      )}
+                      {(place as any).serves_wine && (
+                        <p>🍷 Sirve vino</p>
+                      )}
+                      {(place as any).serves_breakfast && (
+                        <p>🍳 Sirve desayuno</p>
+                      )}
+                      {(place as any).business_status && (
+                        <p>📊 Estado: {(place as any).business_status}</p>
+                      )}
+                      {place.is_open_now !== undefined && (
+                        <p className={place.is_open_now ? "text-green-600" : "text-red-600"}>
+                          {place.is_open_now ? "🟢 Abierto ahora" : "🔴 Cerrado ahora"}
+                        </p>
+                      )}
+                      {(place as any).google_maps_url && (
+                        <p>🗺️ <a href={(place as any).google_maps_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          Ver en Google Maps
+                        </a></p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
