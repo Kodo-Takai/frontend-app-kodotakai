@@ -22,8 +22,9 @@ import ParquesPage from "./pages/categories/ParquesPage";
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import MainLayout from "./components/layout/mainLayout";
-import AuthLayout from "./components/layout/AuthLayout";
+import AuthLayout from "./components/layout/authLayout";
 import ProtectedRoute from "./components/layout/protectedRoute";
+import CustomProfile from "./pages/CustomProfile";
 
 function AppContent() {
   const isLoading = useSplashScreen();
@@ -51,6 +52,7 @@ function AppContent() {
             <Route path="/explorar/estudiar" element={<EstudiarPage />} />
             <Route path="/explorar/parques" element={<ParquesPage />} />
             <Route path="/maps" element={<Maps />} />
+            <Route path="/custom-profile" element={<CustomProfile />} />
           </Route>
         </Route>
       </Routes>

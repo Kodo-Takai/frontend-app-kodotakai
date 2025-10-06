@@ -1,12 +1,12 @@
 import { apiSlice } from "./apiSlice";
-interface User { 
-id: string | number;
-username?: string; 
-email?: string;
-password?: string;
-status?: boolean;
-createdAt?: string;
- updatedAt?: string;
+interface User {
+  id: string | number;
+  username?: string;
+  email?: string;
+  password?: string;
+  status?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 interface LoginRequest {
   username: string;
@@ -23,10 +23,13 @@ interface RegisterRequest {
 
 // Estructura real que devuelve tu backend para LOGIN
 interface LoginResponse {
-  user: User;
+  status_code: number;
   message: string;
-  access_token: string;
-  refresh_token: string;
+  data: {
+    message: string;
+    access_token: string;
+    refresh_token: string;
+  };
 }
 
 // Estructura real que devuelve tu backend para REGISTER

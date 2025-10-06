@@ -54,8 +54,9 @@ export const useAuth = () => {
       };
 
       const result = await loginMutation(loginRequest).unwrap();
-      const userToken = result?.access_token;
-      const apiUser = result?.user || {};
+
+      // Corregir: acceder a los datos dentro de result.data
+      const userToken = result?.data?.access_token;
 
       if (!userToken) {
         return {
@@ -64,16 +65,14 @@ export const useAuth = () => {
         };
       }
 
+      // Como no hay información del usuario en la respuesta, crear un objeto básico
       const userData = {
-        id: apiUser.id || "default-id",
-        userName: apiUser.username,
-        password: apiUser.password,
-        status:
-          typeof apiUser.status === "boolean"
-            ? apiUser.status
-            : apiUser.status === "active",
-        createdAt: apiUser.createdAt ?? "",
-        updatedAt: apiUser.updatedAt ?? "",
+        id: loginData.username, // Usar el username como ID temporal
+        userName: loginData.username,
+        password: "", // No guardar la contraseña
+        status: true, // Asumir activo si el login fue exitoso
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       // Guardar credenciales en Redux
@@ -100,6 +99,7 @@ export const useAuth = () => {
 
       return { success: true, data: result };
     } catch (error: any) {
+      console.error('Login error:', error);
       return {
         success: false,
         error: error.data?.message || "Error al iniciar sesión",
