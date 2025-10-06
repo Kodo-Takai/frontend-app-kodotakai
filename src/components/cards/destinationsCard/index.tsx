@@ -4,15 +4,23 @@ import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { useHotelsTopRated } from "../../../hooks/places";
+import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
-interface Place {
+interface DestinationCardsProps {
   name: string;
   rating?: number;
   vicinity?: string;
   place_id: string;
   photo_url: string;
   location?: { lat: number; lng: number };
+  formatted_address?: string;
+  formatted_phone_number?: string;
+  website?: string;
+  opening_hours?: {
+    open_now?: boolean;
+    weekday_text?: string[];
+  };
 }
 
 export default function DestinationCards() {
@@ -22,16 +30,34 @@ export default function DestinationCards() {
     enableMultiplePhotos: true,
   });
 
-  const handleVisit = (place: Place) => {
-    console.log("Visitando:", place.name);
+  const [selectedPlace, setSelectedPlace] = useState<DestinationCardsProps | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleVisit = (place: DestinationCardsProps) => {
+    setSelectedPlace(place);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedPlace(null), 300); // Delay para animación
+  };
+
+  const handleVisitFromModal = (place: DestinationCardsProps) => {
+    console.log("Navegando a:", place.name);
     // Aquí puedes agregar lógica de navegación
+    // Por ejemplo, abrir Google Maps o navegar a una página de detalles
+    if (place.location) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${place.location.lat},${place.location.lng}&destination_place_id=${place.place_id}`;
+      window.open(url, "_blank");
+    }
   };
 
   // Limitar a máximo 6 lugares
   const displayedPlaces = places.slice(0, 6);
 
   // Componente interno para cada card
-  const DestinationCard = ({ place }: { place: Place }) => {
+  const DestinationCard = ({ place }: { place: DestinationCardsProps }) => {
     const [imageError, setImageError] = useState(false);
 
     const handleImageError = () => {
@@ -175,11 +201,21 @@ export default function DestinationCards() {
   };
 
   return (
-    <div className="w-full ">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 ">
-        Lugares que debes visitar
-      </h2>
-      {renderContent()}
-    </div>
+    <>
+      <div className="w-full ">
+        <h2 className="text-xl font-bold text-gray-900 mb-4 ">
+          Lugares que debes visitar
+        </h2>
+        {renderContent()}
+      </div>
+
+      {/* Modal reutilizable */}
+      <PlaceModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        place={selectedPlace}
+        onVisit={handleVisitFromModal}
+      />
+    </>
   );
 }
