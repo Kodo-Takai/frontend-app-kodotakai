@@ -3,47 +3,32 @@ import { useState } from "react";
 import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
-import { useDestinations } from "../../../hooks/places";
+import { usePlacesWithIA } from "../../../hooks/places";
 import type { EnrichedPlace } from "../../../hooks/places/types";
 import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
 export default function DestinationCards() {
-  const { places, loading } = useDestinations({
-    limit: 6,
-    searchMethod: "both",
-    enableMultiplePhotos: true,
+  const { places, loading } = usePlacesWithIA({
+    category: "destinations",
+    requestedFilters: [],
+    enableEnrichment: true,
+    enableAI: false,
+    maxPlaces: 20,
   });
 
   const [selectedPlace, setSelectedPlace] = useState<EnrichedPlace | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleVisit = async (place: EnrichedPlace) => {
-    try {
-      // Simular una llamada para obtener datos adicionales del lugar
-      const enrichedPlace = await fetch(`/api/places/${place.place_id}`).then((res) => res.json());
-      setSelectedPlace(enrichedPlace);
-      setIsModalOpen(true);
-    } catch (error) {
-      console.error("Error al cargar datos del lugar:", error);
-      setSelectedPlace(place); // Fallback a los datos básicos
-      setIsModalOpen(true);
-    }
+  const handleVisit = (place: EnrichedPlace) => {
+    // Los datos ya vienen enriquecidos del hook usePlacesWithIA
+    setSelectedPlace(place);
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setTimeout(() => setSelectedPlace(null), 300); // Delay para animación
-  };
-
-  const handleVisitFromModal = (place: EnrichedPlace) => {
-    console.log("Navegando a:", place.name);
-    // Abrir Google Maps con direcciones
-    if (place.location) {
-      const url = place.google_maps_url || 
-        `https://www.google.com/maps/dir/?api=1&destination=${place.location.lat},${place.location.lng}&destination_place_id=${place.place_id}`;
-      window.open(url, "_blank");
-    }
   };
 
   // Limitar a máximo 6 lugares
@@ -233,7 +218,6 @@ export default function DestinationCards() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         place={selectedPlace}
-        onVisit={handleVisitFromModal}
       />
     </>
   );

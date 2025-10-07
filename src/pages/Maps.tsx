@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Search from "../components/ui/search/search";
 import CategoryFilter from "../components/ui/categoryFilter";
 import WeatherPill from "../components/cards/weatherCard";
@@ -9,12 +10,17 @@ import { MapDisplay } from "../components/cards/mapDisplay";
 import { usePlaces } from "../hooks/places";
 
 const Maps = () => {
+  // --- Obtener datos del lugar seleccionado desde la navegación ---
+  const location = useLocation();
+  const selectedPlaceData = location.state?.selectedPlace;
+  const initialSearchQuery = location.state?.searchQuery || '';
+  
   // --- Estados ---
   const [isApiReady, setIsApiReady] = useState(false);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   
   // Estados para la lógica de búsqueda y filtros
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [activeCategories, setActiveCategories] = useState<'all' | 'beaches' | 'restaurants' | 'hotels' | 'destinations'>('all');
   const [zoom, setZoom] = useState(12);
 
@@ -22,7 +28,11 @@ const Maps = () => {
   // --- Hook de Datos Simplificado ---
   const { places, mapCenter, loading, status } = usePlaces(activeCategories, searchQuery);
   
-  const placesToShow = places;
+  // Si tenemos un lugar seleccionado, usarlo; sino usar los lugares del hook
+  const placesToShow = selectedPlaceData ? [selectedPlaceData] : places;
+  
+  // Centro del mapa: usar el lugar seleccionado o el centro del hook
+  const mapCenterToUse = selectedPlaceData?.location || mapCenter;
 
 
   const handleCategoryChange = (newCategory: string) => {
@@ -46,14 +56,17 @@ const Maps = () => {
   // Obtener ubicación del usuario
 
   useEffect(() => {
-    if (searchQuery && placesToShow.length === 1) {
+    if (selectedPlaceData) {
+      // Si tenemos un lugar seleccionado, hacer zoom más cercano
+      setZoom(17);
+    } else if (searchQuery && placesToShow.length === 1) {
       setZoom(17);
     } else if (placesToShow.length > 0) {
       setZoom(14);
     } else {
       setZoom(12);
     }
-  }, [searchQuery, placesToShow]);
+  }, [selectedPlaceData, searchQuery, placesToShow]);
 
   // --- Handlers de la UI ---
   const toggleFilters = () => {
@@ -67,7 +80,10 @@ const Maps = () => {
   let displayTitle = "Tu Ubicación Actual";
   let displaySubtitle = "Lugares cercanos a ti";
 
-  if (searchQuery) {
+  if (selectedPlaceData) {
+    displayTitle = "Lugar Seleccionado";
+    displaySubtitle = selectedPlaceData.name;
+  } else if (searchQuery) {
     if (loading) {
       displayTitle = "Buscando...";
       displaySubtitle = searchQuery;
@@ -88,7 +104,7 @@ const Maps = () => {
         {isApiReady ? (
           <MapDisplay 
             markers={placesToShow} 
-            center={mapCenter} 
+            center={mapCenterToUse} 
             zoom={zoom} 
           />
         ) : (
