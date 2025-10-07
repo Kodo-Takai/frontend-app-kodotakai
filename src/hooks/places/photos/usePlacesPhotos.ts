@@ -1,7 +1,5 @@
-// src/hooks/places/photos/usePlacesPhotos.ts
 import { useState, useEffect, useMemo, useCallback } from "react";
 
-// Service para manejo de fotos
 class PhotosService {
   async getPlacePhotos(placeId: string): Promise<any[]> {
     if (!window.google?.maps?.places) return [];
@@ -77,12 +75,10 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
   const [processedPlaces, setProcessedPlaces] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Memoizar la clave única para evitar re-renders innecesarios
   const placesKey = useMemo(() => {
     return places.map(place => place.place_id || place.name).join(',');
   }, [places]);
 
-  // Función memoizada para procesar lugares
   const processPlaces = useCallback(async (placesToProcess: any[], enableMultiple: boolean) => {
     if (!placesToProcess.length) {
       setProcessedPlaces([]);
@@ -90,10 +86,7 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
     }
 
     if (!enableMultiple) {
-      // Procesamiento simple sin fotos múltiples
       const simpleProcessed = placesToProcess.map(place => {
-        
-        // Extraer ubicación de manera más robusta
         let location = null;
         if (place.geometry?.location) {
           if (typeof place.geometry.location.toJSON === 'function') {
@@ -111,7 +104,6 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
           }
         }
         
-        
         return {
           name: place.name,
           photo_url: place.photos?.[0]?.getUrl?.({ maxWidth: 400, maxHeight: 200 }) || 
@@ -126,14 +118,12 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
       return;
     }
 
-    // Procesamiento con fotos múltiples
     setLoading(true);
     
     try {
       const photosService = new PhotosService();
       const placeGroups = new Map();
 
-      // Agrupar lugares por place_id
       placesToProcess.forEach((place) => {
         const placeKey = place.place_id || place.name;
         if (!placeGroups.has(placeKey)) {

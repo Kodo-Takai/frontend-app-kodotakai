@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { FaStar } from "react-icons/fa";
 
 interface TopRatedCardProps {
@@ -25,19 +25,22 @@ interface TopRatedCardProps {
   index?: number;
 }
 
-function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
+const TopRatedCard = memo(function TopRatedCard({ place, onSelect, index }: TopRatedCardProps) {
   const [imageError, setImageError] = useState(false);
 
-  const handleImageError = () => {
-    setImageError(true);
-  };
+  const handleImageError = () => setImageError(true);
 
   const handleClick = () => {
-    if (onSelect) {
-      onSelect(place);
-    }
-    console.log(`Has seleccionado: ${place.name} (${category})`);
+    onSelect ? onSelect(place) : console.log('Lugar seleccionado:', place);
   };
+
+  const description = place.editorial_summary?.overview 
+    ? (place.editorial_summary.overview.length > 100 
+        ? place.editorial_summary.overview.substring(0, 100) + "..."
+        : place.editorial_summary.overview)
+    : "Descripción no disponible";
+
+  const address = place.formatted_address || place.vicinity || "Dirección no disponible";
 
   const renderStars = (rating?: number) => {
     if (!rating) return null;
@@ -46,17 +49,17 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
     const hasHalfStar = rating % 1 >= 0.5;
     const stars = [];
 
-      for (let i = 0; i < fullStars; i++) {
-        stars.push(
-          <FaStar key={`full-${i}`} className="w-4 h-4" style={{ color: '#FF0007' }} />
-        );
-      }
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <FaStar key={`full-${i}`} className="w-4 h-4" style={{ color: '#FF0007' }} />
+      );
+    }
 
-      if (hasHalfStar) {
-        stars.push(
-          <FaStar key="half" className="w-4 h-4" style={{ color: '#FF0007', opacity: 0.5 }} />
-        );
-      }
+    if (hasHalfStar) {
+      stars.push(
+        <FaStar key="half" className="w-4 h-4" style={{ color: '#FF0007', opacity: 0.5 }} />
+      );
+    }
 
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
@@ -73,19 +76,6 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
         </span>
       </div>
     );
-  };
-
-  const getDescription = () => {
-    if (place.editorial_summary?.overview) {
-      return place.editorial_summary.overview.length > 100 
-        ? place.editorial_summary.overview.substring(0, 100) + "..."
-        : place.editorial_summary.overview;
-    }
-    return "Descripción no disponible";
-  };
-
-  const getAddress = () => {
-    return place.formatted_address || place.vicinity || "Dirección no disponible";
   };
 
   return (
@@ -106,7 +96,6 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
 
       <div className="top-rated-card-gradient" />
 
-      {/* Indicador numérico */}
       {index !== undefined && (
         <div className="top-rated-card-indicator">
           {index + 1}
@@ -123,7 +112,7 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
         </h3>
 
         <p className="text-sm text-white/90 mb-2 line-clamp-2">
-          {getDescription()}
+          {description}
         </p>
 
         <div className="flex flex-col items-end gap-1">
@@ -140,12 +129,12 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
           </div>
 
           <p className="text-xs text-white/80 line-clamp-1 text-right">
-            {getAddress()}
+            {address}
           </p>
         </div>
       </div>
     </div>
   );
-}
+});
 
 export default TopRatedCard;

@@ -11,10 +11,11 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
-  const infoWindowRef = useRef<google.maps.InfoWindow | null>(null); // Para reutilizar la misma ventana
+  const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
+  const userLocationMarkerRef = useRef<google.maps.Marker | null>(null);
 
 
-  // ... (Efecto 1 y 2 se mantienen igual) ...
+  // Inicializa el mapa de Google Maps
   useEffect(() => {
     if (mapRef.current && !map && window.google?.maps) {
       const newMap = new window.google.maps.Map(mapRef.current, {
@@ -24,30 +25,75 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
         mapId: 'YOUR_CUSTOM_MAP_ID' 
       });
       setMap(newMap);
-      // AÑADIDO: Creamos una única InfoWindow que reutilizaremos
       infoWindowRef.current = new window.google.maps.InfoWindow();
     }
   }, [mapRef, map, center, zoom]);
 
+  // Actualiza el centro, zoom y marcadores del mapa
   useEffect(() => {
     if (map) {
-      map.panTo(center);
+      const currentCenter = map.getCenter();
+      if (!currentCenter || 
+          Math.abs(currentCenter.lat() - center.lat) > 0.001 || 
+          Math.abs(currentCenter.lng() - center.lng) > 0.001) {
+        map.panTo(center);
+      }
+      
       map.setZoom(zoom);
+      
+      if (userLocationMarkerRef.current) {
+        userLocationMarkerRef.current.setMap(null);
+      }
+      
+      const userLocationIcon = {
+        path: window.google.maps.SymbolPath.CIRCLE,
+        scale: 12,
+        fillColor: '#4285F4',
+        fillOpacity: 1,
+        strokeColor: '#FFFFFF',
+        strokeWeight: 3,
+      };
+      
+      userLocationMarkerRef.current = new window.google.maps.Marker({
+        position: center,
+        map: map,
+        icon: userLocationIcon,
+        title: 'Tu ubicación actual',
+        zIndex: 1000,
+      });
+      
+      if (markers.length > 0) {
+        const bounds = new window.google.maps.LatLngBounds();
+        bounds.extend(center);
+        markers.forEach(marker => {
+          if (marker.location) {
+            bounds.extend(marker.location);
+          }
+        });
+        
+        if (markers.length === 1) {
+          map.setZoom(16);
+        } else if (markers.length <= 5) {
+          map.setZoom(15);
+        } else {
+          map.setZoom(13);
+        }
+      } else {
+        map.setZoom(15);
+      }
     }
-  }, [map, center, zoom]);
+  }, [map, center, zoom, markers]);
 
 
-  // Efecto 3: Se ejecuta cada vez que la lista de marcadores cambia
+  // Actualiza los marcadores de lugares en el mapa
   useEffect(() => {
     if (map && infoWindowRef.current && window.google?.maps) {
       const infoWindow = infoWindowRef.current;
-      // 1. Limpia los marcadores anteriores
+      
       markersRef.current.forEach(marker => marker.setMap(null));
       markersRef.current = [];
 
-      // 2. Crea los nuevos marcadores
       markers.forEach((place) => {
-        // Validar que el lugar tenga ubicación
         if (!place.location) {
           return;
         }
@@ -59,20 +105,17 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
           animation: window.google.maps.Animation.DROP,
         });
         
-        // --- CORRECCIÓN PRINCIPAL AQUÍ ---
-        // Añadimos la etiqueta <img> al contenido del InfoWindow
         marker.addListener('click', () => {
           const contentString = `
             <div style="font-family: sans-serif; max-width: 220px; color: #333;">
               ${
-                // Si el lugar tiene foto, la mostramos
                 place.photo_url
                 ? `<img 
                     src="${place.photo_url}" 
                     alt="${place.name}" 
                     style="width: 100%; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;" 
                   />`
-                : '' // Si no, no mostramos nada
+                : ''
               }
               <h4 style="margin: 0 0 5px 0; font-weight: 600; font-size: 16px;">${place.name}</h4>
               ${
@@ -87,7 +130,6 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
           infoWindow.open(map, marker);
         });
 
-        // Guarda la referencia del nuevo marcador
         markersRef.current.push(marker);
       });
     }

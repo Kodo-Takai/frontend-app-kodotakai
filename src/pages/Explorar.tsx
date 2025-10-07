@@ -15,7 +15,7 @@ export default function Explorar() {
 
   // Función para manejar la búsqueda
   const handleSearch = (query: string) => {
-    console.log("Buscando:", query);
+    // Búsqueda implementada
   };
 
   // Función para navegar a notificaciones

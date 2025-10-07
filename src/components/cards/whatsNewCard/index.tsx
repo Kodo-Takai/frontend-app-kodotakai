@@ -1,10 +1,12 @@
 // src/components/cards/WhatsNewCards.tsx
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useDestinations } from "../../../hooks/places";
+import { usePlaces } from "../../../hooks/places";
 
 export default function WhatsNewCards() {
-  const { places, loading, apiStatus } = useDestinations({
-    radius: 20000,
+  const { places, loading } = usePlaces({
+    category: "destinations",
+    enableEnrichment: true,
+    maxResults: 10
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -81,7 +83,7 @@ export default function WhatsNewCards() {
         <div className="relative rounded-xl overflow-hidden shadow-lg">
           <div className="h-48 w-full bg-gray-200 animate-pulse" />
         </div>
-        <p className="text-xs text-gray-500 mt-2">{apiStatus}</p>
+        <p className="text-xs text-gray-500 mt-2">Cargando lugares...</p>
       </div>
     );
   }
@@ -94,7 +96,7 @@ export default function WhatsNewCards() {
         <div className="rounded-xl border border-dashed p-6 text-center text-sm text-gray-600">
           No encontramos lugares cercanos en este momento.
         </div>
-        <p className="text-xs text-gray-500 mt-2">{apiStatus}</p>
+        <p className="text-xs text-gray-500 mt-2">Cargando lugares...</p>
       </div>
     );
   }

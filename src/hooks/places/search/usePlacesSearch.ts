@@ -1,4 +1,3 @@
-// src/hooks/places/search/usePlacesSearch.ts
 import { useState, useEffect } from "react";
 import type { UsePlacesOptions, PlacesState } from "../types";
 import { useGoogleMaps } from "../base/useGoogleMaps";
@@ -31,15 +30,12 @@ export function usePlacesSearch(options: UsePlacesOptions = {}) {
       try {
         setState(prev => ({ ...prev, apiStatus: "Buscando lugares...", loading: true }));
 
-        // Crear estrategias de búsqueda
         const nearbyStrategy = new NearbySearchStrategy();
         const textStrategy = new TextSearchStrategy();
         const combinedStrategy = new CombinedSearchStrategy(nearbyStrategy, textStrategy);
 
         let results: any[] = [];
 
-        // Aplicar estrategia según el método de búsqueda
-        
         switch (options.searchMethod) {
           case "nearby":
             results = await nearbyStrategy.search(location, options);
@@ -81,7 +77,6 @@ export function usePlacesSearch(options: UsePlacesOptions = {}) {
     };
   }, [mapsLoaded, location, options.searchMethod, options.radius, options.type, options.searchQueries]);
 
-  // Manejar errores de dependencias
   useEffect(() => {
     if (mapsError) {
       setState(prev => ({

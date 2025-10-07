@@ -3,50 +3,33 @@ import { useState } from "react";
 import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
-import { usePlacesWithIA } from "../../../hooks/places";
-import type { EnrichedPlace } from "../../../hooks/places/types";
-import PlaceModal from "../../ui/placeModal";
+import { usePlaces } from "../../../hooks/places";
+import type { Place } from "../../../hooks/places";
 import "./index.scss";
 
 export default function DestinationCards() {
-  const { places, loading } = usePlacesWithIA({
-    category: "destinations",
-    requestedFilters: [],
+  const { places, loading } = usePlaces({
+    category: "tourist_attraction",
     enableEnrichment: true,
-    enableAI: false,
-    maxPlaces: 20,
+    maxResults: 6
   });
 
-  const [selectedPlace, setSelectedPlace] = useState<EnrichedPlace | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleVisit = (place: EnrichedPlace) => {
-    // Los datos ya vienen enriquecidos del hook usePlacesWithIA
-    setSelectedPlace(place);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelectedPlace(null), 300); // Delay para animación
+  const handleVisit = (place: Place) => {
+    console.log("Destino seleccionado:", place);
   };
 
   // Limitar a máximo 6 lugares
   const displayedPlaces = places.slice(0, 6);
 
   // Componente interno para cada card
-  const DestinationCard = ({ place }: { place: EnrichedPlace }) => {
+  const DestinationCard = ({ place }: { place: Place }) => {
     const [imageError, setImageError] = useState(false);
+
 
     const handleImageError = () => {
       setImageError(true);
     };
 
-    const handleVisitClick = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      handleVisit(place);
-    };
 
     // Generar estrellas basadas en el rating
     const renderStars = (rating?: number) => {
@@ -73,14 +56,14 @@ export default function DestinationCards() {
     };
 
     return (
-      <div className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white">
+      <div className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white" onClick={() => handleVisit(place)}>
         {/* Imagen de fondo */}
         <div className="relative h-72 w-full overflow-hidden">
           <img
             src={
               imageError
                 ? "https://picsum.photos/280/288?random=destination-error"
-                : place.photo_url
+                : place.photo_url || "https://picsum.photos/280/288?random=destination-default"
             }
             alt={place.name}
             className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
@@ -103,23 +86,6 @@ export default function DestinationCards() {
             </div>
           )}
 
-          {/* Badge de estado abierto/cerrado */}
-          {place.is_open_now !== undefined && (
-            <div className="absolute top-3 right-3 z-10">
-              <div
-                className={`flex items-center gap-1 px-2 py-1 rounded-full ${
-                  place.is_open_now
-                    ? "bg-green-500"
-                    : "bg-red-500"
-                }`}
-              >
-                <span className="text-xs font-bold text-white">
-                  {place.is_open_now ? "● Abierto" : "● Cerrado"}
-                </span>
-              </div>
-            </div>
-          )}
-
           {/* Contenido superpuesto */}
           <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
             {/* Rating con estrellas */}
@@ -134,22 +100,12 @@ export default function DestinationCards() {
             <div className="flex items-center gap-1 mb-3">
               <MdPlace className="w-4 h-4 text-gray-300 flex-shrink-0" />
               <p className="text-xs text-gray-200 line-clamp-1">
-                {place.vicinity || place.formatted_address || "Ubicación no disponible"}
+                {place.vicinity || "Ciudad de México"}
               </p>
             </div>
 
-            {/* Badge de precio si está disponible */}
-            {place.price_info && (
-              <div className="mb-3">
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${place.price_info.color}`}>
-                  {place.price_info.symbol}
-                </span>
-              </div>
-            )}
-
             {/* Botón de visitar */}
             <button
-              onClick={handleVisitClick}
               className="w-full bg-white/90 border-4 border-gray-300 hover:bg-white text-gray-800 font-semibold py-1 px-4 rounded-xl transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-lg"
             >
               Visitar <TbLocationFilled className="w-4 h-4" />
@@ -205,20 +161,11 @@ export default function DestinationCards() {
   };
 
   return (
-    <>
-      <div className="w-full ">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 ">
-          Lugares que debes visitar
-        </h2>
-        {renderContent()}
-      </div>
-
-      {/* Modal reutilizable */}
-      <PlaceModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        place={selectedPlace}
-      />
-    </>
+    <div className="w-full ">
+      <h2 className="text-xl font-bold text-gray-900 mb-4 ">
+        Lugares que debes visitar
+      </h2>
+      {renderContent()}
+    </div>
   );
 }
