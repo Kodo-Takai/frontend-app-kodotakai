@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { RootState } from "../redux/store";
 import { useGetProfilesQuery } from "../redux/api/profileApi";
 import { logout } from "../redux/slice/authSlice";
@@ -12,7 +12,6 @@ export default function Profile() {
   const token = useSelector((s: RootState) => s.auth.token);
   const payload = useMemo(() => decodeJwt(token), [token]);
   const profileIdFromToken = payload?.profileId as string | undefined;
-  const [isHovered, setIsHovered] = useState(false);
 
   const { data: profiles, isFetching } = useGetProfilesQuery();
 
