@@ -2,21 +2,19 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt, FaHeart } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { useRestaurants } from "../../../hooks/places";
+import { usePlaces } from "../../../hooks/places";
+import type { Place } from "../../../hooks/places";
 import "./index.scss";
 
-interface Restaurant {
-  name: string;
-  photo_url: string;
-  rating?: number;
-  vicinity?: string;
+interface Restaurant extends Place {
+  // Restaurant extends Place interface
 }
 
 export default function RestaurantCards() {
-  const { places: restaurants, loading } = useRestaurants({
-    searchMethod: "both",
-    limit: 6,
-    enableMultiplePhotos: true,
+  const { places: restaurants, loading } = usePlaces({
+    category: "restaurants",
+    enableEnrichment: true,
+    maxResults: 6
   });
 
   const displayedRestaurants = restaurants.slice(0, 6);

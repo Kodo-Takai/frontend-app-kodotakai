@@ -1,2 +1,2 @@
-export { default as LocationMultiCard } from './LocationMultiCard.tsx';
-export { default as LocationMultiGrid } from './LocationMultiGrid.tsx';
+export { default as LocationMultiCard } from './LocationMultiCard';
+export { default as LocationMultiGrid } from './LocationMultiGrid';

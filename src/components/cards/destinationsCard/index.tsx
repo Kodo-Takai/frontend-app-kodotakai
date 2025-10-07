@@ -61,7 +61,7 @@ export default function DestinationCards() {
     };
 
     return (
-      <div className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white">
+      <div className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white" onClick={() => handleVisit(place)}>
         {/* Imagen de fondo */}
         <div className="relative h-72 w-full overflow-hidden">
           <img
@@ -111,7 +111,6 @@ export default function DestinationCards() {
 
             {/* Botón de visitar */}
             <button
-              onClick={handleVisitClick}
               className="w-full bg-white/90 border-4 border-gray-300 hover:bg-white text-gray-800 font-semibold py-1 px-4 rounded-xl transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-lg"
             >
               Visitar <TbLocationFilled className="w-4 h-4" />

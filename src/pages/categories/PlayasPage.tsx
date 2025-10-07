@@ -4,16 +4,11 @@ import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 import BadgeWithIcon from "../../components/ui/badgeWithIcon";
-import { TopRatedSection } from "../../components/cards/topRatedCard";
 
-export default function PlayasPage() {
-  const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
-  const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const animationClass = useNavigationAnimation();
-
-  const carouselData = [
+// Configuración de carrusel para playas
+export const BEACH_CAROUSEL_CONFIG = {
+  interval: 4000,
+  slides: [
     {
       image: "/beach-background-section-explore.svg",
       titleFirst: "DESCUBRE",
@@ -26,10 +21,27 @@ export default function PlayasPage() {
       titleRest: "EN LA COSTA",
       subtitle: "Desde playas tranquilas hasta olas perfectas para surf",
     },
-  ];
+  ]
+};
+
+// Configuración de badges para playas
+export const BEACH_BADGE_CONFIG = [
+  { id: "todo", icon: "p-cat_todo_icon.svg", hoverIcon: "hover-p-cat_todo_icon.svg", label: "Todo" },
+  { id: "surf", icon: "p-cat_surf_icon.svg", hoverIcon: "hover-p-cat_surf_icon.svg", label: "Surf" },
+  { id: "pesca", icon: "p-cat_pesca_icon.svg", hoverIcon: "hover-p-cat_pesca_icon.svg", label: "Pesca" },
+  { id: "camping", icon: "p-cat_camp_icon.svg", hoverIcon: "hover-p-cat_camp_icon.svg", label: "Camping" },
+  { id: "favoritas", icon: "p-cat_fav_icon.svg", hoverIcon: "hover-p-cat_fav_icon.svg", label: "Favoritas" }
+];
+
+export default function PlayasPage() {
+  const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
+  const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const animationClass = useNavigationAnimation();
+
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query);
+    console.log('Búsqueda:', query);
   };
 
   const handleBadgeClick = (badgeId: string) => {
@@ -39,11 +51,11 @@ export default function PlayasPage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % carouselData.length);
-    }, 4000);
+      setCurrentSlide((prev) => (prev + 1) % BEACH_CAROUSEL_CONFIG.slides.length);
+    }, BEACH_CAROUSEL_CONFIG.interval);
 
     return () => clearInterval(interval);
-  }, [carouselData.length]);
+  }, []);
 
   return (
     <div
@@ -77,7 +89,7 @@ export default function PlayasPage() {
 
         <div className="w-full h-50 rounded-2xl mt-2 border-white border-4 relative overflow-hidden mb-1">
           <img
-            src={carouselData[currentSlide].image}
+            src={BEACH_CAROUSEL_CONFIG.slides[currentSlide].image}
             className="w-full h-full object-cover rounded-3xl transition-opacity duration-500"
             alt="PLAYAS NEWS"
           />
@@ -97,17 +109,16 @@ export default function PlayasPage() {
 
           <div className="absolute bottom-7 left-4 text-left">
             <h2 className="text-white text-2xl font-extrabold mb-1 leading-none">
-              {carouselData[currentSlide].titleFirst} <br />
-              {carouselData[currentSlide].titleRest}
+              {BEACH_CAROUSEL_CONFIG.slides[currentSlide].titleFirst} <br />
+              {BEACH_CAROUSEL_CONFIG.slides[currentSlide].titleRest}
             </h2>
             <p className="text-white/80 text-sm">
-              {carouselData[currentSlide].subtitle}
+              {BEACH_CAROUSEL_CONFIG.slides[currentSlide].subtitle}
             </p>
           </div>
 
-          {/* Indicadores de puntos */}
           <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
-            {carouselData.map((_, index) => (
+            {BEACH_CAROUSEL_CONFIG.slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
@@ -128,130 +139,34 @@ export default function PlayasPage() {
 
         <div className="w-full mb-3">
           <div className="flex flex-wrap gap-2">
-            <BadgeWithIcon
-              id="todo"
-              icon={
-                <img
-                  src="/icons/playas_icons/p-cat_todo_icon.svg"
-                  alt="Todo"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/playas_icons/hover-p-cat_todo_icon.svg"
-                  alt="Todo"
-                  className="w-5 h-5"
-                />
-              }
-              label="Todo"
-              isActive={selectedBadge === "todo"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#e1e1e1"
-            />
-
-            <BadgeWithIcon
-              id="surf"
-              icon={
-                <img
-                  src="/icons/playas_icons/p-cat_surf_icon.svg"
-                  alt="Surf"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/playas_icons/hover-p-cat_surf_icon.svg"
-                  alt="Surf"
-                  className="w-5 h-5"
-                />
-              }
-              label="Surf"
-              isActive={selectedBadge === "surf"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
-
-            <BadgeWithIcon
-              id="pesca"
-              icon={
-                <img
-                  src="/icons/playas_icons/p-cat_pesca_icon.svg"
-                  alt="Pesca"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/playas_icons/hover-p-cat_pesca_icon.svg"
-                  alt="Pesca"
-                  className="w-5 h-5"
-                />
-              }
-              label="Pesca"
-              isActive={selectedBadge === "pesca"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
-
-            <BadgeWithIcon
-              id="camping"
-              icon={
-                <img
-                  src="/icons/playas_icons/p-cat_camp_icon.svg"
-                  alt="Camping"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/playas_icons/hover-p-cat_camp_icon.svg"
-                  alt="Camping"
-                  className="w-5 h-5"
-                />
-              }
-              label="Camping"
-              isActive={selectedBadge === "camping"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
-
-            <BadgeWithIcon
-              id="favoritas"
-              icon={
-                <img
-                  src="/icons/playas_icons/p-cat_fav_icon.svg"
-                  alt="Favoritas"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/playas_icons/hover-p-cat_fav_icon.svg"
-                  alt="Favoritas"
-                  className="w-5 h-5"
-                />
-              }
-              label="Favoritas"
-              isActive={selectedBadge === "favoritas"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
+            {BEACH_BADGE_CONFIG.map((badge) => (
+              <BadgeWithIcon
+                key={badge.id}
+                id={badge.id}
+                icon={
+                  <img
+                    src={`/icons/playas_icons/${badge.icon}`}
+                    alt={badge.label}
+                    className="w-5 h-5"
+                  />
+                }
+                hoverIcon={
+                  <img
+                    src={`/icons/playas_icons/${badge.hoverIcon}`}
+                    alt={badge.label}
+                    className="w-5 h-5"
+                  />
+                }
+                label={badge.label}
+                isActive={selectedBadge === badge.id}
+                onClick={handleBadgeClick}
+                activeColor="#DC1217"
+                activeBorderColor={badge.id === "todo" ? "#e1e1e1" : "#F3F3F3"}
+              />
+            ))}
           </div>
         </div>
 
-        {/* Sección de Playas Mejor Valoradas - Temporalmente deshabilitada para evitar conflictos */}
-        {/* <TopRatedSection 
-          category="beaches"
-          title="Playas mejor valoradas"
-          limit={6}
-          minRating={4.0}
-        /> */}
       </div>
     </div>
   );

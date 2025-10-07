@@ -21,24 +21,22 @@ export default function TopRatedCarousel({
 
   const handlePlaceSelect = (place: any) => {
     setSelectedPlace(place);
-    console.log(`Destino seleccionado: ${place.name}`, place);
+    console.log('Lugar seleccionado desde TopRatedCarousel:', place);
   };
 
-  // Filtrar lugares que tengan descripción y precio
   const filteredPlaces = places.filter(place => {
-    // Verificar que tenga descripción (editorial_summary es más valioso)
-    const hasDescription = place.editorial_summary?.overview && 
-                          place.editorial_summary.overview.length > 20;
+    const hasDescription = !!(
+      place.editorial_summary?.overview && 
+      place.editorial_summary.overview.length > 20
+    );
     
-    // Verificar que tenga precio válido
-    const hasPrice = place.price_info?.level !== null && 
-                    place.price_info?.level !== undefined &&
-                    place.price_info.level > 0;
+    const hasPrice = !!(
+      place.price_info?.level !== null && 
+      place.price_info?.level !== undefined &&
+      place.price_info.level > 0
+    );
     
-    // Verificar que tenga datos básicos
-    const hasBasicData = place.name && 
-                        (place.formatted_address || place.vicinity) &&
-                        place.rating;
+    const hasBasicData = !!(place.name && place.rating && place.rating >= 3.0);
     
     return hasDescription && hasPrice && hasBasicData;
   });
@@ -87,7 +85,6 @@ export default function TopRatedCarousel({
     <div className="w-full">
       <h2 className="text-xl font-bold text-gray-800 mb-4 ">{title}</h2>
       
-      {/* Carrusel horizontal */}
       <div className="top-rated-carousel">
         {filteredPlaces.map((place, index) => (
           <TopRatedCard
@@ -99,7 +96,6 @@ export default function TopRatedCarousel({
           />
         ))}
       </div>
-
     </div>
   );
 }

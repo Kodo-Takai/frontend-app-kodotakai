@@ -19,7 +19,7 @@ const Maps = () => {
   const [zoom, setZoom] = useState(12);
 
 
-  // --- Hook de Datos Detallados ---
+  // --- Hook unificado ---
   const { places, loading, error } = usePlaces({
     category: activeCategories as any,
     searchQuery,

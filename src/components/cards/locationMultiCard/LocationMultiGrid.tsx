@@ -1,7 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import LocationMultiCard from './LocationMultiCard';
 import type { Place } from '../../../hooks/places';
 import './index.scss';
+
+const EARTH_RADIUS_KM = 6371;
+const DEFAULT_ITEMS_PER_PAGE = 4;
+const LOAD_MORE_DELAY = 300;
+
+const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return EARTH_RADIUS_KM * c;
+};
 
 interface LocationMultiGridProps {
   places: Place[];
@@ -9,6 +24,7 @@ interface LocationMultiGridProps {
   error?: string | null;
   onPlaceClick?: (place: Place) => void;
   itemsPerPage?: number;
+  userLocation?: { lat: number; lng: number };
 }
 
 const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({ 
@@ -16,27 +32,50 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
   loading, 
   error, 
   onPlaceClick,
-  itemsPerPage = 4 
+  itemsPerPage = DEFAULT_ITEMS_PER_PAGE,
+  userLocation
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const displayedPlaces = places.slice(0, currentPage * itemsPerPage);
-  const hasMorePlaces = displayedPlaces.length < places.length;
+  const sortedPlaces = useMemo(() => {
+    if (!userLocation || places.length === 0) {
+      return places;
+    }
+
+    return [...places].sort((a, b) => {
+      const distanceA = calculateDistance(
+        userLocation.lat,
+        userLocation.lng,
+        a.location.lat,
+        a.location.lng
+      );
+      const distanceB = calculateDistance(
+        userLocation.lat,
+        userLocation.lng,
+        b.location.lat,
+        b.location.lng
+      );
+      return distanceA - distanceB;
+    });
+  }, [places, userLocation]);
+
+  const displayedPlaces = sortedPlaces.slice(0, currentPage * itemsPerPage);
+  const hasMorePlaces = displayedPlaces.length < sortedPlaces.length;
 
   const handleLoadMore = () => {
     setIsLoadingMore(true);
     setTimeout(() => {
       setCurrentPage(prev => prev + 1);
       setIsLoadingMore(false);
-    }, 300);
+    }, LOAD_MORE_DELAY);
   };
 
   if (loading) {
     return (
       <div className="location-multi-grid">
         <div className="location-multi-grid-container">
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: DEFAULT_ITEMS_PER_PAGE }).map((_, index) => (
             <div key={index} className="location-multi-skeleton">
               <div className="location-multi-skeleton-image"></div>
               <div className="location-multi-skeleton-content">
@@ -96,7 +135,7 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
                 Cargando...
               </>
             ) : (
-              `Mostrar más (${places.length - displayedPlaces.length} restantes)`
+              `Mostrar más (${sortedPlaces.length - displayedPlaces.length} restantes)`
             )}
           </button>
         </div>

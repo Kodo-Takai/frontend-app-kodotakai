@@ -1,9 +1,7 @@
-// src/hooks/places/ai/useAIService.ts
 import { useState, useCallback, useMemo } from "react";
 import type { EnrichedPlace, AIAnalysis } from "../types";
 import { AI_CONFIG } from "../enrichment/enrichmentConfigs";
 
-// Interface para datos enviados a IA
 export interface AIDataInput {
   location: {
     lat: number;
@@ -14,7 +12,6 @@ export interface AIDataInput {
   timestamp: string;
 }
 
-// Interface para respuesta de IA
 export interface AIResponse {
   filtered_places: Record<string, EnrichedPlace[]>;
   confidence_scores: Record<string, number>;
@@ -22,7 +19,6 @@ export interface AIResponse {
   timestamp: string;
 }
 
-// Interface para configuración de IA
 export interface AIServiceConfig {
   endpoint: string;
   timeout: number;
@@ -30,7 +26,6 @@ export interface AIServiceConfig {
   retryDelay: number;
 }
 
-// Clase para servicio de IA
 export class AIService {
   private config: AIServiceConfig;
   private cache: Map<string, AIResponse> = new Map();
@@ -45,17 +40,14 @@ export class AIService {
     };
   }
 
-  // Enviar datos a IA para análisis
   async analyzePlaces(
     places: EnrichedPlace[],
     requestedFilters: string[],
     location: { lat: number; lng: number }
   ): Promise<AIResponse> {
     try {
-      // Crear clave de cache
       const cacheKey = this.createCacheKey(places, requestedFilters, location);
       
-      // Verificar cache
       if (this.cache.has(cacheKey)) {
         const cached = this.cache.get(cacheKey);
         if (cached && this.isCacheValid(cached)) {
@@ -63,7 +55,6 @@ export class AIService {
         }
       }
 
-      // Preparar datos para IA
       const aiData: AIDataInput = {
         location,
         places: this.preparePlacesForAI(places),
@@ -71,10 +62,7 @@ export class AIService {
         timestamp: new Date().toISOString()
       };
 
-      // Enviar a IA con reintentos
       const response = await this.sendToAIWithRetry(aiData);
-      
-      // Guardar en cache
       this.cache.set(cacheKey, response);
       
       return response;
@@ -85,16 +73,14 @@ export class AIService {
     }
   }
 
-  // Preparar lugares para envío a IA
   private preparePlacesForAI(places: EnrichedPlace[]): EnrichedPlace[] {
     return places.map(place => ({
       ...place,
-      // Incluir solo datos relevantes para IA
       name: place.name,
       rating: place.rating,
       formatted_address: place.formatted_address,
       editorial_summary: place.editorial_summary,
-      reviews: place.reviews?.slice(0, 10), // Limitar reviews
+      reviews: place.reviews?.slice(0, 10),
       amenities: place.amenities,
       services: place.services,
       lodging_info: place.lodging_info,
@@ -102,7 +88,6 @@ export class AIService {
     }));
   }
 
-  // Enviar datos a IA con reintentos
   private async sendToAIWithRetry(data: AIDataInput): Promise<AIResponse> {
     let lastError: Error | null = null;
 
@@ -122,7 +107,6 @@ export class AIService {
     throw lastError || new Error('Max retry attempts reached');
   }
 
-  // Enviar datos a IA
   private async sendToAI(data: AIDataInput): Promise<AIResponse> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
@@ -146,7 +130,6 @@ export class AIService {
 
       const result = await response.json();
       
-      // Validar respuesta
       if (!this.isValidAIResponse(result)) {
         throw new Error('Invalid AI response format');
       }
@@ -159,7 +142,6 @@ export class AIService {
     }
   }
 
-  // Validar respuesta de IA
   private isValidAIResponse(response: any): response is AIResponse {
     return (
       response &&
@@ -171,7 +153,6 @@ export class AIService {
     );
   }
 
-  // Crear clave de cache
   private createCacheKey(
     places: EnrichedPlace[],
     filters: string[],
@@ -184,23 +165,19 @@ export class AIService {
     return `${placesIds}_${filtersStr}_${locationStr}`;
   }
 
-  // Verificar si cache es válido
   private isCacheValid(response: AIResponse): boolean {
     const cacheAge = Date.now() - new Date(response.timestamp).getTime();
-    return cacheAge < 300000; // 5 minutos
+    return cacheAge < 300000;
   }
 
-  // Delay helper
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // Limpiar cache
   clearCache(): void {
     this.cache.clear();
   }
 
-  // Obtener estadísticas de cache
   getCacheStats(): { size: number; keys: string[] } {
     return {
       size: this.cache.size,
@@ -209,14 +186,12 @@ export class AIService {
   }
 }
 
-// Hook para usar el servicio de IA
 export function useAIService(config?: Partial<AIServiceConfig>) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   const aiService = useMemo(() => new AIService(config), [config]);
 
-  // Analizar lugares con IA
   const analyzePlaces = useCallback(async (
     places: EnrichedPlace[],
     requestedFilters: string[],
@@ -237,12 +212,10 @@ export function useAIService(config?: Partial<AIServiceConfig>) {
     }
   }, [aiService]);
 
-  // Limpiar cache
   const clearCache = useCallback(() => {
     aiService.clearCache();
   }, [aiService]);
 
-  // Obtener estadísticas de cache
   const getCacheStats = useCallback(() => {
     return aiService.getCacheStats();
   }, [aiService]);

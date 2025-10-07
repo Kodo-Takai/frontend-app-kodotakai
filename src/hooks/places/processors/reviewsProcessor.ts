@@ -1,8 +1,6 @@
-// src/hooks/places/processors/reviewsProcessor.ts
 import { useMemo, useCallback } from "react";
 import type { Review, EnrichedPlace } from "../types";
 
-// Configuración de análisis de reviews
 export interface ReviewAnalysisConfig {
   minReviewLength: number;
   maxReviewsToAnalyze: number;
@@ -10,7 +8,6 @@ export interface ReviewAnalysisConfig {
   keywordWeights: Record<string, number>;
 }
 
-// Configuración por defecto
 const DEFAULT_CONFIG: ReviewAnalysisConfig = {
   minReviewLength: 10,
   maxReviewsToAnalyze: 20,
@@ -28,7 +25,6 @@ const DEFAULT_CONFIG: ReviewAnalysisConfig = {
   }
 };
 
-// Clase para procesar reviews
 export class ReviewsProcessor {
   private config: ReviewAnalysisConfig;
 
@@ -36,7 +32,6 @@ export class ReviewsProcessor {
     this.config = { ...DEFAULT_CONFIG, ...config };
   }
 
-  // Procesar reviews de un lugar
   processReviews(place: EnrichedPlace): ProcessedReviews {
     if (!place.reviews || place.reviews.length === 0) {
       return {
@@ -49,16 +44,9 @@ export class ReviewsProcessor {
       };
     }
 
-    // Filtrar reviews relevantes
     const relevantReviews = this.filterRelevantReviews(place.reviews);
-    
-    // Analizar sentimientos
     const sentimentAnalysis = this.analyzeSentiment(relevantReviews);
-    
-    // Extraer palabras clave
     const keywordAnalysis = this.extractKeywords(relevantReviews);
-    
-    // Calcular confianza
     const confidence = this.calculateConfidence(relevantReviews, sentimentAnalysis);
 
     return {
@@ -71,15 +59,13 @@ export class ReviewsProcessor {
     };
   }
 
-  // Filtrar reviews relevantes
   private filterRelevantReviews(reviews: Review[]): Review[] {
     return reviews
       .filter(review => review.text && review.text.length >= this.config.minReviewLength)
-      .sort((a, b) => b.time - a.time) // Más recientes primero
+      .sort((a, b) => b.time - a.time)
       .slice(0, this.config.maxReviewsToAnalyze);
   }
 
-  // Analizar sentimientos de reviews
   private analyzeSentiment(reviews: Review[]): SentimentAnalysis {
     if (reviews.length === 0) {
       return { overall: 0, score: 0, positive: 0, negative: 0, neutral: 0 };
@@ -111,13 +97,11 @@ export class ReviewsProcessor {
     };
   }
 
-  // Calcular sentimiento de un review individual
   private calculateReviewSentiment(review: Review): number {
     const text = review.text.toLowerCase();
     let score = 0;
     let keywordCount = 0;
 
-    // Analizar palabras clave
     Object.entries(this.config.keywordWeights).forEach(([keyword, weight]) => {
       if (text.includes(keyword)) {
         score += weight;
@@ -125,39 +109,33 @@ export class ReviewsProcessor {
       }
     });
 
-    // Normalizar por número de palabras clave encontradas
     if (keywordCount > 0) {
       score = score / keywordCount;
     }
 
-    // Considerar rating del review
-    const ratingScore = (review.rating - 3) / 2; // Normalizar rating 1-5 a -1 a 1
+    const ratingScore = (review.rating - 3) / 2;
     score = (score + ratingScore) / 2;
 
     return Math.max(-1, Math.min(1, score));
   }
 
-  // Extraer palabras clave de reviews
   private extractKeywords(reviews: Review[]): KeywordAnalysis {
     const allText = reviews.map(r => r.text).join(' ').toLowerCase();
     
     const positiveKeywords: string[] = [];
     const negativeKeywords: string[] = [];
 
-    // Palabras clave positivas
     const positivePatterns = [
       'excelente', 'perfecto', 'recomiendo', 'genial', 'bueno', 'fantástico',
       'maravilloso', 'increíble', 'espectacular', 'magnífico', 'súper',
       'limpio', 'cómodo', 'acogedor', 'servicio', 'atención', 'personal'
     ];
 
-    // Palabras clave negativas
     const negativePatterns = [
       'malo', 'terrible', 'horrible', 'no recomiendo', 'pésimo', 'decepcionante',
       'sucio', 'incómodo', 'mal servicio', 'mal atención', 'problema', 'queja'
     ];
 
-    // Palabras clave específicas para hoteles
     const hotelKeywords = [
       'pet friendly', 'mascotas', 'perros', 'gatos', 'animales',
       'piscina', 'pool', 'natación', 'swimming',
@@ -168,21 +146,18 @@ export class ReviewsProcessor {
       'desayuno', 'breakfast', 'restaurante', 'comida'
     ];
 
-    // Buscar palabras clave positivas
     positivePatterns.forEach(pattern => {
       if (allText.includes(pattern)) {
         positiveKeywords.push(pattern);
       }
     });
 
-    // Buscar palabras clave negativas
     negativePatterns.forEach(pattern => {
       if (allText.includes(pattern)) {
         negativeKeywords.push(pattern);
       }
     });
 
-    // Buscar palabras clave específicas de hoteles
     const specificKeywords = hotelKeywords.filter(keyword => 
       allText.includes(keyword)
     );
@@ -194,19 +169,13 @@ export class ReviewsProcessor {
     };
   }
 
-  // Calcular confianza del análisis
   private calculateConfidence(reviews: Review[], sentimentAnalysis: SentimentAnalysis): number {
     if (reviews.length === 0) return 0;
 
-    // Factor de cantidad de reviews
     const quantityFactor = Math.min(reviews.length / 10, 1);
-    
-    // Factor de consistencia en sentimientos
     const totalReviews = sentimentAnalysis.positive + sentimentAnalysis.negative + sentimentAnalysis.neutral;
     const consistencyFactor = totalReviews > 0 ? 
       Math.max(sentimentAnalysis.positive, sentimentAnalysis.negative) / totalReviews : 0;
-    
-    // Factor de longitud promedio de reviews
     const avgLength = reviews.reduce((sum, r) => sum + r.text.length, 0) / reviews.length;
     const lengthFactor = Math.min(avgLength / 100, 1);
 
@@ -214,19 +183,18 @@ export class ReviewsProcessor {
   }
 }
 
-// Interfaces para resultados
 export interface ProcessedReviews {
-  overallSentiment: number; // -1 a 1
-  sentimentScore: number; // -1 a 1
+  overallSentiment: number;
+  sentimentScore: number;
   positiveKeywords: string[];
   negativeKeywords: string[];
   relevantReviews: Review[];
-  confidence: number; // 0 a 1
+  confidence: number;
 }
 
 export interface SentimentAnalysis {
-  overall: number; // -1, 0, 1
-  score: number; // -1 a 1
+  overall: number;
+  score: number;
   positive: number;
   negative: number;
   neutral: number;
@@ -238,7 +206,6 @@ export interface KeywordAnalysis {
   specific: string[];
 }
 
-// Hook para usar el procesador de reviews
 export function useReviewsProcessor(config?: Partial<ReviewAnalysisConfig>) {
   const processor = useMemo(() => new ReviewsProcessor(config), [config]);
   

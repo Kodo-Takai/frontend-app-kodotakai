@@ -1,4 +1,3 @@
-// src/hooks/places/types.ts
 export type LatLng = { lat: number; lng: number };
 
 export type PlaceCategory = 
@@ -7,11 +6,9 @@ export type PlaceCategory =
   | "restaurants" 
   | "hotels" 
   | "destinations"
-  | "restaurant"
   | "tourist_attraction";
 
 export interface Place {
-  // Propiedades básicas (siempre disponibles)
   id: string;
   name: string;
   place_id: string;
@@ -19,8 +16,6 @@ export interface Place {
   location: LatLng;
   rating?: number;
   vicinity?: string;
-  
-  // Propiedades opcionales (Google Maps básico)
   photos?: any[];
   mainPhoto?: any;
   opening_hours?: {
@@ -28,56 +23,35 @@ export interface Place {
   };
 }
 
-// Interface para datos enriquecidos
 export interface EnrichedPlace extends Place {
-  // Información básica enriquecida
   formatted_address?: string;
   website?: string;
   formatted_phone_number?: string;
   international_phone_number?: string;
-  
-  // Descripción y editorial
   editorial_summary?: {
     overview?: string;
   };
-  
-  // Reviews enriquecidos
   reviews?: Review[];
-  
-  // Amenities y servicios
   amenities?: string[];
   services?: string[];
-  
-  // Información específica de hoteles
   lodging_info?: LodgingInfo;
-  
-  // Horarios detallados
   opening_hours_detailed?: OpeningHours;
-  
-  // Información de contacto
   contact_info?: ContactInfo;
-  
-  // Datos para IA
   ai_analysis?: AIAnalysis;
-  
-  // Información adicional de Google Maps
   google_maps_url?: string;
   utc_offset_minutes?: number;
   business_status?: string;
   price_level?: number;
-  is_open_now?: boolean; // Estado de apertura calculado sin usar campo deprecado
-  
-  // Información de precios procesada
+  is_open_now?: boolean;
   price_info?: {
     level: number | null;
     description: string;
     symbol: string;
     color: string;
-    isInferred?: boolean; // Indica si el precio fue inferido
+    isInferred?: boolean;
   };
 }
 
-// Interface para reviews
 export interface Review {
   author_name: string;
   rating: number;
@@ -86,7 +60,6 @@ export interface Review {
   relative_time_description: string;
 }
 
-// Interface para información de hospedaje
 export interface LodgingInfo {
   check_in_time?: string;
   check_out_time?: string;
@@ -106,9 +79,7 @@ export interface LodgingInfo {
   airport_shuttle?: boolean;
 }
 
-// Interface para horarios detallados
 export interface OpeningHours {
-  // open_now removido por deprecación - usar isOpen() method en su lugar
   periods: Array<{
     open: { day: number; time: string };
     close: { day: number; time: string };
@@ -116,7 +87,6 @@ export interface OpeningHours {
   weekday_text: string[];
 }
 
-// Interface para información de contacto
 export interface ContactInfo {
   website?: string;
   phone?: string;
@@ -128,7 +98,6 @@ export interface ContactInfo {
   };
 }
 
-// Interface para análisis de IA
 export interface AIAnalysis {
   categories: {
     petfriendly?: { confidence: number; detected: boolean };

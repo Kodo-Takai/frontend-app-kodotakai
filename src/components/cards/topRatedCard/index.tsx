@@ -25,7 +25,7 @@ interface TopRatedCardProps {
   index?: number;
 }
 
-function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
+function TopRatedCard({ place, onSelect, index }: TopRatedCardProps) {
   const [imageError, setImageError] = useState(false);
 
   const handleImageError = () => {
@@ -35,8 +35,23 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
   const handleClick = () => {
     if (onSelect) {
       onSelect(place);
+    } else {
+      // Mostrar información completa del lugar en consola
+      console.log('Lugar seleccionado:', place);
     }
-    console.log(`Has seleccionado: ${place.name} (${category})`);
+  };
+
+  const getDescription = () => {
+    if (place.editorial_summary?.overview) {
+      return place.editorial_summary.overview.length > 100 
+        ? place.editorial_summary.overview.substring(0, 100) + "..."
+        : place.editorial_summary.overview;
+    }
+    return "Descripción no disponible";
+  };
+
+  const getAddress = () => {
+    return place.formatted_address || place.vicinity || "Dirección no disponible";
   };
 
   const renderStars = (rating?: number) => {
@@ -46,17 +61,17 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
     const hasHalfStar = rating % 1 >= 0.5;
     const stars = [];
 
-      for (let i = 0; i < fullStars; i++) {
-        stars.push(
-          <FaStar key={`full-${i}`} className="w-4 h-4" style={{ color: '#FF0007' }} />
-        );
-      }
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <FaStar key={`full-${i}`} className="w-4 h-4" style={{ color: '#FF0007' }} />
+      );
+    }
 
-      if (hasHalfStar) {
-        stars.push(
-          <FaStar key="half" className="w-4 h-4" style={{ color: '#FF0007', opacity: 0.5 }} />
-        );
-      }
+    if (hasHalfStar) {
+      stars.push(
+        <FaStar key="half" className="w-4 h-4" style={{ color: '#FF0007', opacity: 0.5 }} />
+      );
+    }
 
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
@@ -73,19 +88,6 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
         </span>
       </div>
     );
-  };
-
-  const getDescription = () => {
-    if (place.editorial_summary?.overview) {
-      return place.editorial_summary.overview.length > 100 
-        ? place.editorial_summary.overview.substring(0, 100) + "..."
-        : place.editorial_summary.overview;
-    }
-    return "Descripción no disponible";
-  };
-
-  const getAddress = () => {
-    return place.formatted_address || place.vicinity || "Dirección no disponible";
   };
 
   return (
@@ -106,7 +108,6 @@ function TopRatedCard({ place, category, onSelect, index }: TopRatedCardProps) {
 
       <div className="top-rated-card-gradient" />
 
-      {/* Indicador numérico */}
       {index !== undefined && (
         <div className="top-rated-card-indicator">
           {index + 1}

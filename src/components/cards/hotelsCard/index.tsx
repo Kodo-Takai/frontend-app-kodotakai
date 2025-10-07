@@ -4,20 +4,22 @@ import { usePlaces } from "../../../hooks/places";
 import type { Place, EnrichedPlace } from "../../../hooks/places";
 import "./index.scss";
 
-// Interface para props del componente
 interface HotelsCardProps {
   places?: EnrichedPlace[];
   loading?: boolean;
   error?: string | null;
 }
 
-// Componente HotelCard extraído para evitar recreación
 const HotelCard = ({ hotel }: { hotel: Place }) => {
   const [imageError, setImageError] = useState(false);
   const handleImageError = () => setImageError(true);
 
+  const handleHotelClick = (hotel: Place) => {
+    console.log("Hotel seleccionado:", hotel);
+  };
+
   return (
-    <div className="hotel-card-width shadow-sm">
+    <div className="hotel-card-width shadow-sm" onClick={() => handleHotelClick(hotel)}>
       <div className="hotel-card-image-container">
         <img
           src={
@@ -27,10 +29,9 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
           }
           alt={hotel.name}
           onError={handleImageError}
-          onLoad={() => {}}
         />
 
-        <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black to-transparent " />
+        <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black to-transparent" />
 
         <div className="absolute top-2 left-2 flex gap-1">
           <div className="flex items-center gap-0.5 bg-white rounded-lg px-1 py-0.5 text-sm font-medium text-[#00324A]">
@@ -40,43 +41,38 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
         </div>
 
         <div className="absolute bottom-3 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
-            <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
-              {(() => {
-                const businessStatus = (hotel as any).business_status;
-                const isOpenNow = (hotel as any).is_open_now;
-                
-                // Si el negocio está cerrado permanentemente
-                if (businessStatus === 'CLOSED_PERMANENTLY') {
-                  return "Cerrado permanentemente";
-                }
-                
-                // Si el negocio está cerrado temporalmente
-                if (businessStatus === 'CLOSED_TEMPORARILY') {
-                  return "Cerrado temporalmente";
-                }
-                
-                // Si está operacional, usar el estado de apertura actual
-                if (businessStatus === 'OPERATIONAL') {
-                  if (isOpenNow === true) {
-                    return "Abierto ahora";
-                  } else if (isOpenNow === false) {
-                    return "Cerrado ahora";
-                  } else {
-                    return "Abierto ahora";
-                  }
-                }
-                
-                // Si no hay información del estado del negocio
+          <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
+            {(() => {
+              const businessStatus = (hotel as any).business_status;
+              const isOpenNow = (hotel as any).is_open_now;
+              
+              if (businessStatus === 'CLOSED_PERMANENTLY') {
+                return "Cerrado permanentemente";
+              }
+              
+              if (businessStatus === 'CLOSED_TEMPORARILY') {
+                return "Cerrado temporalmente";
+              }
+              
+              if (businessStatus === 'OPERATIONAL') {
                 if (isOpenNow === true) {
                   return "Abierto ahora";
                 } else if (isOpenNow === false) {
                   return "Cerrado ahora";
+                } else {
+                  return "Abierto ahora";
                 }
-                
-                // Estado por defecto
-                return "Consulta aquí";
-              })()}
-            </span>
+              }
+              
+              if (isOpenNow === true) {
+                return "Abierto ahora";
+              } else if (isOpenNow === false) {
+                return "Cerrado ahora";
+              }
+              
+              return "Consulta aquí";
+            })()}
+          </span>
         </div>
       </div>
 
@@ -93,14 +89,12 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
 };
 
 export default function HotelCards({ places: propPlaces, loading: propLoading, error: propError }: HotelsCardProps = {}) {
-  // Usar hook principal como fallback si no se proporcionan props
   const { places: hookPlaces, loading: hookLoading } = usePlaces({
     category: "hotels",
     enableEnrichment: true,
     maxResults: 6
   });
   
-  // Usar props si están disponibles, sino usar hook interno
   const displayedHotels = (propPlaces || hookPlaces).slice(0, 5);
   const loading = propLoading !== undefined ? propLoading : hookLoading;
   const error = propError;

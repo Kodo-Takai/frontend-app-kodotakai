@@ -1,7 +1,5 @@
-// src/hooks/places/filter/filterStrategies.ts
 import type { UsePlacesOptions, FilterStrategy } from "../types";
 
-// Strategy Pattern: Diferentes estrategias de filtrado
 export class RatingFilterStrategy implements FilterStrategy {
   filter(places: any[], options: UsePlacesOptions): any[] {
     const minRating = options.minRating || 0;

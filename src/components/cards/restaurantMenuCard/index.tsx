@@ -21,7 +21,7 @@ interface Restaurant {
 
 export default function RestaurantMenuCard() {
   const { places: restaurants, loading } = usePlaces({
-    category: "restaurant",
+    category: "restaurants",
     enableEnrichment: true,
     maxResults: 6
   });
