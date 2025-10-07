@@ -56,7 +56,8 @@ export class GoogleMapsService {
         checkApi();
       };
 
-      script.onerror = () => reject(new Error("Failed to load Google Maps API"));
+      script.onerror = () =>
+        reject(new Error("Failed to load Google Maps API"));
       document.head.appendChild(script);
     });
 
@@ -78,7 +79,10 @@ export class GoogleMapsService {
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          const location = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          };
           CacheService.set(cacheKey, location, LOCATION_CACHE_TTL);
           resolve(location);
         },
@@ -96,7 +100,9 @@ export class GoogleMapsService {
    * Crea una instancia del servicio de Places de Google Maps
    */
   static createService(): google.maps.places.PlacesService {
-    return new window.google.maps.places.PlacesService(document.createElement("div"));
+    return new window.google.maps.places.PlacesService(
+      document.createElement("div")
+    );
   }
 
   /**
@@ -111,7 +117,10 @@ export class GoogleMapsService {
    * Verifica si la ubicación es real o es la ubicación de fallback
    */
   static isUsingRealLocation(location: LatLng): boolean {
-    return !(location.lat === FALLBACK_LOCATION.lat && location.lng === FALLBACK_LOCATION.lng);
+    return !(
+      location.lat === FALLBACK_LOCATION.lat &&
+      location.lng === FALLBACK_LOCATION.lng
+    );
   }
 
   /**
@@ -124,17 +133,21 @@ export class GoogleMapsService {
   ): Promise<google.maps.places.PlaceResult[]> {
     const SEARCH_RADII = [2000, 10000, 30000];
     const results = await Promise.all(
-      SEARCH_RADII.map(radius => 
-        new Promise<google.maps.places.PlaceResult[]>((resolve) => {
-          service.nearbySearch({ location, radius, type }, (results, status) => {
-            resolve(status === "OK" && results ? results : []);
-          });
-        })
+      SEARCH_RADII.map(
+        (radius) =>
+          new Promise<google.maps.places.PlaceResult[]>((resolve) => {
+            service.nearbySearch(
+              { location, radius, type },
+              (results, status) => {
+                resolve(status === "OK" && results ? results : []);
+              }
+            );
+          })
       )
     );
 
     const uniqueResults = new Map();
-    results.flat().forEach(place => {
+    results.flat().forEach((place) => {
       if (place.place_id && !uniqueResults.has(place.place_id)) {
         uniqueResults.set(place.place_id, place);
       }
@@ -160,7 +173,10 @@ export class GoogleMapsService {
   /**
    * Formatea un resultado de Google Places a formato estándar de la aplicación
    */
-  static formatPlaceResult(p: google.maps.places.PlaceResult): any {
+  static formatPlaceResult(
+    p: google.maps.places.PlaceResult,
+    _category?: string
+  ): any {
     if (!p.place_id || !p.name || !p.geometry?.location) return null;
     if (!p.rating || p.rating < 1.5) return null;
     if (!p.photos || p.photos.length === 0) return null;
@@ -173,6 +189,9 @@ export class GoogleMapsService {
       rating: p.rating,
       photo_url: p.photos?.[0]?.getUrl() || "",
       place_id: p.place_id || "",
+      vicinity: p.vicinity || "",
+      types: p.types || [],
+      user_ratings_total: p.user_ratings_total || 0,
     };
   }
 }

@@ -14,10 +14,16 @@ interface PriceDisplayProps {
   className?: string;
 }
 
-export default function PriceDisplay({ priceInfo, category, className = "" }: PriceDisplayProps) {
+export default function PriceDisplay({
+  priceInfo,
+  category,
+  className = "",
+}: PriceDisplayProps) {
   // Determinar si mostrar precios según la categoría
-  const shouldShowPrice = ["hotels", "restaurants", "destinations"].includes(category);
-  
+  const shouldShowPrice = ["hotels", "restaurants", "destinations"].includes(
+    category
+  );
+
   if (!shouldShowPrice) {
     return null;
   }
@@ -25,7 +31,9 @@ export default function PriceDisplay({ priceInfo, category, className = "" }: Pr
   // Mostrar información de precio incluso si no está disponible
   if (!priceInfo) {
     return (
-      <div className={`p-3 rounded-lg border-l-4 border-gray-300 bg-gray-50 ${className}`}>
+      <div
+        className={`p-3 rounded-lg border-l-4 border-gray-300 bg-gray-50 ${className}`}
+      >
         <div className="flex items-center space-x-2">
           <span className="text-lg">🏨</span>
           <div>
@@ -42,7 +50,9 @@ export default function PriceDisplay({ priceInfo, category, className = "" }: Pr
   }
 
   return (
-    <div className={`p-3 rounded-lg border-l-4 ${priceInfo.color} bg-gray-50 ${className}`}>
+    <div
+      className={`p-3 rounded-lg border-l-4 ${priceInfo.color} bg-gray-50 ${className}`}
+    >
       <div className="flex items-center space-x-2">
         <span className="text-lg">{priceInfo.symbol}</span>
         <div>
@@ -53,13 +63,15 @@ export default function PriceDisplay({ priceInfo, category, className = "" }: Pr
             <p className="text-xs text-gray-600">
               Nivel {priceInfo.level}/4
               {priceInfo.isInferred && (
-                <span className="ml-1 text-blue-600 font-medium">(Estimado)</span>
+                <span className="ml-1 text-blue-600 font-medium">
+                  (Estimado)
+                </span>
               )}
             </p>
           )}
         </div>
       </div>
-      
+
       {/* Información adicional según categoría */}
       {category === "hotels" && priceInfo.level !== null && (
         <div className="mt-2 text-xs text-gray-600">
@@ -70,7 +82,7 @@ export default function PriceDisplay({ priceInfo, category, className = "" }: Pr
           {priceInfo.level === 4 && "Resorts, hoteles de ultra lujo"}
         </div>
       )}
-      
+
       {category === "restaurants" && priceInfo.level !== null && (
         <div className="mt-2 text-xs text-gray-600">
           {priceInfo.level === 0 && "Comida gratuita"}

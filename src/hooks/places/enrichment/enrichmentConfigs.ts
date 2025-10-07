@@ -8,53 +8,76 @@ export interface EnrichmentConfig {
 }
 
 const COMMON_FIELDS = [
-  "name", "rating", "formatted_address", "geometry", "place_id", "photos",
-  "editorial_summary", "reviews", "opening_hours", "website", "formatted_phone_number",
-  "types", "user_ratings_total", "vicinity", "business_status"
+  "name",
+  "rating",
+  "formatted_address",
+  "geometry",
+  "place_id",
+  "photos",
+  "editorial_summary",
+  "reviews",
+  "opening_hours",
+  "website",
+  "formatted_phone_number",
+  "types",
+  "user_ratings_total",
+  "vicinity",
+  "business_status",
 ];
 
 const HOTEL_SPECIFIC_FIELDS = [
-  "international_phone_number", "price_level", "url", "utc_offset_minutes",
-  "wheelchair_accessible_entrance", "curbside_pickup", "delivery", "dine_in", 
-  "takeout", "reservable", "serves_breakfast", "serves_lunch", "serves_dinner",
-  "serves_beer", "serves_wine", "serves_brunch", "serves_vegetarian_food"
+  "international_phone_number",
+  "price_level",
+  "url",
+  "utc_offset_minutes",
+  "wheelchair_accessible_entrance",
+  "curbside_pickup",
+  "delivery",
+  "dine_in",
+  "takeout",
+  "reservable",
+  "serves_breakfast",
+  "serves_lunch",
+  "serves_dinner",
+  "serves_beer",
+  "serves_wine",
+  "serves_brunch",
+  "serves_vegetarian_food",
 ];
 
-const RESTAURANT_SPECIFIC_FIELDS = [
-  "price_level", "url", "utc_offset_minutes"
-];
+const RESTAURANT_SPECIFIC_FIELDS = ["price_level", "url", "utc_offset_minutes"];
 
 export const ENRICHMENT_CONFIGS: Record<PlaceCategory, EnrichmentConfig> = {
   hotels: {
     fields: [...COMMON_FIELDS, ...HOTEL_SPECIFIC_FIELDS],
     language: "es",
-    region: "PE"
+    region: "PE",
   },
   restaurants: {
     fields: [...COMMON_FIELDS, ...RESTAURANT_SPECIFIC_FIELDS],
     language: "es",
-    region: "PE"
+    region: "PE",
   },
   beaches: {
     fields: COMMON_FIELDS,
     language: "es",
-    region: "PE"
+    region: "PE",
   },
   destinations: {
     fields: COMMON_FIELDS,
     language: "es",
-    region: "PE"
+    region: "PE",
   },
   tourist_attraction: {
     fields: COMMON_FIELDS,
     language: "es",
-    region: "PE"
+    region: "PE",
   },
   all: {
     fields: COMMON_FIELDS,
     language: "es",
-    region: "PE"
-  }
+    region: "PE",
+  },
 };
 
 export class EnrichmentConfigFactory {
@@ -62,13 +85,14 @@ export class EnrichmentConfigFactory {
     category: PlaceCategory,
     customOptions: Partial<EnrichmentConfig> = {}
   ): EnrichmentConfig {
-    const baseConfig = ENRICHMENT_CONFIGS[category] || ENRICHMENT_CONFIGS['all'];
-    
+    const baseConfig =
+      ENRICHMENT_CONFIGS[category] || ENRICHMENT_CONFIGS["all"];
+
     return {
       fields: customOptions.fields || baseConfig.fields,
       language: customOptions.language || baseConfig.language,
       region: customOptions.region || baseConfig.region,
-      sessionToken: customOptions.sessionToken || baseConfig.sessionToken
+      sessionToken: customOptions.sessionToken || baseConfig.sessionToken,
     };
   }
 }
@@ -77,20 +101,21 @@ export const RATE_LIMIT_CONFIG = {
   maxRequestsPerSecond: 10,
   maxRequestsPerDay: 100000,
   retryDelay: 1000,
-  maxRetries: 3
+  maxRetries: 3,
 };
 
 export const CACHE_CONFIG = {
   ttl: 3600000,
   maxSize: 1000,
-  enabled: true
+  enabled: true,
 };
-
 
 //Para poner el endpoint de la IA
 export const AI_CONFIG = {
-  endpoint: import.meta.env.VITE_AI_ENDPOINT || "http://localhost:8000/api/hotels/analyze",
+  endpoint:
+    import.meta.env.VITE_AI_ENDPOINT ||
+    "http://localhost:8000/api/hotels/analyze",
   timeout: 30000,
   retryAttempts: 3,
-  retryDelay: 2000
+  retryDelay: 2000,
 };

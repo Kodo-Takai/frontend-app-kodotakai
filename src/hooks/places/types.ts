@@ -1,10 +1,10 @@
 export type LatLng = { lat: number; lng: number };
 
-export type PlaceCategory = 
-  | "all" 
-  | "beaches" 
-  | "restaurants" 
-  | "hotels" 
+export type PlaceCategory =
+  | "all"
+  | "beaches"
+  | "restaurants"
+  | "hotels"
   | "destinations"
   | "tourist_attraction";
 
@@ -44,6 +44,7 @@ export interface EnrichedPlace extends Place {
   business_status?: string;
   price_level?: number;
   is_open_now?: boolean;
+  user_ratings_total?: number;
   price_info?: {
     level: number | null;
     description: string;

@@ -1,12 +1,12 @@
 import React from "react";
 // Importando los iconos necesarios de react-icons
-import { 
-  IoLocationSharp, 
-  IoHome, 
+import {
+  IoLocationSharp,
+  IoHome,
   IoCart, // <-- NUEVO ÍCONO IMPORTADO
-  IoFastFood, 
-  IoCalendar, 
-  IoFootball 
+  IoFastFood,
+  IoCalendar,
+  IoFootball,
 } from "react-icons/io5";
 
 const CATEGORIES = [
@@ -24,9 +24,9 @@ interface CategoryFilterProps {
   onSelectionChange: (newSelection: string) => void;
 }
 
-const CategoryFilter: React.FC<CategoryFilterProps> = ({ 
-  selectedCategory, 
-  onSelectionChange 
+const CategoryFilter: React.FC<CategoryFilterProps> = ({
+  selectedCategory,
+  onSelectionChange,
 }) => {
   const handleSelect = (categoryId: string) => {
     onSelectionChange(categoryId);

@@ -1,20 +1,24 @@
-import React, { useState, useMemo } from 'react';
-import LocationMultiCard from './LocationMultiCard';
-import type { Place } from '../../../hooks/places';
-import './index.scss';
+import React, { useState, useMemo } from "react";
+import LocationMultiCard from "./LocationMultiCard";
+import type { Place } from "../../../hooks/places";
+import "./index.scss";
 
 const EARTH_RADIUS_KM = 6371;
 const DEFAULT_ITEMS_PER_PAGE = 4;
 const LOAD_MORE_DELAY = 300;
 
-const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLng/2) * Math.sin(dLng/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+const calculateDistance = (
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number => {
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return EARTH_RADIUS_KM * c;
 };
 
@@ -27,13 +31,13 @@ interface LocationMultiGridProps {
   userLocation?: { lat: number; lng: number };
 }
 
-const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({ 
-  places, 
-  loading, 
-  error, 
+const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
+  places,
+  loading,
+  error,
   onPlaceClick,
   itemsPerPage = DEFAULT_ITEMS_PER_PAGE,
-  userLocation
+  userLocation,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -66,7 +70,7 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
   const handleLoadMore = () => {
     setIsLoadingMore(true);
     setTimeout(() => {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
       setIsLoadingMore(false);
     }, LOAD_MORE_DELAY);
   };
@@ -135,7 +139,9 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
                 Cargando...
               </>
             ) : (
-              `Mostrar más (${sortedPlaces.length - displayedPlaces.length} restantes)`
+              `Mostrar más (${
+                sortedPlaces.length - displayedPlaces.length
+              } restantes)`
             )}
           </button>
         </div>

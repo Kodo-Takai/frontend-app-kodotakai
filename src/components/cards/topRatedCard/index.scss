@@ -33,7 +33,7 @@
   width: 32px;
   height: 32px;
   background-color: white;
-  color: #FF0007;
+  color: #ff0007;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -60,11 +60,11 @@
 }
 
 .top-rated-star-full {
-  color: #FF0007;
+  color: #ff0007;
 }
 
 .top-rated-star-half {
-  color: #FF0007;
+  color: #ff0007;
   opacity: 0.5;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .top-rated-price {
-  color: #FF0007;
+  color: #ff0007;
   font-weight: bold;
   font-size: 1.125rem;
   margin-bottom: 0.5rem;
@@ -148,11 +148,12 @@
   left: 0;
   right: 0;
   height: 100%;
-  background: linear-gradient(to top, 
-    rgba(0, 0, 0, 0.9) 0%, 
-    rgba(0, 0, 0, 0.9) 30%, 
-    rgba(0, 0, 0, 0.5) 60%, 
-    rgba(0, 0, 0, 0.3) 85%, 
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.9) 30%,
+    rgba(0, 0, 0, 0.5) 60%,
+    rgba(0, 0, 0, 0.3) 85%,
     rgba(0, 0, 0, 0) 100%
   );
   pointer-events: none;
@@ -180,7 +181,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -192,7 +194,7 @@
   .top-rated-card {
     @apply w-72 h-56;
   }
-  
+
   .top-rated-skeleton {
     @apply w-72 h-56;
   }
@@ -202,7 +204,7 @@
   .top-rated-card {
     @apply w-64 h-48;
   }
-  
+
   .top-rated-skeleton {
     @apply w-64 h-48;
   }

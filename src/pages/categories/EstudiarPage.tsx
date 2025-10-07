@@ -5,9 +5,11 @@ export default function EstudiarPage() {
   const animationClass = useNavigationAnimation();
 
   return (
-    <div className={`flex flex-col gap-3 max-w-md mx-auto p-6 bg-white min-h-screen ${animationClass}`}>
+    <div
+      className={`flex flex-col gap-3 max-w-md mx-auto p-6 bg-white min-h-screen ${animationClass}`}
+    >
       <HeaderNavigationExplore />
-      
+
       <div className="flex items-center justify-center h-64 bg-gray-100 rounded-xl">
         <div className="text-center">
           <div className="text-6xl mb-4">📚</div>

@@ -11,43 +11,74 @@ export interface CategoryConfig {
 
 export const CATEGORY_CONFIGS: Record<PlaceCategory, CategoryConfig> = {
   beaches: {
-    searchQueries: ["playa", "playas"],
-    type: "natural_feature",
+    searchQueries: ["playa", "playas", "beach", "costa", "mar"],
+    type: "establishment",
     minRating: 3.0,
     enableMultiplePhotos: true,
     radius: 20000,
     defaultLimit: 6,
   },
   restaurants: {
-    searchQueries: ["restaurant", "menu", "restaurante"],
+    searchQueries: [
+      "restaurant",
+      "restaurante",
+      "comida",
+      "gastronomía",
+      "cocina",
+    ],
     type: "restaurant",
     minRating: 4.0,
     enableMultiplePhotos: true,
-    radius: 5000,
+    radius: 10000,
     defaultLimit: 8,
   },
   hotels: {
-    searchQueries: ["hotel", "hospedaje", "hostal", "alojamiento"],
+    searchQueries: ["hotel", "hospedaje", "hostal", "alojamiento", "resort"],
     type: "lodging",
-    minRating: 1.5, // Reducido de 2.0 a 1.5 como tu código anterior
+    minRating: 1.5,
     enableMultiplePhotos: true,
-    radius: 20000, // Aumentado para buscar más lejos
-    defaultLimit: 20, // Aumentado para más resultados
+    radius: 10000,
+    defaultLimit: 20,
   },
   destinations: {
-    searchQueries: ["lugar turístico", "destino", "atracción", "sitio de interés", "tourist"],
-    type: "tourist_attraction",
+    searchQueries: [
+      "museo",
+      "parque",
+      "monumento",
+      "iglesia",
+      "plaza",
+      "centro histórico",
+      "mirador",
+      "cascada",
+      "ruinas",
+      "catedral",
+      "basílica",
+      "zoológico",
+      "acuario",
+      "teatro",
+      "centro cultural",
+    ],
+    type: "establishment",
     minRating: 4.0,
     enableMultiplePhotos: true,
-    radius: 3000,
+    radius: 10000,
     defaultLimit: 6,
   },
   tourist_attraction: {
-    searchQueries: ["lugar turístico", "destino", "atracción", "sitio de interés", "tourist"],
-    type: "tourist_attraction",
+    searchQueries: [
+      "monumento",
+      "iglesia",
+      "plaza",
+      "mirador",
+      "cascada",
+      "ruinas",
+      "catedral",
+      "basílica",
+    ],
+    type: "establishment",
     minRating: 4.0,
     enableMultiplePhotos: true,
-    radius: 3000,
+    radius: 10000,
     defaultLimit: 6,
   },
   all: {
@@ -55,7 +86,7 @@ export const CATEGORY_CONFIGS: Record<PlaceCategory, CategoryConfig> = {
     type: "establishment",
     minRating: 2.0,
     enableMultiplePhotos: false,
-    radius: 5000,
+    radius: 10000,
     defaultLimit: 15,
   },
 };
@@ -91,15 +122,126 @@ export function getCategoryConfig(category: keyof typeof CATEGORY_CONFIGS) {
 }
 
 export function filterByKeywords(places: any[], keywords: string[]): any[] {
-  return places.filter(place => {
-    const name = place.name?.toLowerCase() || "";
-    const vicinity = place.vicinity?.toLowerCase() || "";
-    const address = place.formatted_address?.toLowerCase() || "";
-    
-    return keywords.some(keyword => 
-      name.includes(keyword) || 
-      vicinity.includes(keyword) || 
-      address.includes(keyword)
-    );
+  return places.filter((place) => {
+    const searchText = buildSearchText(place);
+    return keywords.some((keyword) => matchesKeyword(searchText, keyword));
   });
+}
+
+function buildSearchText(place: any): string {
+  const name = place.name?.toLowerCase() || "";
+  const vicinity = place.vicinity?.toLowerCase() || "";
+  const address = place.formatted_address?.toLowerCase() || "";
+  const types = place.types?.join(" ").toLowerCase() || "";
+
+  return `${name} ${vicinity} ${address} ${types}`;
+}
+
+function matchesKeyword(searchText: string, keyword: string): boolean {
+  const lowerKeyword = keyword.toLowerCase();
+
+  const exclusionRules = getExclusionRules();
+  if (exclusionRules[lowerKeyword]) {
+    return false;
+  }
+
+  const inclusionRules = getInclusionRules();
+  if (inclusionRules[lowerKeyword]) {
+    return inclusionRules[lowerKeyword].some((term) =>
+      searchText.includes(term)
+    );
+  }
+
+  return searchText.includes(lowerKeyword);
+}
+
+function getExclusionRules(): Record<string, boolean> {
+  return {
+    cerro: true,
+    montaña: true,
+    mountain: true,
+    destino: true,
+    destinos: true,
+  };
+}
+
+function getInclusionRules(): Record<string, string[]> {
+  return {
+    // Playas
+    playa: ["playa", "beach", "costa", "mar", "oceano", "litoral"],
+    playas: ["playa", "beach", "costa", "mar", "oceano", "litoral"],
+    beach: ["playa", "beach", "costa", "mar", "oceano", "litoral"],
+
+    // Restaurantes
+    restaurant: [
+      "restaurant",
+      "restaurante",
+      "comida",
+      "gastronomía",
+      "cocina",
+      "mesón",
+      "café",
+    ],
+    restaurante: [
+      "restaurant",
+      "restaurante",
+      "comida",
+      "gastronomía",
+      "cocina",
+      "mesón",
+      "café",
+    ],
+    comida: [
+      "restaurant",
+      "restaurante",
+      "comida",
+      "gastronomía",
+      "cocina",
+      "mesón",
+      "café",
+    ],
+
+    // Hoteles
+    hotel: [
+      "hotel",
+      "hospedaje",
+      "hostal",
+      "alojamiento",
+      "resort",
+      "posada",
+      "hospedería",
+    ],
+    hospedaje: [
+      "hotel",
+      "hospedaje",
+      "hostal",
+      "alojamiento",
+      "resort",
+      "posada",
+      "hospedería",
+    ],
+    alojamiento: [
+      "hotel",
+      "hospedaje",
+      "hostal",
+      "alojamiento",
+      "resort",
+      "posada",
+      "hospedería",
+    ],
+
+    // Destinos turísticos
+    museo: ["museo", "galería", "exposición", "arte", "historia", "cultura"],
+    parque: ["parque", "jardín", "plaza", "espacio verde", "recreación"],
+    monumento: ["monumento", "estatua", "memorial", "hito", "landmark"],
+    iglesia: [
+      "iglesia",
+      "catedral",
+      "basílica",
+      "templo",
+      "santuario",
+      "capilla",
+    ],
+    plaza: ["plaza", "square", "centro", "plaza mayor", "plaza principal"],
+  };
 }

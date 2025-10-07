@@ -46,7 +46,6 @@ function AppContent() {
           <Route path="/explorar/parques" element={<ParquesPage />} />
           <Route path="/maps" element={<Maps />} />
           <Route path="/home" element={<Home />} />
-
         </Route>
 
         <Route element={<ProtectedRoute />}>

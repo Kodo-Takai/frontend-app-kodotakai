@@ -14,35 +14,22 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
   const [imageError, setImageError] = useState(false);
   const handleImageError = () => setImageError(true);
 
-         const handleHotelClick = (hotel: Place) => {
-           console.log("Hotel seleccionado:", hotel);
-           
-           // Debug de amenities y servicios
-           if ((hotel as any).amenities) {
-             console.log("🏨 Amenities del hotel:", (hotel as any).amenities);
-           } else {
-             console.log("❌ No se encontraron amenities para este hotel");
-           }
-           
-           if ((hotel as any).services) {
-             console.log("🛎️ Servicios del hotel:", (hotel as any).services);
-           } else {
-             console.log("❌ No se encontraron servicios para este hotel");
-           }
-           
-           if ((hotel as any).types) {
-             console.log("🏷️ Tipos de lugar:", (hotel as any).types);
-           }
-         };
+  const handleHotelClick = (hotel: Place) => {
+    console.log("Hotel seleccionado:", hotel);
+  };
 
   return (
-    <div className="hotel-card-width shadow-sm" onClick={() => handleHotelClick(hotel)}>
+    <div
+      className="hotel-card-width shadow-sm"
+      onClick={() => handleHotelClick(hotel)}
+    >
       <div className="hotel-card-image-container">
         <img
           src={
             imageError
               ? "https://picsum.photos/400/200?random=hotel-error"
-              : hotel.photo_url || "https://picsum.photos/400/200?random=hotel-default"
+              : hotel.photo_url ||
+                "https://picsum.photos/400/200?random=hotel-default"
           }
           alt={hotel.name}
           onError={handleImageError}
@@ -62,16 +49,16 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
             {(() => {
               const businessStatus = (hotel as any).business_status;
               const isOpenNow = (hotel as any).is_open_now;
-              
-              if (businessStatus === 'CLOSED_PERMANENTLY') {
+
+              if (businessStatus === "CLOSED_PERMANENTLY") {
                 return "Cerrado permanentemente";
               }
-              
-              if (businessStatus === 'CLOSED_TEMPORARILY') {
+
+              if (businessStatus === "CLOSED_TEMPORARILY") {
                 return "Cerrado temporalmente";
               }
-              
-              if (businessStatus === 'OPERATIONAL') {
+
+              if (businessStatus === "OPERATIONAL") {
                 if (isOpenNow === true) {
                   return "Abierto ahora";
                 } else if (isOpenNow === false) {
@@ -80,13 +67,13 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
                   return "Abierto ahora";
                 }
               }
-              
+
               if (isOpenNow === true) {
                 return "Abierto ahora";
               } else if (isOpenNow === false) {
                 return "Cerrado ahora";
               }
-              
+
               return "Consulta aquí";
             })()}
           </span>
@@ -98,20 +85,26 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
           {hotel.name}
         </h3>
         <p className="text-sm text-black mt-1 line-clamp-2 overflow-hidden text-ellipsis">
-          {(hotel as any).formatted_address || hotel.vicinity || "Ubicación no disponible"}
+          {(hotel as any).formatted_address ||
+            hotel.vicinity ||
+            "Ubicación no disponible"}
         </p>
       </div>
     </div>
   );
 };
 
-export default function HotelCards({ places: propPlaces, loading: propLoading, error: propError }: HotelsCardProps = {}) {
+export default function HotelCards({
+  places: propPlaces,
+  loading: propLoading,
+  error: propError,
+}: HotelsCardProps = {}) {
   const { places: hookPlaces, loading: hookLoading } = usePlaces({
     category: "hotels",
     enableEnrichment: true,
-    maxResults: 6
+    maxResults: 6,
   });
-  
+
   const displayedHotels = (propPlaces || hookPlaces).slice(0, 5);
   const loading = propLoading !== undefined ? propLoading : hookLoading;
   const error = propError;
@@ -149,9 +142,7 @@ export default function HotelCards({ places: propPlaces, loading: propLoading, e
           <h3 className="text-lg font-semibold text-red-900 mb-2">
             Error al cargar hoteles
           </h3>
-          <p className="text-red-600 text-sm">
-            {error}
-          </p>
+          <p className="text-red-600 text-sm">{error}</p>
         </div>
       </div>
     );

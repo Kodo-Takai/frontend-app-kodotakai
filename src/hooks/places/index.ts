@@ -5,7 +5,12 @@ export * from "./search/usePlacesSearch";
 export * from "./filter/usePlacesFilter";
 export * from "./photos/usePlacesPhotos";
 
-export { CategoryConfigFactory, CATEGORY_CONFIGS, getCategoryConfig, filterByKeywords } from "./config/categoryConfigs";
+export {
+  CategoryConfigFactory,
+  CATEGORY_CONFIGS,
+  getCategoryConfig,
+  filterByKeywords,
+} from "./config/categoryConfigs";
 
 export { useReviewsProcessor } from "./processors/reviewsProcessor";
 export { useAIService } from "./ai/useAIService";

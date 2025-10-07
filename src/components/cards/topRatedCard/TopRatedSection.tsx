@@ -8,28 +8,28 @@ interface TopRatedSectionProps {
   minRating?: number;
 }
 
-export default function TopRatedSection({ 
-  category, 
+export default function TopRatedSection({
+  category,
   title,
   limit = 15,
-  minRating = 4.0
+  minRating = 4.0,
 }: TopRatedSectionProps) {
   const { places, loading, error } = useTopRatedPlaces({
     category,
     limit,
-    minRating
+    minRating,
   });
 
   const getTitle = () => {
     if (title) return title;
-    
+
     const titles = {
       hotels: " Top Hoteles mejor valorados",
-      beaches: " Top Playas mejor valoradas", 
+      beaches: " Top Playas mejor valoradas",
       restaurants: " Top Restaurantes mejor valorados",
-      destinations: " Top Destinos mejor valorados"
+      destinations: " Top Destinos mejor valorados",
     };
-    
+
     return titles[category];
   };
 
@@ -42,7 +42,6 @@ export default function TopRatedSection({
         loading={loading}
         error={error}
       />
-      
     </div>
   );
 }

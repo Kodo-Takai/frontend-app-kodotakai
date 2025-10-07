@@ -25,22 +25,28 @@ interface TopRatedCardProps {
   index?: number;
 }
 
-const TopRatedCard = memo(function TopRatedCard({ place, onSelect, index }: TopRatedCardProps) {
+const TopRatedCard = memo(function TopRatedCard({
+  place,
+  onSelect,
+  index,
+}: TopRatedCardProps) {
   const [imageError, setImageError] = useState(false);
 
   const handleImageError = () => setImageError(true);
 
   const handleClick = () => {
-    onSelect ? onSelect(place) : console.log('Lugar seleccionado:', place);
+    onSelect ? onSelect(place) : console.log("Lugar seleccionado:", place);
   };
 
-  const description = place.editorial_summary?.overview 
-    ? (place.editorial_summary.overview.length > 100 
-        ? place.editorial_summary.overview.substring(0, 100) + "..."
-        : place.editorial_summary.overview)
-    : "Descripción no disponible";
+  const hasDescription = place.editorial_summary?.overview && place.editorial_summary.overview.length > 10;
+  const description = hasDescription
+    ? place.editorial_summary!.overview!.length > 100
+      ? place.editorial_summary!.overview!.substring(0, 100) + "..."
+      : place.editorial_summary!.overview!
+    : null;
 
-  const address = place.formatted_address || place.vicinity || "Dirección no disponible";
+  const address =
+    place.formatted_address || place.vicinity || "Dirección no disponible";
 
   const renderStars = (rating?: number) => {
     if (!rating) return null;
@@ -51,21 +57,27 @@ const TopRatedCard = memo(function TopRatedCard({ place, onSelect, index }: TopR
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(
-        <FaStar key={`full-${i}`} className="w-4 h-4" style={{ color: '#FF0007' }} />
+        <FaStar
+          key={`full-${i}`}
+          className="w-4 h-4"
+          style={{ color: "#FF0007" }}
+        />
       );
     }
 
     if (hasHalfStar) {
       stars.push(
-        <FaStar key="half" className="w-4 h-4" style={{ color: '#FF0007', opacity: 0.5 }} />
+        <FaStar
+          key="half"
+          className="w-4 h-4"
+          style={{ color: "#FF0007", opacity: 0.5 }}
+        />
       );
     }
 
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <FaStar key={`empty-${i}`} className="w-4 h-4 text-white" />
-      );
+      stars.push(<FaStar key={`empty-${i}`} className="w-4 h-4 text-white" />);
     }
 
     return (
@@ -79,15 +91,13 @@ const TopRatedCard = memo(function TopRatedCard({ place, onSelect, index }: TopR
   };
 
   return (
-    <div 
-      className="top-rated-card-width"
-      onClick={handleClick}
-    >
+    <div className="top-rated-card-width" onClick={handleClick}>
       <img
         src={
           imageError
             ? "https://picsum.photos/320/256?random=destination-error"
-            : place.photo_url || "https://picsum.photos/320/256?random=destination-default"
+            : place.photo_url ||
+              "https://picsum.photos/320/256?random=destination-default"
         }
         alt={place.name}
         className="top-rated-card-image"
@@ -97,28 +107,27 @@ const TopRatedCard = memo(function TopRatedCard({ place, onSelect, index }: TopR
       <div className="top-rated-card-gradient" />
 
       {index !== undefined && (
-        <div className="top-rated-card-indicator">
-          {index + 1}
-        </div>
+        <div className="top-rated-card-indicator">{index + 1}</div>
       )}
 
       <div className="top-rated-card-content">
-        <div className="mb-2">
-          {renderStars(place.rating)}
-        </div>
+        <div className="mb-2">{renderStars(place.rating)}</div>
 
         <h3 className="text-lg font-extrabold mb-2 line-clamp-1 uppercase">
           {place.name}
         </h3>
 
-        <p className="text-sm text-white/90 mb-2 line-clamp-2">
-          {description}
-        </p>
+        {description && (
+          <p className="text-sm text-white/90 mb-2 line-clamp-2">{description}</p>
+        )}
 
         <div className="flex flex-col items-end gap-1">
           <div className="flex items-center gap-1">
             {place.price_info ? (
-              <span className="font-extrabold uppercase text-lg" style={{ color: '#FF0007' }}>
+              <span
+                className="font-extrabold uppercase text-lg"
+                style={{ color: "#FF0007" }}
+              >
                 {place.price_info.description}
               </span>
             ) : (

@@ -17,7 +17,7 @@ export default function BeachCards() {
   const { places: beaches, loading } = usePlaces({
     category: "beaches",
     enableEnrichment: true,
-    maxResults: 6
+    maxResults: 6,
   });
 
   const handleVisit = (beach: Beach) => {
@@ -34,15 +34,15 @@ export default function BeachCards() {
       if (!beach.photos || beach.photos.length === 0) {
         return [];
       }
-      
-      return beach.photos.slice(0, 3).map(photo => {
-        if (typeof photo === 'object' && 'getUrl' in photo) {
+
+      return beach.photos.slice(0, 3).map((photo) => {
+        if (typeof photo === "object" && "getUrl" in photo) {
           return {
-            photo_url: (photo as any).getUrl({ maxWidth: 400, maxHeight: 300 })
+            photo_url: (photo as any).getUrl({ maxWidth: 400, maxHeight: 300 }),
           };
         }
         return {
-          photo_url: (photo as any).photo_url || beach.photo_url
+          photo_url: (photo as any).photo_url || beach.photo_url,
         };
       });
     };
@@ -96,7 +96,10 @@ export default function BeachCards() {
     };
 
     return (
-      <div className="beach-card-width shadow-sm" onClick={() => handleVisit(beach)}>
+      <div
+        className="beach-card-width shadow-sm"
+        onClick={() => handleVisit(beach)}
+      >
         <div className="beach-card-container">
           <div className="beach-card-header">
             <div className="beach-card-title-section">
@@ -192,7 +195,8 @@ export default function BeachCards() {
                     src={
                       imageError
                         ? "https://picsum.photos/97/114?random=error"
-                        : photo.photo_url || "https://picsum.photos/97/114?random=beach-default"
+                        : photo.photo_url ||
+                          "https://picsum.photos/97/114?random=beach-default"
                     }
                     alt={beach.name}
                     className={`beach-card-image ${

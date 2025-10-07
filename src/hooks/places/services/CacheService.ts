@@ -17,7 +17,7 @@ export class CacheService {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
@@ -80,7 +80,7 @@ export class CacheService {
   static getStats() {
     return {
       size: this.cache.size,
-      keys: Array.from(this.cache.keys())
+      keys: Array.from(this.cache.keys()),
     };
   }
 }

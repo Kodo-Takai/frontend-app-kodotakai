@@ -17,7 +17,7 @@ export class CategoryFilterStrategy implements FilterStrategy {
     const types = place.types || [];
     return (
       types.includes("restaurant") ||
-      types.includes("comedor") ||
+      types.includes("Menu") ||
       types.includes("fonda") ||
       types.includes("parador")
     );

@@ -14,7 +14,9 @@ export function loadGoogleMaps(): Promise<void> {
     const existing = document.getElementById(SCRIPT_ID);
     if (existing) {
       existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Failed to load Google Maps")));
+      existing.addEventListener("error", () =>
+        reject(new Error("Failed to load Google Maps"))
+      );
       return;
     }
 

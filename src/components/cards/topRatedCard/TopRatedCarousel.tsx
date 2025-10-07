@@ -10,35 +10,44 @@ interface TopRatedCarouselProps {
   error?: string | null;
 }
 
-export default function TopRatedCarousel({ 
-  places, 
-  category, 
-  title, 
-  loading = false, 
-  error = null 
+export default function TopRatedCarousel({
+  places,
+  category,
+  title,
+  loading = false,
+  error = null,
 }: TopRatedCarouselProps) {
   const [, setSelectedPlace] = useState<any>(null);
 
   const handlePlaceSelect = (place: any) => {
     setSelectedPlace(place);
-    console.log('Lugar seleccionado desde TopRatedCarousel:', place);
+    console.log("Lugar seleccionado desde TopRatedCarousel:", place);
   };
 
-  const filteredPlaces = places.filter(place => {
-    const hasDescription = !!(
-      place.editorial_summary?.overview && 
-      place.editorial_summary.overview.length > 20
-    );
-    
-    const hasPrice = !!(
-      place.price_info?.level !== null && 
-      place.price_info?.level !== undefined &&
-      place.price_info.level > 0
-    );
-    
+  const filteredPlaces = places.filter((place) => {
     const hasBasicData = !!(place.name && place.rating && place.rating >= 3.0);
-    
-    return hasDescription && hasPrice && hasBasicData;
+
+    if (!hasBasicData) return false;
+
+    const hasDescription = !!(
+      place.editorial_summary?.overview &&
+      place.editorial_summary.overview.length > 10
+    );
+
+    const hasPrice = !!(
+      place.price_info?.level !== null && place.price_info?.level !== undefined
+    );
+
+    const hasTypes = !!(place.types && place.types.length > 0);
+    const hasVicinity = !!(place.vicinity && place.vicinity.length > 0);
+
+    // Para restaurantes: aceptar si tiene descripción O precio O tipos/vicinity
+    // Para hoteles: mantener el filtro estricto (descripción Y precio)
+    if (category === 'restaurants') {
+      return hasBasicData && (hasDescription || hasPrice || hasTypes || hasVicinity);
+    } else {
+      return hasBasicData && hasDescription && hasPrice;
+    }
   });
 
   if (loading) {
@@ -69,12 +78,15 @@ export default function TopRatedCarousel({
     return (
       <div className="w-full p-4">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">{title}</h2>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="border rounded-lg p-4">
           <p className="text-yellow-700">
-            No se encontraron destinos con descripción y precio completos.
+            No se encontraron destinos con datos completos suficientes.
           </p>
           <p className="text-yellow-600 text-sm mt-1">
             Total de destinos encontrados: {places.length}
+          </p>
+          <p className="text-yellow-600 text-sm">
+            Filtros aplicados: rating ≥ 3.0, nombre válido, {category === 'restaurants' ? 'descripción, precio, tipos o ubicación' : 'descripción completa y precio'}.
           </p>
         </div>
       </div>
@@ -84,7 +96,7 @@ export default function TopRatedCarousel({
   return (
     <div className="w-full">
       <h2 className="text-xl font-bold text-gray-800 mb-4 ">{title}</h2>
-      
+
       <div className="top-rated-carousel">
         {filteredPlaces.map((place, index) => (
           <TopRatedCard
