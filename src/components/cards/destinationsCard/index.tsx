@@ -4,8 +4,9 @@ import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { usePlaces } from "../../../hooks/places";
-import type { Place } from "../../../hooks/places";
+import type { Place, EnrichedPlace } from "../../../hooks/places/types";
 import "./index.scss";
+import PlaceModal from "../../ui/placeModal";
 
 export default function DestinationCards() {
   const { places, loading } = usePlaces({
@@ -14,8 +15,12 @@ export default function DestinationCards() {
     maxResults: 6
   });
 
-  const handleVisit = (place: Place) => {
-    console.log("Destino seleccionado:", place);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<Place | EnrichedPlace | null>(null);
+
+  const handleVisit = (place: Place | EnrichedPlace) => {
+    setSelectedPlace(place);
+    setIsModalOpen(true);
   };
 
   // Limitar a máximo 6 lugares
@@ -166,6 +171,11 @@ export default function DestinationCards() {
         Lugares que debes visitar
       </h2>
       {renderContent()}
+      <PlaceModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        place={selectedPlace}
+      />
     </div>
   );
 }

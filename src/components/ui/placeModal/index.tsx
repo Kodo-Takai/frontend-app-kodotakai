@@ -1,144 +1,139 @@
-// src/components/ui/placeModal/index.tsx
-import { useEffect } from "react"; // Solo para eventos DOM
-import { MdClose, MdEvent } from "react-icons/md";
-import { FaStar } from "react-icons/fa";
-import { TbLocationFilled } from "react-icons/tb";
-import { useNavigate } from "react-router-dom";
-import type { EnrichedPlace } from "../../../hooks/places/types";
+import { useEffect, useMemo } from "react";
+import type { EnrichedPlace, Place } from "../../../hooks/places";
+import { FaStar, FaPhoneAlt, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
 
-interface PlaceModalProps {
+export type PlaceModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  place: EnrichedPlace | null; 
-}
+  place: (Place | EnrichedPlace) | null;
+};
 
-export default function PlaceModal({
-  isOpen,
-  onClose,
-  place,
-}: PlaceModalProps) {
-  const navigate = useNavigate();
-  
-  // ✅ Solo manejo de eventos DOM (no hooks de datos)
+export default function PlaceModal({ isOpen, onClose, place }: PlaceModalProps) {
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
+    if (!isOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
 
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
-    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [isOpen, onClose]);
+
+  const photoUrl = useMemo(() => {
+    if (!place) return "https://picsum.photos/800/450?random=place-modal";
+    return place.photo_url || "https://picsum.photos/800/450?random=place-modal-fallback";
+  }, [place]);
+
+  const mapsUrl = useMemo(() => {
+    if (!place) return undefined;
+    const enriched = place as EnrichedPlace;
+    if (enriched.google_maps_url) return enriched.google_maps_url;
+    if (place.place_id) return `https://www.google.com/maps/place/?q=place_id:${place.place_id}`;
+    return undefined;
+  }, [place]);
+
+  const phone = useMemo(() => {
+    if (!place) return undefined;
+    const enriched = place as EnrichedPlace;
+    return (
+      enriched.formatted_phone_number ||
+      enriched.international_phone_number
+    );
+  }, [place]);
 
   if (!isOpen || !place) return null;
 
-  // ✅ Renderizado del modal usando los datos recibidos
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header con imagen */}
-        <div className="relative h-64 w-full">
-          <img
-            src={place.photo_url} // ✅ Datos del prop
-            alt={place.name}      // ✅ Datos del prop
-            className="w-full h-full object-cover"
-          />
-          
-          {/* Botón cerrar */}
-          <button onClick={onClose} className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2">
-            <MdClose className="w-6 h-6 text-gray-700" />
-          </button>
+  const description = (place as EnrichedPlace).editorial_summary?.overview;
+  const address = (place as EnrichedPlace).formatted_address || place.vicinity;
+  // website intentionally unused for now
 
-          {/* Rating badge */}
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
+
+  return (
+    <div
+      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+      aria-modal
+      role="dialog"
+    >
+      <div
+        className="relative w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl"
+        onClick={stop}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Cerrar"
+          className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow hover:bg-white"
+        >
+          <FaTimes className="h-4 w-4" />
+        </button>
+
+        <div className="relative h-56 w-full overflow-hidden sm:h-64">
+          <img
+            src={photoUrl}
+            alt={place.name}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
           {typeof place.rating === "number" && (
-            <div className="absolute top-4 left-4">
-              <div className="flex items-center gap-1 bg-white/95 px-3 py-1.5 rounded-full shadow-lg">
-                <FaStar className="w-4 h-4 text-[#FF0C12]" />
-                <span className="text-sm font-bold text-gray-800">
-                  {place.rating.toFixed(1)} {/* ✅ Datos del prop */}
-                </span>
-              </div>
+            <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[#00324A] px-3 py-1 text-white">
+              <FaStar className="h-4 w-4 text-[#FF0C12]" />
+              <span className="text-sm font-semibold">{place.rating.toFixed(1)}</span>
             </div>
           )}
         </div>
 
-        {/* Contenido */}
-        <div className="p-6 space-y-4">
-          {/* Descripción */}
-          {place.editorial_summary?.overview && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Descripción</h3>
-              <p className="text-sm text-gray-600">{place.editorial_summary.overview}</p>
+        <div className="p-4 sm:p-6">
+          <h3 className="mb-1 text-xl font-bold text-gray-900 sm:text-2xl">{place.name}</h3>
+
+          {address && (
+            <div className="mb-3 flex items-start gap-2 text-gray-700">
+              <FaMapMarkerAlt className="mt-1 h-4 w-4 flex-shrink-0 text-gray-500" />
+              <span className="text-sm sm:text-base">{address}</span>
             </div>
           )}
 
-          {/* Sitio web */}
-          {place.website && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Sitio web</h3>
-              <a href={place.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
-                {place.website}
-              </a>
+          {description && (
+            <p className="mb-4 whitespace-pre-line text-sm leading-relaxed text-gray-700 sm:text-base">
+              {description}
+            </p>
+          )}
+
+          {phone && (
+            <div className="mt-4 flex items-center gap-2 text-gray-800">
+              <FaPhoneAlt className="h-4 w-4 text-gray-500" />
+              <span className="text-sm sm:text-base font-medium select-text">{phone}</span>
             </div>
           )}
 
-          {/* Teléfono */}
-          {place.formatted_phone_number && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Teléfono</h3>
-              <p className="text-sm text-gray-600">{place.formatted_phone_number}</p>
-            </div>
-          )}
-
-          {/* Botones de acción */}
-          <div className="flex gap-3">
-            {/* Botón Agendar - Sin funcionalidad por ahora */}
+          <div className="mt-6 grid grid-cols-2 gap-3">
             <button
-              onClick={() => {
-                // TODO: Implementar funcionalidad de agendar
-                console.log("Funcionalidad de agendar - Próximamente");
-                alert("Funcionalidad de agendar estará disponible próximamente");
-              }}
-              className="flex-1 bg-[#FF0C12] hover:bg-[#E00B10] text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-300 flex items-center justify-center gap-2"
+              type="button"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2 font-semibold text-white shadow hover:bg-black"
+              onClick={() => { /* por ahora sin funcionalidad */ }}
             >
-              <MdEvent className="w-5 h-5" />
               Agendar
             </button>
 
-            {/* Botón Visitar - Navega a Maps con ubicación */}
-            {place.location && (
-              <button
-                onClick={() => {
-                  // Navegar a Maps con los datos del lugar
-                  const placeData = {
-                    name: place.name,
-                    location: place.location,
-                    place_id: place.place_id,
-                    rating: place.rating,
-                    photo_url: place.photo_url,
-                    formatted_address: place.formatted_address,
-                    website: place.website,
-                    formatted_phone_number: place.formatted_phone_number,
-                  };
-                  
-                  // Navegar a Maps pasando los datos del lugar
-                  navigate('/maps', { 
-                    state: { 
-                      selectedPlace: placeData,
-                      searchQuery: place.name 
-                    } 
-                  });
-                }}
-                className="flex-1 bg-[#00324A] hover:bg-[#004060] text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-300 flex items-center justify-center gap-2"
+            {mapsUrl ? (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50"
               >
-                <TbLocationFilled className="w-5 h-5" />
-                Visitar
+                <FaMapMarkerAlt className="h-4 w-4" />
+                <span>Visitar</span>
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-4 py-2 font-semibold text-gray-400"
+              >
+                <FaMapMarkerAlt className="h-4 w-4" />
+                <span>Visitar</span>
               </button>
             )}
           </div>
@@ -147,3 +142,5 @@ export default function PlaceModal({
     </div>
   );
 }
+
+
