@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { FaStar } from "react-icons/fa";
 
 interface TopRatedCardProps {
@@ -25,34 +25,22 @@ interface TopRatedCardProps {
   index?: number;
 }
 
-function TopRatedCard({ place, onSelect, index }: TopRatedCardProps) {
+const TopRatedCard = memo(function TopRatedCard({ place, onSelect, index }: TopRatedCardProps) {
   const [imageError, setImageError] = useState(false);
 
-  const handleImageError = () => {
-    setImageError(true);
-  };
+  const handleImageError = () => setImageError(true);
 
   const handleClick = () => {
-    if (onSelect) {
-      onSelect(place);
-    } else {
-      // Mostrar información completa del lugar en consola
-      console.log('Lugar seleccionado:', place);
-    }
+    onSelect ? onSelect(place) : console.log('Lugar seleccionado:', place);
   };
 
-  const getDescription = () => {
-    if (place.editorial_summary?.overview) {
-      return place.editorial_summary.overview.length > 100 
+  const description = place.editorial_summary?.overview 
+    ? (place.editorial_summary.overview.length > 100 
         ? place.editorial_summary.overview.substring(0, 100) + "..."
-        : place.editorial_summary.overview;
-    }
-    return "Descripción no disponible";
-  };
+        : place.editorial_summary.overview)
+    : "Descripción no disponible";
 
-  const getAddress = () => {
-    return place.formatted_address || place.vicinity || "Dirección no disponible";
-  };
+  const address = place.formatted_address || place.vicinity || "Dirección no disponible";
 
   const renderStars = (rating?: number) => {
     if (!rating) return null;
@@ -124,7 +112,7 @@ function TopRatedCard({ place, onSelect, index }: TopRatedCardProps) {
         </h3>
 
         <p className="text-sm text-white/90 mb-2 line-clamp-2">
-          {getDescription()}
+          {description}
         </p>
 
         <div className="flex flex-col items-end gap-1">
@@ -141,12 +129,12 @@ function TopRatedCard({ place, onSelect, index }: TopRatedCardProps) {
           </div>
 
           <p className="text-xs text-white/80 line-clamp-1 text-right">
-            {getAddress()}
+            {address}
           </p>
         </div>
       </div>
     </div>
   );
-}
+});
 
 export default TopRatedCard;

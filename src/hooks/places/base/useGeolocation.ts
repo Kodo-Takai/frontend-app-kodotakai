@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import type { LatLng } from "../types";
 
-const FALLBACK_LOCATION: LatLng = { lat: -12.0464, lng: -77.0428 };
 const GEOLOCATION_OPTIONS = {
   enableHighAccuracy: true,
   timeout: 10000,
@@ -19,14 +18,14 @@ export function useGeolocation(fallbackLocation?: LatLng) {
   };
 
   const handleGeolocationError = (err: GeolocationPositionError) => {
-    setLocation(fallbackLocation || FALLBACK_LOCATION);
+    setLocation(fallbackLocation || null);
     setError(err.message);
     setLoading(false);
   };
 
   useEffect(() => {
     if (!("geolocation" in navigator)) {
-      setLocation(fallbackLocation || FALLBACK_LOCATION);
+      setLocation(fallbackLocation || null);
       setLoading(false);
       return;
     }

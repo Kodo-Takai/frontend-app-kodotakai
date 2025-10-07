@@ -4,11 +4,15 @@ interface CacheEntry<T> {
   ttl: number;
 }
 
-const DEFAULT_TTL = 300000; // 5 minutos
+// TTL por defecto: 5 minutos
+const DEFAULT_TTL = 300000;
 
 export class CacheService {
   private static cache = new Map<string, CacheEntry<any>>();
 
+  /**
+   * Almacena datos en caché con TTL personalizable
+   */
   static set<T>(key: string, data: T, ttl: number = DEFAULT_TTL): void {
     this.cache.set(key, {
       data,
@@ -17,6 +21,9 @@ export class CacheService {
     });
   }
 
+  /**
+   * Recupera datos de caché si no han expirado
+   */
   static get<T>(key: string): T | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
@@ -30,6 +37,9 @@ export class CacheService {
     return entry.data as T;
   }
 
+  /**
+   * Verifica si una clave existe y no ha expirado
+   */
   static has(key: string): boolean {
     const entry = this.cache.get(key);
     if (!entry) return false;
@@ -43,18 +53,30 @@ export class CacheService {
     return true;
   }
 
+  /**
+   * Elimina una entrada específica de la caché
+   */
   static delete(key: string): boolean {
     return this.cache.delete(key);
   }
 
+  /**
+   * Limpia toda la caché
+   */
   static clear(): void {
     this.cache.clear();
   }
 
+  /**
+   * Retorna el número de entradas en caché
+   */
   static size(): number {
     return this.cache.size;
   }
 
+  /**
+   * Obtiene estadísticas de la caché
+   */
   static getStats() {
     return {
       size: this.cache.size,

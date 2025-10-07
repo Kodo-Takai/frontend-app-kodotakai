@@ -27,12 +27,12 @@ export const CATEGORY_CONFIGS: Record<PlaceCategory, CategoryConfig> = {
     defaultLimit: 8,
   },
   hotels: {
-    searchQueries: ["hotel", "hospedaje", "hostal"],
+    searchQueries: ["hotel", "hospedaje", "hostal", "alojamiento"],
     type: "lodging",
-    minRating: 3.5,
+    minRating: 1.5, // Reducido de 2.0 a 1.5 como tu código anterior
     enableMultiplePhotos: true,
-    radius: 10000,
-    defaultLimit: 6,
+    radius: 20000, // Aumentado para buscar más lejos
+    defaultLimit: 20, // Aumentado para más resultados
   },
   destinations: {
     searchQueries: ["lugar turístico", "destino", "atracción", "sitio de interés", "tourist"],

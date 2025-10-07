@@ -4,17 +4,18 @@ import { GoogleMapsService } from "./services/GoogleMapsService";
 import { EnrichmentService } from "./services/EnrichmentService";
 import { SmartSearchService } from "./services/SmartSearchService";
 
+const FALLBACK_LOCATION: LatLng = { lat: -12.0464, lng: -77.0428 };
+
 export const usePlaces = (options: {
   category: PlaceCategory;
   searchQuery?: string;
   enableEnrichment?: boolean;
   maxResults?: number;
-  fallbackLocation?: LatLng;
 }) => {
-  const { category, searchQuery, enableEnrichment = true, maxResults = 20, fallbackLocation } = options;
+  const { category, searchQuery, enableEnrichment = true, maxResults = 20 } = options;
   
   const [places, setPlaces] = useState<EnrichedPlace[]>([]);
-  const [mapCenter, setMapCenter] = useState<LatLng | null>(null);
+  const [mapCenter, setMapCenter] = useState<LatLng>(FALLBACK_LOCATION);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("Inicializando...");
   const [error, setError] = useState<string | null>(null);
@@ -44,32 +45,9 @@ export const usePlaces = (options: {
           setMapCenter(userLocation);
           
           const isRealLocation = GoogleMapsService.isUsingRealLocation(userLocation);
-          if (isRealLocation) {
-            setStatus(`Buscando ${category} cerca de ti...`);
-          } else {
-            if (fallbackLocation) {
-              setStatus(`Buscando ${category} en ubicación especificada...`);
-              setMapCenter(fallbackLocation);
-              formattedPlaces = await SmartSearchService.searchPlaces(
-                category, 
-                fallbackLocation, 
-                maxResults
-              );
-            } else {
-              setStatus(`No se pudo obtener tu ubicación. Por favor, permite el acceso a la ubicación o proporciona una ubicación específica.`);
-              setError("Ubicación no disponible");
-              setLoading(false);
-              return;
-            }
-          }
+          setStatus(isRealLocation ? `Buscando ${category} cerca de ti...` : `Buscando ${category} en ubicación por defecto...`);
           
-          if (isRealLocation || !fallbackLocation) {
-            formattedPlaces = await SmartSearchService.searchPlaces(
-              category, 
-              userLocation, 
-              maxResults
-            );
-          }
+          formattedPlaces = await SmartSearchService.searchPlaces(category, userLocation, maxResults);
         }
 
         if (enableEnrichment && formattedPlaces.length > 0) {
@@ -82,9 +60,6 @@ export const usePlaces = (options: {
           setStatus(`${formattedPlaces.length} lugares encontrados`);
         }
 
-        if (formattedPlaces.length > 0 && formattedPlaces[0]) {
-          setMapCenter(formattedPlaces[0].location);
-        }
 
       } catch (error) {
         console.error("Error en usePlaces:", error);

@@ -6,8 +6,8 @@ import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 import BadgeWithIcon from "../../components/ui/badgeWithIcon";
 import { usePlaces } from "../../hooks/places";
 import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
-import FilterableContent from "../../components/ui/FilterableContent";
-import FilteredResults from "../../components/ui/FilteredResults";
+import FilterableContent from "../../components/ui/filtering/FilterableContent";
+import FilteredResults from "../../components/ui/filtering/FilteredResults";
 
 const BEACH_CAROUSEL_CONFIG = {
   interval: 4000,
@@ -46,7 +46,6 @@ export default function PlayasPage() {
     applyFilter,
     clearFilter,
     isFilterActive,
-    qualityAnalysis,
     analyzeContentMatch
   } = useIntelligentFiltering(places, 'beaches');
 
@@ -200,7 +199,6 @@ export default function PlayasPage() {
             error={error}
             filterName={BEACH_BADGE_CONFIG.find(b => b.id === activeFilter)?.label || 'filtro'}
             totalMatches={totalMatches}
-            qualityAnalysis={qualityAnalysis}
             onPlaceClick={(place) => {
               console.log('Playa filtrada seleccionada:', place);
               if (activeFilter) {

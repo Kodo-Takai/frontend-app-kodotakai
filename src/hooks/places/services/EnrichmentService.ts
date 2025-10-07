@@ -1,6 +1,7 @@
 import type { Place, EnrichedPlace, PlaceCategory } from "../types";
 import { EnrichmentConfigFactory, CACHE_CONFIG } from "../enrichment/enrichmentConfigs";
 
+// Configuración de niveles de precio
 const PRICE_LEVELS = {
   0: { description: "Gratis", color: "text-green-600" },
   1: { description: "Económico", color: "text-green-500" },
@@ -14,6 +15,9 @@ const HIGH_RATING_THRESHOLD = 4;
 const enrichmentCache = new Map<string, EnrichedPlace>();
 
 export class EnrichmentService {
+  /**
+   * Obtiene información de precio basada en el nivel o infiere del rating
+   */
   static getPriceInfo(priceLevel: number | undefined, place?: Place) {
     const level = priceLevel ?? (place?.rating && place.rating >= HIGH_RATING_THRESHOLD ? 3 : DEFAULT_PRICE_LEVEL);
     const info = PRICE_LEVELS[level as keyof typeof PRICE_LEVELS] || PRICE_LEVELS[DEFAULT_PRICE_LEVEL];
@@ -27,10 +31,12 @@ export class EnrichmentService {
     };
   }
 
+  /**
+   * Procesa y combina datos de Google Places con el lugar original
+   */
   static processEnrichedData(googleData: google.maps.places.PlaceResult, originalPlace: Place): EnrichedPlace {
     const amenities = this.extractAmenities(googleData);
     const services = this.extractServices(googleData.types || []);
-    const types = googleData.types || [];
     
     return {
       ...originalPlace,
@@ -66,12 +72,15 @@ export class EnrichmentService {
       rating: googleData.rating || originalPlace.rating,
       name: googleData.name || originalPlace.name,
       location: googleData.geometry?.location?.toJSON() || originalPlace.location,
-      amenities: amenities,
-      services: services,
-      types: types
+      amenities,
+      services,
+      types: googleData.types || []
     };
   }
 
+  /**
+   * Extrae amenidades disponibles del lugar
+   */
   private static extractAmenities(googleData: google.maps.places.PlaceResult): string[] {
     const amenities: string[] = [];
     
@@ -103,6 +112,9 @@ export class EnrichmentService {
     return amenities;
   }
 
+  /**
+   * Convierte tipos de Google Places a servicios legibles
+   */
   private static extractServices(types: string[]): string[] {
     const typeServiceMap: Record<string, string> = {
       'lodging': 'Alojamiento',
@@ -116,10 +128,12 @@ export class EnrichmentService {
     return types.map(type => typeServiceMap[type]).filter(Boolean);
   }
 
+  /**
+   * Enriquece un lugar individual con datos de Google Places API
+   */
   static async enrichPlace(place: Place, category: PlaceCategory = "hotels"): Promise<EnrichedPlace | null> {
     try {
       if (!place?.place_id || !place?.name) {
-        console.warn("Invalid place data for enrichment:", place);
         return null;
       }
 
@@ -158,11 +172,14 @@ export class EnrichmentService {
         });
       });
     } catch (err) {
-      console.error("Error enriching place:", err);
       return null;
     }
   }
 
+  /**
+   * Enriquece múltiples lugares en paralelo
+   * Retorna solo los lugares enriquecidos exitosamente
+   */
   static async enrichPlaces(places: Place[], category: PlaceCategory = "hotels"): Promise<EnrichedPlace[]> {
     if (!places.length) return [];
     

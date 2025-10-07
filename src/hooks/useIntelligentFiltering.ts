@@ -98,19 +98,10 @@ export const useIntelligentFiltering = (places: EnrichedPlace[], category: strin
       })
       .map(item => item.place);
 
-    const highQualityMatches = placesWithScores.filter(item => item.score >= 3.0).length;
-    const mediumQualityMatches = placesWithScores.filter(item => item.score >= 1.5 && item.score < 3.0).length;
-    const lowQualityMatches = placesWithScores.filter(item => item.score >= 1.0 && item.score < 1.5).length;
-
     return {
       places: filtered,
       totalMatches: filtered.length,
-      filterApplied: activeFilter,
-      qualityAnalysis: {
-        high: highQualityMatches,
-        medium: mediumQualityMatches,
-        low: lowQualityMatches
-      }
+      filterApplied: activeFilter
     };
   }, [places, activeFilter, category, analyzePlaceContent]);
 

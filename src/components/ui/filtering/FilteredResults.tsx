@@ -1,6 +1,6 @@
 import React from 'react';
-import { LocationMultiGrid } from '../cards/locationMultiCard';
-import type { EnrichedPlace } from '../../hooks/places';
+import { LocationMultiGrid } from '../../cards/locationMultiCard';
+import type { EnrichedPlace } from '../../../hooks/places';
 
 interface FilteredResultsProps {
   places: EnrichedPlace[];
@@ -10,11 +10,6 @@ interface FilteredResultsProps {
   totalMatches: number;
   onPlaceClick?: (place: EnrichedPlace) => void;
   userLocation?: { lat: number; lng: number };
-  qualityAnalysis?: {
-    high: number;
-    medium: number;
-    low: number;
-  };
 }
 
 export const FilteredResults: React.FC<FilteredResultsProps> = ({
@@ -24,8 +19,7 @@ export const FilteredResults: React.FC<FilteredResultsProps> = ({
   filterName,
   totalMatches,
   onPlaceClick,
-  userLocation,
-  qualityAnalysis
+  userLocation
 }) => {
   if (loading) {
     return (
@@ -88,26 +82,11 @@ export const FilteredResults: React.FC<FilteredResultsProps> = ({
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-[#00324A]">
-          Lugares con {filterName}
+        <h2 className="text-3xl font-black text-[#00324A] uppercase">
+          {filterName}
         </h2>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-            {totalMatches} encontrados
-          </span>
-          {qualityAnalysis && (
-            <div className="flex items-center gap-1 text-xs">
-              <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
-                {qualityAnalysis.high} alta
-              </span>
-              <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                {qualityAnalysis.medium} media
-              </span>
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                {qualityAnalysis.low} baja
-              </span>
-            </div>
-          )}
+        <div className="bg-[#DC1217] text-white px-4 py-2 rounded-xl font-semibold">
+          Total Encontrado {totalMatches}
         </div>
       </div>
       

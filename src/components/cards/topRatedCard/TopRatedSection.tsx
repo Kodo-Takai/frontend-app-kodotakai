@@ -1,5 +1,5 @@
 import TopRatedCarousel from "./TopRatedCarousel";
-import { useTopRatedPlaces } from "../../../hooks/places";
+import { useTopRatedPlaces } from "../../../hooks/places/topRated";
 
 interface TopRatedSectionProps {
   category: "hotels" | "beaches" | "restaurants" | "destinations";
@@ -17,9 +17,7 @@ export default function TopRatedSection({
   const { places, loading, error } = useTopRatedPlaces({
     category,
     limit,
-    minRating,
-    requireDescription: true,
-    requirePrice: true
+    minRating
   });
 
   const getTitle = () => {

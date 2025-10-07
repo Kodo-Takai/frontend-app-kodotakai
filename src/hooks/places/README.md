@@ -252,7 +252,7 @@ import { usePlaces } from '@/hooks/places';
 
 function BeachesComponent() {
   const { places, loading, error } = usePlaces({
-    category: "beaches",
+  category: "beaches",
     enableEnrichment: true,
     maxResults: 15
   });
@@ -283,7 +283,7 @@ import { usePlacesWithIA } from '@/hooks/places';
 
 function RestaurantsWithIA() {
   const { places, filteredPlaces, loading, aiAnalysis } = usePlacesWithIA({
-    category: "restaurants",
+  category: "restaurants",
     requestedFilters: ["luxury", "beach", "petfriendly"],
     enableAI: true,
     maxPlaces: 20

@@ -1,21 +1,20 @@
 import type { LatLng } from "../types";
 import { CacheService } from "./CacheService";
 
-const FALLBACK_LOCATION: LatLng = { lat: -12.0464, lng: -77.0428 };
+// Configuración de la API de Google Maps
 const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
-const SEARCH_RADII = [2000, 10000, 15000];
-const MIN_RATING = 2.0;
-const MIN_REVIEWS = 3;
 const SCRIPT_ID = "google-maps-script";
 const API_CHECK_ATTEMPTS = 50;
 const API_CHECK_INTERVAL = 100;
 const LOCATION_CACHE_TTL = 30000;
-const GEOLOCATION_TIMEOUT = 15000;
-const GEOLOCATION_MAX_AGE = 300000;
+const FALLBACK_LOCATION: LatLng = { lat: -12.0464, lng: -77.0428 };
 
 export class GoogleMapsService {
   private static mapsApiLoaded: Promise<void> | null = null;
 
+  /**
+   * Carga la API de Google Maps de forma asíncrona
+   */
   static async loadApi(): Promise<void> {
     if (this.mapsApiLoaded) return this.mapsApiLoaded;
 
@@ -64,12 +63,13 @@ export class GoogleMapsService {
     return this.mapsApiLoaded;
   }
 
+  /**
+   * Obtiene la ubicación del usuario con fallback a ubicación por defecto
+   */
   static async getUserLocation(): Promise<LatLng> {
     const cacheKey = "user_location";
     const cached = CacheService.get<LatLng>(cacheKey);
-    if (cached) {
-      return cached;
-    }
+    if (cached) return cached;
 
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
@@ -83,34 +83,46 @@ export class GoogleMapsService {
           resolve(location);
         },
         () => resolve(FALLBACK_LOCATION),
-        { 
-          enableHighAccuracy: true, 
-          timeout: GEOLOCATION_TIMEOUT, 
-          maximumAge: GEOLOCATION_MAX_AGE 
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 60000,
         }
       );
     });
   }
 
+  /**
+   * Crea una instancia del servicio de Places de Google Maps
+   */
   static createService(): google.maps.places.PlacesService {
     return new window.google.maps.places.PlacesService(document.createElement("div"));
   }
 
+  /**
+   * Fuerza la obtención de una nueva ubicación eliminando la caché
+   */
   static async forceNewLocation(): Promise<LatLng> {
     CacheService.delete("user_location");
     return this.getUserLocation();
   }
 
+  /**
+   * Verifica si la ubicación es real o es la ubicación de fallback
+   */
   static isUsingRealLocation(location: LatLng): boolean {
-    const fallback = FALLBACK_LOCATION;
-    return !(location.lat === fallback.lat && location.lng === fallback.lng);
+    return !(location.lat === FALLBACK_LOCATION.lat && location.lng === FALLBACK_LOCATION.lng);
   }
 
+  /**
+   * Busca lugares cercanos en múltiples radios para obtener más resultados
+   */
   static async searchNearby(
     service: google.maps.places.PlacesService,
     location: LatLng,
     type: string
   ): Promise<google.maps.places.PlaceResult[]> {
+    const SEARCH_RADII = [2000, 10000, 30000];
     const results = await Promise.all(
       SEARCH_RADII.map(radius => 
         new Promise<google.maps.places.PlaceResult[]>((resolve) => {
@@ -131,6 +143,9 @@ export class GoogleMapsService {
     return Array.from(uniqueResults.values());
   }
 
+  /**
+   * Busca lugares por texto usando Google Places API
+   */
   static async searchByText(
     service: google.maps.places.PlacesService,
     query: string
@@ -142,18 +157,21 @@ export class GoogleMapsService {
     });
   }
 
+  /**
+   * Formatea un resultado de Google Places a formato estándar de la aplicación
+   */
   static formatPlaceResult(p: google.maps.places.PlaceResult): any {
     if (!p.place_id || !p.name || !p.geometry?.location) return null;
-    if (!p.rating || p.rating < MIN_RATING) return null;
+    if (!p.rating || p.rating < 1.5) return null;
     if (!p.photos || p.photos.length === 0) return null;
-    if (!p.user_ratings_total || p.user_ratings_total < MIN_REVIEWS) return null;
+    if (!p.user_ratings_total || p.user_ratings_total < 1) return null;
 
     return {
       id: p.place_id,
       name: p.name,
       location: p.geometry.location.toJSON(),
       rating: p.rating,
-      photo_url: p.photos[0]?.getUrl() || "",
+      photo_url: p.photos?.[0]?.getUrl() || "",
       place_id: p.place_id || "",
     };
   }

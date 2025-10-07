@@ -9,8 +9,8 @@ import { usePlaces } from "../../hooks/places";
 import { TopRatedSection } from "../../components/cards/topRatedCard";
 import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
 import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
-import FilterableContent from "../../components/ui/FilterableContent";
-import FilteredResults from "../../components/ui/FilteredResults";
+import FilterableContent from "../../components/ui/filtering/FilterableContent";
+import FilteredResults from "../../components/ui/filtering/FilteredResults";
 
 const CAROUSEL_CONFIG = {
   interval: 4000,
@@ -51,7 +51,6 @@ export default function HotelesPage() {
     applyFilter,
     clearFilter,
     isFilterActive,
-    qualityAnalysis,
     analyzeContentMatch
   } = useIntelligentFiltering(places, 'hotels');
 
@@ -226,7 +225,6 @@ export default function HotelesPage() {
             error={error}
             filterName={BADGE_CONFIG.find(b => b.id === activeFilter)?.label || 'filtro'}
             totalMatches={totalMatches}
-            qualityAnalysis={qualityAnalysis}
             onPlaceClick={(place) => {
               console.log('Lugar filtrado seleccionado:', place);
               if (activeFilter) {
