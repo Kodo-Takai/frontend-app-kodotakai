@@ -1,0 +1,146 @@
+/* Estilos personalizados para react-datepicker */
+.custom-datepicker-wrapper {
+  font-family: inherit;
+}
+
+.custom-datepicker-wrapper .react-datepicker {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  font-family: inherit !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__header {
+  background-color: #00324A !important;
+  border-bottom: none !important;
+  border-radius: 16px 16px 0 0 !important;
+  padding: 16px !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__current-month {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__day-name {
+  color: white !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__day {
+  border-radius: 8px !important;
+  margin: 2px !important;
+  transition: all 0.2s ease !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 14px !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__day:hover {
+  background-color: #00324A !important;
+  color: white !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__day--selected,
+.custom-datepicker-wrapper .react-datepicker__day--selected:hover {
+  background-color: #DC1217 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__day--keyboard-selected {
+  background-color: #00324A !important;
+  color: white !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__day--today {
+  background-color: #f0f0f0 !important;
+  color: #00324A !important;
+  font-weight: 600 !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__day--today:hover {
+  background-color: #00324A !important;
+  color: white !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__navigation {
+  top: 20px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__navigation--previous {
+  left: 20px !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__navigation--next {
+  right: 20px !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__navigation-icon::before {
+  border-color: white !important;
+  border-width: 2px 2px 0 0 !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__month-dropdown,
+.custom-datepicker-wrapper .react-datepicker__year-dropdown {
+  background: white !important;
+  border: 1px solid #DEDEDE !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__month-option,
+.custom-datepicker-wrapper .react-datepicker__year-option {
+  padding: 8px 12px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__month-option:hover,
+.custom-datepicker-wrapper .react-datepicker__year-option:hover {
+  background-color: #00324A !important;
+  color: white !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__month-option--selected,
+.custom-datepicker-wrapper .react-datepicker__year-option--selected {
+  background-color: #DC1217 !important;
+  color: white !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__month {
+  padding: 16px !important;
+}
+
+/* Estilos para los dropdowns de mes y año */
+.custom-datepicker-wrapper .react-datepicker__month-dropdown-container,
+.custom-datepicker-wrapper .react-datepicker__year-dropdown-container {
+  position: relative !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__month-read-view,
+.custom-datepicker-wrapper .react-datepicker__year-read-view {
+  color: white !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__month-read-view:hover,
+.custom-datepicker-wrapper .react-datepicker__year-read-view:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.custom-datepicker-wrapper .react-datepicker__month-read-view--down-arrow,
+.custom-datepicker-wrapper .react-datepicker__year-read-view--down-arrow {
+  border-top-color: white !important;
+  margin-left: 8px !important;
+}
