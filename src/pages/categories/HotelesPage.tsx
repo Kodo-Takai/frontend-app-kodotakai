@@ -5,7 +5,7 @@ import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 import BadgeWithIcon from "../../components/ui/badgeWithIcon";
-import { usePlacesWithIA } from "../../hooks/places";
+import { usePlaces } from "../../hooks/places";
 import { TopRatedSection } from "../../components/cards/topRatedCard";
 import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
 
@@ -16,13 +16,12 @@ export default function HotelesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const animationClass = useNavigationAnimation();
 
-  // Hook con datos detallados SIN IA
-  const { places, loading, error } = usePlacesWithIA({
+  // Hook con datos detallados completos
+  const { places, loading, error } = usePlaces({
     category: "hotels",
     searchQuery: searchQuery,
-    enableEnrichment: true, // ← ACTIVAR para datos detallados
-    enableAI: false, // ← Mantener false hasta que IA esté lista
-    requestedFilters: selectedBadge ? [selectedBadge] : [],
+    enableEnrichment: true, // Datos detallados siempre
+    maxResults: 20
   });
 
   // Funciones básicas de filtrado

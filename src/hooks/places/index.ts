@@ -7,10 +7,14 @@ export * from "./filter/usePlacesFilter";
 export * from "./photos/usePlacesPhotos";
 
 // Hooks específicos por categoría
+export { useHotels } from "./categories/useHotels";
 export { useHotelsTopRated } from "./categories/useHotelsTopRated";
 export { useDestinations } from "./categories/useDestinations";
 export { useBeaches } from "./categories/useBeaches";
 export { useRestaurants } from "./categories/useRestaurants";
+
+// Configuraciones de categorías
+export { CATEGORY_CONFIGS, getCategoryConfig, filterByKeywords } from "./categories/categoryConfigs";
 
 // Hook principal que combina todo (para compatibilidad) - ELIMINADO (redundante)
 

@@ -44,6 +44,22 @@ export const CATEGORY_CONFIGS: Record<PlaceCategory, CategoryConfig> = {
     radius: 15000,
     defaultLimit: 6,
   },
+  restaurant: {
+    searchQueries: ["restaurant", "menu", "restaurante"],
+    type: "restaurant",
+    minRating: 4.0,
+    enableMultiplePhotos: true,
+    radius: 20000,
+    defaultLimit: 8,
+  },
+  tourist_attraction: {
+    searchQueries: ["lugar turístico", "destino", "atracción", "sitio de interés"],
+    type: "tourist_attraction",
+    minRating: 4.0,
+    enableMultiplePhotos: true,
+    radius: 15000,
+    defaultLimit: 6,
+  },
   all: {
     searchQueries: ["restaurant", "hotel", "shopping", "attraction", "tourist"],
     type: "establishment",
@@ -93,4 +109,28 @@ export class CategoryConfigFactory {
       customFilters: customOptions.customFilters,
     };
   }
+}
+
+/**
+ * Función para obtener configuración de una categoría
+ */
+export function getCategoryConfig(category: keyof typeof CATEGORY_CONFIGS) {
+  return CATEGORY_CONFIGS[category];
+}
+
+/**
+ * Función para filtrar lugares por palabras clave (útil para playas)
+ */
+export function filterByKeywords(places: any[], keywords: string[]): any[] {
+  return places.filter(place => {
+    const name = place.name?.toLowerCase() || "";
+    const vicinity = place.vicinity?.toLowerCase() || "";
+    const address = place.formatted_address?.toLowerCase() || "";
+    
+    return keywords.some(keyword => 
+      name.includes(keyword) || 
+      vicinity.includes(keyword) || 
+      address.includes(keyword)
+    );
+  });
 }

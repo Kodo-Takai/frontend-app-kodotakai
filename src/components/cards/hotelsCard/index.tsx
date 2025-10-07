@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { useHotelsTopRated } from "../../../hooks/places";
+import { usePlaces } from "../../../hooks/places";
 import type { Place, EnrichedPlace } from "../../../hooks/places";
 import "./index.scss";
 
@@ -17,7 +17,7 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
   const handleImageError = () => setImageError(true);
 
   return (
-    <div className="hotel-card-width">
+    <div className="hotel-card-width shadow-sm">
       <div className="hotel-card-image-container">
         <img
           src={
@@ -27,7 +27,7 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
           }
           alt={hotel.name}
           onError={handleImageError}
-          onLoad={() => console.log("Imagen cargada:", hotel.name, hotel.photo_url)}
+          onLoad={() => {}}
         />
 
         <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black to-transparent " />
@@ -80,7 +80,7 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
         </div>
       </div>
 
-      <div className="py-3 px-2">
+      <div className="p-3">
         <h3 className="text-xl font-extrabold text-[#00324A] line-clamp-1 uppercase">
           {hotel.name}
         </h3>
@@ -93,10 +93,11 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
 };
 
 export default function HotelCards({ places: propPlaces, loading: propLoading, error: propError }: HotelsCardProps = {}) {
-  // Usar hook interno como fallback si no se proporcionan props
-  const { places: hookPlaces, loading: hookLoading } = useHotelsTopRated({ 
-    radius: 30000,
-    limit: 6
+  // Usar hook principal como fallback si no se proporcionan props
+  const { places: hookPlaces, loading: hookLoading } = usePlaces({
+    category: "hotels",
+    enableEnrichment: true,
+    maxResults: 6
   });
   
   // Usar props si están disponibles, sino usar hook interno
@@ -110,7 +111,7 @@ export default function HotelCards({ places: propPlaces, loading: propLoading, e
         <h2 className="text-xl font-bold text-gray-900 mb-4">
           A descansar un momento
         </h2>
-        <div className="hotel-scroll">
+        <div className="hotel-scroll shadow-sm">
           {Array.from({ length: 5 }, (_, i) => (
             <div key={`hotel-skeleton-${i}`} className="hotel-card-width">
               <div className="rounded-xl overflow-hidden animate-pulse">

@@ -140,16 +140,6 @@ export function usePlacesEnrichment() {
         }
       });
 
-      // Debug: Log de datos obtenidos
-      console.log("Datos enriquecidos obtenidos:", {
-        name: enrichedData.name,
-        price_level: (enrichedData as any).price_level,
-        user_ratings_total: (enrichedData as any).user_ratings_total,
-        reviews_count: enrichedData.reviews?.length || 0,
-        photos_count: enrichedData.photos?.length || 0,
-        has_photos: !!(enrichedData.photos && enrichedData.photos.length > 0)
-      });
-
       // Procesar datos enriquecidos
       const enrichedPlace = processEnrichedData(enrichedData, place);
 

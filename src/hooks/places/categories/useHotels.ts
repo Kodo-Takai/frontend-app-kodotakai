@@ -1,14 +1,14 @@
-// src/hooks/places/categories/useDestinations.ts
+// src/hooks/places/categories/useHotels.ts
 import { usePlaces } from "../usePlaces";
 import type { UsePlacesOptions } from "../types";
 
 /**
- * Hook especializado para destinos turísticos
- * Usa usePlaces con configuración optimizada para atracciones turísticas
+ * Hook especializado para hoteles
+ * Usa usePlaces con configuración optimizada para hoteles
  */
-export function useDestinations(customOptions: Partial<UsePlacesOptions> = {}) {
+export function useHotels(customOptions: Partial<UsePlacesOptions> = {}) {
   const { places, loading, error, status } = usePlaces({
-    category: "tourist_attraction",
+    category: "hotels",
     enableEnrichment: true,
     maxResults: customOptions.limit || 6
   });

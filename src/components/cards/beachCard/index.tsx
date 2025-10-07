@@ -7,26 +7,39 @@ import "./index.scss";
 
 interface Beach {
   name: string;
-  photos: Array<{
+  photos?: Array<{
     photo_url: string;
     rating?: number;
     vicinity?: string;
   }>;
-  mainPhoto: any;
+  mainPhoto?: any;
   rating?: number;
   vicinity?: string;
 }
 
 export default function BeachCards() {
-  const { places: beaches, loading } = useBeaches({
+  const { places: beaches, loading, error, status } = useBeaches({
     searchMethod: "both",
     limit: 6,
     enableMultiplePhotos: true,
   });
 
+  // Debug: Log del estado del componente
+  console.log("🏖️ BeachCards - Estado del componente:", {
+    beachesCount: beaches.length,
+    loading,
+    error,
+    status,
+    beaches: beaches.map(beach => ({
+      name: beach.name,
+      vicinity: beach.vicinity,
+      rating: beach.rating,
+      photos: beach.photos?.length || 0
+    }))
+  });
+
   const handleVisit = (beach: Beach) => {
     console.log("Visitando playa:", beach.name);
-    // Aquí puedes agregar lógica de navegación
   };
 
   const displayedBeaches = beaches.slice(0, 6);
@@ -42,14 +55,19 @@ export default function BeachCards() {
       photos: beach.photos?.map(p => ({ photo_url: p.photo_url })) || []
     });
 
+
     const nextPhoto = () => {
-      setCurrentPhotoIndex((prev) => (prev + 1) % beach.photos.length);
+      if (beach.photos && beach.photos.length > 0) {
+        setCurrentPhotoIndex((prev) => (prev + 1) % beach.photos!.length);
+      }
     };
 
     const prevPhoto = () => {
-      setCurrentPhotoIndex((prev) =>
-        prev === 0 ? beach.photos.length - 1 : prev - 1
-      );
+      if (beach.photos && beach.photos.length > 0) {
+        setCurrentPhotoIndex((prev) =>
+          prev === 0 ? beach.photos!.length - 1 : prev - 1
+        );
+      }
     };
 
     const handleImageError = () => {
@@ -87,7 +105,7 @@ export default function BeachCards() {
     };
 
     return (
-      <div className="beach-card-width">
+      <div className="beach-card-width shadow-sm" onClick={() => handleVisit(beach)}>
         <div className="beach-card-container">
           <div className="beach-card-header">
             {/* Primera subfila - dividida en 2 columnas */}
@@ -131,7 +149,7 @@ export default function BeachCards() {
 
             <button
               onClick={prevPhoto}
-              disabled={beach.photos.length <= 1}
+              disabled={!beach.photos || beach.photos.length <= 1}
               className="beach-card-nav-button"
             >
               <img
@@ -145,10 +163,10 @@ export default function BeachCards() {
 
             {/* Columna 2: Carrusel de 3 imágenes estilo baraja */}
             <div className="beach-card-image-container">
-              {beach.photos.map((photo, index) => {
+              {beach.photos?.map((photo, index) => {
                 // Calcular la posición relativa basada en el índice actual
                 const getImagePosition = (photoIndex: number) => {
-                  const totalPhotos = beach.photos.length;
+                  const totalPhotos = beach.photos?.length || 0;
                   const relativePosition =
                     (photoIndex - currentPhotoIndex + totalPhotos) %
                     totalPhotos;
@@ -218,7 +236,7 @@ export default function BeachCards() {
             {/* Columna 3: Botón siguiente */}
             <button
               onClick={nextPhoto}
-              disabled={beach.photos.length <= 1}
+              disabled={!beach.photos || beach.photos.length <= 1}
               className="beach-card-nav-button"
             >
               <img
@@ -237,7 +255,7 @@ export default function BeachCards() {
             </div>
 
             <div className="beach-card-indicators">
-              {beach.photos.map((_, index) => (
+              {beach.photos?.map((_, index) => (
                 <button
                   key={index}
                   className={`beach-card-indicator ${

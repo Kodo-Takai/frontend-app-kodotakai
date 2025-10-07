@@ -1,7 +1,14 @@
 // src/hooks/places/types.ts
 export type LatLng = { lat: number; lng: number };
 
-export type PlaceCategory = "all" | "beaches" | "restaurants" | "hotels" | "destinations";
+export type PlaceCategory = 
+  | "all" 
+  | "beaches" 
+  | "restaurants" 
+  | "hotels" 
+  | "destinations"
+  | "restaurant"
+  | "tourist_attraction";
 
 export interface Place {
   // Propiedades básicas (siempre disponibles)

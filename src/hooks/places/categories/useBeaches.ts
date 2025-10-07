@@ -14,6 +14,9 @@ export function useBeaches(customOptions: Partial<UsePlacesOptions> = {}) {
     ...customOptions,
   });
 
+  // Debug: Log de configuración
+  console.log("🏖️ useBeaches - Configuración:", options);
+
   // Usar hooks base
   const searchResult = usePlacesSearch(options);
   const filteredPlaces = usePlacesFilter(searchResult.places, options);
@@ -21,6 +24,15 @@ export function useBeaches(customOptions: Partial<UsePlacesOptions> = {}) {
     filteredPlaces, 
     options.enableMultiplePhotos
   );
+
+  // Debug: Log de resultados
+  console.log("🏖️ useBeaches - Resultados:", {
+    searchPlaces: searchResult.places.length,
+    filteredPlaces: filteredPlaces.length,
+    processedPlaces: processedPlaces.length,
+    loading: searchResult.loading || photosLoading,
+    error: searchResult.error
+  });
 
   // Combinar estados
   const state: PlacesState = {

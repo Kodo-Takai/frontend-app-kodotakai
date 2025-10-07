@@ -3,20 +3,19 @@ import { useState } from "react";
 import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
-import { useDestinations } from "../../../hooks/places";
+import { usePlaces } from "../../../hooks/places";
 import type { Place } from "../../../hooks/places";
 import "./index.scss";
 
 export default function DestinationCards() {
-  const { places, loading } = useDestinations({
-    limit: 6,
-    searchMethod: "both",
-    enableMultiplePhotos: true,
+  const { places, loading } = usePlaces({
+    category: "tourist_attraction",
+    enableEnrichment: true,
+    maxResults: 6
   });
 
   const handleVisit = (place: Place) => {
-    console.log("Visitando:", place.name);
-    // Aquí puedes agregar lógica de navegación
+    console.log("Destino seleccionado:", place);
   };
 
   // Limitar a máximo 6 lugares
@@ -26,12 +25,6 @@ export default function DestinationCards() {
   const DestinationCard = ({ place }: { place: Place }) => {
     const [imageError, setImageError] = useState(false);
 
-    // Debug: Log de fotos disponibles
-    console.log("DestinationCard - Fotos disponibles:", {
-      name: place.name,
-      photo_url: place.photo_url,
-      hasPhoto: !!place.photo_url
-    });
 
     const handleImageError = () => {
       setImageError(true);
