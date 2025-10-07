@@ -14,7 +14,10 @@ const COMMON_FIELDS = [
 ];
 
 const HOTEL_SPECIFIC_FIELDS = [
-  "international_phone_number", "price_level", "url", "utc_offset_minutes"
+  "international_phone_number", "price_level", "url", "utc_offset_minutes",
+  "wheelchair_accessible_entrance", "curbside_pickup", "delivery", "dine_in", 
+  "takeout", "reservable", "serves_breakfast", "serves_lunch", "serves_dinner",
+  "serves_beer", "serves_wine", "serves_brunch", "serves_vegetarian_food"
 ];
 
 const RESTAURANT_SPECIFIC_FIELDS = [

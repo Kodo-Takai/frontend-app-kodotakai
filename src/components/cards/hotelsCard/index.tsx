@@ -14,9 +14,26 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
   const [imageError, setImageError] = useState(false);
   const handleImageError = () => setImageError(true);
 
-  const handleHotelClick = (hotel: Place) => {
-    console.log("Hotel seleccionado:", hotel);
-  };
+         const handleHotelClick = (hotel: Place) => {
+           console.log("Hotel seleccionado:", hotel);
+           
+           // Debug de amenities y servicios
+           if ((hotel as any).amenities) {
+             console.log("🏨 Amenities del hotel:", (hotel as any).amenities);
+           } else {
+             console.log("❌ No se encontraron amenities para este hotel");
+           }
+           
+           if ((hotel as any).services) {
+             console.log("🛎️ Servicios del hotel:", (hotel as any).services);
+           } else {
+             console.log("❌ No se encontraron servicios para este hotel");
+           }
+           
+           if ((hotel as any).types) {
+             console.log("🏷️ Tipos de lugar:", (hotel as any).types);
+           }
+         };
 
   return (
     <div className="hotel-card-width shadow-sm" onClick={() => handleHotelClick(hotel)}>

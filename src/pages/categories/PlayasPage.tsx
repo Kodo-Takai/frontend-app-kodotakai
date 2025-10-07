@@ -4,28 +4,20 @@ import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 import BadgeWithIcon from "../../components/ui/badgeWithIcon";
+import { usePlaces } from "../../hooks/places";
+import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
+import FilterableContent from "../../components/ui/FilterableContent";
+import FilteredResults from "../../components/ui/FilteredResults";
 
-// Configuración de carrusel para playas
-export const BEACH_CAROUSEL_CONFIG = {
+const BEACH_CAROUSEL_CONFIG = {
   interval: 4000,
   slides: [
-    {
-      image: "/beach-background-section-explore.svg",
-      titleFirst: "DESCUBRE",
-      titleRest: "LAS MEJORES PLAYAS",
-      subtitle: "Encuentra playas paradisíacas y vive experiencias únicas",
-    },
-    {
-      image: "/beach-background-section-explore.svg", 
-      titleFirst: "DIVIÉRTETE",
-      titleRest: "EN LA COSTA",
-      subtitle: "Desde playas tranquilas hasta olas perfectas para surf",
-    },
+    { image: "/beach-background-section-explore.svg", titleFirst: "DESCUBRE", titleRest: "LAS MEJORES PLAYAS", subtitle: "Encuentra playas paradisíacas y vive experiencias únicas" },
+    { image: "/beach-background-section-explore.svg", titleFirst: "DIVIÉRTETE", titleRest: "EN LA COSTA", subtitle: "Desde playas tranquilas hasta olas perfectas para surf" }
   ]
 };
 
-// Configuración de badges para playas
-export const BEACH_BADGE_CONFIG = [
+const BEACH_BADGE_CONFIG = [
   { id: "todo", icon: "p-cat_todo_icon.svg", hoverIcon: "hover-p-cat_todo_icon.svg", label: "Todo" },
   { id: "surf", icon: "p-cat_surf_icon.svg", hoverIcon: "hover-p-cat_surf_icon.svg", label: "Surf" },
   { id: "pesca", icon: "p-cat_pesca_icon.svg", hoverIcon: "hover-p-cat_pesca_icon.svg", label: "Pesca" },
@@ -37,16 +29,40 @@ export default function PlayasPage() {
   const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
   const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const animationClass = useNavigationAnimation();
 
+  const { places, loading, error, mapCenter } = usePlaces({
+    category: "beaches",
+    searchQuery: searchQuery,
+    enableEnrichment: true,
+    maxResults: 20
+  });
+
+  const {
+    places: filteredPlaces,
+    totalMatches,
+    activeFilter,
+    applyFilter,
+    clearFilter,
+    isFilterActive,
+    qualityAnalysis,
+    analyzeContentMatch
+  } = useIntelligentFiltering(places, 'beaches');
 
   const handleSearch = (query: string) => {
-    console.log('Búsqueda:', query);
+    setSearchQuery(query);
   };
 
   const handleBadgeClick = (badgeId: string) => {
     const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
     setSelectedBadge(newSelectedBadge);
+
+    if (newSelectedBadge && newSelectedBadge !== "todo") {
+      applyFilter(newSelectedBadge);
+    } else {
+      clearFilter();
+    }
   };
 
   useEffect(() => {
@@ -166,6 +182,35 @@ export default function PlayasPage() {
             ))}
           </div>
         </div>
+
+        <FilterableContent isVisible={!isFilterActive}>
+          <div className="flex items-center justify-center h-64 bg-gray-100 rounded-xl">
+            <div className="text-center">
+              <div className="text-6xl mb-4">🏖️</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Playas disponibles</h3>
+              <p className="text-gray-600 text-sm">{places.length} playas encontradas cerca de ti</p>
+            </div>
+          </div>
+        </FilterableContent>
+
+        <FilterableContent isVisible={isFilterActive}>
+          <FilteredResults
+            places={filteredPlaces}
+            loading={loading}
+            error={error}
+            filterName={BEACH_BADGE_CONFIG.find(b => b.id === activeFilter)?.label || 'filtro'}
+            totalMatches={totalMatches}
+            qualityAnalysis={qualityAnalysis}
+            onPlaceClick={(place) => {
+              console.log('Playa filtrada seleccionada:', place);
+              if (activeFilter) {
+                const contentAnalysis = analyzeContentMatch(place, activeFilter);
+                console.log('Análisis de contenido:', contentAnalysis);
+              }
+            }}
+            userLocation={mapCenter || undefined}
+          />
+        </FilterableContent>
 
       </div>
     </div>

@@ -30,11 +30,6 @@ export default function DestinationCards() {
       setImageError(true);
     };
 
-    const handleVisitClick = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      handleVisit(place);
-    };
 
     // Generar estrellas basadas en el rating
     const renderStars = (rating?: number) => {

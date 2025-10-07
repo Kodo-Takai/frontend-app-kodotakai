@@ -8,43 +8,20 @@ import BadgeWithIcon from "../../components/ui/badgeWithIcon";
 import { usePlaces } from "../../hooks/places";
 import { TopRatedSection } from "../../components/cards/topRatedCard";
 import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
+import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
+import FilterableContent from "../../components/ui/FilterableContent";
+import FilteredResults from "../../components/ui/FilteredResults";
 
-// Configuración de carrusel
-export const CAROUSEL_CONFIG = {
+const CAROUSEL_CONFIG = {
   interval: 4000,
   slides: [
-    {
-      image: "/hotels-news-1.svg",
-      titleFirst: "ENCUENTRA",
-      titleRest: "LOS MEJORES HOTELES",
-      subtitle: "Descubre experiencias únicas y encuentra tu lugar perfecto",
-    },
-    {
-      image: "/hotels-news-2.svg",
-      titleFirst: "RESERVA",
-      titleRest: "TU ESTANCIA IDEAL",
-      subtitle: "Hoteles de lujo y económicos a tu preferencia y originalidad",
-    },
-    {
-      image: "/hotels-news-3.svg",
-      titleFirst: "VIVE",
-      titleRest: "EXPERIENCIAS ÚNICAS",
-      subtitle: "Desde playas paradisíacas hasta montañas majestuosas",
-    },
+    { image: "/hotels-news-1.svg", titleFirst: "ENCUENTRA", titleRest: "LOS MEJORES HOTELES", subtitle: "Descubre experiencias únicas y encuentra tu lugar perfecto" },
+    { image: "/hotels-news-2.svg", titleFirst: "RESERVA", titleRest: "TU ESTANCIA IDEAL", subtitle: "Hoteles de lujo y económicos a tu preferencia y originalidad" },
+    { image: "/hotels-news-3.svg", titleFirst: "VIVE", titleRest: "EXPERIENCIAS ÚNICAS", subtitle: "Desde playas paradisíacas hasta montañas majestuosas" }
   ]
 };
 
-// Configuración de filtros
-export const FILTER_CONFIG = {
-  spa: ["spa"],
-  sauna: ["sauna"],
-  cocina: ["cocina", "kitchen"],
-  gym: ["gym", "gimnasio"],
-  rest: ["restaurante", "restaurant"]
-};
-
-// Configuración de badges
-export const BADGE_CONFIG = [
+const BADGE_CONFIG = [
   { id: "todo", icon: "h-cat_todo_icon.svg", hoverIcon: "hover-h-cat_todo_icon.svg", label: "Todo" },
   { id: "spa", icon: "h-cat_spa_icon.svg", hoverIcon: "hover-h-cat_spa_icon.svg", label: "Spa" },
   { id: "rest", icon: "h-cat_rest_icon.svg", hoverIcon: "hover-h-cat_rest_icon.svg", label: "Restaurante" },
@@ -67,20 +44,16 @@ export default function HotelesPage() {
     maxResults: 20
   });
 
-  const getPlacesByFilter = (filter: string) => {
-    if (filter === "todo" || !filter) return places;
-
-    return places.filter((place) => {
-      const lowerName = place.name.toLowerCase();
-      const lowerVicinity = place.vicinity?.toLowerCase() || "";
-      const keywords = FILTER_CONFIG[filter as keyof typeof FILTER_CONFIG] || [];
-      
-      return keywords.some(keyword => 
-        lowerName.includes(keyword) || lowerVicinity.includes(keyword)
-      );
-    });
-  };
-
+  const {
+    places: filteredPlaces,
+    totalMatches,
+    activeFilter,
+    applyFilter,
+    clearFilter,
+    isFilterActive,
+    qualityAnalysis,
+    analyzeContentMatch
+  } = useIntelligentFiltering(places, 'hotels');
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -89,6 +62,12 @@ export default function HotelesPage() {
   const handleBadgeClick = (badgeId: string) => {
     const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
     setSelectedBadge(newSelectedBadge);
+    
+    if (newSelectedBadge && newSelectedBadge !== "todo") {
+      applyFilter(newSelectedBadge);
+    } else {
+      clearFilter();
+    }
   };
 
   useEffect(() => {
@@ -209,38 +188,56 @@ export default function HotelesPage() {
           </div>
         </div>
 
-        <TopRatedSection 
-          category="hotels"
-          title="Top Hoteles mejor valorados"
-          limit={5}
-          minRating={4.0}
-        />
+        <FilterableContent isVisible={!isFilterActive}>
+          <TopRatedSection 
+            category="hotels"
+            title="Top Hoteles mejor valorados"
+            limit={5}
+            minRating={4.0}
+          />
 
-        <HotelsCard
-          places={
-            selectedBadge && selectedBadge !== "todo"
-              ? getPlacesByFilter(selectedBadge)
-              : places
-          }
-          loading={loading}
-          error={error}
-        />
-
-        <div className="mt-4">
-          <h2 className="text-2xl font-bold text-[#00324A] mb-4 text-center">
-            Explora más hoteles
-          </h2>
-          <LocationMultiGrid
+          <HotelsCard
             places={places}
             loading={loading}
             error={error}
+          />
+
+          <div className="mt-4">
+            <h2 className="text-2xl font-bold text-[#00324A] mb-4 text-center">
+              Explora más hoteles
+            </h2>
+            <LocationMultiGrid
+              places={places}
+              loading={loading}
+              error={error}
+              onPlaceClick={(place) => {
+                console.log('Hotel seleccionado:', place);
+              }}
+              itemsPerPage={4}
+              userLocation={mapCenter || undefined}
+            />
+          </div>
+        </FilterableContent>
+
+        <FilterableContent isVisible={isFilterActive}>
+          <FilteredResults
+            places={filteredPlaces}
+            loading={loading}
+            error={error}
+            filterName={BADGE_CONFIG.find(b => b.id === activeFilter)?.label || 'filtro'}
+            totalMatches={totalMatches}
+            qualityAnalysis={qualityAnalysis}
             onPlaceClick={(place) => {
-              console.log('Hotel seleccionado:', place);
+              console.log('Lugar filtrado seleccionado:', place);
+              if (activeFilter) {
+                const contentAnalysis = analyzeContentMatch(place, activeFilter);
+                console.log('Análisis de contenido:', contentAnalysis);
+              }
             }}
-            itemsPerPage={4}
             userLocation={mapCenter || undefined}
           />
-        </div>
+        </FilterableContent>
+
       </div>
     </div>
   );

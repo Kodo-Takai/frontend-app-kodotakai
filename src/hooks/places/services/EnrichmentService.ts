@@ -11,7 +11,6 @@ const PRICE_LEVELS = {
 
 const DEFAULT_PRICE_LEVEL = 2;
 const HIGH_RATING_THRESHOLD = 4;
-
 const enrichmentCache = new Map<string, EnrichedPlace>();
 
 export class EnrichmentService {
@@ -29,6 +28,10 @@ export class EnrichmentService {
   }
 
   static processEnrichedData(googleData: google.maps.places.PlaceResult, originalPlace: Place): EnrichedPlace {
+    const amenities = this.extractAmenities(googleData);
+    const services = this.extractServices(googleData.types || []);
+    const types = googleData.types || [];
+    
     return {
       ...originalPlace,
       formatted_address: googleData.formatted_address,
@@ -62,8 +65,55 @@ export class EnrichmentService {
       place_id: googleData.place_id || originalPlace.place_id,
       rating: googleData.rating || originalPlace.rating,
       name: googleData.name || originalPlace.name,
-      location: googleData.geometry?.location?.toJSON() || originalPlace.location
+      location: googleData.geometry?.location?.toJSON() || originalPlace.location,
+      amenities: amenities,
+      services: services,
+      types: types
     };
+  }
+
+  private static extractAmenities(googleData: google.maps.places.PlaceResult): string[] {
+    const amenities: string[] = [];
+    
+    if ((googleData as any).wheelchair_accessible_entrance) {
+      amenities.push("Accesible para sillas de ruedas");
+    }
+    
+    const serviceMappings = [
+      { field: 'curbside_pickup', label: 'Recogida en acera' },
+      { field: 'delivery', label: 'Delivery' },
+      { field: 'dine_in', label: 'Comer en el lugar' },
+      { field: 'takeout', label: 'Para llevar' },
+      { field: 'reservable', label: 'Reservas disponibles' },
+      { field: 'serves_breakfast', label: 'Desayuno' },
+      { field: 'serves_lunch', label: 'Almuerzo' },
+      { field: 'serves_dinner', label: 'Cena' },
+      { field: 'serves_beer', label: 'Cerveza' },
+      { field: 'serves_wine', label: 'Vino' },
+      { field: 'serves_brunch', label: 'Brunch' },
+      { field: 'serves_vegetarian_food', label: 'Comida vegetariana' }
+    ];
+    
+    serviceMappings.forEach(service => {
+      if ((googleData as any)[service.field]) {
+        amenities.push(service.label);
+      }
+    });
+    
+    return amenities;
+  }
+
+  private static extractServices(types: string[]): string[] {
+    const typeServiceMap: Record<string, string> = {
+      'lodging': 'Alojamiento',
+      'restaurant': 'Restaurante',
+      'spa': 'Spa',
+      'gym': 'Gimnasio',
+      'parking': 'Estacionamiento',
+      'wifi': 'WiFi'
+    };
+    
+    return types.map(type => typeServiceMap[type]).filter(Boolean);
   }
 
   static async enrichPlace(place: Place, category: PlaceCategory = "hotels"): Promise<EnrichedPlace | null> {

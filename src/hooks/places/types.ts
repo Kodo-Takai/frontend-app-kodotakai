@@ -34,6 +34,7 @@ export interface EnrichedPlace extends Place {
   reviews?: Review[];
   amenities?: string[];
   services?: string[];
+  types?: string[];
   lodging_info?: LodgingInfo;
   opening_hours_detailed?: OpeningHours;
   contact_info?: ContactInfo;
