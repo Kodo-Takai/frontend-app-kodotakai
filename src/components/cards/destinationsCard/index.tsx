@@ -4,16 +4,9 @@ import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { useDestinations } from "../../../hooks/places";
+import type { EnrichedPlace } from "../../../hooks/places/types";
+import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
-
-interface Place {
-  name: string;
-  rating?: number;
-  vicinity?: string;
-  place_id: string;
-  photo_url: string;
-  location?: { lat: number; lng: number };
-}
 
 export default function DestinationCards() {
   const { places, loading } = useDestinations({
@@ -22,24 +15,43 @@ export default function DestinationCards() {
     enableMultiplePhotos: true,
   });
 
-  const handleVisit = (place: Place) => {
-    console.log("Visitando:", place.name);
-    // Aquí puedes agregar lógica de navegación
+  const [selectedPlace, setSelectedPlace] = useState<EnrichedPlace | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleVisit = async (place: EnrichedPlace) => {
+    try {
+      // Simular una llamada para obtener datos adicionales del lugar
+      const enrichedPlace = await fetch(`/api/places/${place.place_id}`).then((res) => res.json());
+      setSelectedPlace(enrichedPlace);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error al cargar datos del lugar:", error);
+      setSelectedPlace(place); // Fallback a los datos básicos
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedPlace(null), 300); // Delay para animación
+  };
+
+  const handleVisitFromModal = (place: EnrichedPlace) => {
+    console.log("Navegando a:", place.name);
+    // Abrir Google Maps con direcciones
+    if (place.location) {
+      const url = place.google_maps_url || 
+        `https://www.google.com/maps/dir/?api=1&destination=${place.location.lat},${place.location.lng}&destination_place_id=${place.place_id}`;
+      window.open(url, "_blank");
+    }
   };
 
   // Limitar a máximo 6 lugares
   const displayedPlaces = places.slice(0, 6);
 
   // Componente interno para cada card
-  const DestinationCard = ({ place }: { place: Place }) => {
+  const DestinationCard = ({ place }: { place: EnrichedPlace }) => {
     const [imageError, setImageError] = useState(false);
-
-    // Debug: Log de fotos disponibles
-    console.log("DestinationCard - Fotos disponibles:", {
-      name: place.name,
-      photo_url: place.photo_url,
-      hasPhoto: !!place.photo_url
-    });
 
     const handleImageError = () => {
       setImageError(true);
@@ -83,7 +95,7 @@ export default function DestinationCards() {
             src={
               imageError
                 ? "https://picsum.photos/280/288?random=destination-error"
-                : place.photo_url || "https://picsum.photos/280/288?random=destination-default"
+                : place.photo_url
             }
             alt={place.name}
             className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
@@ -106,6 +118,23 @@ export default function DestinationCards() {
             </div>
           )}
 
+          {/* Badge de estado abierto/cerrado */}
+          {place.is_open_now !== undefined && (
+            <div className="absolute top-3 right-3 z-10">
+              <div
+                className={`flex items-center gap-1 px-2 py-1 rounded-full ${
+                  place.is_open_now
+                    ? "bg-green-500"
+                    : "bg-red-500"
+                }`}
+              >
+                <span className="text-xs font-bold text-white">
+                  {place.is_open_now ? "● Abierto" : "● Cerrado"}
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Contenido superpuesto */}
           <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
             {/* Rating con estrellas */}
@@ -120,9 +149,18 @@ export default function DestinationCards() {
             <div className="flex items-center gap-1 mb-3">
               <MdPlace className="w-4 h-4 text-gray-300 flex-shrink-0" />
               <p className="text-xs text-gray-200 line-clamp-1">
-                {place.vicinity || "Ciudad de México"}
+                {place.vicinity || place.formatted_address || "Ubicación no disponible"}
               </p>
             </div>
+
+            {/* Badge de precio si está disponible */}
+            {place.price_info && (
+              <div className="mb-3">
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${place.price_info.color}`}>
+                  {place.price_info.symbol}
+                </span>
+              </div>
+            )}
 
             {/* Botón de visitar */}
             <button
@@ -182,11 +220,21 @@ export default function DestinationCards() {
   };
 
   return (
-    <div className="w-full ">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 ">
-        Lugares que debes visitar
-      </h2>
-      {renderContent()}
-    </div>
+    <>
+      <div className="w-full ">
+        <h2 className="text-xl font-bold text-gray-900 mb-4 ">
+          Lugares que debes visitar
+        </h2>
+        {renderContent()}
+      </div>
+
+      {/* Modal reutilizable */}
+      <PlaceModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        place={selectedPlace}
+        onVisit={handleVisitFromModal}
+      />
+    </>
   );
 }

@@ -38,20 +38,13 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/explorar" element={<Explorar />} />
-          <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
-          <Route path="/explorar/playas" element={<PlayasPage />} />
-          <Route path="/explorar/hoteles" element={<HotelesPage />} />
-          <Route path="/explorar/discos" element={<DiscosPage />} />
-          <Route path="/explorar/estudiar" element={<EstudiarPage />} />
-          <Route path="/explorar/parques" element={<ParquesPage />} />
-          <Route path="/maps" element={<Maps />} />
-          <Route path="/home" element={<Home />} />
+      
 
         </Route>
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
+            <Route path="/home" element={<Home />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/explorar" element={<Explorar />} />
             <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
