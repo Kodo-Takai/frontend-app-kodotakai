@@ -20,11 +20,7 @@ export default function MapsCard({ className = "w-1/2", height= "h-44" }: Props)
   const miniMapInstance = useRef<google.maps.Map | null>(null);
   const expandedMapInstance = useRef<google.maps.Map | null>(null);
   
-  const { places, loading: placesLoading } = usePlaces({
-    fallback: FALLBACK,
-    type: "tourist_attraction",
-    radius: 3000,
-  });
+  const { places, loading: placesLoading } = usePlaces("destinations", "");
 
   // Obtener ubicación del usuario
   const getUserLocation = useCallback((): Promise<LatLng> => {

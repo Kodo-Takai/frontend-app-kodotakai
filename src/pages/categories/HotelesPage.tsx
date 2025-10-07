@@ -5,12 +5,70 @@ import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 import BadgeWithIcon from "../../components/ui/badgeWithIcon";
+import { usePlacesWithIA } from "../../hooks/places";
+import { TopRatedSection } from "../../components/cards/topRatedCard";
+import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
 
 export default function HotelesPage() {
   const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
   const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const animationClass = useNavigationAnimation();
+
+  // Hook con datos detallados SIN IA
+  const { places, loading, error } = usePlacesWithIA({
+    category: "hotels",
+    searchQuery: searchQuery,
+    enableEnrichment: true, // ← ACTIVAR para datos detallados
+    enableAI: false, // ← Mantener false hasta que IA esté lista
+    requestedFilters: selectedBadge ? [selectedBadge] : [],
+  });
+
+  // Funciones básicas de filtrado
+  const getPlacesByFilter = (filter: string) => {
+    if (filter === "todo" || !filter) return places;
+
+    return places.filter((place) => {
+      const lowerName = place.name.toLowerCase();
+      const lowerVicinity = place.vicinity?.toLowerCase() || "";
+
+      switch (filter) {
+        case "spa":
+          return lowerName.includes("spa") || lowerVicinity.includes("spa");
+        case "sauna":
+          return lowerName.includes("sauna") || lowerVicinity.includes("sauna");
+        case "cocina":
+          return (
+            lowerName.includes("cocina") ||
+            lowerName.includes("kitchen") ||
+            lowerVicinity.includes("cocina") ||
+            lowerVicinity.includes("kitchen")
+          );
+        case "gym":
+          return (
+            lowerName.includes("gym") ||
+            lowerName.includes("gimnasio") ||
+            lowerVicinity.includes("gym") ||
+            lowerVicinity.includes("gimnasio")
+          );
+        case "rest":
+          return (
+            lowerName.includes("restaurante") ||
+            lowerName.includes("restaurant") ||
+            lowerVicinity.includes("restaurante") ||
+            lowerVicinity.includes("restaurant")
+          );
+        default:
+          return true;
+      }
+    });
+  };
+
+  // Variables para compatibilidad futura con IA
+  // const getFilterStatistics = () => ({});
+  // const activeFilters = selectedBadge ? [selectedBadge] : [];
+  // const updateActiveFilters = () => {};
 
   const carouselData = [
     {
@@ -34,12 +92,12 @@ export default function HotelesPage() {
   ];
 
   const handleSearch = (query: string) => {
-    console.log("Buscando:", query);
+    setSearchQuery(query);
   };
 
   const handleBadgeClick = (badgeId: string) => {
-    setSelectedBadge(selectedBadge === badgeId ? null : badgeId);
-    console.log("Badge seleccionado:", badgeId);
+    const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
+    setSelectedBadge(newSelectedBadge);
   };
 
   useEffect(() => {
@@ -80,7 +138,7 @@ export default function HotelesPage() {
           onChange={setSelectedOption}
         />
 
-        <div className="w-full h-50 rounded-2xl mt-2 border-white border-4 relative overflow-hidden mb-1">
+        <div className="w-full h-50 rounded-3xl mt-2 border-white border-4 relative overflow-hidden mb-1">
           <img
             src={carouselData[currentSlide].image}
             className="w-full h-full object-cover rounded-3xl transition-opacity duration-500"
@@ -110,7 +168,6 @@ export default function HotelesPage() {
             </p>
           </div>
 
-          {/* Indicadores de puntos */}
           <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
             {carouselData.map((_, index) => (
               <button
@@ -128,7 +185,7 @@ export default function HotelesPage() {
 
         <Search
           onSearch={handleSearch}
-          placeholder="Buscar playas cerca de ti..."
+          placeholder="Buscar hoteles cerca de ti..."
         />
 
         <div className="w-full mb-3">
@@ -157,115 +214,115 @@ export default function HotelesPage() {
             />
 
             <BadgeWithIcon
-              id="petfriendly"
+              id="spa"
               icon={
                 <img
-                  src="/icons/playas_icons/p-cat_pet_icon.svg"
-                  alt="Petfriendly"
+                  src="/icons/hotels_icons/h-cat_spa_icon.svg"
+                  alt="Spa"
                   className="w-5 h-5"
                 />
               }
               hoverIcon={
                 <img
-                  src="/icons/playas_icons/hover-p-cat_pet_icon.svg"
-                  alt="Petfriendly"
+                  src="/icons/hotels_icons/hover-h-cat_spa_icon.svg"
+                  alt="Spa"
                   className="w-5 h-5"
                 />
               }
-              label="Petfriendly"
-              isActive={selectedBadge === "petfriendly"}
+              label="Spa"
+              isActive={selectedBadge === "spa"}
               onClick={handleBadgeClick}
               activeColor="#DC1217"
               activeBorderColor="#F3F3F3"
             />
 
             <BadgeWithIcon
-              id="lujo"
+              id="rest"
               icon={
                 <img
-                  src="/icons/hotels_icons/h-cat_luj_icon.svg"
-                  alt="Lujo"
+                  src="/icons/hotels_icons/h-cat_rest_icon.svg"
+                  alt="Restaurante"
                   className="w-5 h-5"
                 />
               }
               hoverIcon={
                 <img
-                  src="/icons/hotels_icons/hover-h-cat_luj_icon.svg"
-                  alt="Lujo"
+                  src="/icons/hotels_icons/hover-h-cat_rest_icon.svg"
+                  alt="Restaurante"
                   className="w-5 h-5"
                 />
               }
-              label="Lujo"
-              isActive={selectedBadge === "lujo"}
+              label="Restaurante"
+              isActive={selectedBadge === "rest"}
               onClick={handleBadgeClick}
               activeColor="#DC1217"
               activeBorderColor="#F3F3F3"
             />
 
             <BadgeWithIcon
-              id="economic"
+              id="sauna"
               icon={
                 <img
-                  src="/icons/hotels_icons/h-cat_econ_icon.svg"
-                  alt="Económico"
+                  src="/icons/hotels_icons/h-cat_sauna_icon.svg"
+                  alt="Sauna"
                   className="w-5 h-5"
                 />
               }
               hoverIcon={
                 <img
-                  src="/icons/hotels_icons/hover-h-cat_econ_icon.svg"
-                  alt="Económico"
+                  src="/icons/hotels_icons/hover-h-cat_sauna_icon.svg"
+                  alt="Sauna"
                   className="w-5 h-5"
                 />
               }
-              label="Barato"
-              isActive={selectedBadge === "economic"}
+              label="Sauna"
+              isActive={selectedBadge === "sauna"}
               onClick={handleBadgeClick}
               activeColor="#DC1217"
               activeBorderColor="#F3F3F3"
             />
 
             <BadgeWithIcon
-              id="playa"
+              id="cocina"
               icon={
                 <img
-                  src="/icons/hotels_icons/h-cat_playa_icon.svg"
-                  alt="Playa"
+                  src="/icons/hotels_icons/h-cat_cocina_icon.svg"
+                  alt="Cocina"
                   className="w-5 h-5"
                 />
               }
               hoverIcon={
                 <img
-                  src="/icons/hotels_icons/hover-h-cat_playa_icon.svg"
-                  alt="Playa"
+                  src="/icons/hotels_icons/hover-h-cat_cocina_icon.svg"
+                  alt="Cocina"
                   className="w-5 h-5"
                 />
               }
-              label="Playa"
-              isActive={selectedBadge === "playa"}
+              label="Cocina"
+              isActive={selectedBadge === "cocina"}
               onClick={handleBadgeClick}
               activeColor="#DC1217"
               activeBorderColor="#F3F3F3"
             />
 
             <BadgeWithIcon
-              id="piscina"
+              id="gym"
               icon={
                 <img
-                  src="/icons/hotels_icons/h-cat_pisc_icon.svg"
-                  alt="Piscina"
+                  src="/icons/hotels_icons/h-cat_gym_icon.svg"
+                  alt="Gym"
                   className="w-5 h-5"
                 />
               }
               hoverIcon={
                 <img
-                  src="/icons/hotels_icons/hover-h-cat_pisc_icon.svg"
-                  alt="Piscina"
+                  src="/icons/hotels_icons/hover-h-cat_gym_icon.svg"
+                  alt="Gym"
                   className="w-5 h-5"
                 />
               }
-              label="Piscina"
-              isActive={selectedBadge === "piscina"}
+              label="Gym"
+              isActive={selectedBadge === "gym"}
               onClick={handleBadgeClick}
               activeColor="#DC1217"
               activeBorderColor="#F3F3F3"
@@ -273,17 +330,36 @@ export default function HotelesPage() {
           </div>
         </div>
 
-        <HotelsCard />
+        <TopRatedSection 
+          category="hotels"
+          title="Top Hoteles mejor valorados"
+          limit={10}
+          minRating={4.0}
+        />
 
-        {/* Agregar más tarjetas de hoteles */}
+        <HotelsCard
+          places={
+            selectedBadge && selectedBadge !== "todo"
+              ? getPlacesByFilter(selectedBadge)
+              : places
+          }
+          loading={loading}
+          error={error}
+        />
 
-        <div className=" flex gap-5 justify-between">
-          <div className="w-full h-70 rounded-2xl mt-2 bg-amber-600 relative overflow-hidden mb-1">
-            card1
-          </div>
-          <div className="w-full h-70 rounded-2xl mt-2 bg-amber-600 relative overflow-hidden mb-1">
-            card2
-          </div>
+        <div className="mt-4">
+          <h2 className="text-2xl font-bold text-[#00324A] mb-4 text-center">
+            Explora más hoteles
+          </h2>
+          <LocationMultiGrid
+            places={places}
+            loading={loading}
+            error={error}
+            onPlaceClick={(place) => {
+              console.log('Hotel seleccionado:', place.name);
+            }}
+            itemsPerPage={4}
+          />
         </div>
       </div>
     </div>

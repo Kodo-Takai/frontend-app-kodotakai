@@ -6,7 +6,7 @@ import MapFilters from "../components/ui/mapsFilter";
 import { FaSlidersH } from "react-icons/fa";
 import { IoLocationOutline, IoSync } from "react-icons/io5";
 import { MapDisplay } from "../components/cards/mapDisplay";
-import { usePlacesSimple } from "../hooks/places/usePlacesSimple";
+import { usePlaces } from "../hooks/places";
 
 const Maps = () => {
   // --- Estados ---
@@ -20,7 +20,7 @@ const Maps = () => {
 
 
   // --- Hook de Datos Simplificado ---
-  const { places, mapCenter, loading, status } = usePlacesSimple(activeCategories, searchQuery);
+  const { places, mapCenter, loading, status } = usePlaces(activeCategories, searchQuery);
   
   const placesToShow = places;
 
@@ -32,7 +32,15 @@ const Maps = () => {
 
   // --- Efectos ---
   useEffect(() => {
-    setIsApiReady(true);
+    const checkApiReady = () => {
+      if (window.google?.maps) {
+        setIsApiReady(true);
+      } else {
+        // Reintentar en 100ms
+        setTimeout(checkApiReady, 100);
+      }
+    };
+    checkApiReady();
   }, []);
 
   // Obtener ubicación del usuario

@@ -35,6 +35,13 @@ export default function BeachCards() {
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
     const [imageError, setImageError] = useState(false);
 
+    // Debug: Log de fotos disponibles
+    console.log("BeachCard - Fotos disponibles:", {
+      name: beach.name,
+      photosCount: beach.photos?.length || 0,
+      photos: beach.photos?.map(p => ({ photo_url: p.photo_url })) || []
+    });
+
     const nextPhoto = () => {
       setCurrentPhotoIndex((prev) => (prev + 1) % beach.photos.length);
     };
@@ -188,7 +195,7 @@ export default function BeachCards() {
                     src={
                       imageError
                         ? "https://picsum.photos/97/114?random=error"
-                        : photo.photo_url
+                        : photo.photo_url || "https://picsum.photos/97/114?random=beach-default"
                     }
                     alt={beach.name}
                     className={`beach-card-image ${

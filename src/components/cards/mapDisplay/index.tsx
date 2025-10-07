@@ -16,7 +16,7 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
 
   // ... (Efecto 1 y 2 se mantienen igual) ...
   useEffect(() => {
-    if (mapRef.current && !map) {
+    if (mapRef.current && !map && window.google?.maps) {
       const newMap = new window.google.maps.Map(mapRef.current, {
         center: center,
         zoom: zoom,
@@ -39,7 +39,7 @@ export function MapDisplay({ center, zoom, markers }: MapDisplayProps) {
 
   // Efecto 3: Se ejecuta cada vez que la lista de marcadores cambia
   useEffect(() => {
-    if (map && infoWindowRef.current) {
+    if (map && infoWindowRef.current && window.google?.maps) {
       const infoWindow = infoWindowRef.current;
       // 1. Limpia los marcadores anteriores
       markersRef.current.forEach(marker => marker.setMap(null));

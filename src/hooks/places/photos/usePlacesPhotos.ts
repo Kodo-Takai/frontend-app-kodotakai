@@ -177,7 +177,7 @@ export function usePlacesPhotos(places: any[], enableMultiplePhotos: boolean = f
 
   useEffect(() => {
     processPlaces(places, enableMultiplePhotos);
-  }, [placesKey, enableMultiplePhotos, processPlaces]);
+  }, [placesKey, enableMultiplePhotos]);
 
   return { processedPlaces, loading };
 }

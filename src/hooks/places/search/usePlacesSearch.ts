@@ -79,7 +79,7 @@ export function usePlacesSearch(options: UsePlacesOptions = {}) {
     return () => {
       cancelled = true;
     };
-  }, [mapsLoaded, location, options.searchMethod, options.radius, options.type, JSON.stringify(options.searchQueries)]);
+  }, [mapsLoaded, location, options.searchMethod, options.radius, options.type, options.searchQueries]);
 
   // Manejar errores de dependencias
   useEffect(() => {
