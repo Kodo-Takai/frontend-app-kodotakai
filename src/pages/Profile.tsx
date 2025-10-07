@@ -1,15 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useMemo, useState } from "react";
 import type { RootState } from "../redux/store";
 import { useGetProfilesQuery } from "../redux/api/profileApi";
+import { logout } from "../redux/slice/authSlice";
 import { decodeJwt } from "../utils/jwt";
 
 export default function Profile() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const token = useSelector((s: RootState) => s.auth.token);
   const payload = useMemo(() => decodeJwt(token), [token]);
   const profileIdFromToken = payload?.profileId as string | undefined;
+  const [isHovered, setIsHovered] = useState(false);
 
   const { data: profiles, isFetching } = useGetProfilesQuery();
 
@@ -20,6 +23,11 @@ export default function Profile() {
     if (payload?.email) return profiles.find((p) => p.email === payload.email);
     return profiles[0];
   }, [profiles, profileIdFromToken, payload]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
   return (
     <div className="w-full h-full flex flex-col justify-center items-center p-4 bg-[#F6F6F6] space-y-4">
       <div className="flex items-center justify-between w-full">
@@ -116,9 +124,7 @@ export default function Profile() {
                 fill="#DC1217"
               />
             </svg>
-            <span className="font-medium text-[#DC1217]">
-              Lvl: Nuevo Usuario
-            </span>
+            <span className="font-bold text-[#DC1217]">Lvl: Nuevo Usuario</span>
           </button>
         </div>
         <div className="flex w-full gap-4">
@@ -246,6 +252,27 @@ export default function Profile() {
           </svg>
           <span className="font-bold text-lg">Configuración</span>
         </div>
+      </div>
+      <div className="flex justify-end w-full mt-4">
+        <button
+          className="flex gap-4 items-center justify-center py-3 px-8 rounded-xl bg-white"
+          onClick={handleLogout}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="17"
+            height="24"
+            viewBox="0 0 17 24"
+            fill="none"
+            className="transition-all duration-300"
+          >
+            <path
+              d="M9.646.688c3.201-.478 4.802-.716 5.843.181 1.042.898 1.042 2.516 1.042 5.753v4.29H9.3l3.306-3.925-1.53-1.289-4.691 5.569-.543.644.543.645 4.691 5.567.765-.643.765-.645L9.3 12.911h7.232V17.2c0 3.237 0 4.856-1.042 5.753-1.041.898-2.642.659-5.843.18L3.52 22.22c-1.626-.243-2.44-.365-2.924-.927-.485-.563-.486-1.386-.486-3.03V5.558c0-1.644 0-2.467.486-3.03.485-.562 1.298-.684 2.924-.926z"
+              fill="#DC1217"
+            />
+          </svg>
+          <span className="font-bold text-[#DC1217]">Cerrar Sesión</span>
+        </button>
       </div>
     </div>
   );
