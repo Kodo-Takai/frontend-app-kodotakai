@@ -4,21 +4,21 @@ export type LatLng = { lat: number; lng: number };
 export type PlaceCategory = "all" | "beaches" | "restaurants" | "hotels" | "destinations";
 
 export interface Place {
+  // Propiedades básicas (siempre disponibles)
+  id: string;
   name: string;
-  rating?: number;
-  vicinity?: string;
   place_id: string;
   photo_url: string;
-  location?: LatLng;
+  location: LatLng;
+  rating?: number;
+  vicinity?: string;
+  
+  // Propiedades opcionales (Google Maps básico)
   photos?: any[];
   mainPhoto?: any;
-  // Propiedades específicas de hoteles
   opening_hours?: {
     open_now?: boolean;
   };
-  wheelchair_accessible_entrance?: boolean;
-  serves_wine?: boolean;
-  serves_breakfast?: boolean;
 }
 
 // Interface para datos enriquecidos
@@ -56,9 +56,6 @@ export interface EnrichedPlace extends Place {
   // Información adicional de Google Maps
   google_maps_url?: string;
   utc_offset_minutes?: number;
-  wheelchair_accessible?: boolean;
-  serves_wine?: boolean;
-  serves_breakfast?: boolean;
   business_status?: string;
   price_level?: number;
   is_open_now?: boolean; // Estado de apertura calculado sin usar campo deprecado

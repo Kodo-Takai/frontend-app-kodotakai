@@ -280,9 +280,6 @@ export function usePlacesEnrichment() {
       // Información adicional de Google Maps
       google_maps_url: (googleData as any).url,
       utc_offset_minutes: (googleData as any).utc_offset_minutes,
-      wheelchair_accessible: (googleData as any).wheelchair_accessible_entrance,
-      serves_wine: (googleData as any).serves_wine,
-      serves_breakfast: (googleData as any).serves_breakfast,
       business_status: (googleData as any).business_status,
       price_level: (googleData as any).price_level,
 

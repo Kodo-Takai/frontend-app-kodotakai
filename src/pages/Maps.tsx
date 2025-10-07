@@ -19,8 +19,17 @@ const Maps = () => {
   const [zoom, setZoom] = useState(12);
 
 
-  // --- Hook de Datos Simplificado ---
-  const { places, mapCenter, loading, status } = usePlaces(activeCategories, searchQuery);
+  // --- Hook de Datos Detallados ---
+  const { places, loading, error } = usePlaces({
+    category: activeCategories as any,
+    searchQuery,
+    enableEnrichment: false, // Para Maps, solo datos básicos
+    maxResults: 20
+  });
+  
+  // Mapear datos para compatibilidad
+  const mapCenter = places.length > 0 ? places[0].location || { lat: -12.0464, lng: -77.0428 } : { lat: -12.0464, lng: -77.0428 };
+  const status = loading ? "Cargando..." : error ? "Error" : `${places.length} lugares encontrados`;
   
   const placesToShow = places;
 

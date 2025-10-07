@@ -1,14 +1,9 @@
 import { useState, useEffect } from "react";
+import type { Place, EnrichedPlace, PlaceCategory } from "./types";
+import { EnrichmentConfigFactory, CACHE_CONFIG } from "./enrichment/enrichmentConfigs";
 
 // --- Tipos y Constantes ---
-export interface Place {
-  id: string;
-  name: string;
-  location: { lat: number; lng: number };
-  rating?: number;
-  photo_url: string;
-  place_id: string;
-}
+// Place interface movido a types.ts para evitar duplicación
 
 type LatLng = { lat: number; lng: number };
 
@@ -18,6 +13,251 @@ const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
 const SEARCH_RADII = [2000, 10000, 15000]; // Radios en metros
 const MIN_RATING = 2.0;
 const MIN_REVIEWS = 3;
+
+// --- Funciones de Enrichment Integradas ---
+
+// Helper function simplificada para inferir precios
+const inferPriceFromData = (place: Place): number | null => {
+  const name = place.name.toLowerCase();
+  const rating = place.rating || 0;
+  
+  // Lógica simple basada en rating y palabras clave
+  if (rating >= 4.5 || name.includes('lujo') || name.includes('luxury') || name.includes('resort')) {
+    return 4; // Lujo
+  } else if (rating >= 4.0 || name.includes('hotel')) {
+    return 3; // Caro
+  } else if (rating >= 3.5) {
+    return 2; // Moderado
+  } else if (name.includes('hostal') || name.includes('hostel')) {
+    return 1; // Económico
+  }
+  
+  return null; // No se puede inferir
+};
+
+// Helper function simplificada para interpretar niveles de precios
+const getPriceInfo = (priceLevel: number | undefined, place?: Place) => {
+  // Si no hay precio de Google, intentar inferir
+  if (priceLevel === undefined || priceLevel === null) {
+    if (place) {
+      const inferredLevel = inferPriceFromData(place);
+      if (inferredLevel !== null) {
+        priceLevel = inferredLevel;
+      }
+    }
+    
+    // Si aún no hay precio, mostrar mensaje genérico
+    if (priceLevel === undefined || priceLevel === null) {
+      return {
+        level: null,
+        description: "Precio no disponible",
+        symbol: "",
+        color: "text-gray-500"
+      };
+    }
+  }
+
+  // Configuración simple de precios
+  const priceConfig = {
+    0: { description: "Gratis", color: "text-green-600" },
+    1: { description: "Económico", color: "text-green-500" },
+    2: { description: "Moderado", color: "text-yellow-500" },
+    3: { description: "Caro", color: "text-orange-500" },
+    4: { description: "Lujo", color: "text-red-500" }
+  };
+
+  const info = priceConfig[priceLevel as keyof typeof priceConfig] || priceConfig[0];
+  const isInferred = place && inferPriceFromData(place) !== null;
+
+  return {
+    level: priceLevel,
+    description: info.description,
+    symbol: "",
+    color: info.color,
+    isInferred
+  };
+};
+
+// Cache simple para evitar llamadas repetidas
+const enrichmentCache = new Map<string, EnrichedPlace>();
+
+// Función para procesar datos enriquecidos de Google Places
+const processEnrichedData = (
+  googleData: google.maps.places.PlaceResult,
+  originalPlace: Place
+): EnrichedPlace => {
+  const enriched: EnrichedPlace = {
+    ...originalPlace,
+    formatted_address: googleData.formatted_address,
+    website: googleData.website,
+    formatted_phone_number: googleData.formatted_phone_number,
+    international_phone_number: googleData.international_phone_number,
+
+    // Procesar fotos si están disponibles
+    photo_url: googleData.photos?.[0]?.getUrl() || originalPlace.photo_url,
+    photos: googleData.photos || originalPlace.photos,
+    editorial_summary: (googleData as any).editorial_summary ? {
+      overview: (googleData as any).editorial_summary.overview
+    } : undefined,
+    reviews: googleData.reviews?.map(review => ({
+      author_name: review.author_name || "",
+      rating: review.rating || 0,
+      text: review.text || "",
+      time: review.time || 0,
+      relative_time_description: review.relative_time_description || ""
+    })) || [],
+    opening_hours_detailed: googleData.opening_hours ? {
+      periods: (googleData.opening_hours.periods || []).map(period => ({
+        open: {
+          day: period.open?.day || 0,
+          time: period.open?.time || "0000"
+        },
+        close: period.close ? {
+          day: period.close.day,
+          time: period.close.time
+        } : {
+          day: 0,
+          time: "0000"
+        }
+      })),
+      weekday_text: googleData.opening_hours.weekday_text || []
+    } : undefined,
+    utc_offset_minutes: (googleData as any).utc_offset_minutes,
+    is_open_now: (() => {
+      // Usar isOpen() method si está disponible
+      if (googleData.opening_hours?.isOpen && typeof googleData.opening_hours.isOpen === 'function') {
+        return googleData.opening_hours.isOpen();
+      }
+      // Fallback a open_now si isOpen() no está disponible
+      return (googleData as any).open_now;
+    })(),
+    price_info: getPriceInfo((googleData as any).price_level, originalPlace),
+    business_status: googleData.business_status,
+    // types: googleData.types || [], // Removido - no existe en EnrichedPlace
+    vicinity: googleData.vicinity,
+    // url: googleData.url, // Removido - no existe en EnrichedPlace
+    // utc_offset: (googleData as any).utc_offset, // Removido - no existe en EnrichedPlace
+    // adr_address: googleData.adr_address, // Removido - no existe en EnrichedPlace
+    // geometry: googleData.geometry ? { // Removido - no existe en EnrichedPlace
+    //   location: googleData.geometry.location?.toJSON(),
+    //   viewport: googleData.geometry.viewport ? {
+    //     northeast: googleData.geometry.viewport.getNorthEast().toJSON(),
+    //     southwest: googleData.geometry.viewport.getSouthWest().toJSON()
+    //   } : undefined
+    // } : undefined,
+    place_id: googleData.place_id || originalPlace.place_id,
+    // plus_code: (googleData as any).plus_code, // Removido - no existe en EnrichedPlace
+    // reference: (googleData as any).reference, // Removido - no existe en EnrichedPlace
+    // scope: (googleData as any).scope, // Removido - no existe en EnrichedPlace
+    // user_ratings_total: googleData.user_ratings_total || 0, // Removido - no existe en EnrichedPlace
+    rating: googleData.rating || originalPlace.rating,
+    name: googleData.name || originalPlace.name,
+    location: googleData.geometry?.location?.toJSON() || originalPlace.location
+  };
+
+  return enriched;
+};
+
+// Función para enriquecer un lugar individual
+const enrichPlace = async (
+  place: Place,
+  category: PlaceCategory = "hotels"
+): Promise<EnrichedPlace | null> => {
+  try {
+    // Verificar cache primero
+    const cacheKey = `${place.place_id}_${category}`;
+    if (CACHE_CONFIG.enabled && enrichmentCache.has(cacheKey)) {
+      const cached = enrichmentCache.get(cacheKey);
+      if (cached && Date.now() - (cached as any).cached_at < CACHE_CONFIG.ttl) {
+        return cached;
+      }
+    }
+
+    // Verificar que Google Maps API esté disponible
+    if (!window.google?.maps?.places?.PlacesService) {
+      console.error("Google Maps API not fully loaded:", {
+        google: !!window.google,
+        maps: !!window.google?.maps,
+        places: !!window.google?.maps?.places,
+        PlacesService: !!window.google?.maps?.places?.PlacesService
+      });
+      throw new Error("Google Maps API not fully loaded");
+    }
+
+    // Crear servicio de Places con manejo de errores
+    let service;
+    try {
+      service = new window.google.maps.places.PlacesService(
+        document.createElement('div')
+      );
+    } catch (err) {
+      console.error("Error creating PlacesService:", err);
+      throw new Error("Failed to create PlacesService");
+    }
+
+    // Obtener configuración de enriquecimiento
+    const config = EnrichmentConfigFactory.createConfig(category);
+
+    // Crear request para Google Places Details
+    const request: google.maps.places.PlaceDetailsRequest = {
+      placeId: place.place_id,
+      fields: config.fields
+    };
+
+    return new Promise((resolve, reject) => {
+      service.getDetails(request, (result, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && result) {
+          try {
+            const enrichedPlace = processEnrichedData(result, place);
+            
+            // Guardar en cache
+            if (CACHE_CONFIG.enabled) {
+              (enrichedPlace as any).cached_at = Date.now();
+              enrichmentCache.set(cacheKey, enrichedPlace);
+            }
+            
+            resolve(enrichedPlace);
+          } catch (err) {
+            console.error("Error processing enriched data:", err);
+            reject(err);
+          }
+        } else {
+          console.warn(`Places API error for ${place.name}:`, status);
+          reject(new Error(`Places API error: ${status}`));
+        }
+      });
+    });
+
+  } catch (err) {
+    console.error("Error enriching place:", err);
+    return null;
+  }
+};
+
+// Función para enriquecer múltiples lugares
+const enrichPlaces = async (
+  places: Place[],
+  category: PlaceCategory = "hotels"
+): Promise<EnrichedPlace[]> => {
+  if (!places.length) return [];
+
+  const enrichedPlaces: EnrichedPlace[] = [];
+  
+  // Procesar todos los lugares secuencialmente
+  for (const place of places) {
+    try {
+      const enriched = await enrichPlace(place, category);
+      if (enriched) {
+        enrichedPlaces.push(enriched);
+      }
+    } catch (err) {
+      console.warn(`Error enriching place ${place.name}:`, err);
+      // Continuar con el siguiente lugar
+    }
+  }
+
+  return enrichedPlaces;
+};
 
 // Loader de la API de Google Maps para evitar cargas múltiples
 let mapsApiLoaded: Promise<void> | null = null;
@@ -187,16 +427,25 @@ const categoryMapping: Record<string, string> = {
   attraction: "tourist_attraction",
 };
 
-// --- El Hook Principal Simplificado ---
-export const usePlaces = (activeCategories: string, searchQuery?: string) => {
-  const [places, setPlaces] = useState<Place[]>([]);
+// --- El Hook Principal con Datos Detallados ---
+export const usePlaces = (options: {
+  category: PlaceCategory;
+  searchQuery?: string;
+  enableEnrichment?: boolean; // true por defecto, pero mantenido para compatibilidad
+  maxResults?: number;
+}) => {
+  const { category, searchQuery, enableEnrichment = true, maxResults = 20 } = options;
+  
+  const [places, setPlaces] = useState<EnrichedPlace[]>([]);
   const [mapCenter, setMapCenter] = useState<LatLng>(FALLBACK_LOCATION);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("Inicializando...");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAndFilter = async () => {
       setLoading(true);
+      setError(null);
       setStatus("Cargando Google Maps API...");
 
       try {
@@ -243,14 +492,25 @@ export const usePlaces = (activeCategories: string, searchQuery?: string) => {
           setStatus(`Buscando "${searchQuery}"...`);
           service.textSearch(
             { query: searchQuery },
-            (
+            async (
               results: google.maps.places.PlaceResult[] | null,
               searchStatus: google.maps.places.PlacesServiceStatus
             ) => {
               if (searchStatus === "OK" && results?.[0]) {
                 const place = formatPlaceResult(results[0]);
                 if (place) {
-                  setPlaces([place]);
+                  // Enriquecer datos si está habilitado
+                  if (enableEnrichment) {
+                    try {
+                      const enrichedPlaces = await enrichPlaces([place], category);
+                      setPlaces(enrichedPlaces);
+                    } catch (error) {
+                      console.warn("Error enriching place:", error);
+                      setPlaces([place as EnrichedPlace]);
+                    }
+                  } else {
+                    setPlaces([place as EnrichedPlace]);
+                  }
                   setMapCenter(place.location);
                   setStatus(`Mostrando: ${place.name}`);
                 }
@@ -263,13 +523,12 @@ export const usePlaces = (activeCategories: string, searchQuery?: string) => {
           );
 
           // 2. Filtro por categorías (si no hay búsqueda por texto)
-        } else if (activeCategories && activeCategories !== "all") {
-          setStatus(`Buscando ${activeCategories}...`);
+        } else if (category && category !== "all") {
+          setStatus(`Buscando ${category}...`);
           const userLocation = await getUserLocation();
           setMapCenter(userLocation);
 
-          const googleType =
-            categoryMapping[activeCategories] || "establishment";
+          const googleType = categoryMapping[category] || "establishment";
 
           try {
             const uniquePlaces = await performMultipleSearch(
@@ -279,9 +538,22 @@ export const usePlaces = (activeCategories: string, searchQuery?: string) => {
             );
             const formattedPlaces = uniquePlaces
               .map((p) => formatPlaceResult(p))
-              .filter((p): p is Place => p !== null);
+              .filter((p): p is Place => p !== null)
+              .slice(0, maxResults);
 
-            setPlaces(formattedPlaces);
+            // Enriquecer datos si está habilitado
+            if (enableEnrichment) {
+              try {
+                const enrichedPlaces = await enrichPlaces(formattedPlaces, category);
+                setPlaces(enrichedPlaces);
+              } catch (error) {
+                console.warn("Error enriching places:", error);
+                setPlaces(formattedPlaces as EnrichedPlace[]);
+              }
+            } else {
+              setPlaces(formattedPlaces as EnrichedPlace[]);
+            }
+            
             setStatus(
               `${formattedPlaces.length} lugares de calidad encontrados.`
             );
@@ -305,9 +577,22 @@ export const usePlaces = (activeCategories: string, searchQuery?: string) => {
             );
             const defaultPlaces = uniquePlaces
               .map((p) => formatPlaceResult(p))
-              .filter((p): p is Place => p !== null);
+              .filter((p): p is Place => p !== null)
+              .slice(0, maxResults);
 
-            setPlaces(defaultPlaces);
+            // Enriquecer datos si está habilitado
+            if (enableEnrichment) {
+              try {
+                const enrichedPlaces = await enrichPlaces(defaultPlaces, category);
+                setPlaces(enrichedPlaces);
+              } catch (error) {
+                console.warn("Error enriching places:", error);
+                setPlaces(defaultPlaces as EnrichedPlace[]);
+              }
+            } else {
+              setPlaces(defaultPlaces as EnrichedPlace[]);
+            }
+            
             setStatus(`${defaultPlaces.length} lugares de calidad cercanos.`);
           } catch (error) {
             setPlaces([]);
@@ -318,13 +603,14 @@ export const usePlaces = (activeCategories: string, searchQuery?: string) => {
       } catch (error) {
         console.error("Error en usePlaces:", error);
         setPlaces([]);
+        setError(error instanceof Error ? error.message : "Error al cargar lugares");
         setStatus("Error al cargar lugares. Verifica tu conexión a internet.");
         setLoading(false);
       }
     };
 
     fetchAndFilter();
-  }, [activeCategories, searchQuery]);
+  }, [category, searchQuery, enableEnrichment, maxResults]);
 
-  return { places, mapCenter, loading, status };
+  return { places, mapCenter, loading, status, error };
 };

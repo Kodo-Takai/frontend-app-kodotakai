@@ -31,10 +31,7 @@ export const ENRICHMENT_CONFIGS: Record<PlaceCategory, EnrichmentConfig> = {
       "vicinity",
       "business_status",
       "url", // URL de Google Maps
-      "utc_offset_minutes", // Zona horaria (actualizado)
-      "wheelchair_accessible_entrance", // Accesibilidad
-      "serves_wine", // Servicios
-      "serves_breakfast"
+      "utc_offset_minutes" // Zona horaria (actualizado)
     ],
     language: "es",
     region: "PE"
@@ -58,10 +55,7 @@ export const ENRICHMENT_CONFIGS: Record<PlaceCategory, EnrichmentConfig> = {
       "vicinity",
       "business_status",
       "url", // URL de Google Maps
-      "utc_offset_minutes", // Zona horaria
-      "wheelchair_accessible_entrance", // Accesibilidad
-      "serves_wine", // Servicios
-      "serves_breakfast"
+      "utc_offset_minutes" // Zona horaria
     ],
     language: "es",
     region: "PE"

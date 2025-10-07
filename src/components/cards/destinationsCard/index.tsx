@@ -4,16 +4,8 @@ import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { useDestinations } from "../../../hooks/places";
+import type { Place } from "../../../hooks/places";
 import "./index.scss";
-
-interface Place {
-  name: string;
-  rating?: number;
-  vicinity?: string;
-  place_id: string;
-  photo_url: string;
-  location?: { lat: number; lng: number };
-}
 
 export default function DestinationCards() {
   const { places, loading } = useDestinations({

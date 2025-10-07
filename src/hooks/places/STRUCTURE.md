@@ -22,10 +22,10 @@
 - **Flags**: `enableAI`, `enableEnrichment`
 - **Afecta**: HotelesPage.tsx, datos inteligentes
 
-### **`usePlacesWithFilters.ts`** - Hook con Filtros
-- **Función**: Filtrado genérico para todas las categorías
-- **Usa**: `usePlacesWithIA` internamente
-- **Afecta**: Categorías (hoteles, playas, restaurantes)
+### **`usePlacesWithFilters.ts`** - ❌ ELIMINADO (Redundante)
+- **Razón**: Era solo un wrapper de `usePlacesWithIA`
+- **Reemplazo**: Usar `usePlacesWithIA` directamente
+- **Estado**: Archivo eliminado
 
 ## 📂 Carpetas Especializadas
 
@@ -91,7 +91,7 @@ usePlaces (base)
     ↓
 usePlacesWithIA (enriquecimiento + IA)
     ↓
-usePlacesWithFilters (filtrado)
+usePlacesWithIA (filtrado con IA)
     ↓
 categories/ (específicos por tipo)
     ↓
@@ -102,7 +102,7 @@ Componentes (UI)
 
 - **Maps**: `usePlaces`
 - **Páginas de categoría**: `usePlacesWithIA` + `categories/`
-- **Filtrado**: `usePlacesWithFilters`
+- **Filtrado**: `usePlacesWithIA`
 - **Top rated**: `topRated/useTopRatedPlaces`
 - **Búsquedas**: `search/usePlacesSearch`
 

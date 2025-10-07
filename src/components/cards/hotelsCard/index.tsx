@@ -1,8 +1,5 @@
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { RiWheelchairLine } from "react-icons/ri";
-import { BiSolidWine } from "react-icons/bi";
-import { MdOutlineFreeBreakfast } from "react-icons/md";
 import { useHotelsTopRated } from "../../../hooks/places";
 import type { Place, EnrichedPlace } from "../../../hooks/places";
 import "./index.scss";
@@ -40,21 +37,6 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
             <FaStar className="text-[#00324A]" />
             {hotel.rating ?? "-"}
           </div>
-          {hotel.wheelchair_accessible_entrance && (
-            <div className="flex items-center bg-white rounded-lg px-1 py-1 text-xs font-medium">
-              <RiWheelchairLine className="text-[#00324A] text-lg" />
-            </div>
-          )}
-          {hotel.serves_wine && (
-            <div className="flex items-center bg-white rounded-lg px-1 py-1 text-xs font-medium">
-              <BiSolidWine className="text-[#00324A] text-lg" />
-            </div>
-          )}
-          {hotel.serves_breakfast && (
-            <div className="flex items-center bg-white rounded-lg px-1 py-1 text-xs font-medium">
-              <MdOutlineFreeBreakfast className="text-[#00324A] text-lg" />
-            </div>
-          )}
         </div>
 
         <div className="absolute bottom-3 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">

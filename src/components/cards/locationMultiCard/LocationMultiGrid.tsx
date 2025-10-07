@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import LocationMultiCard from './LocationMultiCard';
-import type { Place } from '../../../hooks/places/types';
+import type { Place } from '../../../hooks/places';
 import './index.scss';
 
 interface LocationMultiGridProps {

@@ -15,18 +15,17 @@ export { useRestaurants } from "./categories/useRestaurants";
 // Hook principal que combina todo (para compatibilidad) - ELIMINADO (redundante)
 
 // Hooks de enriquecimiento y IA
-export { usePlacesEnrichment } from "./enrichment/usePlacesEnrichment";
+export { usePlacesEnrichment } from "./enrichment/usePlacesEnrichment"; // Mantener para casos especiales
 export { useReviewsProcessor } from "./processors/reviewsProcessor";
 export { useAmenitiesProcessor } from "./processors/amenitiesProcessor";
 export { useAIService } from "./ai/useAIService";
-export { usePlacesWithIA } from "./usePlacesWithIA";
 export { useIntelligentFilters } from "./filters/useIntelligentFilters";
 
-// Hook principal (recomendado)
+// Hook principal con datos detallados (recomendado) - SIEMPRE ENRIQUECIDO
 export { usePlaces } from "./usePlaces";
 
-// Hook genérico para todas las categorías con filtros
-export { usePlacesWithFilters } from "./usePlacesWithFilters";
+// Hook con IA para filtros avanzados - USA usePlaces ENRIQUECIDO
+export { usePlacesWithIA } from "./usePlacesWithIA";
 
 // Hook para destinos mejor valorados
 export { useTopRatedPlaces } from "./topRated/useTopRatedPlaces";

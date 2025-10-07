@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaStar } from 'react-icons/fa';
-import type { Place } from '../../../hooks/places/types';
+import type { Place } from '../../../hooks/places';
 import './index.scss';
 
 interface LocationMultiCardProps {

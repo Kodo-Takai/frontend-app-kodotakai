@@ -15,21 +15,21 @@ const { places, mapCenter, loading, status } = usePlaces(
 );
 ```
 
-#### **2. `usePlacesWithFilters` - Genérico Universal**
+#### **2. `usePlacesWithIA` - Hook con IA**
 ```typescript
-// Para todas las categorías
-import { usePlacesWithFilters } from "../../hooks/places";
+// Para filtros inteligentes y análisis avanzado
+import { usePlacesWithIA } from "../../hooks/places";
 
 const {
   places,
   filteredPlaces,
   loading,
   error,
-  getPlacesByFilter,
-  getFilterStatistics
-} = usePlacesWithFilters({
-  category: "hotels", // o "beaches", "restaurants", "destinations"
-  activeFilters: ["petfriendly", "lujo"],
+  aiAnalysis,
+  getFilteredPlaces
+} = usePlacesWithIA({
+  category: "hotels",
+  requestedFilters: ["petfriendly", "lujo"],
   enableEnrichment: true,
   enableAI: true
 });
@@ -114,7 +114,7 @@ import { useHotelsTopRated } from "../../hooks/places";
 const { places, loading, error } = useHotelsTopRated({...});
 
 // AGREGAR:
-import { usePlacesWithFilters } from "../../hooks/places";
+import { usePlacesWithIA } from "../../hooks/places";
 const {
   places,
   filteredPlaces,
@@ -124,7 +124,7 @@ const {
   getFilterStatistics,
   activeFilters,
   updateActiveFilters
-} = usePlacesWithFilters({
+} = usePlacesWithIA({
   searchQuery,
   activeFilters: selectedBadge ? [selectedBadge] : [],
   category: "hotels",
@@ -173,14 +173,14 @@ npm run dev
 import { useHotelsTopRated } from "../../hooks/places";
 
 // Genérico para todas las categorías (recomendado)
-import { usePlacesWithFilters } from "../../hooks/places";
+import { usePlacesWithIA } from "../../hooks/places";
 ```
 
 ### **🏖️ Hooks de Playas**
 ```typescript
 // Genérico con filtros (recomendado)
-import { usePlacesWithFilters } from "../../hooks/places";
-const { places, loading, getPlacesByFilter } = usePlacesWithFilters({
+import { usePlacesWithIA } from "../../hooks/places";
+const { places, loading, getPlacesByFilter } = usePlacesWithIA({
   category: "beaches",
   activeFilters: ["surf", "pesca"]
 });
@@ -189,8 +189,8 @@ const { places, loading, getPlacesByFilter } = usePlacesWithFilters({
 ### **🍽️ Hooks de Restaurantes**
 ```typescript
 // Genérico con filtros (recomendado)
-import { usePlacesWithFilters } from "../../hooks/places";
-const { places, loading, getPlacesByFilter } = usePlacesWithFilters({
+import { usePlacesWithIA } from "../../hooks/places";
+const { places, loading, getPlacesByFilter } = usePlacesWithIA({
   category: "restaurants",
   activeFilters: ["vegetariano", "mariscos"]
 });
@@ -199,8 +199,8 @@ const { places, loading, getPlacesByFilter } = usePlacesWithFilters({
 ### **🗺️ Hooks de Destinos**
 ```typescript
 // Genérico con filtros (recomendado)
-import { usePlacesWithFilters } from "../../hooks/places";
-const { places, loading, getPlacesByFilter } = usePlacesWithFilters({
+import { usePlacesWithIA } from "../../hooks/places";
+const { places, loading, getPlacesByFilter } = usePlacesWithIA({
   category: "destinations",
   activeFilters: ["historico", "natural"]
 });
