@@ -9,7 +9,7 @@ export interface Profile {
   address?: string | null;
   gender?: string | null;
   photo?: string | null;
-  birthDate?: string | null; // ISO string
+  birthDate?: string | null;
   status: boolean;
   createdAt: string;
   updatedAt?: string | null;
@@ -19,7 +19,7 @@ export interface Profile {
 export type ProfileUpdateRequest = Partial<
   Pick<
     Profile,
-    "name" | "lastName" | "gender" | "birthDate" | "address" | "phone"
+    "name" | "lastName" | "gender" | "birthDate" | "address" | "phone" | "photo"
   >
 >;
 
