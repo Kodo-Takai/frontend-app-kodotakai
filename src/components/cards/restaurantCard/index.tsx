@@ -5,7 +5,7 @@ import { TbLocationFilled } from "react-icons/tb";
 import { usePlaces } from "../../../hooks/places";
 import type { Place } from "../../../hooks/places";
 import "./index.scss";
-
+import PlaceModal from "../../ui/placeModal";
 interface Restaurant extends Place {
   // Restaurant extends Place interface
 }
@@ -21,13 +21,15 @@ export default function RestaurantCards() {
 
   const RestaurantCard = ({ restaurant }: { restaurant: Restaurant }) => {
     const [imageError, setImageError] = useState(false);
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const handleImageError = () => {
       setImageError(true);
     };
 
     const renderStars = (rating?: number) => {
       if (!rating) return null;
+
+    
 
       const fullStars = Math.floor(rating);
       const stars = Array.from({ length: 5 }, (_, i) => (
@@ -49,6 +51,14 @@ export default function RestaurantCards() {
         </div>
       );
     };
+      const handleOpenModal = () => {
+        setIsModalOpen(true);
+      };
+
+      const handleCloseModal = () => {
+        setIsModalOpen(false);
+      };
+
 
     return (
       <div className="restaurant-card-width">
@@ -117,18 +127,25 @@ export default function RestaurantCards() {
           </div>
 
           <div className="restaurant-card-footer">
-            <div className="restaurant-card-location-center">
+            <button
+              className="restaurant-card-location-center"
+              onClick={handleOpenModal}>
               <TbLocationFilled className="w-4 h-4 text-white" />
               <span className="text-white text-sm font-medium">
                 Visítalo ahora
               </span>
-            </div>
+            </button>
 
             <button className="restaurant-card-red-button">
               <FaHeart className="w-4 h-4" />
             </button>
           </div>
         </div>
+        <PlaceModal
+          place={restaurant}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
       </div>
     );
   };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { TbLocationFilled } from "react-icons/tb";
 import { usePlaces, type EnrichedPlace } from "../../../hooks/places";
+import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
 interface PlaceCardProps {
@@ -20,10 +21,13 @@ export default function PlaceCards({
   title,
   loading: externalLoading,
   error: externalError,
-  onPlaceClick,
   itemsPerPage = 6,
 }: PlaceCardProps) {
   const [imageError, setImageError] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<EnrichedPlace | null>(
+    null
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
     places: hookPlaces,
@@ -49,9 +53,13 @@ export default function PlaceCards({
   const handleVisitClick = (e: React.MouseEvent, place: EnrichedPlace) => {
     e.preventDefault();
     e.stopPropagation();
-    if (onPlaceClick) {
-      onPlaceClick(place);
-    }
+    setSelectedPlace(place);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlace(null);
   };
 
   const renderStars = (rating?: number) => {
@@ -185,6 +193,15 @@ export default function PlaceCards({
           />
         ))}
       </div>
+
+      {/* Modal para mostrar detalles del lugar */}
+      {selectedPlace && (
+        <PlaceModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          place={selectedPlace}
+        />
+      )}
     </div>
   );
 }

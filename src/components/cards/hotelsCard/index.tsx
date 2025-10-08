@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { usePlaces } from "../../../hooks/places";
 import type { Place, EnrichedPlace } from "../../../hooks/places";
+import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
 interface HotelsCardProps {
@@ -12,85 +13,96 @@ interface HotelsCardProps {
 
 const HotelCard = ({ hotel }: { hotel: Place }) => {
   const [imageError, setImageError] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const handleImageError = () => setImageError(true);
 
-  const handleHotelClick = (hotel: Place) => {
-    console.log("Hotel seleccionado:", hotel);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
-    <div
-      className="hotel-card-width shadow-sm"
-      onClick={() => handleHotelClick(hotel)}
-    >
-      <div className="hotel-card-image-container">
-        <img
-          src={
-            imageError
-              ? "https://picsum.photos/400/200?random=hotel-error"
-              : hotel.photo_url ||
-                "https://picsum.photos/400/200?random=hotel-default"
-          }
-          alt={hotel.name}
-          onError={handleImageError}
-        />
+    <>
+      <div
+        className="hotel-card-width shadow-sm"
+        onClick={handleOpenModal}
+      >
+        <div className="hotel-card-image-container">
+          <img
+            src={
+              imageError
+                ? "https://picsum.photos/400/200?random=hotel-error"
+                : hotel.photo_url ||
+                  "https://picsum.photos/400/200?random=hotel-default"
+            }
+            alt={hotel.name}
+            onError={handleImageError}
+          />
 
-        <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black to-transparent" />
 
-        <div className="absolute top-2 left-2 flex gap-1">
-          <div className="flex items-center gap-0.5 bg-white rounded-lg px-1 py-0.5 text-sm font-medium text-[#00324A]">
-            <FaStar className="text-[#00324A]" />
-            {hotel.rating ?? "-"}
+          <div className="absolute top-2 left-2 flex gap-1">
+            <div className="flex items-center gap-0.5 bg-white rounded-lg px-1 py-0.5 text-sm font-medium text-[#00324A]">
+              <FaStar className="text-[#00324A]" />
+              {hotel.rating ?? "-"}
+            </div>
           </div>
-        </div>
 
-        <div className="absolute bottom-3 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
-          <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
-            {(() => {
-              const businessStatus = (hotel as any).business_status;
-              const isOpenNow = (hotel as any).is_open_now;
+          <div className="absolute bottom-3 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
+            <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
+              {(() => {
+                const businessStatus = (hotel as any).business_status;
+                const isOpenNow = (hotel as any).is_open_now;
 
-              if (businessStatus === "CLOSED_PERMANENTLY") {
-                return "Cerrado permanentemente";
-              }
+                if (businessStatus === "CLOSED_PERMANENTLY") {
+                  return "Cerrado permanentemente";
+                }
 
-              if (businessStatus === "CLOSED_TEMPORARILY") {
-                return "Cerrado temporalmente";
-              }
+                if (businessStatus === "CLOSED_TEMPORARILY") {
+                  return "Cerrado temporalmente";
+                }
 
-              if (businessStatus === "OPERATIONAL") {
+                if (businessStatus === "OPERATIONAL") {
+                  if (isOpenNow === true) {
+                    return "Abierto ahora";
+                  } else if (isOpenNow === false) {
+                    return "Cerrado ahora";
+                  } else {
+                    return "Abierto ahora";
+                  }
+                }
+
                 if (isOpenNow === true) {
                   return "Abierto ahora";
                 } else if (isOpenNow === false) {
                   return "Cerrado ahora";
-                } else {
-                  return "Abierto ahora";
                 }
-              }
 
-              if (isOpenNow === true) {
-                return "Abierto ahora";
-              } else if (isOpenNow === false) {
-                return "Cerrado ahora";
-              }
+                return "Consulta aquí";
+              })()}
+            </span>
+          </div>
+        </div>
 
-              return "Consulta aquí";
-            })()}
-          </span>
+        <div className="p-3">
+          <h3 className="text-xl font-extrabold text-[#00324A] line-clamp-1 uppercase">
+            {hotel.name}
+          </h3>
+          <p className="text-sm text-black mt-1 line-clamp-2 overflow-hidden text-ellipsis">
+            {(hotel as any).formatted_address ||
+              hotel.vicinity ||
+              "Ubicación no disponible"}
+          </p>
         </div>
       </div>
 
-      <div className="p-3">
-        <h3 className="text-xl font-extrabold text-[#00324A] line-clamp-1 uppercase">
-          {hotel.name}
-        </h3>
-        <p className="text-sm text-black mt-1 line-clamp-2 overflow-hidden text-ellipsis">
-          {(hotel as any).formatted_address ||
-            hotel.vicinity ||
-            "Ubicación no disponible"}
-        </p>
-      </div>
-    </div>
+      {/* Modal para mostrar detalles del hotel */}
+      <PlaceModal isOpen={isModalOpen} onClose={handleCloseModal} place={hotel} />
+    </>
   );
 };
 
