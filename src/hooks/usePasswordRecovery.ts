@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
-import { useField, required, emailValidator } from './useField';
-import { useCodeInput, codeValidator } from './useCodeInput';
+import { useState, useCallback } from "react";
+import { useField, required, emailValidator } from "./useField";
+import { useCodeInput, codeValidator } from "./useCodeInput";
 
 const minLengthValidator = (len: number) => (v: string) =>
   v.length >= len ? undefined : `Debe tener al menos ${len} caracteres`;
@@ -8,18 +8,18 @@ const minLengthValidator = (len: number) => (v: string) =>
 export function usePasswordRecovery() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [generalError, setGeneralError] = useState('');
+  const [generalError, setGeneralError] = useState("");
 
   // Campos usando diferentes hooks
-  const email = useField('', [required, emailValidator]);
-  const code = useCodeInput('', [codeValidator]); // ← USANDO useCodeInput
-  const newPassword = useField('', [required, minLengthValidator(8)]);
-  const confirmPassword = useField('', [required]);
+  const email = useField("", [required, emailValidator]);
+  const code = useCodeInput("", [codeValidator]); // ← USANDO useCodeInput
+  const newPassword = useField("", [required, minLengthValidator(8)]);
+  const confirmPassword = useField("", [required]);
 
   // Validación para confirmar contraseña
   const validateConfirmPassword = useCallback(() => {
     if (confirmPassword.value !== newPassword.value) {
-      confirmPassword.setError('Las contraseñas no coinciden');
+      confirmPassword.setError("Las contraseñas no coinciden");
       return false;
     }
     confirmPassword.setError(undefined);
@@ -28,18 +28,18 @@ export function usePasswordRecovery() {
 
   const handleNextStep = async () => {
     setIsSubmitting(true);
-    setGeneralError('');
+    setGeneralError("");
 
     try {
       if (step === 1 && email.isValid) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setStep(2);
       } else if (step === 2 && code.isValid && code.isComplete) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setStep(3);
       }
     } catch (error) {
-      setGeneralError('Ocurrió un error. Inténtalo de nuevo.');
+      setGeneralError("Ocurrió un error. Inténtalo de nuevo.");
     } finally {
       setIsSubmitting(false);
     }
@@ -51,13 +51,13 @@ export function usePasswordRecovery() {
     }
 
     setIsSubmitting(true);
-    setGeneralError('');
+    setGeneralError("");
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert('Contraseña actualizada correctamente');
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      alert("Contraseña actualizada correctamente");
     } catch (error) {
-      setGeneralError('Error al actualizar la contraseña');
+      setGeneralError("Error al actualizar la contraseña");
     } finally {
       setIsSubmitting(false);
     }
@@ -66,8 +66,11 @@ export function usePasswordRecovery() {
   // Validaciones por paso
   const canProceedStep1 = email.isValid && !isSubmitting;
   const canProceedStep2 = code.isValid && code.isComplete && !isSubmitting;
-  const canSubmitStep3 = newPassword.isValid && confirmPassword.isValid && 
-                        newPassword.value === confirmPassword.value && !isSubmitting;
+  const canSubmitStep3 =
+    newPassword.isValid &&
+    confirmPassword.isValid &&
+    newPassword.value === confirmPassword.value &&
+    !isSubmitting;
 
   return {
     step,

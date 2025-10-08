@@ -1,7 +1,5 @@
-// src/hooks/places/search/searchStrategies.ts
 import type { LatLng, UsePlacesOptions, SearchStrategy } from "../types";
 
-// Strategy Pattern: Diferentes estrategias de búsqueda
 export class NearbySearchStrategy implements SearchStrategy {
   async search(userPosition: LatLng, options: UsePlacesOptions): Promise<any[]> {
     if (!window.google?.maps?.places) return [];

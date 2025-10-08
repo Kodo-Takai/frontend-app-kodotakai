@@ -5,14 +5,16 @@ import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 import BadgeWithIcon from "../../components/ui/badgeWithIcon";
+import { usePlaces } from "../../hooks/places";
+import { TopRatedSection } from "../../components/cards/topRatedCard";
+import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
+import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
+import FilterableContent from "../../components/ui/filtering/FilterableContent";
+import FilteredResults from "../../components/ui/filtering/FilteredResults";
 
-export default function HotelesPage() {
-  const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
-  const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const animationClass = useNavigationAnimation();
-
-  const carouselData = [
+const CAROUSEL_CONFIG = {
+  interval: 4000,
+  slides: [
     {
       image: "/hotels-news-1.svg",
       titleFirst: "ENCUENTRA",
@@ -31,24 +33,94 @@ export default function HotelesPage() {
       titleRest: "EXPERIENCIAS ÚNICAS",
       subtitle: "Desde playas paradisíacas hasta montañas majestuosas",
     },
-  ];
+  ],
+};
+
+const BADGE_CONFIG = [
+  {
+    id: "todo",
+    icon: "h-cat_todo_icon.svg",
+    hoverIcon: "hover-h-cat_todo_icon.svg",
+    label: "Todo",
+  },
+  {
+    id: "spa",
+    icon: "h-cat_spa_icon.svg",
+    hoverIcon: "hover-h-cat_spa_icon.svg",
+    label: "Spa",
+  },
+  {
+    id: "rest",
+    icon: "h-cat_rest_icon.svg",
+    hoverIcon: "hover-h-cat_rest_icon.svg",
+    label: "Restaurante",
+  },
+  {
+    id: "sauna",
+    icon: "h-cat_sauna_icon.svg",
+    hoverIcon: "hover-h-cat_sauna_icon.svg",
+    label: "Sauna",
+  },
+  {
+    id: "cocina",
+    icon: "h-cat_cocina_icon.svg",
+    hoverIcon: "hover-h-cat_cocina_icon.svg",
+    label: "Cocina",
+  },
+  {
+    id: "gym",
+    icon: "h-cat_gym_icon.svg",
+    hoverIcon: "hover-h-cat_gym_icon.svg",
+    label: "Gym",
+  },
+];
+
+export default function HotelesPage() {
+  const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
+  const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const animationClass = useNavigationAnimation();
+
+  const { places, loading, error, mapCenter } = usePlaces({
+    category: "hotels",
+    searchQuery: searchQuery,
+    enableEnrichment: true,
+    maxResults: 20,
+  });
+
+  const {
+    places: filteredPlaces,
+    totalMatches,
+    activeFilter,
+    applyFilter,
+    clearFilter,
+    isFilterActive,
+    analyzeContentMatch,
+  } = useIntelligentFiltering(places, "hotels");
 
   const handleSearch = (query: string) => {
-    console.log("Buscando:", query);
+    setSearchQuery(query);
   };
 
   const handleBadgeClick = (badgeId: string) => {
-    setSelectedBadge(selectedBadge === badgeId ? null : badgeId);
-    console.log("Badge seleccionado:", badgeId);
+    const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
+    setSelectedBadge(newSelectedBadge);
+
+    if (newSelectedBadge && newSelectedBadge !== "todo") {
+      applyFilter(newSelectedBadge);
+    } else {
+      clearFilter();
+    }
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % carouselData.length);
-    }, 4000);
+      setCurrentSlide((prev) => (prev + 1) % CAROUSEL_CONFIG.slides.length);
+    }, CAROUSEL_CONFIG.interval);
 
     return () => clearInterval(interval);
-  }, [carouselData.length]);
+  }, []);
 
   return (
     <div
@@ -80,9 +152,9 @@ export default function HotelesPage() {
           onChange={setSelectedOption}
         />
 
-        <div className="w-full h-50 rounded-2xl mt-2 border-white border-4 relative overflow-hidden mb-1">
+        <div className="w-full h-50 rounded-3xl mt-2 border-white border-4 relative overflow-hidden mb-1">
           <img
-            src={carouselData[currentSlide].image}
+            src={CAROUSEL_CONFIG.slides[currentSlide].image}
             className="w-full h-full object-cover rounded-3xl transition-opacity duration-500"
             alt="HOTELS NEWS"
           />
@@ -102,17 +174,16 @@ export default function HotelesPage() {
 
           <div className="absolute bottom-7 left-4 text-left">
             <h2 className="text-white text-2xl font-extrabold mb-1 leading-none">
-              {carouselData[currentSlide].titleFirst} <br />
-              {carouselData[currentSlide].titleRest}
+              {CAROUSEL_CONFIG.slides[currentSlide].titleFirst} <br />
+              {CAROUSEL_CONFIG.slides[currentSlide].titleRest}
             </h2>
             <p className="text-white/80 text-sm">
-              {carouselData[currentSlide].subtitle}
+              {CAROUSEL_CONFIG.slides[currentSlide].subtitle}
             </p>
           </div>
 
-          {/* Indicadores de puntos */}
           <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
-            {carouselData.map((_, index) => (
+            {CAROUSEL_CONFIG.slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
@@ -128,163 +199,88 @@ export default function HotelesPage() {
 
         <Search
           onSearch={handleSearch}
-          placeholder="Buscar playas cerca de ti..."
+          placeholder="Buscar hoteles cerca de ti..."
         />
 
         <div className="w-full mb-3">
           <div className="flex flex-wrap gap-2">
-            <BadgeWithIcon
-              id="todo"
-              icon={
-                <img
-                  src="/icons/hotels_icons/h-cat_todo_icon.svg"
-                  alt="Todo"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/hotels_icons/hover-h-cat_todo_icon.svg"
-                  alt="Todo"
-                  className="w-5 h-5"
-                />
-              }
-              label="Todo"
-              isActive={selectedBadge === "todo"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#e1e1e1"
-            />
-
-            <BadgeWithIcon
-              id="petfriendly"
-              icon={
-                <img
-                  src="/icons/playas_icons/p-cat_pet_icon.svg"
-                  alt="Petfriendly"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/playas_icons/hover-p-cat_pet_icon.svg"
-                  alt="Petfriendly"
-                  className="w-5 h-5"
-                />
-              }
-              label="Petfriendly"
-              isActive={selectedBadge === "petfriendly"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
-
-            <BadgeWithIcon
-              id="lujo"
-              icon={
-                <img
-                  src="/icons/hotels_icons/h-cat_luj_icon.svg"
-                  alt="Lujo"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/hotels_icons/hover-h-cat_luj_icon.svg"
-                  alt="Lujo"
-                  className="w-5 h-5"
-                />
-              }
-              label="Lujo"
-              isActive={selectedBadge === "lujo"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
-
-            <BadgeWithIcon
-              id="economic"
-              icon={
-                <img
-                  src="/icons/hotels_icons/h-cat_econ_icon.svg"
-                  alt="Económico"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/hotels_icons/hover-h-cat_econ_icon.svg"
-                  alt="Económico"
-                  className="w-5 h-5"
-                />
-              }
-              label="Barato"
-              isActive={selectedBadge === "economic"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
-
-            <BadgeWithIcon
-              id="playa"
-              icon={
-                <img
-                  src="/icons/hotels_icons/h-cat_playa_icon.svg"
-                  alt="Playa"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/hotels_icons/hover-h-cat_playa_icon.svg"
-                  alt="Playa"
-                  className="w-5 h-5"
-                />
-              }
-              label="Playa"
-              isActive={selectedBadge === "playa"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
-
-            <BadgeWithIcon
-              id="piscina"
-              icon={
-                <img
-                  src="/icons/hotels_icons/h-cat_pisc_icon.svg"
-                  alt="Piscina"
-                  className="w-5 h-5"
-                />
-              }
-              hoverIcon={
-                <img
-                  src="/icons/hotels_icons/hover-h-cat_pisc_icon.svg"
-                  alt="Piscina"
-                  className="w-5 h-5"
-                />
-              }
-              label="Piscina"
-              isActive={selectedBadge === "piscina"}
-              onClick={handleBadgeClick}
-              activeColor="#DC1217"
-              activeBorderColor="#F3F3F3"
-            />
+            {BADGE_CONFIG.map((badge) => (
+              <BadgeWithIcon
+                key={badge.id}
+                id={badge.id}
+                icon={
+                  <img
+                    src={`/icons/hotels_icons/${badge.icon}`}
+                    alt={badge.label}
+                    className="w-5 h-5"
+                  />
+                }
+                hoverIcon={
+                  <img
+                    src={`/icons/hotels_icons/${badge.hoverIcon}`}
+                    alt={badge.label}
+                    className="w-5 h-5"
+                  />
+                }
+                label={badge.label}
+                isActive={selectedBadge === badge.id}
+                onClick={handleBadgeClick}
+                activeColor="#DC1217"
+                activeBorderColor={badge.id === "todo" ? "#e1e1e1" : "#F3F3F3"}
+              />
+            ))}
           </div>
         </div>
 
-        <HotelsCard />
+        <FilterableContent isVisible={!isFilterActive}>
+          <TopRatedSection
+            category="hotels"
+            title="Top Hoteles mejor valorados"
+            limit={5}
+            minRating={4.0}
+          />
 
-        {/* Agregar más tarjetas de hoteles */}
+          <HotelsCard places={places} loading={loading} error={error} />
 
-        <div className=" flex gap-5 justify-between">
-          <div className="w-full h-70 rounded-2xl mt-2 bg-amber-600 relative overflow-hidden mb-1">
-            card1
+          <div className="mt-4">
+            <h2 className="text-2xl font-bold text-[#00324A] mb-4 text-center">
+              Explora más hoteles
+            </h2>
+            <LocationMultiGrid
+              places={places}
+              loading={loading}
+              error={error}
+              onPlaceClick={(place) => {
+                console.log("Hotel seleccionado:", place);
+              }}
+              itemsPerPage={4}
+              userLocation={mapCenter || undefined}
+            />
           </div>
-          <div className="w-full h-70 rounded-2xl mt-2 bg-amber-600 relative overflow-hidden mb-1">
-            card2
-          </div>
-        </div>
+        </FilterableContent>
+
+        <FilterableContent isVisible={isFilterActive}>
+          <FilteredResults
+            places={filteredPlaces}
+            loading={loading}
+            error={error}
+            filterName={
+              BADGE_CONFIG.find((b) => b.id === activeFilter)?.label || "filtro"
+            }
+            totalMatches={totalMatches}
+            onPlaceClick={(place) => {
+              console.log("Lugar filtrado seleccionado:", place);
+              if (activeFilter) {
+                const contentAnalysis = analyzeContentMatch(
+                  place,
+                  activeFilter
+                );
+                console.log("Análisis de contenido:", contentAnalysis);
+              }
+            }}
+            userLocation={mapCenter || undefined}
+          />
+        </FilterableContent>
       </div>
     </div>
   );

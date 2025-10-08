@@ -3,71 +3,37 @@ import { useState } from "react";
 import { TbLocationFilled } from "react-icons/tb";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
-import { useHotelsTopRated } from "../../../hooks/places";
-import PlaceModal from "../../ui/placeModal";
+import { usePlaces } from "../../../hooks/places";
+import type { Place, EnrichedPlace } from "../../../hooks/places/types";
 import "./index.scss";
-
-interface DestinationCardsProps {
-  name: string;
-  rating?: number;
-  vicinity?: string;
-  place_id: string;
-  photo_url: string;
-  location?: { lat: number; lng: number };
-  formatted_address?: string;
-  formatted_phone_number?: string;
-  website?: string;
-  opening_hours?: {
-    open_now?: boolean;
-    weekday_text?: string[];
-  };
-}
+import PlaceModal from "../../ui/placeModal";
 
 export default function DestinationCards() {
-  const { places, loading } = useHotelsTopRated({
-    limit: 6,
-    searchMethod: "both",
-    enableMultiplePhotos: true,
+  const { places, loading } = usePlaces({
+    category: "tourist_attraction",
+    enableEnrichment: true,
+    maxResults: 6,
   });
 
-  const [selectedPlace, setSelectedPlace] = useState<DestinationCardsProps | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<
+    Place | EnrichedPlace | null
+  >(null);
 
-  const handleVisit = (place: DestinationCardsProps) => {
+  const handleVisit = (place: Place | EnrichedPlace) => {
     setSelectedPlace(place);
     setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelectedPlace(null), 300); // Delay para animación
-  };
-
-  const handleVisitFromModal = (place: DestinationCardsProps) => {
-    console.log("Navegando a:", place.name);
-    // Aquí puedes agregar lógica de navegación
-    // Por ejemplo, abrir Google Maps o navegar a una página de detalles
-    if (place.location) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${place.location.lat},${place.location.lng}&destination_place_id=${place.place_id}`;
-      window.open(url, "_blank");
-    }
   };
 
   // Limitar a máximo 6 lugares
   const displayedPlaces = places.slice(0, 6);
 
   // Componente interno para cada card
-  const DestinationCard = ({ place }: { place: DestinationCardsProps }) => {
+  const DestinationCard = ({ place }: { place: Place }) => {
     const [imageError, setImageError] = useState(false);
 
     const handleImageError = () => {
       setImageError(true);
-    };
-
-    const handleVisitClick = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      handleVisit(place);
     };
 
     // Generar estrellas basadas en el rating
@@ -95,14 +61,18 @@ export default function DestinationCards() {
     };
 
     return (
-      <div className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white">
+      <div
+        className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white"
+        onClick={() => handleVisit(place)}
+      >
         {/* Imagen de fondo */}
         <div className="relative h-72 w-full overflow-hidden">
           <img
             src={
               imageError
                 ? "https://picsum.photos/280/288?random=destination-error"
-                : place.photo_url
+                : place.photo_url ||
+                  "https://picsum.photos/280/288?random=destination-default"
             }
             alt={place.name}
             className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
@@ -144,10 +114,7 @@ export default function DestinationCards() {
             </div>
 
             {/* Botón de visitar */}
-            <button
-              onClick={handleVisitClick}
-              className="w-full bg-white/90 border-4 border-gray-300 hover:bg-white text-gray-800 font-semibold py-1 px-4 rounded-xl transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-lg"
-            >
+            <button className="w-full bg-white/90 border-4 border-gray-300 hover:bg-white text-gray-800 font-semibold py-1 px-4 rounded-xl transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-lg">
               Visitar <TbLocationFilled className="w-4 h-4" />
             </button>
           </div>
@@ -201,21 +168,16 @@ export default function DestinationCards() {
   };
 
   return (
-    <>
-      <div className="w-full ">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 ">
-          Lugares que debes visitar
-        </h2>
-        {renderContent()}
-      </div>
-
-      {/* Modal reutilizable */}
+    <div className="w-full ">
+      <h2 className="text-xl font-bold text-gray-900 mb-4 ">
+        Lugares que debes visitar
+      </h2>
+      {renderContent()}
       <PlaceModal
         isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        onClose={() => setIsModalOpen(false)}
         place={selectedPlace}
-        onVisit={handleVisitFromModal}
       />
-    </>
+    </div>
   );
 }

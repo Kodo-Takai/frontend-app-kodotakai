@@ -1,4 +1,3 @@
-// src/hooks/places/index.ts - Barrel exports
 export * from "./types";
 export * from "./base/useGoogleMaps";
 export * from "./base/useGeolocation";
@@ -6,11 +5,24 @@ export * from "./search/usePlacesSearch";
 export * from "./filter/usePlacesFilter";
 export * from "./photos/usePlacesPhotos";
 
-// Hooks específicos por categoría
-export { useHotelsTopRated } from "./categories/useHotelsTopRated";
-export { useDestinations } from "./categories/useDestinations";
-export { useBeaches } from "./categories/useBeaches";
-export { useRestaurants } from "./categories/useRestaurants";
+export {
+  CategoryConfigFactory,
+  CATEGORY_CONFIGS,
+  filterByKeywords,
+} from "./config/categoryConfigs";
 
-// Hook principal que combina todo (para compatibilidad)
+export { useReviewsProcessor } from "./processors/reviewsProcessor";
+export { useAIService } from "./ai/useAIService";
+export { useIntelligentFilters } from "./filters/useIntelligentFilters";
+
 export { usePlaces } from "./usePlaces";
+export { usePlacesWithIA } from "./usePlacesWithIA";
+export { useTopRatedPlaces } from "./topRated/useTopRatedPlaces";
+
+export { GoogleMapsService } from "./services/GoogleMapsService";
+export { EnrichmentService } from "./services/EnrichmentService";
+export { SmartSearchService } from "./services/SmartSearchService";
+export { CacheService } from "./services/CacheService";
+export { PlaceUtils } from "./utils/PlaceUtils";
+
+export { GoogleMapsService as LocationService } from "./services/GoogleMapsService";

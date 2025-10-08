@@ -2,7 +2,9 @@
   display: flex;
   gap: 1rem;
   overflow-x: auto;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0.25rem;
+  margin-bottom: 15px;
+
   scroll-behavior: smooth;
 
   scrollbar-width: none;
@@ -20,12 +22,11 @@
   background-color: #ffffff;
   border-radius: 20px;
   padding: 15px;
-  border: 1px solid #dedede;
   transition: transform 0.3s ease-in-out;
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.01);
+    transform: scale(1.02);
   }
 
   @media (max-width: 640px) {

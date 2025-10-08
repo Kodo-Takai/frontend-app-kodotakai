@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
-import { useRestaurants } from "../../../hooks/places";
+import { usePlaces } from "../../../hooks/places";
 import "./index.scss";
 
 interface Restaurant {
@@ -20,13 +20,17 @@ interface Restaurant {
 }
 
 export default function RestaurantMenuCard() {
-  const { places: restaurants, loading } = useRestaurants({
-    searchMethod: "both",
-    limit: 6,
-    enableMultiplePhotos: true,
+  const { places: restaurants, loading } = usePlaces({
+    category: "restaurants",
+    enableEnrichment: true,
+    maxResults: 6
   });
 
   const displayedRestaurants = restaurants.slice(0, 6);
+
+  const handleRestaurantClick = (restaurant: Restaurant) => {
+    console.log("Restaurante seleccionado:", restaurant);
+  };
 
   const RestaurantCard = ({ restaurant }: { restaurant: Restaurant }) => {
     const [imageErrors, setImageErrors] = useState<boolean[]>([
@@ -43,10 +47,22 @@ export default function RestaurantMenuCard() {
       });
     };
 
+    // Procesar fotos del lugar enriquecido
+    const getProcessedPhotos = () => {
+      if ((restaurant as any).photos && Array.isArray((restaurant as any).photos)) {
+        return (restaurant as any).photos.map((photo: any) => ({
+          photo_url: photo.getUrl ? photo.getUrl() : photo.photo_url || photo
+        }));
+      }
+      return [];
+    };
+
     // Obtener las 3 imágenes del restaurante
     const getImages = () => {
-      if (restaurant.photos && restaurant.photos.length >= 3) {
-        return restaurant.photos.slice(0, 3);
+      const processedPhotos = getProcessedPhotos();
+      
+      if (processedPhotos.length >= 3) {
+        return processedPhotos.slice(0, 3);
       }
 
       // Si no hay suficientes fotos, usar placeholders
@@ -70,7 +86,7 @@ export default function RestaurantMenuCard() {
     const images = getImages();
 
     return (
-      <div className="restaurant-menu-card-width">
+      <div className="restaurant-menu-card-width shadow-sm" onClick={() => handleRestaurantClick(restaurant)}>
         <div className="restaurant-menu-card-container">
           <div className="restaurant-menu-card-header">
             <div className="restaurant-menu-card-icon-column">

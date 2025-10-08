@@ -1,9 +1,9 @@
-// src/hooks/places/base/useGoogleMaps.ts
 import { useState, useEffect } from "react";
 
 const API_KEY = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY;
+const SCRIPT_ID = "gmaps-sdk";
+const GOOGLE_MAPS_URL = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&v=weekly`;
 
-// Singleton para evitar cargar el script múltiples veces
 let gmapsLoader: Promise<void> | null = null;
 
 export function loadGoogleMaps(): Promise<void> {
@@ -11,7 +11,7 @@ export function loadGoogleMaps(): Promise<void> {
   if (gmapsLoader) return gmapsLoader;
 
   gmapsLoader = new Promise<void>((resolve, reject) => {
-    const existing = document.getElementById("gmaps-sdk");
+    const existing = document.getElementById(SCRIPT_ID);
     if (existing) {
       existing.addEventListener("load", () => resolve());
       existing.addEventListener("error", () =>
@@ -21,10 +21,10 @@ export function loadGoogleMaps(): Promise<void> {
     }
 
     const script = document.createElement("script");
-    script.id = "gmaps-sdk";
+    script.id = SCRIPT_ID;
     script.async = true;
     script.defer = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&v=weekly`;
+    script.src = GOOGLE_MAPS_URL;
 
     script.onload = () => resolve();
     script.onerror = () => reject(new Error("Failed to load Google Maps"));

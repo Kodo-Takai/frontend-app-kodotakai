@@ -6,56 +6,58 @@ import MapFilters from "../components/ui/mapsFilter";
 import { FaSlidersH } from "react-icons/fa";
 import { IoLocationOutline, IoSync } from "react-icons/io5";
 import { MapDisplay } from "../components/cards/mapDisplay";
-import { usePlacesSimple } from "../hooks/places/usePlacesSimple";
+import { usePlaces, type PlaceCategory } from "../hooks/places";
 
 const Maps = () => {
-  // --- Estados ---
   const [isApiReady, setIsApiReady] = useState(false);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  
-  // Estados para la lógica de búsqueda y filtros
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategories, setActiveCategories] = useState<'all' | 'beaches' | 'restaurants' | 'hotels' | 'destinations'>('all');
+  const [activeCategories, setActiveCategories] = useState<PlaceCategory>('all');
   const [zoom, setZoom] = useState(12);
 
-
-  // --- Hook de Datos Simplificado ---
-  const { places, mapCenter, loading, status } = usePlacesSimple(activeCategories, searchQuery);
+  const { places, mapCenter, loading, status } = usePlaces({
+    category: activeCategories,
+    searchQuery,
+    enableEnrichment: false,
+    maxResults: activeCategories === 'all' ? 30 : 20
+  });
   
   const placesToShow = places;
 
 
   const handleCategoryChange = (newCategory: string) => {
-    setActiveCategories(newCategory as 'all' | 'beaches' | 'restaurants' | 'hotels' | 'destinations');
+    // Validar que la categoría sea válida
+    const validCategories: PlaceCategory[] = ['all', 'beaches', 'restaurants', 'hotels', 'destinations', 'tourist_attraction', 'discos', 'estudiar', 'parques'];
+    const category = validCategories.includes(newCategory as PlaceCategory) ? newCategory as PlaceCategory : 'all';
+    setActiveCategories(category);
     setSearchQuery(''); 
   };
 
-  // --- Efectos ---
-  useEffect(() => {
-    setIsApiReady(true);
-  }, []);
 
-  // Obtener ubicación del usuario
+  useEffect(() => {
+    const checkApiReady = () => {
+      if (window.google?.maps) {
+        setIsApiReady(true);
+      } else {
+        setTimeout(checkApiReady, 100);
+      }
+    };
+    checkApiReady();
+  }, []);
 
   useEffect(() => {
     if (searchQuery && placesToShow.length === 1) {
-      setZoom(17);
+      setZoom(18);
     } else if (placesToShow.length > 0) {
-      setZoom(14);
+      setZoom(15);
     } else {
-      setZoom(12);
+      setZoom(15);
     }
   }, [searchQuery, placesToShow]);
 
-  // --- Handlers de la UI ---
-  const toggleFilters = () => {
-    setIsFilterVisible(!isFilterVisible);
-  };
-  const closeFilters = () => {
-    setIsFilterVisible(false);
-  };
+  const toggleFilters = () => setIsFilterVisible(!isFilterVisible);
+  const closeFilters = () => setIsFilterVisible(false);
 
-  // Lógica para el texto dinámico ---
   let displayTitle = "Tu Ubicación Actual";
   let displaySubtitle = "Lugares cercanos a ti";
 
@@ -70,12 +72,27 @@ const Maps = () => {
       displayTitle = "Sin resultados";
       displaySubtitle = "Intenta con otra búsqueda";
     }
+  } else if (activeCategories !== 'all') {
+    const categoryNames: Record<PlaceCategory, string> = {
+      'all': 'Todos',
+      'beaches': 'Playas',
+      'restaurants': 'Restaurantes', 
+      'hotels': 'Hoteles',
+      'destinations': 'Destinos',
+      'tourist_attraction': 'Atracciones',
+      'discos': 'Discos',
+      'estudiar': 'Lugares para Estudiar',
+      'parques': 'Parques'
+    };
+    displayTitle = categoryNames[activeCategories] || 'Lugares';
+    displaySubtitle = `${placesToShow.length} lugares encontrados`;
+  } else if (placesToShow.length > 0) {
+    displayTitle = "Lugares Cercanos";
+    displaySubtitle = `${placesToShow.length} lugares cerca de ti`;
   }
 
   return (
     <div className="relative h-screen overflow-hidden bg-gray-200">
-      
-      {/* Mapa de fondo (ocupa toda la altura) */}
       <div id="map" className="absolute inset-0 z-0">
         {isApiReady ? (
           <MapDisplay 
@@ -90,7 +107,6 @@ const Maps = () => {
         )}
       </div>
 
-      {/* Barra de búsqueda y botón de filtros */}
       <div className="absolute top-4 left-0 right-0 z-40 mx-auto w-11/12 md:w-3/4">
         <div className="flex items-center gap-2">
           <div className="flex-grow">
@@ -113,7 +129,6 @@ const Maps = () => {
         )}
       </div>
       
-      {/* PANEL DESLIZABLE */}
       <div
         onClick={closeFilters}
         className={`
@@ -137,43 +152,33 @@ const Maps = () => {
         </div>
       </div>
       
-      {/* Weather Pill */}
       <div className="absolute top-20 left-0 right-0 z-20 mx-auto w-11/12 md:w-3/4">
         <div className="w-fit">
           <WeatherPill className="w-20 h-6" textContainerClassName="text-xs" showWindInfo={false}/>
         </div>
       </div>
 
-     {/* --- INICIO: SECCIÓN INFERIOR (FOOTER ANCLADO AL FONDO) --- */}
       <div className="absolute bottom-31 left-0 right-0 z-10 w-full p-4 pb-6 flex flex-col items-center gap-4">
-
-          {/* 1. PÍLDORA DE UBICACIÓN COMPLETA (Arriba) */}
-          <div className="flex w-full max-w-sm items-center justify-between rounded-full bg-[#073247] p-2 pl-5 text-white shadow-lg">
-              {/* Lado izquierdo: Ícono y Texto */}
-              <div className="flex items-center gap-4">
-                  <IoLocationOutline size={28} className="flex-shrink-0 opacity-90" />
-                  <div>
-                      <p className="font-bold text-sm">{displayTitle}</p>
-                      <p className="text-xs text-white/80">{displaySubtitle}</p>
-                  </div>
-              </div>
-
-              {/* Lado derecho: Botón de refrescar */}
-              <div className="pr-1">
-                  <button
-                      className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white text-gray-800 shadow transition-colors hover:bg-gray-200"
-                      aria-label="Refrescar ubicación"
-                  >
-                      <IoSync size={20} />
-                  </button>
-              </div>
+        <div className="flex w-full max-w-sm items-center justify-between rounded-full bg-[#073247] p-2 pl-5 text-white shadow-lg">
+          <div className="flex items-center gap-4">
+            <IoLocationOutline size={28} className="flex-shrink-0 opacity-90" />
+            <div>
+              <p className="font-bold text-sm">{displayTitle}</p>
+              <p className="text-xs text-white/80">{displaySubtitle}</p>
+            </div>
           </div>
-
-          {/* 2. FILTROS (Debajo de la píldora y con el mismo ancho) */}
-          <div className="w-full max-w-sm flex justify-center">
-              <MapFilters />
+          <div className="pr-1">
+            <button
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white text-gray-800 shadow transition-colors hover:bg-gray-200"
+              aria-label="Refrescar ubicación"
+            >
+              <IoSync size={20} />
+            </button>
           </div>
-          
+        </div>
+        <div className="w-full max-w-sm flex justify-center">
+          <MapFilters />
+        </div>
       </div>      
     </div>
   );

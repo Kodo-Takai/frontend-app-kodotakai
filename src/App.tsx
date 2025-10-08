@@ -42,20 +42,20 @@ function AppContent() {
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route element={<MainLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/explorar" element={<Explorar />} />
-            <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
-            <Route path="/explorar/playas" element={<PlayasPage />} />
-            <Route path="/explorar/hoteles" element={<HotelesPage />} />
-            <Route path="/explorar/discos" element={<DiscosPage />} />
-            <Route path="/explorar/estudiar" element={<EstudiarPage />} />
-            <Route path="/explorar/parques" element={<ParquesPage />} />
-            <Route path="/maps" element={<Maps />} />
-            <Route path="/custom-profile" element={<CustomProfile />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
+          <Route element={<MainLayout />}></Route>
+          <Route path="/home" element={<Home />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/maps" element={<Maps />} />
+          <Route path="/explorar" element={<Explorar />} />
+          <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
+          <Route path="/explorar/playas" element={<PlayasPage />} />
+          <Route path="/explorar/hoteles" element={<HotelesPage />} />
+          <Route path="/explorar/discos" element={<DiscosPage />} />
+          <Route path="/explorar/estudiar" element={<EstudiarPage />} />
+          <Route path="/explorar/parques" element={<ParquesPage />} />
+          <Route path="/maps" element={<Maps />} />
+          <Route path="/custom-profile" element={<CustomProfile />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </>

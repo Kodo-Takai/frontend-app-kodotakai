@@ -21,9 +21,10 @@ export default function MapsCard({ className = "w-1/2", height= "h-44" }: Props)
   const expandedMapInstance = useRef<google.maps.Map | null>(null);
   
   const { places, loading: placesLoading } = usePlaces({
-    fallback: FALLBACK,
-    type: "tourist_attraction",
-    radius: 3000,
+    category: "destinations",
+    searchQuery: "",
+    enableEnrichment: false,
+    maxResults: 10
   });
 
   // Obtener ubicación del usuario
