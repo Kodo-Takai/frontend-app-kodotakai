@@ -42,22 +42,23 @@ export class PlaceUtils {
 
   static getPlaceDistance(place1: any, place2: any): number {
     if (!place1?.location || !place2?.location) return Infinity;
-    
+
     const R = 6371; // Radio de la Tierra en km
     const dLat = this.toRad(place2.location.lat - place1.location.lat);
     const dLon = this.toRad(place2.location.lng - place1.location.lng);
     const lat1 = this.toRad(place1.location.lat);
     const lat2 = this.toRad(place2.location.lat);
 
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
     return R * c;
   }
 
   private static toRad(deg: number): number {
-    return deg * (Math.PI/180);
+    return deg * (Math.PI / 180);
   }
 
   static sortByRating(places: any[]): any[] {
@@ -73,10 +74,10 @@ export class PlaceUtils {
   }
 
   static filterByRating(places: any[], minRating: number): any[] {
-    return places.filter(place => (place.rating || 0) >= minRating);
+    return places.filter((place) => (place.rating || 0) >= minRating);
   }
 
   static filterByPhotos(places: any[]): any[] {
-    return places.filter(place => place.photos && place.photos.length > 0);
+    return places.filter((place) => place.photos && place.photos.length > 0);
   }
 }

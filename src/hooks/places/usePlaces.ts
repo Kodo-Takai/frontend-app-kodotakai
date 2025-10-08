@@ -13,7 +13,12 @@ export const usePlaces = (options: {
   enableEnrichment?: boolean;
   maxResults?: number;
 }) => {
-  const { category, searchQuery, enableEnrichment = true, maxResults = 20 } = options;
+  const {
+    category,
+    searchQuery,
+    enableEnrichment = true,
+    maxResults = 20,
+  } = options;
 
   const [places, setPlaces] = useState<EnrichedPlace[]>([]);
   const [mapCenter, setMapCenter] = useState<LatLng>(FALLBACK_LOCATION);
@@ -34,7 +39,10 @@ export const usePlaces = (options: {
         if (searchQuery) {
           setStatus(`Buscando "${searchQuery}"...`);
           const service = GoogleMapsService.createService();
-          const results = await GoogleMapsService.searchByText(service, searchQuery);
+          const results = await GoogleMapsService.searchByText(
+            service,
+            searchQuery
+          );
           formattedPlaces = results
             .map((p) => GoogleMapsService.formatPlaceResult(p, category))
             .filter((p): p is Place => p !== null)
@@ -44,15 +52,27 @@ export const usePlaces = (options: {
           const userLocation = await GoogleMapsService.getUserLocation();
           setMapCenter(userLocation);
 
-          const isRealLocation = GoogleMapsService.isUsingRealLocation(userLocation);
-          setStatus(isRealLocation ? `Buscando ${category} cerca de ti...` : `Buscando ${category} en ubicación por defecto...`);
+          const isRealLocation =
+            GoogleMapsService.isUsingRealLocation(userLocation);
+          setStatus(
+            isRealLocation
+              ? `Buscando ${category} cerca de ti...`
+              : `Buscando ${category} en ubicación por defecto...`
+          );
 
-          formattedPlaces = await SmartSearchService.searchPlaces(category, userLocation, maxResults);
+          formattedPlaces = await SmartSearchService.searchPlaces(
+            category,
+            userLocation,
+            maxResults
+          );
         }
 
         if (enableEnrichment && formattedPlaces.length > 0) {
           setStatus("Enriqueciendo datos...");
-          const enrichedPlaces = await EnrichmentService.enrichPlaces(formattedPlaces, category);
+          const enrichedPlaces = await EnrichmentService.enrichPlaces(
+            formattedPlaces,
+            category
+          );
           setPlaces(enrichedPlaces);
           setStatus(`${enrichedPlaces.length} lugares encontrados`);
         } else {
@@ -63,13 +83,14 @@ export const usePlaces = (options: {
         console.error("Error en usePlaces:", error);
         setPlaces([]);
 
-        const errorMessage = error instanceof Error 
-          ? error.message.includes("Google Maps API") 
-            ? "Error de conexión con Google Maps"
-            : error.message.includes("geolocation")
-            ? "Error al obtener ubicación"
-            : error.message
-          : "Error al cargar lugares";
+        const errorMessage =
+          error instanceof Error
+            ? error.message.includes("Google Maps API")
+              ? "Error de conexión con Google Maps"
+              : error.message.includes("geolocation")
+              ? "Error al obtener ubicación"
+              : error.message
+            : "Error al cargar lugares";
 
         setError(errorMessage);
         setStatus("Error al cargar lugares");

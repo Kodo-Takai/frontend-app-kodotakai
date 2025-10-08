@@ -3,13 +3,13 @@ import HeaderNavigationExplore from "../../components/ui/headerNavigationExplore
 import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
-import BadgeWithIcon from "../../components/ui/badgeWithIcon";
+// import BadgeWithIcon from "../../components/ui/badgeWithIcon";
 import { usePlaces } from "../../hooks/places";
 import { TopRatedSection } from "../../components/cards/topRatedCard";
 import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
-import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
+// import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
 import FilterableContent from "../../components/ui/filtering/FilterableContent";
-import FilteredResults from "../../components/ui/filtering/FilteredResults";
+// import FilteredResults from "../../components/ui/filtering/FilteredResults";
 import PlaceCards from "../../components/cards/placeCard";
 
 const CAROUSEL_CONFIG = {
@@ -30,48 +30,48 @@ const CAROUSEL_CONFIG = {
   ],
 };
 
-const BADGE_CONFIG = [
-  {
-    id: "todo",
-    icon: "p-cat_todo_icon.svg",
-    hoverIcon: "hover-p-cat_todo_icon.svg",
-    label: "Todo",
-  },
-  {
-    id: "recreacion",
-    icon: "p-cat_recreacion_icon.svg",
-    hoverIcon: "hover-p-cat_recreacion_icon.svg",
-    label: "Recreación",
-  },
-  {
-    id: "deportes",
-    icon: "p-cat_deportes_icon.svg",
-    hoverIcon: "hover-p-cat_deportes_icon.svg",
-    label: "Deportes",
-  },
-  {
-    id: "jardin",
-    icon: "p-cat_jardin_icon.svg",
-    hoverIcon: "hover-p-cat_jardin_icon.svg",
-    label: "Jardín",
-  },
-  {
-    id: "plaza",
-    icon: "p-cat_plaza_icon.svg",
-    hoverIcon: "hover-p-cat_plaza_icon.svg",
-    label: "Plaza",
-  },
-  {
-    id: "naturaleza",
-    icon: "p-cat_naturaleza_icon.svg",
-    hoverIcon: "hover-p-cat_naturaleza_icon.svg",
-    label: "Naturaleza",
-  },
-];
+// const BADGE_CONFIG = [
+//   {
+//     id: "todo",
+//     icon: "p-cat_todo_icon.svg",
+//     hoverIcon: "hover-p-cat_todo_icon.svg",
+//     label: "Todo",
+//   },
+//   {
+//     id: "recreacion",
+//     icon: "p-cat_recreacion_icon.svg",
+//     hoverIcon: "hover-p-cat_recreacion_icon.svg",
+//     label: "Recreación",
+//   },
+//   {
+//     id: "deportes",
+//     icon: "p-cat_deportes_icon.svg",
+//     hoverIcon: "hover-p-cat_deportes_icon.svg",
+//     label: "Deportes",
+//   },
+//   {
+//     id: "jardin",
+//     icon: "p-cat_jardin_icon.svg",
+//     hoverIcon: "hover-p-cat_jardin_icon.svg",
+//     label: "Jardín",
+//   },
+//   {
+//     id: "plaza",
+//     icon: "p-cat_plaza_icon.svg",
+//     hoverIcon: "hover-p-cat_plaza_icon.svg",
+//     label: "Plaza",
+//   },
+//   {
+//     id: "naturaleza",
+//     icon: "p-cat_naturaleza_icon.svg",
+//     hoverIcon: "hover-p-cat_naturaleza_icon.svg",
+//     label: "Naturaleza",
+//   },
+// ];
 
 export default function ParquesPage() {
   const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
-  const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
+  // const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const animationClass = useNavigationAnimation();
@@ -83,30 +83,30 @@ export default function ParquesPage() {
     maxResults: 20,
   });
 
-  const {
-    places: filteredPlaces,
-    totalMatches,
-    activeFilter,
-    applyFilter,
-    clearFilter,
-    isFilterActive,
-    analyzeContentMatch,
-  } = useIntelligentFiltering(places, "parques");
+  // const {
+  //   places: filteredPlaces,
+  //   totalMatches,
+  //   activeFilter,
+  //   applyFilter,
+  //   clearFilter,
+  //   isFilterActive,
+  //   analyzeContentMatch,
+  // } = useIntelligentFiltering(places, "parques");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
 
-  const handleBadgeClick = (badgeId: string) => {
-    const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
-    setSelectedBadge(newSelectedBadge);
+  // const handleBadgeClick = (badgeId: string) => {
+  //   const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
+  //   setSelectedBadge(newSelectedBadge);
 
-    if (newSelectedBadge && newSelectedBadge !== "todo") {
-      applyFilter(newSelectedBadge);
-    } else {
-      clearFilter();
-    }
-  };
+  //   if (newSelectedBadge && newSelectedBadge !== "todo") {
+  //     applyFilter(newSelectedBadge);
+  //   } else {
+  //     clearFilter();
+  //   }
+  // };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -123,8 +123,9 @@ export default function ParquesPage() {
       <div
         className="absolute top-0 left-0 w-full h-100 sm:h-40 md:h-48 lg:h-56 bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url(/icons/parques/parques-background-section-explore.svg)",
-          backgroundSize: "110%",
+          backgroundImage:
+            "url(/icons/parques/parques-background-section-explore.svg)",
+          backgroundSize: "150%",
           backgroundPosition: "top center",
           backgroundRepeat: "no-repeat",
         }}
@@ -134,7 +135,7 @@ export default function ParquesPage() {
         <HeaderNavigationExplore />
 
         <div className="justify-center items-center text-center mt-3 mb-5">
-          <h1 className="text-[42px] font-black pb-1 text-[#FF0A10] leading-none tracking-[-0.03em]">
+          <h1 className="text-[60px] font-black pb-1 text-[#FF0A10] leading-none tracking-[-0.03em]">
             PARQUES
           </h1>
           <p className="text-xl font-bold text-[#ffffff]">CERCA DE TI</p>
@@ -196,7 +197,7 @@ export default function ParquesPage() {
           placeholder="Buscar parques cerca de ti..."
         />
 
-        <div className="w-full mb-3">
+        {/* <div className="w-full mb-3">
           <div className="flex flex-wrap gap-2">
             {BADGE_CONFIG.map((badge) => (
               <BadgeWithIcon
@@ -224,9 +225,9 @@ export default function ParquesPage() {
               />
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <FilterableContent isVisible={!isFilterActive}>
+        <FilterableContent isVisible={true}>
           <TopRatedSection
             category="parques"
             title="Top Parques mejor valorados"
@@ -263,7 +264,7 @@ export default function ParquesPage() {
           </div>
         </FilterableContent>
 
-        <FilterableContent isVisible={isFilterActive}>
+        {/* <FilterableContent isVisible={isFilterActive}>
           <FilteredResults
             places={filteredPlaces}
             loading={loading}
@@ -284,7 +285,7 @@ export default function ParquesPage() {
             }}
             userLocation={mapCenter || undefined}
           />
-        </FilterableContent>
+        </FilterableContent> */}
       </div>
     </div>
   );

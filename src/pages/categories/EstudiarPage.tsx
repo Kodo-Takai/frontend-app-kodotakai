@@ -3,26 +3,26 @@ import HeaderNavigationExplore from "../../components/ui/headerNavigationExplore
 import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
-import BadgeWithIcon from "../../components/ui/badgeWithIcon";
+// import BadgeWithIcon from "../../components/ui/badgeWithIcon";
 import { usePlaces } from "../../hooks/places";
 import { TopRatedSection } from "../../components/cards/topRatedCard";
 import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
-import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
+// import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
 import FilterableContent from "../../components/ui/filtering/FilterableContent";
-import FilteredResults from "../../components/ui/filtering/FilteredResults";
+// import FilteredResults from "../../components/ui/filtering/FilteredResults";
 import PlaceCards from "../../components/cards/placeCard";
 
 const CAROUSEL_CONFIG = {
   interval: 4000,
   slides: [
     {
-      image: "/icons/estudiar/estudiar-news-1.svg",
+      image: "/icons/estudiar/study-news-1.svg",
       titleFirst: "ESTUDIA",
-      titleRest: "EN LOS MEJORES LUGARES",
+      titleRest: "Y ADÁPTATE AHORA",
       subtitle: "Bibliotecas, universidades y espacios de estudio perfectos",
     },
     {
-      image: "/icons/estudiar/estudiar-news-2.svg",
+      image: "/icons/estudiar/study-news-2.svg",
       titleFirst: "CONCENTRATE",
       titleRest: "Y APRENDE MEJOR",
       subtitle: "Ambientes tranquilos y propicios para el aprendizaje",
@@ -30,48 +30,48 @@ const CAROUSEL_CONFIG = {
   ],
 };
 
-const BADGE_CONFIG = [
-  {
-    id: "todo",
-    icon: "e-cat_todo_icon.svg",
-    hoverIcon: "hover-e-cat_todo_icon.svg",
-    label: "Todo",
-  },
-  {
-    id: "biblioteca",
-    icon: "e-cat_biblioteca_icon.svg",
-    hoverIcon: "hover-e-cat_biblioteca_icon.svg",
-    label: "Biblioteca",
-  },
-  {
-    id: "universidad",
-    icon: "e-cat_universidad_icon.svg",
-    hoverIcon: "hover-e-cat_universidad_icon.svg",
-    label: "Universidad",
-  },
-  {
-    id: "cafe",
-    icon: "e-cat_cafe_icon.svg",
-    hoverIcon: "hover-e-cat_cafe_icon.svg",
-    label: "Café Estudio",
-  },
-  {
-    id: "coworking",
-    icon: "e-cat_coworking_icon.svg",
-    hoverIcon: "hover-e-cat_coworking_icon.svg",
-    label: "Coworking",
-  },
-  {
-    id: "academia",
-    icon: "e-cat_academia_icon.svg",
-    hoverIcon: "hover-e-cat_academia_icon.svg",
-    label: "Academia",
-  },
-];
+// const BADGE_CONFIG = [
+//   {
+//     id: "todo",
+//     icon: "e-cat_todo_icon.svg",
+//     hoverIcon: "hover-e-cat_todo_icon.svg",
+//     label: "Todo",
+//   },
+//   {
+//     id: "biblioteca",
+//     icon: "e-cat_biblioteca_icon.svg",
+//     hoverIcon: "hover-e-cat_biblioteca_icon.svg",
+//     label: "Biblioteca",
+//   },
+//   {
+//     id: "universidad",
+//     icon: "e-cat_universidad_icon.svg",
+//     hoverIcon: "hover-e-cat_universidad_icon.svg",
+//     label: "Universidad",
+//   },
+//   {
+//     id: "cafe",
+//     icon: "e-cat_cafe_icon.svg",
+//     hoverIcon: "hover-e-cat_cafe_icon.svg",
+//     label: "Café Estudio",
+//   },
+//   {
+//     id: "coworking",
+//     icon: "e-cat_coworking_icon.svg",
+//     hoverIcon: "hover-e-cat_coworking_icon.svg",
+//     label: "Coworking",
+//   },
+//   {
+//     id: "academia",
+//     icon: "e-cat_academia_icon.svg",
+//     hoverIcon: "hover-e-cat_academia_icon.svg",
+//     label: "Academia",
+//   },
+// ];
 
 export default function EstudiarPage() {
   const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
-  const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
+  // const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const animationClass = useNavigationAnimation();
@@ -83,30 +83,30 @@ export default function EstudiarPage() {
     maxResults: 25,
   });
 
-  const {
-    places: filteredPlaces,
-    totalMatches,
-    activeFilter,
-    applyFilter,
-    clearFilter,
-    isFilterActive,
-    analyzeContentMatch,
-  } = useIntelligentFiltering(places, "estudiar");
+  // const {
+  //   places: filteredPlaces,
+  //   totalMatches,
+  //   activeFilter,
+  //   applyFilter,
+  //   clearFilter,
+  //   isFilterActive,
+  //   analyzeContentMatch,
+  // } = useIntelligentFiltering(places, "estudiar");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
 
-  const handleBadgeClick = (badgeId: string) => {
-    const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
-    setSelectedBadge(newSelectedBadge);
+  // const handleBadgeClick = (badgeId: string) => {
+  //   const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
+  //   setSelectedBadge(newSelectedBadge);
 
-    if (newSelectedBadge && newSelectedBadge !== "todo") {
-      applyFilter(newSelectedBadge);
-    } else {
-      clearFilter();
-    }
-  };
+  //   if (newSelectedBadge && newSelectedBadge !== "todo") {
+  //     applyFilter(newSelectedBadge);
+  //   } else {
+  //     clearFilter();
+  //   }
+  // };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -123,7 +123,8 @@ export default function EstudiarPage() {
       <div
         className="absolute top-0 left-0 w-full h-100 sm:h-40 md:h-48 lg:h-56 bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url(/icons/estudiar/estudiar-background-section-explore.svg)",
+          backgroundImage:
+            "url(/icons/estudiar/study-background-section-explore.svg)",
           backgroundSize: "110%",
           backgroundPosition: "top center",
           backgroundRepeat: "no-repeat",
@@ -133,9 +134,9 @@ export default function EstudiarPage() {
       <div className="relative z-10 flex flex-col gap-3 p-6">
         <HeaderNavigationExplore />
 
-        <div className="justify-center items-center text-center mt-3 mb-5">
-          <h1 className="text-[42px] font-black pb-1 text-[#FF0A10] leading-none tracking-[-0.03em]">
-            ESTUDIAR
+        <div className="justify-center items-center text-center mb-5">
+          <h1 className="text-[50px] font-black pb-1 text-[#FF0A10] leading-none tracking-[-0.03em]">
+            ESTUDIOS
           </h1>
           <p className="text-xl font-bold text-[#ffffff]">CERCA DE TI</p>
         </div>
@@ -196,7 +197,7 @@ export default function EstudiarPage() {
           placeholder="Buscar lugares para estudiar cerca de ti..."
         />
 
-        <div className="w-full mb-3">
+        {/* <div className="w-full mb-3">
           <div className="flex flex-wrap gap-2">
             {BADGE_CONFIG.map((badge) => (
               <BadgeWithIcon
@@ -224,9 +225,9 @@ export default function EstudiarPage() {
               />
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <FilterableContent isVisible={!isFilterActive}>
+        <FilterableContent isVisible={true}>
           <TopRatedSection
             category="estudiar"
             title="Top Lugares para estudiar mejor valorados"
@@ -263,7 +264,7 @@ export default function EstudiarPage() {
           </div>
         </FilterableContent>
 
-        <FilterableContent isVisible={isFilterActive}>
+        {/* <FilterableContent isVisible={isFilterActive}>
           <FilteredResults
             places={filteredPlaces}
             loading={loading}
@@ -284,7 +285,7 @@ export default function EstudiarPage() {
             }}
             userLocation={mapCenter || undefined}
           />
-        </FilterableContent>
+        </FilterableContent> */}
       </div>
     </div>
   );

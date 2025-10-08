@@ -9,17 +9,42 @@ export interface EnrichmentConfig {
 
 // Campos comunes para todas las categorías
 const COMMON_FIELDS = [
-  "name", "rating", "formatted_address", "geometry", "place_id", "photos",
-  "editorial_summary", "reviews", "opening_hours", "website", "formatted_phone_number",
-  "types", "user_ratings_total", "vicinity", "business_status"
+  "name",
+  "rating",
+  "formatted_address",
+  "geometry",
+  "place_id",
+  "photos",
+  "editorial_summary",
+  "reviews",
+  "opening_hours",
+  "website",
+  "formatted_phone_number",
+  "types",
+  "user_ratings_total",
+  "vicinity",
+  "business_status",
 ];
 
 // Campos específicos para hoteles
 const HOTEL_SPECIFIC_FIELDS = [
-  "international_phone_number", "price_level", "url", "utc_offset_minutes",
-  "wheelchair_accessible_entrance", "curbside_pickup", "delivery", "dine_in",
-  "takeout", "reservable", "serves_breakfast", "serves_lunch", "serves_dinner",
-  "serves_beer", "serves_wine", "serves_brunch", "serves_vegetarian_food"
+  "international_phone_number",
+  "price_level",
+  "url",
+  "utc_offset_minutes",
+  "wheelchair_accessible_entrance",
+  "curbside_pickup",
+  "delivery",
+  "dine_in",
+  "takeout",
+  "reservable",
+  "serves_breakfast",
+  "serves_lunch",
+  "serves_dinner",
+  "serves_beer",
+  "serves_wine",
+  "serves_brunch",
+  "serves_vegetarian_food",
 ];
 
 // Campos específicos para restaurantes
@@ -74,7 +99,9 @@ export const CACHE_CONFIG = {
 
 // Configuración de IA
 export const AI_CONFIG = {
-  endpoint: import.meta.env.VITE_AI_ENDPOINT || "http://localhost:8000/api/hotels/analyze",
+  endpoint:
+    import.meta.env.VITE_AI_ENDPOINT ||
+    "http://localhost:8000/api/hotels/analyze",
   timeout: 30000,
   retryAttempts: 3,
   retryDelay: 2000,

@@ -4,13 +4,13 @@ import HeaderNavigationExplore from "../../components/ui/headerNavigationExplore
 import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
 import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
-import BadgeWithIcon from "../../components/ui/badgeWithIcon";
+// import BadgeWithIcon from "../../components/ui/badgeWithIcon";
 import { usePlaces } from "../../hooks/places";
 import { TopRatedSection } from "../../components/cards/topRatedCard";
 import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
-import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
+// import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
 import FilterableContent from "../../components/ui/filtering/FilterableContent";
-import FilteredResults from "../../components/ui/filtering/FilteredResults";
+// import FilteredResults from "../../components/ui/filtering/FilteredResults";
 import PlaceCards from "../../components/cards/placeCard";
 
 const CAROUSEL_CONFIG = {
@@ -31,48 +31,48 @@ const CAROUSEL_CONFIG = {
   ],
 };
 
-const BADGE_CONFIG = [
-  {
-    id: "todo",
-    icon: "r-cat_todo_icon.svg",
-    hoverIcon: "hover-r-cat_todo_icon.svg",
-    label: "Todo",
-  },
-  {
-    id: "italiana",
-    icon: "r-cat_italiana_icon.svg",
-    hoverIcon: "hover-r-cat_italiana_icon.svg",
-    label: "Italiana",
-  },
-  {
-    id: "asiatica",
-    icon: "r-cat_asiatica_icon.svg",
-    hoverIcon: "hover-r-cat_asiatica_icon.svg",
-    label: "Asiática",
-  },
-  {
-    id: "mexicana",
-    icon: "r-cat_mexicana_icon.svg",
-    hoverIcon: "hover-r-cat_mexicana_icon.svg",
-    label: "Mexicana",
-  },
-  {
-    id: "mariscos",
-    icon: "r-cat_mariscos_icon.svg",
-    hoverIcon: "hover-r-cat_mariscos_icon.svg",
-    label: "Mariscos",
-  },
-  {
-    id: "vegetariana",
-    icon: "r-cat_vegetariana_icon.svg",
-    hoverIcon: "hover-r-cat_vegetariana_icon.svg",
-    label: "Vegetariana",
-  },
-];
+// const BADGE_CONFIG = [
+//   {
+//     id: "todo",
+//     icon: "r-cat_todo_icon.svg",
+//     hoverIcon: "hover-r-cat_todo_icon.svg",
+//     label: "Todo",
+//   },
+//   {
+//     id: "italiana",
+//     icon: "r-cat_italiana_icon.svg",
+//     hoverIcon: "hover-r-cat_italiana_icon.svg",
+//     label: "Italiana",
+//   },
+//   {
+//     id: "asiatica",
+//     icon: "r-cat_asiatica_icon.svg",
+//     hoverIcon: "hover-r-cat_asiatica_icon.svg",
+//     label: "Asiática",
+//   },
+//   {
+//     id: "mexicana",
+//     icon: "r-cat_mexicana_icon.svg",
+//     hoverIcon: "hover-r-cat_mexicana_icon.svg",
+//     label: "Mexicana",
+//   },
+//   {
+//     id: "mariscos",
+//     icon: "r-cat_mariscos_icon.svg",
+//     hoverIcon: "hover-r-cat_mariscos_icon.svg",
+//     label: "Mariscos",
+//   },
+//   {
+//     id: "vegetariana",
+//     icon: "r-cat_vegetariana_icon.svg",
+//     hoverIcon: "hover-r-cat_vegetariana_icon.svg",
+//     label: "Vegetariana",
+//   },
+// ];
 
 export default function RestaurantsPage() {
   const [selectedOption, setSelectedOption] = useState("Mostrar Todo");
-  const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
+  // const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const animationClass = useNavigationAnimation();
@@ -84,30 +84,30 @@ export default function RestaurantsPage() {
     maxResults: 20,
   });
 
-  const {
-    places: filteredPlaces,
-    totalMatches,
-    activeFilter,
-    applyFilter,
-    clearFilter,
-    isFilterActive,
-    analyzeContentMatch,
-  } = useIntelligentFiltering(places, "restaurants");
+  // const {
+  //   places: filteredPlaces,
+  //   totalMatches,
+  //   activeFilter,
+  //   applyFilter,
+  //   clearFilter,
+  //   isFilterActive,
+  //   analyzeContentMatch,
+  // } = useIntelligentFiltering(places, "restaurants");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
 
-  const handleBadgeClick = (badgeId: string) => {
-    const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
-    setSelectedBadge(newSelectedBadge);
+  // const handleBadgeClick = (badgeId: string) => {
+  //   const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
+  //   setSelectedBadge(newSelectedBadge);
 
-    if (newSelectedBadge && newSelectedBadge !== "todo") {
-      applyFilter(newSelectedBadge);
-    } else {
-      clearFilter();
-    }
-  };
+  //   if (newSelectedBadge && newSelectedBadge !== "todo") {
+  //     applyFilter(newSelectedBadge);
+  //   } else {
+  //     clearFilter();
+  //   }
+  // };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -227,7 +227,7 @@ export default function RestaurantsPage() {
           </div>
         </div> */}
 
-        <FilterableContent isVisible={!isFilterActive}>
+        <FilterableContent isVisible={true}>
           <TopRatedSection
             category="restaurants"
             title="Top Restaurantes mejor valorados"
@@ -266,7 +266,7 @@ export default function RestaurantsPage() {
           </div>
         </FilterableContent>
 
-        <FilterableContent isVisible={isFilterActive}>
+        {/* <FilterableContent isVisible={isFilterActive}>
           <FilteredResults
             places={filteredPlaces}
             loading={loading}
@@ -287,7 +287,7 @@ export default function RestaurantsPage() {
             }}
             userLocation={mapCenter || undefined}
           />
-        </FilterableContent>
+        </FilterableContent> */}
       </div>
     </div>
   );

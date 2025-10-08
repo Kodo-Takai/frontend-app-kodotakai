@@ -120,7 +120,7 @@ export default function PlayasPage() {
         className="absolute top-0 left-0 w-full h-140 sm:h-40 md:h-48 lg:h-56 bg-center bg-no-repeat"
         style={{
           backgroundImage: "url(/beach-background-section-explore.svg)",
-          backgroundSize: "145%",
+          backgroundSize: "170%",
           backgroundPosition: "top center",
           backgroundRepeat: "no-repeat",
         }}

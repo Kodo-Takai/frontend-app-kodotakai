@@ -11,17 +11,41 @@ export interface CategoryConfig {
 
 // Grupos de términos de búsqueda optimizados
 const TERM_GROUPS: Record<string, string[]> = {
-  beaches: ["playa", "beach", "playa de","playas","bahia"],
-  restaurants: ["restaurant", "restaurante", "comida", "gastronomía", "cocina", "café"],
+  beaches: ["playa", "beach", "playa de", "playas", "bahia"],
+  restaurants: [
+    "restaurant",
+    "restaurante",
+    "comida",
+    "gastronomía",
+    "cocina",
+    "café",
+  ],
   hotels: ["hotel", "hospedaje", "hostal", "alojamiento", "resort"],
-  cultural: ["museo","feria","artesanía", "galería", "arte", "templo", "historia", "cultura", "teatro"],
+  cultural: ["museo", "templo", "historia", "cultura", "teatro"],
   religious: ["iglesia", "catedral", "basílica", "templo", "santuario"],
   nightlife: ["discoteca", "club nocturno", "bar", "pub", "nightclub"],
-  study: ["biblioteca", "centro de estudios", "universidad","teatro","colegio", "academia"],
-  parks: ["parque", "jardín", "espacio verde", "naturaleza", "bosque"],
+  study: [
+    "biblioteca",
+    "centro de estudios",
+    "universidad",
+    "teatro",
+    "colegio",
+    "museo",
+    "academia",
+  ],
+  parks: [
+    "parque",
+    "jardín",
+    "espacio verde",
+    "naturaleza",
+    "bosque",
+    "jungla",
+    "parque nacional",
+    "reserva natural",
+  ],
   monuments: ["monumento", "estatua", "memorial", "hito"],
   historical: ["centro histórico", "ruinas", "mirador", "cascada"],
-  entertainment: ["zoológico", "acuario", "teatro"]
+  entertainment: ["zoológico", "acuario", "teatro"],
 };
 
 // Configuraciones base optimizadas
@@ -31,7 +55,7 @@ const BASE_CONFIGS = {
   lodging: { type: "lodging", enableMultiplePhotos: true },
   nightClub: { type: "night_club", enableMultiplePhotos: true },
   park: { type: "park", enableMultiplePhotos: true },
-  beach: { type: "establishment", enableMultiplePhotos: true }
+  beach: { type: "establishment", enableMultiplePhotos: true },
 } as const;
 
 // Configuraciones de categorías optimizadas
@@ -87,12 +111,7 @@ export const CATEGORY_CONFIGS: Record<PlaceCategory, CategoryConfig> = {
   },
   estudiar: {
     ...BASE_CONFIGS.establishment,
-    searchQueries: [
-      ...TERM_GROUPS.study,
-      ...TERM_GROUPS.cultural,
-      ...TERM_GROUPS.entertainment,
-      ...TERM_GROUPS.parks,
-    ],
+    searchQueries: [...TERM_GROUPS.study],
     minRating: 2.5,
     radius: 30000,
     defaultLimit: 15,
@@ -108,7 +127,9 @@ export const CATEGORY_CONFIGS: Record<PlaceCategory, CategoryConfig> = {
     type: "establishment",
     searchQueries: [
       // Términos muy generales que funcionan bien
-      "lugar", "centro", "plaza"
+      "lugar",
+      "centro",
+      "plaza",
     ],
     minRating: 0.5, // Rating muy bajo para incluir más lugares
     enableMultiplePhotos: false,
@@ -150,7 +171,9 @@ export function filterByKeywords(places: any[], keywords: string[]): any[] {
 
   return places.filter((place) => {
     const searchText = buildSearchText(place);
-    return keywords.some((keyword) => searchText.includes(keyword.toLowerCase()));
+    return keywords.some((keyword) =>
+      searchText.includes(keyword.toLowerCase())
+    );
   });
 }
 
@@ -160,9 +183,8 @@ function buildSearchText(place: any): string {
     place.name,
     place.vicinity,
     place.formatted_address,
-    place.types?.join(" ")
+    place.types?.join(" "),
   ];
-  
+
   return fields.filter(Boolean).join(" ").toLowerCase();
 }
-
