@@ -14,7 +14,7 @@ export default function RestaurantCards() {
   const { places: restaurants, loading } = usePlaces({
     category: "restaurants",
     enableEnrichment: true,
-    maxResults: 6
+    maxResults: 6,
   });
 
   const displayedRestaurants = restaurants.slice(0, 6);
@@ -138,7 +138,10 @@ export default function RestaurantCards() {
       return (
         <div className="restaurant-scroll">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={`restaurant-skeleton-${i}`} className="restaurant-card-width">
+            <div
+              key={`restaurant-skeleton-${i}`}
+              className="restaurant-card-width"
+            >
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
                 <div className="h-72 bg-gray-200" />
               </div>

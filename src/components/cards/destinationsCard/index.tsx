@@ -12,7 +12,7 @@ export default function DestinationCards() {
   const { places, loading } = usePlaces({
     category: "tourist_attraction",
     enableEnrichment: true,
-    maxResults: 6
+    maxResults: 6,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,11 +30,9 @@ export default function DestinationCards() {
   const DestinationCard = ({ place }: { place: Place }) => {
     const [imageError, setImageError] = useState(false);
 
-
     const handleImageError = () => {
       setImageError(true);
     };
-
 
     // Generar estrellas basadas en el rating
     const renderStars = (rating?: number) => {
@@ -61,14 +59,18 @@ export default function DestinationCards() {
     };
 
     return (
-      <div className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white" onClick={() => handleVisit(place)}>
+      <div
+        className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white"
+        onClick={() => handleVisit(place)}
+      >
         {/* Imagen de fondo */}
         <div className="relative h-72 w-full overflow-hidden">
           <img
             src={
               imageError
                 ? "https://picsum.photos/280/288?random=destination-error"
-                : place.photo_url || "https://picsum.photos/280/288?random=destination-default"
+                : place.photo_url ||
+                  "https://picsum.photos/280/288?random=destination-default"
             }
             alt={place.name}
             className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
@@ -110,9 +112,7 @@ export default function DestinationCards() {
             </div>
 
             {/* Botón de visitar */}
-            <button
-              className="w-full bg-white/90 border-4 border-gray-300 hover:bg-white text-gray-800 font-semibold py-1 px-4 rounded-xl transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-lg"
-            >
+            <button className="w-full bg-white/90 border-4 border-gray-300 hover:bg-white text-gray-800 font-semibold py-1 px-4 rounded-xl transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-lg">
               Visitar <TbLocationFilled className="w-4 h-4" />
             </button>
           </div>

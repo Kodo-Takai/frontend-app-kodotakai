@@ -57,7 +57,7 @@
 .location-multi-card-title {
   font-size: 16px;
   font-weight: 700;
-  color: #00324A;
+  color: #00324a;
   line-height: 1.3;
   margin: 0;
   display: -webkit-box;
@@ -97,14 +97,14 @@
 }
 
 .location-multi-card-star {
-  color: #FF0007;
+  color: #ff0007;
   font-size: 14px;
 }
 
 .location-multi-card-rating-text {
   font-size: 14px;
   font-weight: 600;
-  color: #00324A;
+  color: #00324a;
 }
 
 // Grid Container
@@ -196,7 +196,7 @@
 }
 
 .location-multi-load-more-btn {
-  background: linear-gradient(135deg, #FF0007, #ff3333);
+  background: linear-gradient(135deg, #ff0007, #ff3333);
   color: white;
   border: none;
   border-radius: 25px;
@@ -244,7 +244,8 @@
 
 // Animations
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

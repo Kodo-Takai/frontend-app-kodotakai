@@ -4,7 +4,7 @@ import type { LatLng } from "../types";
 const GEOLOCATION_OPTIONS = {
   enableHighAccuracy: true,
   timeout: 10000,
-  maximumAge: 300000
+  maximumAge: 300000,
 };
 
 export function useGeolocation(fallbackLocation?: LatLng) {

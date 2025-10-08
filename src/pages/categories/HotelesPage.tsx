@@ -15,19 +15,64 @@ import FilteredResults from "../../components/ui/filtering/FilteredResults";
 const CAROUSEL_CONFIG = {
   interval: 4000,
   slides: [
-    { image: "/hotels-news-1.svg", titleFirst: "ENCUENTRA", titleRest: "LOS MEJORES HOTELES", subtitle: "Descubre experiencias únicas y encuentra tu lugar perfecto" },
-    { image: "/hotels-news-2.svg", titleFirst: "RESERVA", titleRest: "TU ESTANCIA IDEAL", subtitle: "Hoteles de lujo y económicos a tu preferencia y originalidad" },
-    { image: "/hotels-news-3.svg", titleFirst: "VIVE", titleRest: "EXPERIENCIAS ÚNICAS", subtitle: "Desde playas paradisíacas hasta montañas majestuosas" }
-  ]
+    {
+      image: "/hotels-news-1.svg",
+      titleFirst: "ENCUENTRA",
+      titleRest: "LOS MEJORES HOTELES",
+      subtitle: "Descubre experiencias únicas y encuentra tu lugar perfecto",
+    },
+    {
+      image: "/hotels-news-2.svg",
+      titleFirst: "RESERVA",
+      titleRest: "TU ESTANCIA IDEAL",
+      subtitle: "Hoteles de lujo y económicos a tu preferencia y originalidad",
+    },
+    {
+      image: "/hotels-news-3.svg",
+      titleFirst: "VIVE",
+      titleRest: "EXPERIENCIAS ÚNICAS",
+      subtitle: "Desde playas paradisíacas hasta montañas majestuosas",
+    },
+  ],
 };
 
 const BADGE_CONFIG = [
-  { id: "todo", icon: "h-cat_todo_icon.svg", hoverIcon: "hover-h-cat_todo_icon.svg", label: "Todo" },
-  { id: "spa", icon: "h-cat_spa_icon.svg", hoverIcon: "hover-h-cat_spa_icon.svg", label: "Spa" },
-  { id: "rest", icon: "h-cat_rest_icon.svg", hoverIcon: "hover-h-cat_rest_icon.svg", label: "Restaurante" },
-  { id: "sauna", icon: "h-cat_sauna_icon.svg", hoverIcon: "hover-h-cat_sauna_icon.svg", label: "Sauna" },
-  { id: "cocina", icon: "h-cat_cocina_icon.svg", hoverIcon: "hover-h-cat_cocina_icon.svg", label: "Cocina" },
-  { id: "gym", icon: "h-cat_gym_icon.svg", hoverIcon: "hover-h-cat_gym_icon.svg", label: "Gym" }
+  {
+    id: "todo",
+    icon: "h-cat_todo_icon.svg",
+    hoverIcon: "hover-h-cat_todo_icon.svg",
+    label: "Todo",
+  },
+  {
+    id: "spa",
+    icon: "h-cat_spa_icon.svg",
+    hoverIcon: "hover-h-cat_spa_icon.svg",
+    label: "Spa",
+  },
+  {
+    id: "rest",
+    icon: "h-cat_rest_icon.svg",
+    hoverIcon: "hover-h-cat_rest_icon.svg",
+    label: "Restaurante",
+  },
+  {
+    id: "sauna",
+    icon: "h-cat_sauna_icon.svg",
+    hoverIcon: "hover-h-cat_sauna_icon.svg",
+    label: "Sauna",
+  },
+  {
+    id: "cocina",
+    icon: "h-cat_cocina_icon.svg",
+    hoverIcon: "hover-h-cat_cocina_icon.svg",
+    label: "Cocina",
+  },
+  {
+    id: "gym",
+    icon: "h-cat_gym_icon.svg",
+    hoverIcon: "hover-h-cat_gym_icon.svg",
+    label: "Gym",
+  },
 ];
 
 export default function HotelesPage() {
@@ -41,7 +86,7 @@ export default function HotelesPage() {
     category: "hotels",
     searchQuery: searchQuery,
     enableEnrichment: true,
-    maxResults: 20
+    maxResults: 20,
   });
 
   const {
@@ -51,8 +96,8 @@ export default function HotelesPage() {
     applyFilter,
     clearFilter,
     isFilterActive,
-    analyzeContentMatch
-  } = useIntelligentFiltering(places, 'hotels');
+    analyzeContentMatch,
+  } = useIntelligentFiltering(places, "hotels");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -61,7 +106,7 @@ export default function HotelesPage() {
   const handleBadgeClick = (badgeId: string) => {
     const newSelectedBadge = selectedBadge === badgeId ? null : badgeId;
     setSelectedBadge(newSelectedBadge);
-    
+
     if (newSelectedBadge && newSelectedBadge !== "todo") {
       applyFilter(newSelectedBadge);
     } else {
@@ -188,18 +233,14 @@ export default function HotelesPage() {
         </div>
 
         <FilterableContent isVisible={!isFilterActive}>
-          <TopRatedSection 
+          <TopRatedSection
             category="hotels"
             title="Top Hoteles mejor valorados"
             limit={5}
             minRating={4.0}
           />
 
-          <HotelsCard
-            places={places}
-            loading={loading}
-            error={error}
-          />
+          <HotelsCard places={places} loading={loading} error={error} />
 
           <div className="mt-4">
             <h2 className="text-2xl font-bold text-[#00324A] mb-4 text-center">
@@ -210,7 +251,7 @@ export default function HotelesPage() {
               loading={loading}
               error={error}
               onPlaceClick={(place) => {
-                console.log('Hotel seleccionado:', place);
+                console.log("Hotel seleccionado:", place);
               }}
               itemsPerPage={4}
               userLocation={mapCenter || undefined}
@@ -223,19 +264,23 @@ export default function HotelesPage() {
             places={filteredPlaces}
             loading={loading}
             error={error}
-            filterName={BADGE_CONFIG.find(b => b.id === activeFilter)?.label || 'filtro'}
+            filterName={
+              BADGE_CONFIG.find((b) => b.id === activeFilter)?.label || "filtro"
+            }
             totalMatches={totalMatches}
             onPlaceClick={(place) => {
-              console.log('Lugar filtrado seleccionado:', place);
+              console.log("Lugar filtrado seleccionado:", place);
               if (activeFilter) {
-                const contentAnalysis = analyzeContentMatch(place, activeFilter);
-                console.log('Análisis de contenido:', contentAnalysis);
+                const contentAnalysis = analyzeContentMatch(
+                  place,
+                  activeFilter
+                );
+                console.log("Análisis de contenido:", contentAnalysis);
               }
             }}
             userLocation={mapCenter || undefined}
           />
         </FilterableContent>
-
       </div>
     </div>
   );

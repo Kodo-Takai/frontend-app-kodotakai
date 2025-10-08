@@ -1,1 +1,1 @@
-export { useTopRatedPlaces } from './useTopRatedPlaces';
+export { useTopRatedPlaces } from "./useTopRatedPlaces";

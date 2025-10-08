@@ -6,37 +6,30 @@ import MapFilters from "../components/ui/mapsFilter";
 import { FaSlidersH } from "react-icons/fa";
 import { IoLocationOutline, IoSync } from "react-icons/io5";
 import { MapDisplay } from "../components/cards/mapDisplay";
-import { usePlaces } from "../hooks/places";
+import { usePlaces, type PlaceCategory } from "../hooks/places";
 
 const Maps = () => {
   const [isApiReady, setIsApiReady] = useState(false);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategories, setActiveCategories] = useState<'all' | 'beaches' | 'restaurants' | 'hotels' | 'destinations'>('all');
+  const [activeCategories, setActiveCategories] = useState<PlaceCategory>('all');
   const [zoom, setZoom] = useState(12);
 
   const { places, mapCenter, loading, status } = usePlaces({
-    category: activeCategories as any,
+    category: activeCategories,
     searchQuery,
     enableEnrichment: false,
-    maxResults: 20
+    maxResults: activeCategories === 'all' ? 30 : 20
   });
   
   const placesToShow = places;
 
 
-  const categoryMapping: Record<string, 'all' | 'beaches' | 'restaurants' | 'hotels' | 'destinations'> = {
-    'all': 'all',
-    'lodging': 'hotels',
-    'shopping_mall': 'destinations',
-    'restaurant': 'restaurants',
-    'point_of_interest': 'destinations',
-    'stadium': 'destinations'
-  };
-
   const handleCategoryChange = (newCategory: string) => {
-    const mappedCategory = categoryMapping[newCategory] || 'all';
-    setActiveCategories(mappedCategory);
+    // Validar que la categoría sea válida
+    const validCategories: PlaceCategory[] = ['all', 'beaches', 'restaurants', 'hotels', 'destinations', 'tourist_attraction', 'discos', 'estudiar', 'parques'];
+    const category = validCategories.includes(newCategory as PlaceCategory) ? newCategory as PlaceCategory : 'all';
+    setActiveCategories(category);
     setSearchQuery(''); 
   };
 
@@ -80,11 +73,16 @@ const Maps = () => {
       displaySubtitle = "Intenta con otra búsqueda";
     }
   } else if (activeCategories !== 'all') {
-    const categoryNames = {
+    const categoryNames: Record<PlaceCategory, string> = {
+      'all': 'Todos',
       'beaches': 'Playas',
       'restaurants': 'Restaurantes', 
       'hotels': 'Hoteles',
-      'destinations': 'Destinos'
+      'destinations': 'Destinos',
+      'tourist_attraction': 'Atracciones',
+      'discos': 'Discos',
+      'estudiar': 'Lugares para Estudiar',
+      'parques': 'Parques'
     };
     displayTitle = categoryNames[activeCategories] || 'Lugares';
     displaySubtitle = `${placesToShow.length} lugares encontrados`;

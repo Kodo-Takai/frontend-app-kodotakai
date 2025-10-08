@@ -1,140 +1,255 @@
-import { useEffect, useMemo } from "react";
-import type { EnrichedPlace, Place } from "../../../hooks/places";
-import { FaStar, FaPhoneAlt, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
+// src/components/modals/PlaceModal.tsx
+import { useEffect } from "react";
+import { MdClose, MdPlace, MdPhone, MdLanguage } from "react-icons/md";
+import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
+import { TbLocationFilled } from "react-icons/tb";
+import "./index.scss";
 
-export type PlaceModalProps = {
+interface Place {
+  name: string;
+  rating?: number;
+  vicinity?: string;
+  place_id: string;
+  photo_url: string;
+  location?: { lat: number; lng: number };
+  formatted_address?: string;
+  formatted_phone_number?: string;
+  website?: string;
+  opening_hours?: {
+    open_now?: boolean;
+    weekday_text?: string[];
+  };
+}
+
+interface PlaceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  place: (Place | EnrichedPlace) | null;
-};
+  place: Place | null;
+  onVisit?: (place: Place) => void;
+}
 
-export default function PlaceModal({ isOpen, onClose, place }: PlaceModalProps) {
+export default function PlaceModal({
+  isOpen,
+  onClose,
+  place,
+  onVisit,
+}: PlaceModalProps) {
+  // Cerrar modal con tecla Escape
   useEffect(() => {
-    if (!isOpen) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen, onClose]);
-
-  const photoUrl = useMemo(() => {
-    if (!place) return "https://picsum.photos/800/450?random=place-modal";
-    return place.photo_url || "https://picsum.photos/800/450?random=place-modal-fallback";
-  }, [place]);
-
-  const mapsUrl = useMemo(() => {
-    if (!place) return undefined;
-    const enriched = place as EnrichedPlace;
-    if (enriched.google_maps_url) return enriched.google_maps_url;
-    if (place.place_id) return `https://www.google.com/maps/place/?q=place_id:${place.place_id}`;
-    return undefined;
-  }, [place]);
-
-  const phone = useMemo(() => {
-    if (!place) return undefined;
-    const enriched = place as EnrichedPlace;
-    return (
-      enriched.formatted_phone_number ||
-      enriched.international_phone_number
-    );
-  }, [place]);
 
   if (!isOpen || !place) return null;
 
-  const description = (place as EnrichedPlace).editorial_summary?.overview;
-  const address = (place as EnrichedPlace).formatted_address || place.vicinity;
-  // website intentionally unused for now
+  // Renderizar estrellas
+  const renderStars = (rating?: number) => {
+    if (!rating) return null;
 
-  const stop = (e: React.MouseEvent) => e.stopPropagation();
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    return (
+      <div className="flex items-center gap-1">
+        {Array.from({ length: 5 }, (_, i) => (
+          <FaStar
+            key={`star-${i}`}
+            className={`w-4 h-4 ${
+              i < fullStars
+                ? "text-[#FF0C12]"
+                : i === fullStars && hasHalfStar
+                ? "text-[#FF0C12] opacity-50"
+                : "text-gray-300"
+            }`}
+          />
+        ))}
+        <span className="text-gray-700 text-sm font-semibold ml-2">
+          {rating.toFixed(1)}
+        </span>
+      </div>
+    );
+  };
+
+  const handleVisitClick = () => {
+    if (onVisit) {
+      onVisit(place);
+    }
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-      aria-modal
-      role="dialog"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+      onClick={handleBackdropClick}
     >
-      <div
-        className="relative w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl"
-        onClick={stop}
-      >
-        <button
-          onClick={onClose}
-          aria-label="Cerrar"
-          className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow hover:bg-white"
-        >
-          <FaTimes className="h-4 w-4" />
-        </button>
-
-        <div className="relative h-56 w-full overflow-hidden sm:h-64">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-slideUp">
+        {/* Header con imagen */}
+        <div className="relative h-64 w-full">
           <img
-            src={photoUrl}
+            src={place.photo_url}
             alt={place.name}
-            className="h-full w-full object-cover"
-            loading="lazy"
+            className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+          {/* Botón cerrar */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors duration-200 shadow-lg"
+            aria-label="Cerrar modal"
+          >
+            <MdClose className="w-6 h-6 text-gray-700" />
+          </button>
+
+          {/* Rating badge */}
           {typeof place.rating === "number" && (
-            <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[#00324A] px-3 py-1 text-white">
-              <FaStar className="h-4 w-4 text-[#FF0C12]" />
-              <span className="text-sm font-semibold">{place.rating.toFixed(1)}</span>
+            <div className="absolute top-4 left-4">
+              <div className="flex items-center gap-1 bg-white/95 px-3 py-1.5 rounded-full shadow-lg">
+                <FaStar className="w-4 h-4 text-[#FF0C12]" />
+                <span className="text-sm font-bold text-gray-800">
+                  {place.rating.toFixed(1)}
+                </span>
+              </div>
             </div>
           )}
         </div>
 
-        <div className="p-4 sm:p-6">
-          <h3 className="mb-1 text-xl font-bold text-gray-900 sm:text-2xl">{place.name}</h3>
+        {/* Contenido */}
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-16rem)]">
+          {/* Título */}
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+            {place.name}
+          </h2>
 
-          {address && (
-            <div className="mb-3 flex items-start gap-2 text-gray-700">
-              <FaMapMarkerAlt className="mt-1 h-4 w-4 flex-shrink-0 text-gray-500" />
-              <span className="text-sm sm:text-base">{address}</span>
+          {/* Rating con estrellas */}
+          {place.rating && (
+            <div className="mb-4">{renderStars(place.rating)}</div>
+          )}
+
+          {/* Información de contacto y ubicación */}
+          <div className="space-y-3 mb-6">
+            {/* Dirección */}
+            <div className="flex items-start gap-3">
+              <MdPlace className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-gray-700 mb-1">
+                  Dirección
+                </p>
+                <p className="text-sm text-gray-600">
+                  {place.formatted_address || place.vicinity || "No disponible"}
+                </p>
+              </div>
             </div>
-          )}
 
-          {description && (
-            <p className="mb-4 whitespace-pre-line text-sm leading-relaxed text-gray-700 sm:text-base">
-              {description}
-            </p>
-          )}
+            {/* Teléfono */}
+            {place.formatted_phone_number && (
+              <div className="flex items-start gap-3">
+                <MdPhone className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-gray-700 mb-1">
+                    Teléfono
+                  </p>
+                  <a
+                    href={`tel:${place.formatted_phone_number}`}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    {place.formatted_phone_number}
+                  </a>
+                </div>
+              </div>
+            )}
 
-          {phone && (
-            <div className="mt-4 flex items-center gap-2 text-gray-800">
-              <FaPhoneAlt className="h-4 w-4 text-gray-500" />
-              <span className="text-sm sm:text-base font-medium select-text">{phone}</span>
-            </div>
-          )}
+            {/* Sitio web */}
+            {place.website && (
+              <div className="flex items-start gap-3">
+                <MdLanguage className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-gray-700 mb-1">
+                    Sitio web
+                  </p>
+                  <a
+                    href={place.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    Visitar sitio web
+                  </a>
+                </div>
+              </div>
+            )}
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+            {/* Horarios */}
+            {place.opening_hours?.weekday_text && (
+              <div className="flex items-start gap-3">
+                <MdPlace className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-gray-700 mb-2">
+                    Horarios
+                  </p>
+                  <div className="space-y-1">
+                    {place.opening_hours.weekday_text.map((text, i) => (
+                      <p key={i} className="text-xs text-gray-600">
+                        {text}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Estado abierto/cerrado */}
+            {place.opening_hours?.open_now !== undefined && (
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                    place.opening_hours.open_now
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {place.opening_hours.open_now ? "Abierto ahora" : "Cerrado"}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Botones de acción */}
+          <div className="flex gap-3">
             <button
-              type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2 font-semibold text-white shadow hover:bg-black"
-              onClick={() => { /* por ahora sin funcionalidad */ }}
+              onClick={handleVisitClick}
+              className="flex-1 bg-[#00324A] hover:bg-[#004060] text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-300 flex items-center justify-center gap-2"
             >
-              Agendar
+              <TbLocationFilled className="w-5 h-5" />
+              Cómo llegar
             </button>
 
-            {mapsUrl ? (
+            {place.location && (
               <a
-                href={mapsUrl}
+                href={`https://www.google.com/maps/search/?api=1&query=${place.location.lat},${place.location.lng}&query_place_id=${place.place_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50"
+                className="flex-1 bg-white hover:bg-gray-50 text-[#00324A] font-semibold py-3 px-6 rounded-xl transition-colors duration-300 flex items-center justify-center gap-2 border-2 border-[#00324A]"
               >
-                <FaMapMarkerAlt className="h-4 w-4" />
-                <span>Visitar</span>
+                <FaMapMarkerAlt className="w-4 h-4" />
+                Ver en Google Maps
               </a>
-            ) : (
-              <button
-                type="button"
-                disabled
-                className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-4 py-2 font-semibold text-gray-400"
-              >
-                <FaMapMarkerAlt className="h-4 w-4" />
-                <span>Visitar</span>
-              </button>
             )}
           </div>
         </div>
@@ -142,5 +257,3 @@ export default function PlaceModal({ isOpen, onClose, place }: PlaceModalProps) 
     </div>
   );
 }
-
-

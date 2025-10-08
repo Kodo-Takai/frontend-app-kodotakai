@@ -1,6 +1,10 @@
-import { useState, useMemo } from 'react';
-import type { EnrichedPlace } from './places';
-import { getFilterConfig, getAvailableFilters, hasFilter } from './useIntelligentFilteringConfig';
+import { useState, useMemo } from "react";
+import type { EnrichedPlace } from "./places";
+import {
+  getFilterConfig,
+  getAvailableFilters,
+  hasFilter,
+} from "./useIntelligentFilteringConfig";
 
 export interface FilterResult {
   places: EnrichedPlace[];
@@ -8,39 +12,71 @@ export interface FilterResult {
   filterApplied: string | null;
 }
 
-export const useIntelligentFiltering = (places: EnrichedPlace[], category: string = 'hotels') => {
+export const useIntelligentFiltering = (
+  places: EnrichedPlace[],
+  category: string = "hotels"
+) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
-  const analyzePlaceContent = (place: EnrichedPlace, filterConfig: any): number => {
+  const analyzePlaceContent = (
+    place: EnrichedPlace,
+    filterConfig: any
+  ): number => {
     const { keywords, weight } = filterConfig;
     const textFields = extractTextFields(place);
     const scoringWeights = getScoringWeights();
-    
+
     let totalScore = 0;
-    
+
     Object.entries(scoringWeights).forEach(([field, weights]) => {
       const text = textFields[field as keyof typeof textFields];
       if (text) {
         totalScore += calculateScore(text, keywords.primary, weights.primary);
-        totalScore += calculateScore(text, keywords.secondary, weights.secondary);
-        totalScore += calculateScore(text, keywords.amenities, weights.amenities);
+        totalScore += calculateScore(
+          text,
+          keywords.secondary,
+          weights.secondary
+        );
+        totalScore += calculateScore(
+          text,
+          keywords.amenities,
+          weights.amenities
+        );
       }
     });
-    
+
     const bonusScore = calculateBonusScore(textFields, keywords.primary);
     return (totalScore + bonusScore) * weight;
   };
 
   const extractTextFields = (place: EnrichedPlace) => {
     return {
-      primary: [place.name, place.vicinity, place.formatted_address, place.editorial_summary?.overview]
-        .filter(Boolean).join(' ').toLowerCase(),
-      amenities: (place.amenities || []).join(' ').toLowerCase(),
-      services: (place.services || []).join(' ').toLowerCase(),
-      contact: [place.website, place.formatted_phone_number, place.international_phone_number]
-        .filter(Boolean).join(' ').toLowerCase(),
-      lodging: place.lodging_info ? Object.values(place.lodging_info).join(' ').toLowerCase() : '',
-      reviews: (place.reviews || []).map(review => review.text).join(' ').toLowerCase()
+      primary: [
+        place.name,
+        place.vicinity,
+        place.formatted_address,
+        place.editorial_summary?.overview,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase(),
+      amenities: (place.amenities || []).join(" ").toLowerCase(),
+      services: (place.services || []).join(" ").toLowerCase(),
+      contact: [
+        place.website,
+        place.formatted_phone_number,
+        place.international_phone_number,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase(),
+      lodging: place.lodging_info
+        ? Object.values(place.lodging_info).join(" ").toLowerCase()
+        : "",
+      reviews: (place.reviews || [])
+        .map((review) => review.text)
+        .join(" ")
+        .toLowerCase(),
     };
   };
 
@@ -51,28 +87,36 @@ export const useIntelligentFiltering = (places: EnrichedPlace[], category: strin
       services: { primary: 2.5, secondary: 1, amenities: 0 },
       contact: { primary: 1.5, secondary: 0.5, amenities: 0 },
       lodging: { primary: 2, secondary: 1, amenities: 0 },
-      reviews: { primary: 1.5, secondary: 0.5, amenities: 0 }
+      reviews: { primary: 1.5, secondary: 0.5, amenities: 0 },
     };
   };
 
-  const calculateScore = (text: string, keywords: string[], multiplier: number): number => {
+  const calculateScore = (
+    text: string,
+    keywords: string[],
+    multiplier: number
+  ): number => {
     return keywords.reduce((score, keyword) => {
-      const matches = (text.match(new RegExp(keyword.toLowerCase(), 'g')) || []).length;
-      return score + (matches * multiplier);
+      const matches = (text.match(new RegExp(keyword.toLowerCase(), "g")) || [])
+        .length;
+      return score + matches * multiplier;
     }, 0);
   };
 
-  const calculateBonusScore = (textFields: any, primaryKeywords: string[]): number => {
-    const allText = Object.values(textFields).join(' ');
-    const primaryMatches = primaryKeywords.filter((keyword: string) => 
+  const calculateBonusScore = (
+    textFields: any,
+    primaryKeywords: string[]
+  ): number => {
+    const allText = Object.values(textFields).join(" ");
+    const primaryMatches = primaryKeywords.filter((keyword: string) =>
       allText.includes(keyword.toLowerCase())
     ).length;
-    
+
     return primaryMatches >= 3 ? 2 : 0;
   };
 
   const filteredPlaces = useMemo(() => {
-    if (!activeFilter || activeFilter === 'todo') {
+    if (!activeFilter || activeFilter === "todo") {
       return { places, totalMatches: places.length, filterApplied: null };
     }
 
@@ -81,27 +125,27 @@ export const useIntelligentFiltering = (places: EnrichedPlace[], category: strin
       return { places, totalMatches: places.length, filterApplied: null };
     }
 
-    const placesWithScores = places.map(place => ({
+    const placesWithScores = places.map((place) => ({
       place,
       score: analyzePlaceContent(place, filterConfig),
-      category: (filterConfig as any).category
+      category: (filterConfig as any).category,
     }));
 
     const minScore = 1.0;
     const filtered = placesWithScores
-      .filter(item => item.score >= minScore)
+      .filter((item) => item.score >= minScore)
       .sort((a, b) => {
         if (b.score !== a.score) {
           return b.score - a.score;
         }
         return (b.place.rating || 0) - (a.place.rating || 0);
       })
-      .map(item => item.place);
+      .map((item) => item.place);
 
     return {
       places: filtered,
       totalMatches: filtered.length,
-      filterApplied: activeFilter
+      filterApplied: activeFilter,
     };
   }, [places, activeFilter, category, analyzePlaceContent]);
 
@@ -114,7 +158,7 @@ export const useIntelligentFiltering = (places: EnrichedPlace[], category: strin
   };
 
   const getFilterStats = () => {
-    if (!activeFilter || activeFilter === 'todo') {
+    if (!activeFilter || activeFilter === "todo") {
       return null;
     }
 
@@ -124,10 +168,13 @@ export const useIntelligentFiltering = (places: EnrichedPlace[], category: strin
     return {
       filterName: activeFilter,
       category: (filterConfig as any).category,
-      totalKeywords: (filterConfig as any).keywords.primary.length + (filterConfig as any).keywords.secondary.length + (filterConfig as any).keywords.amenities.length,
+      totalKeywords:
+        (filterConfig as any).keywords.primary.length +
+        (filterConfig as any).keywords.secondary.length +
+        (filterConfig as any).keywords.amenities.length,
       primaryKeywords: (filterConfig as any).keywords.primary,
       secondaryKeywords: (filterConfig as any).keywords.secondary,
-      amenityKeywords: (filterConfig as any).keywords.amenities
+      amenityKeywords: (filterConfig as any).keywords.amenities,
     };
   };
 
@@ -137,17 +184,33 @@ export const useIntelligentFiltering = (places: EnrichedPlace[], category: strin
 
     const analysis = {
       name: { text: place.name, matches: [] as string[] },
-      address: { text: place.formatted_address || place.vicinity, matches: [] as string[] },
-      description: { text: place.editorial_summary?.overview, matches: [] as string[] },
-      amenities: { text: (place.amenities || []).join(', '), matches: [] as string[] },
-      services: { text: (place.services || []).join(', '), matches: [] as string[] }
+      address: {
+        text: place.formatted_address || place.vicinity,
+        matches: [] as string[],
+      },
+      description: {
+        text: place.editorial_summary?.overview,
+        matches: [] as string[],
+      },
+      amenities: {
+        text: (place.amenities || []).join(", "),
+        matches: [] as string[],
+      },
+      services: {
+        text: (place.services || []).join(", "),
+        matches: [] as string[],
+      },
     };
 
-    Object.keys(analysis).forEach(field => {
+    Object.keys(analysis).forEach((field) => {
       const fieldData = analysis[field as keyof typeof analysis];
       if (fieldData.text) {
         const text = fieldData.text.toLowerCase();
-        [...(filterConfig as any).keywords.primary, ...(filterConfig as any).keywords.secondary, ...(filterConfig as any).keywords.amenities].forEach(keyword => {
+        [
+          ...(filterConfig as any).keywords.primary,
+          ...(filterConfig as any).keywords.secondary,
+          ...(filterConfig as any).keywords.amenities,
+        ].forEach((keyword) => {
           if (text.includes(keyword.toLowerCase())) {
             fieldData.matches.push(keyword);
           }
@@ -171,11 +234,11 @@ export const useIntelligentFiltering = (places: EnrichedPlace[], category: strin
     activeFilter,
     applyFilter,
     clearFilter,
-    isFilterActive: activeFilter !== null && activeFilter !== 'todo',
+    isFilterActive: activeFilter !== null && activeFilter !== "todo",
     getFilterStats,
     analyzeContentMatch,
     getAvailableFiltersForCategory,
     filterExists,
-    currentCategory: category
+    currentCategory: category,
   };
 };

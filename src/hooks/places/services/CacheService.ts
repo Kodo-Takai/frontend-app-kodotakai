@@ -4,26 +4,24 @@ interface CacheEntry<T> {
   ttl: number;
 }
 
-// TTL por defecto: 5 minutos
-const DEFAULT_TTL = 300000;
+// Configuración centralizada
+const CONFIG = {
+  DEFAULT_TTL: 300000, // 5 minutos
+} as const;
 
 export class CacheService {
   private static cache = new Map<string, CacheEntry<any>>();
 
-  /**
-   * Almacena datos en caché con TTL personalizable
-   */
-  static set<T>(key: string, data: T, ttl: number = DEFAULT_TTL): void {
+  // Almacenar datos con TTL
+  static set<T>(key: string, data: T, ttl: number = CONFIG.DEFAULT_TTL): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
-  /**
-   * Recupera datos de caché si no han expirado
-   */
+  // Recuperar datos si no han expirado
   static get<T>(key: string): T | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
@@ -37,9 +35,7 @@ export class CacheService {
     return entry.data as T;
   }
 
-  /**
-   * Verifica si una clave existe y no ha expirado
-   */
+  // Verificar si clave existe y no ha expirado
   static has(key: string): boolean {
     const entry = this.cache.get(key);
     if (!entry) return false;
@@ -53,34 +49,26 @@ export class CacheService {
     return true;
   }
 
-  /**
-   * Elimina una entrada específica de la caché
-   */
+  // Eliminar entrada específica
   static delete(key: string): boolean {
     return this.cache.delete(key);
   }
 
-  /**
-   * Limpia toda la caché
-   */
+  // Limpiar toda la caché
   static clear(): void {
     this.cache.clear();
   }
 
-  /**
-   * Retorna el número de entradas en caché
-   */
+  // Obtener tamaño de caché
   static size(): number {
     return this.cache.size;
   }
 
-  /**
-   * Obtiene estadísticas de la caché
-   */
+  // Obtener estadísticas
   static getStats() {
     return {
       size: this.cache.size,
-      keys: Array.from(this.cache.keys())
+      keys: Array.from(this.cache.keys()),
     };
   }
 }

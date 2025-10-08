@@ -11,14 +11,9 @@ export interface PlacesWithIAOptions {
   maxPlaces?: number;
 }
 
+// Hook optimizado con IA
 export function usePlacesWithIA(options: PlacesWithIAOptions) {
-  const {
-    category,
-    searchQuery,
-    requestedFilters,
-    enableAI = false,
-    maxPlaces = 20
-  } = options;
+  const { category, searchQuery, requestedFilters, enableAI = false, maxPlaces = 20 } = options;
 
   const [filteredPlaces, setFilteredPlaces] = useState<Record<string, EnrichedPlace[]>>({});
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
@@ -28,7 +23,7 @@ export function usePlacesWithIA(options: PlacesWithIAOptions) {
     category,
     searchQuery,
     enableEnrichment: true,
-    maxResults: maxPlaces
+    maxResults: maxPlaces,
   });
 
   const { analyzePlaces } = useAIService();
@@ -44,14 +39,11 @@ export function usePlacesWithIA(options: PlacesWithIAOptions) {
       setAiLoading(true);
       try {
         const analysis = await analyzePlaces(places, requestedFilters, { lat: -12.0464, lng: -77.0428 });
-        
+
         if (analysis) {
           const filtered: Record<string, EnrichedPlace[]> = {};
-          
-          requestedFilters.forEach(filter => {
-            filtered[filter] = places.filter(place => {
-              return place.rating && place.rating >= 4.0;
-            });
+          requestedFilters.forEach((filter) => {
+            filtered[filter] = places.filter((place) => place.rating && place.rating >= 4.0);
           });
 
           setFilteredPlaces(filtered);
@@ -67,9 +59,10 @@ export function usePlacesWithIA(options: PlacesWithIAOptions) {
     processWithAI();
   }, [enableAI, places.length, JSON.stringify(requestedFilters)]);
 
-  const getFilteredPlaces = useCallback((filter: string): EnrichedPlace[] => {
-    return filteredPlaces[filter] || [];
-  }, [filteredPlaces]);
+  const getFilteredPlaces = useCallback(
+    (filter: string): EnrichedPlace[] => filteredPlaces[filter] || [],
+    [filteredPlaces]
+  );
 
   return {
     places,
@@ -77,6 +70,6 @@ export function usePlacesWithIA(options: PlacesWithIAOptions) {
     loading: loading || aiLoading,
     error,
     aiAnalysis,
-    getFilteredPlaces
+    getFilteredPlaces,
   };
 }

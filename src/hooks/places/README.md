@@ -1,4 +1,4 @@
-# 🗺️ Sistema de Lugares (Places) - Guía Completa para Desarrolladores
+# 🗺️ Sistema de Lugares (Places) - Guía Actualizada
 
 ## 📋 Índice
 1. [Introducción](#introducción)
@@ -15,16 +15,16 @@
 
 ## 🎯 Introducción
 
-El sistema `@places/` es un conjunto completo de hooks, servicios y utilidades para gestionar lugares usando Google Places API. Permite buscar, filtrar, enriquecer y analizar lugares con inteligencia artificial.
+El sistema `@places/` es un conjunto optimizado de hooks, servicios y utilidades para gestionar lugares usando Google Places API. Proporciona búsqueda inteligente, enriquecimiento de datos y análisis con IA de forma eficiente.
 
 ### 🚀 Características Principales
-- **Búsqueda inteligente** de lugares por categoría
-- **Enriquecimiento de datos** con información detallada
-- **Filtros avanzados** con IA
-- **Geolocalización** automática
+- **Búsqueda inteligente** por categorías con múltiples estrategias
+- **Enriquecimiento de datos** optimizado con caché
+- **Análisis con IA** para filtros avanzados
+- **Geolocalización** automática con fallback
 - **Caché inteligente** para optimizar rendimiento
-- **Análisis de sentimientos** en reviews
-- **Detección de amenities** automática
+- **Configuraciones flexibles** por categoría
+- **Código optimizado** siguiendo principios de clean code
 
 ---
 
@@ -49,38 +49,40 @@ graph TB
     
     L[useIntelligentFilters] --> F
     M[usePlacesPhotos] --> B
+    
+    N[CategoryConfigFactory] --> C
+    O[EnrichmentConfigFactory] --> D
 ```
 
 ---
 
 ## 📁 Estructura de Carpetas
 
-### 🎯 **Hooks Principales**
+### 🎯 **Archivos Principales**
 ```
 src/hooks/places/
-├── usePlaces.ts              # Hook principal para buscar lugares
-├── usePlacesWithIA.ts        # Hook con análisis de IA
-├── usePlacesSearch.ts        # Hook para búsquedas específicas
-├── usePlacesFilter.ts        # Hook para filtros
-└── useTopRatedPlaces.ts      # Hook para lugares mejor valorados
+├── index.ts                  # Exportaciones centralizadas
+├── types.ts                  # Tipos e interfaces optimizadas
+├── usePlaces.ts              # Hook principal optimizado
+└── usePlacesWithIA.ts        # Hook con análisis de IA
 ```
 
-### 🔧 **Servicios**
+### 🔧 **Servicios Core**
 ```
 services/
-├── GoogleMapsService.ts      # Servicio principal de Google Maps
-├── SmartSearchService.ts     # Búsqueda inteligente por categorías
-├── EnrichmentService.ts      # Enriquecimiento de datos de lugares
-└── CacheService.ts           # Sistema de caché
+├── GoogleMapsService.ts      # Servicio principal optimizado
+├── SmartSearchService.ts     # Búsqueda inteligente unificada
+├── EnrichmentService.ts      # Enriquecimiento de datos
+└── CacheService.ts           # Sistema de caché en memoria
 ```
 
-### ⚙️ **Configuraciones**
+### ⚙️ **Configuraciones Optimizadas**
 ```
 config/
-└── categoryConfigs.ts        # Configuraciones por categoría
+└── categoryConfigs.ts        # Configuraciones por categoría con factory
 
 enrichment/
-└── enrichmentConfigs.ts     # Configuraciones de enriquecimiento
+└── enrichmentConfigs.ts     # Configuraciones de enriquecimiento optimizadas
 ```
 
 ### 🤖 **Inteligencia Artificial**
@@ -93,13 +95,14 @@ ai/
 ```
 filter/
 ├── filterFactory.ts          # Factory para crear filtros
-└── filterStrategies.ts       # Estrategias de filtrado
+├── filterStrategies.ts       # Estrategias de filtrado
+└── usePlacesFilter.ts        # Hook para filtros
 
 filters/
 └── useIntelligentFilters.ts  # Filtros inteligentes con IA
 
 search/
-├── usePlacesSearch.ts        # Hook de búsqueda
+├── usePlacesSearch.ts        # Hook de búsqueda específica
 └── searchStrategies.ts       # Estrategias de búsqueda
 ```
 
@@ -122,17 +125,17 @@ utils/
 └── PlaceUtils.ts            # Utilidades para lugares
 
 topRated/
-├── useTopRatedPlaces.ts     # Hook para top rated
-└── index.ts                 # Exports
+├── useTopRatedPlaces.ts     # Hook para lugares mejor valorados
+└── index.ts                 # Exports del módulo
 ```
 
 ---
 
 ## 🎣 Hooks Principales
 
-### 1. **`usePlaces`** - Hook Principal
+### 1. **`usePlaces`** - Hook Principal Optimizado
 
-**Propósito**: Buscar lugares por categoría con enriquecimiento opcional.
+**Propósito**: Buscar lugares por categoría con enriquecimiento optimizado y manejo de errores mejorado.
 
 ```typescript
 const { places, mapCenter, loading, status, error } = usePlaces({
@@ -140,26 +143,29 @@ const { places, mapCenter, loading, status, error } = usePlaces({
   searchQuery?: "playa bonita",  // Búsqueda específica (opcional)
   enableEnrichment?: true,      // Habilitar enriquecimiento (default: true)
   maxResults?: 20,              // Máximo de resultados (default: 20)
-  fallbackLocation?: {          // Ubicación de respaldo (opcional)
-    lat: -12.0464, 
-    lng: -77.0428 
-  }
 });
 ```
 
 **Retorna**:
-- `places`: Array de lugares enriquecidos
-- `mapCenter`: Centro del mapa
+- `places`: Array de lugares enriquecidos optimizados
+- `mapCenter`: Centro del mapa con fallback automático
 - `loading`: Estado de carga
-- `status`: Mensaje de estado
-- `error`: Error si existe
+- `status`: Mensaje de estado descriptivo
+- `error`: Error con mensajes específicos
 
-### 2. **`usePlacesWithIA`** - Hook con IA
+**Características**:
+- Carga automática de Google Maps API
+- Geolocalización con fallback a ubicación por defecto
+- Búsqueda unificada (nearby + text search)
+- Enriquecimiento de datos con caché
+- Manejo de errores optimizado
 
-**Propósito**: Buscar lugares con análisis de inteligencia artificial.
+### 2. **`usePlacesWithIA`** - Hook con IA Optimizado
+
+**Propósito**: Buscar lugares con análisis de inteligencia artificial y filtrado avanzado.
 
 ```typescript
-const { places, filteredPlaces, loading, aiAnalysis } = usePlacesWithIA({
+const { places, filteredPlaces, loading, aiAnalysis, getFilteredPlaces } = usePlacesWithIA({
   category: "restaurants",
   searchQuery?: "comida peruana",
   requestedFilters: ["luxury", "beach", "petfriendly"],
@@ -168,9 +174,15 @@ const { places, filteredPlaces, loading, aiAnalysis } = usePlacesWithIA({
 });
 ```
 
+**Características**:
+- Análisis de IA para categorización automática
+- Filtrado inteligente por características
+- Callback optimizado para obtener lugares filtrados
+- Integración con `usePlaces` base
+
 ### 3. **`useTopRatedPlaces`** - Hook para Top Rated
 
-**Propósito**: Obtener lugares mejor valorados.
+**Propósito**: Obtener lugares mejor valorados con filtros de calidad.
 
 ```typescript
 const { places, loading, error } = useTopRatedPlaces({
@@ -180,9 +192,9 @@ const { places, loading, error } = useTopRatedPlaces({
 });
 ```
 
-### 4. **`usePlacesSearch`** - Hook de Búsqueda
+### 4. **`usePlacesSearch`** - Hook de Búsqueda Específica
 
-**Propósito**: Búsqueda específica con diferentes estrategias.
+**Propósito**: Búsqueda específica con estrategias personalizadas.
 
 ```typescript
 const { places, loading, error } = usePlacesSearch({
@@ -195,32 +207,63 @@ const { places, loading, error } = usePlacesSearch({
 
 ---
 
-## 🔧 Servicios
+## 🔧 Servicios Core
 
-### 1. **GoogleMapsService**
-- Carga la API de Google Maps
-- Obtiene ubicación del usuario
-- Crea servicios de Places
-- Formatea resultados
+### 1. **GoogleMapsService** - Servicio Principal Optimizado
+**Responsabilidad**: Gestión completa de Google Maps API con optimizaciones de rendimiento.
 
-### 2. **SmartSearchService**
-- Búsqueda inteligente por categorías
-- Combina múltiples estrategias de búsqueda
-- Filtra y ordena resultados
+**Funcionalidades**:
+- Carga asíncrona de Google Maps API con retry automático
+- Geolocalización con fallback a ubicación por defecto
+- Búsqueda nearby en múltiples radios para mayor cobertura
+- Búsqueda por texto con deduplicación automática
+- Formateo optimizado de resultados con validaciones
+- Caché de ubicación del usuario
 
-### 3. **EnrichmentService**
-- Enriquece datos de lugares
-- Obtiene información detallada
-- Procesa precios y amenities
+**Métodos principales**:
+- `loadApi()`: Carga la API de forma asíncrona
+- `getUserLocation()`: Obtiene ubicación con caché
+- `searchNearby()`: Búsqueda por proximidad optimizada
+- `searchByText()`: Búsqueda por texto
+- `formatPlaceResult()`: Formateo con validaciones por categoría
 
-### 4. **CacheService**
-- Sistema de caché en memoria
-- TTL configurable
-- Gestión de estadísticas
+### 2. **SmartSearchService** - Búsqueda Inteligente Unificada
+**Responsabilidad**: Búsqueda inteligente que combina múltiples estrategias.
+
+**Funcionalidades**:
+- Búsqueda unificada (nearby + text search)
+- Configuración por categoría usando `CategoryConfigFactory`
+- Deduplicación automática de resultados
+- Filtrado por palabras clave optimizado
+- Manejo de errores robusto
+
+**Métodos principales**:
+- `searchPlaces()`: Búsqueda principal por categoría
+- `performUnifiedSearch()`: Combina estrategias de búsqueda
+- `deduplicateResults()`: Elimina duplicados
+- `filterByKeywords()`: Filtrado optimizado
+
+### 3. **EnrichmentService** - Enriquecimiento de Datos
+**Responsabilidad**: Enriquece datos básicos con información detallada.
+
+**Funcionalidades**:
+- Enriquecimiento con campos específicos por categoría
+- Configuración flexible usando `EnrichmentConfigFactory`
+- Procesamiento de precios y amenities
+- Manejo de rate limiting
+
+### 4. **CacheService** - Sistema de Caché Inteligente
+**Responsabilidad**: Caché en memoria para optimizar rendimiento.
+
+**Funcionalidades**:
+- TTL configurable por tipo de dato
+- Gestión de estadísticas de uso
+- Limpieza automática de datos expirados
+- Soporte para diferentes tipos de datos
 
 ---
 
-## ⚙️ Configuraciones
+## ⚙️ Configuraciones Optimizadas
 
 ### **Categorías Disponibles**
 ```typescript
@@ -230,45 +273,77 @@ type PlaceCategory =
   | "restaurants" 
   | "hotels" 
   | "destinations"
-  | "tourist_attraction";
+  | "tourist_attraction"
+  | "discos"
+  | "estudiar"
+  | "parques";
 ```
 
+### **CategoryConfigFactory** - Factory de Configuraciones
+**Responsabilidad**: Proporciona configuraciones optimizadas por categoría.
+
+**Funcionalidades**:
+- Configuraciones base reutilizables (`BASE_CONFIGS`)
+- Grupos de términos optimizados (`TERM_GROUPS`)
+- Factory methods para acceso consistente
+- Configuraciones específicas por categoría
+
+**Métodos disponibles**:
+- `getConfig(category)`: Obtiene configuración completa
+- `getSearchQueries(category)`: Obtiene términos de búsqueda
+- `getGoogleType(category)`: Obtiene tipo de Google Places
+- `getMinRating(category)`: Obtiene rating mínimo
+- `shouldEnableMultiplePhotos(category)`: Verifica si requiere fotos
+- `getRadius(category)`: Obtiene radio de búsqueda
+
+### **EnrichmentConfigFactory** - Factory de Enriquecimiento
+**Responsabilidad**: Configuraciones de enriquecimiento optimizadas.
+
+**Funcionalidades**:
+- Configuración base común (`BASE_CONFIG`)
+- Campos específicos por categoría
+- Factory method con opciones personalizables
+- Configuraciones de rate limiting y caché
+
 ### **Configuraciones por Categoría**
-Cada categoría tiene configuraciones específicas:
-- Tipo de Google Places
-- Radio de búsqueda
-- Queries de búsqueda
-- Rating mínimo
-- Campos de enriquecimiento
+Cada categoría tiene configuraciones específicas optimizadas:
+- **Tipo de Google Places**: Específico o genérico
+- **Radio de búsqueda**: Optimizado por tipo de lugar
+- **Términos de búsqueda**: Agrupados y optimizados
+- **Rating mínimo**: Ajustado por categoría
+- **Campos de enriquecimiento**: Específicos por tipo
+- **Límites de resultados**: Configurados por categoría
 
 ---
 
-## 📝 Ejemplos de Uso
+## 📝 Ejemplos de Uso Actualizados
 
-### 🏖️ **Ejemplo 1: Buscar Playas**
+### 🏖️ **Ejemplo 1: Buscar Playas Optimizado**
 
 ```typescript
 import { usePlaces } from '@/hooks/places';
 
 function BeachesComponent() {
-  const { places, loading, error } = usePlaces({
-  category: "beaches",
+  const { places, loading, status, error } = usePlaces({
+    category: "beaches",
     enableEnrichment: true,
     maxResults: 15
   });
 
-  if (loading) return <div>Cargando playas...</div>;
+  if (loading) return <div>{status}</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
       <h2>Playas Cerca de Ti</h2>
+      <p>Estado: {status}</p>
       {places.map(place => (
         <div key={place.place_id}>
           <h3>{place.name}</h3>
           <p>{place.editorial_summary?.overview}</p>
-          <p>Rating: {place.rating}/5</p>
+          <p>Rating: {place.rating}/5 ({place.user_ratings_total} reseñas)</p>
           <img src={place.photo_url} alt={place.name} />
+          <p>📍 {place.formatted_address}</p>
         </div>
       ))}
     </div>
@@ -276,14 +351,14 @@ function BeachesComponent() {
 }
 ```
 
-### 🍽️ **Ejemplo 2: Buscar Restaurantes con IA**
+### 🍽️ **Ejemplo 2: Restaurantes con IA Optimizado**
 
 ```typescript
 import { usePlacesWithIA } from '@/hooks/places';
 
 function RestaurantsWithIA() {
-  const { places, filteredPlaces, loading, aiAnalysis } = usePlacesWithIA({
-  category: "restaurants",
+  const { places, filteredPlaces, loading, aiAnalysis, getFilteredPlaces } = usePlacesWithIA({
+    category: "restaurants",
     requestedFilters: ["luxury", "beach", "petfriendly"],
     enableAI: true,
     maxPlaces: 20
@@ -296,7 +371,7 @@ function RestaurantsWithIA() {
       {/* Restaurantes de lujo */}
       <section>
         <h3>Restaurantes de Lujo</h3>
-        {filteredPlaces.luxury?.map(place => (
+        {getFilteredPlaces("luxury").map(place => (
           <RestaurantCard key={place.place_id} place={place} />
         ))}
       </section>
@@ -304,10 +379,18 @@ function RestaurantsWithIA() {
       {/* Restaurantes pet-friendly */}
       <section>
         <h3>Pet Friendly</h3>
-        {filteredPlaces.petfriendly?.map(place => (
+        {getFilteredPlaces("petfriendly").map(place => (
           <RestaurantCard key={place.place_id} place={place} />
         ))}
       </section>
+
+      {/* Análisis de IA */}
+      {aiAnalysis && (
+        <div>
+          <h3>Análisis de IA</h3>
+          <p>Confianza general: {aiAnalysis.overall_confidence}%</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -340,29 +423,42 @@ function TopHotels() {
 }
 ```
 
-### 🔍 **Ejemplo 4: Búsqueda Específica**
+### 🔍 **Ejemplo 4: Búsqueda con Configuración**
 
 ```typescript
-import { usePlaces } from '@/hooks/places';
+import { usePlaces, CategoryConfigFactory } from '@/hooks/places';
 
 function SearchComponent() {
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<PlaceCategory>("all");
   
-  const { places, loading } = usePlaces({
-    category: "all",
+  const { places, loading, status } = usePlaces({
+    category,
     searchQuery: query,
     enableEnrichment: true
   });
 
+  const config = CategoryConfigFactory.getConfig(category);
+
   return (
     <div>
+      <select value={category} onChange={(e) => setCategory(e.target.value as PlaceCategory)}>
+        <option value="all">Todos</option>
+        <option value="beaches">Playas</option>
+        <option value="restaurants">Restaurantes</option>
+        <option value="hotels">Hoteles</option>
+      </select>
+      
       <input 
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Buscar lugares..."
       />
       
-      {loading && <div>Buscando...</div>}
+      <p>Radio de búsqueda: {config.radius}m</p>
+      <p>Rating mínimo: {config.minRating}</p>
+      
+      {loading && <div>{status}</div>}
       
       {places.map(place => (
         <PlaceCard key={place.place_id} place={place} />
@@ -376,78 +472,102 @@ function SearchComponent() {
 
 ## 🎯 Casos de Uso Comunes
 
-### 1. **Página de Categorías**
+### 1. **Página de Categorías Optimizada**
 ```typescript
 // Para mostrar hoteles, restaurantes, playas, etc.
-const { places } = usePlaces({ category: "hotels" });
+const { places, loading, status } = usePlaces({ 
+  category: "hotels",
+  enableEnrichment: true,
+  maxResults: 20
+});
 ```
 
-### 2. **Búsqueda con Filtros**
+### 2. **Búsqueda con Filtros Específicos**
 ```typescript
 // Para búsqueda con filtros específicos
-const { places } = usePlaces({ 
+const { places, loading } = usePlaces({ 
   category: "restaurants",
-  searchQuery: "comida peruana"
+  searchQuery: "comida peruana",
+  enableEnrichment: true
 });
 ```
 
-### 3. **Análisis con IA**
+### 3. **Análisis con IA Optimizado**
 ```typescript
 // Para análisis inteligente de lugares
-const { filteredPlaces } = usePlacesWithIA({
+const { places, filteredPlaces, getFilteredPlaces, aiAnalysis } = usePlacesWithIA({
   category: "beaches",
-  requestedFilters: ["luxury", "family_friendly"]
+  requestedFilters: ["luxury", "family_friendly"],
+  enableAI: true
+});
+
+// Usar callback optimizado
+const luxuryBeaches = getFilteredPlaces("luxury");
+```
+
+### 4. **Top Rated con Configuración**
+```typescript
+// Para mostrar los mejores lugares
+const { places, loading } = useTopRatedPlaces({ 
+  category: "restaurants",
+  minRating: 4.5,
+  maxResults: 10
 });
 ```
 
-### 4. **Top Rated**
+### 5. **Configuración Dinámica**
 ```typescript
-// Para mostrar los mejores lugares
-const { places } = useTopRatedPlaces({ 
-  category: "restaurants",
-  minRating: 4.5 
-});
+// Usar configuraciones por categoría
+const config = CategoryConfigFactory.getConfig("hotels");
+const searchQueries = CategoryConfigFactory.getSearchQueries("restaurants");
+const minRating = CategoryConfigFactory.getMinRating("beaches");
 ```
 
 ---
 
-## 🏆 Mejores Prácticas
+## 🏆 Mejores Prácticas Optimizadas
 
 ### ✅ **Do's**
 - Usa `enableEnrichment: true` para obtener datos completos
-- Implementa manejo de errores
-- Usa `loading` states para UX
-- Aprovecha el caché automático
-- Usa filtros específicos para mejor rendimiento
+- Implementa manejo de errores con mensajes específicos
+- Usa `loading` y `status` states para mejor UX
+- Aprovecha el caché automático del sistema
+- Usa `CategoryConfigFactory` para configuraciones consistentes
+- Implementa `getFilteredPlaces()` para filtros de IA
+- Usa `maxResults` apropiado para tu caso de uso
 
 ### ❌ **Don'ts**
-- No hagas demasiadas llamadas simultáneas
-- No ignores el manejo de errores
+- No hagas demasiadas llamadas simultáneas a la API
+- No ignores el manejo de errores optimizado
 - No uses ubicaciones hardcodeadas sin necesidad
-- No olvides limpiar estados al desmontar
+- No olvides limpiar estados al desmontar componentes
+- No uses configuraciones hardcodeadas, usa los factories
 
-### 🔧 **Optimizaciones**
-- Usa `maxResults` apropiado para tu caso
-- Implementa paginación para muchos resultados
-- Usa `fallbackLocation` solo cuando sea necesario
-- Aprovecha los filtros de IA para mejor relevancia
-
----
-
-## 🚀 Flujo de Trabajo Típico
-
-1. **Inicialización**: El hook carga Google Maps API
-2. **Geolocalización**: Obtiene ubicación del usuario
-3. **Búsqueda**: Busca lugares según categoría
-4. **Enriquecimiento**: Enriquece datos con información detallada
-5. **Filtrado**: Aplica filtros y ordenamiento
-6. **Retorno**: Devuelve lugares listos para mostrar
+### 🔧 **Optimizaciones Implementadas**
+- **Caché inteligente**: Ubicación y resultados se cachean automáticamente
+- **Búsqueda unificada**: Combina nearby + text search para mejor cobertura
+- **Deduplicación**: Elimina resultados duplicados automáticamente
+- **Configuraciones flexibles**: Usa factories para configuraciones consistentes
+- **Manejo de errores**: Mensajes específicos por tipo de error
+- **Validaciones optimizadas**: Filtros por categoría con validaciones específicas
 
 ---
 
-## 📊 Estructura de Datos
+## 🚀 Flujo de Trabajo Optimizado
 
-### **Place** (Básico)
+1. **Inicialización**: El hook carga Google Maps API de forma asíncrona
+2. **Geolocalización**: Obtiene ubicación del usuario con caché y fallback
+3. **Configuración**: Usa `CategoryConfigFactory` para obtener configuraciones
+4. **Búsqueda Unificada**: Combina nearby + text search con deduplicación
+5. **Enriquecimiento**: Enriquece datos usando `EnrichmentConfigFactory`
+6. **Filtrado**: Aplica filtros optimizados por categoría
+7. **Retorno**: Devuelve lugares listos para mostrar con manejo de errores
+
+---
+
+## 📊 Estructura de Datos Optimizada
+
+### **Place** (Básico Optimizado)
 ```typescript
 interface Place {
   id: string;
@@ -457,45 +577,82 @@ interface Place {
   location: LatLng;
   rating?: number;
   vicinity?: string;
+  photos?: any[];
+  opening_hours?: { open_now?: boolean };
 }
 ```
 
-### **EnrichedPlace** (Completo)
+### **EnrichedPlace** (Completo Optimizado)
 ```typescript
 interface EnrichedPlace extends Place {
   formatted_address?: string;
   website?: string;
+  formatted_phone_number?: string;
   editorial_summary?: { overview?: string };
   reviews?: Review[];
+  types?: string[];
+  lodging_info?: LodgingInfo;
+  opening_hours_detailed?: OpeningHours;
+  contact_info?: ContactInfo;
+  ai_analysis?: AIAnalysis;
+  business_status?: string;
+  price_level?: number;
+  user_ratings_total?: number;
   price_info?: PriceInfo;
-  amenities?: string[];
-  // ... más campos
+}
+```
+
+### **LodgingInfo** (Optimizado)
+```typescript
+interface LodgingInfo {
+  check_in_time?: string;
+  check_out_time?: string;
+  amenities: string[]; // Array optimizado en lugar de campos booleanos
+}
+```
+
+### **ContactInfo** (Flexible)
+```typescript
+interface ContactInfo {
+  website?: string;
+  phone?: string;
+  email?: string;
+  social_media?: Record<string, string>; // Más flexible
 }
 ```
 
 ---
 
-## 🔗 Integración con Cards
+## 🔗 Integración con Cards Optimizada
 
 ```typescript
 // En tu componente de card
-import { usePlaces } from '@/hooks/places';
+import { usePlaces, CategoryConfigFactory } from '@/hooks/places';
 
 function PlacesGrid() {
-  const { places, loading } = usePlaces({
+  const { places, loading, status, error } = usePlaces({
     category: "beaches",
-    enableEnrichment: true
+    enableEnrichment: true,
+    maxResults: 20
   });
 
+  const config = CategoryConfigFactory.getConfig("beaches");
+
+  if (loading) return <div>{status}</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {places.map(place => (
-        <BeachCard 
-          key={place.place_id}
-          place={place}
-          onSelect={(place) => console.log('Selected:', place)}
-        />
-      ))}
+    <div>
+      <p>Radio de búsqueda: {config.radius}m</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {places.map(place => (
+          <BeachCard 
+            key={place.place_id}
+            place={place}
+            onSelect={(place) => console.log('Selected:', place)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -505,6 +662,12 @@ function PlacesGrid() {
 
 ## 🎉 Conclusión
 
-El sistema `@places/` proporciona una solución completa para gestionar lugares con Google Places API. Es modular, escalable y fácil de usar. Con esta guía, deberías poder implementar cualquier funcionalidad relacionada con lugares de manera eficiente.
+El sistema `@places/` optimizado proporciona una solución eficiente y escalable para gestionar lugares con Google Places API. Con las optimizaciones implementadas:
 
-**¡Happy Coding Bro, Ojalá Funcione XD!**
+- **Código más limpio** siguiendo principios de clean code
+- **Mejor rendimiento** con caché inteligente y búsqueda unificada
+- **Configuraciones flexibles** usando factories
+- **Manejo de errores robusto** con mensajes específicos
+- **Estructura de datos optimizada** sin redundancias
+
+**¡Sistema optimizado y listo para producción! 🚀**

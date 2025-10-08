@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import type { EnrichedPlace, AIAnalysis } from "../types";
+import type { EnrichedPlace } from "../types";
 import { AI_CONFIG } from "../enrichment/enrichmentConfigs";
 
 export interface AIDataInput {
@@ -81,8 +81,6 @@ export class AIService {
       formatted_address: place.formatted_address,
       editorial_summary: place.editorial_summary,
       reviews: place.reviews?.slice(0, 10),
-      amenities: place.amenities,
-      services: place.services,
       lodging_info: place.lodging_info,
       contact_info: place.contact_info
     }));

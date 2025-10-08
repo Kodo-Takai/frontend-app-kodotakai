@@ -8,21 +8,59 @@ import { usePlaces } from "../../hooks/places";
 import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
 import FilterableContent from "../../components/ui/filtering/FilterableContent";
 import FilteredResults from "../../components/ui/filtering/FilteredResults";
+import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
+import PlaceCards from "../../components/cards/placeCard";
+import BeachCards from "../../components/cards/beachCard";
 
 const BEACH_CAROUSEL_CONFIG = {
   interval: 4000,
   slides: [
-    { image: "/beach-background-section-explore.svg", titleFirst: "DESCUBRE", titleRest: "LAS MEJORES PLAYAS", subtitle: "Encuentra playas paradisíacas y vive experiencias únicas" },
-    { image: "/beach-background-section-explore.svg", titleFirst: "DIVIÉRTETE", titleRest: "EN LA COSTA", subtitle: "Desde playas tranquilas hasta olas perfectas para surf" }
-  ]
+    {
+      image: "/beach-news (1).jpg",
+      titleFirst: "DESCUBRE",
+      titleRest: "LAS MEJORES PLAYAS",
+      subtitle: "Encuentra playas paradisíacas y vive experiencias únicas",
+    },
+    {
+      image: "/beach-news (2).jpg",
+      titleFirst: "DIVIÉRTETE",
+      titleRest: "EN LA COSTA",
+      subtitle: "Desde playas tranquilas hasta olas perfectas para surf",
+    },
+  ],
 };
 
 const BEACH_BADGE_CONFIG = [
-  { id: "todo", icon: "p-cat_todo_icon.svg", hoverIcon: "hover-p-cat_todo_icon.svg", label: "Todo" },
-  { id: "surf", icon: "p-cat_surf_icon.svg", hoverIcon: "hover-p-cat_surf_icon.svg", label: "Surf" },
-  { id: "pesca", icon: "p-cat_pesca_icon.svg", hoverIcon: "hover-p-cat_pesca_icon.svg", label: "Pesca" },
-  { id: "camping", icon: "p-cat_camp_icon.svg", hoverIcon: "hover-p-cat_camp_icon.svg", label: "Camping" },
-  { id: "favoritas", icon: "p-cat_fav_icon.svg", hoverIcon: "hover-p-cat_fav_icon.svg", label: "Favoritas" }
+  {
+    id: "todo",
+    icon: "p-cat_todo_icon.svg",
+    hoverIcon: "hover-p-cat_todo_icon.svg",
+    label: "Todo",
+  },
+  {
+    id: "surf",
+    icon: "p-cat_surf_icon.svg",
+    hoverIcon: "hover-p-cat_surf_icon.svg",
+    label: "Surf",
+  },
+  {
+    id: "pesca",
+    icon: "p-cat_pesca_icon.svg",
+    hoverIcon: "hover-p-cat_pesca_icon.svg",
+    label: "Pesca",
+  },
+  {
+    id: "camping",
+    icon: "p-cat_camp_icon.svg",
+    hoverIcon: "hover-p-cat_camp_icon.svg",
+    label: "Camping",
+  },
+  {
+    id: "tranquilo",
+    icon: "p-cat_relaxed_icon.svg",
+    hoverIcon: "hover-p-cat_relaxed_icon.svg",
+    label: "Tranquilo",
+  },
 ];
 
 export default function PlayasPage() {
@@ -36,7 +74,7 @@ export default function PlayasPage() {
     category: "beaches",
     searchQuery: searchQuery,
     enableEnrichment: true,
-    maxResults: 20
+    maxResults: 20,
   });
 
   const {
@@ -46,8 +84,8 @@ export default function PlayasPage() {
     applyFilter,
     clearFilter,
     isFilterActive,
-    analyzeContentMatch
-  } = useIntelligentFiltering(places, 'beaches');
+    analyzeContentMatch,
+  } = useIntelligentFiltering(places, "beaches");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -66,7 +104,9 @@ export default function PlayasPage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % BEACH_CAROUSEL_CONFIG.slides.length);
+      setCurrentSlide(
+        (prev) => (prev + 1) % BEACH_CAROUSEL_CONFIG.slides.length
+      );
     }, BEACH_CAROUSEL_CONFIG.interval);
 
     return () => clearInterval(interval);
@@ -80,7 +120,7 @@ export default function PlayasPage() {
         className="absolute top-0 left-0 w-full h-140 sm:h-40 md:h-48 lg:h-56 bg-center bg-no-repeat"
         style={{
           backgroundImage: "url(/beach-background-section-explore.svg)",
-          backgroundSize: "130%",
+          backgroundSize: "170%",
           backgroundPosition: "top center",
           backgroundRepeat: "no-repeat",
         }}
@@ -90,7 +130,7 @@ export default function PlayasPage() {
         <HeaderNavigationExplore />
 
         <div className="justify-center items-center text-center">
-          <h1 className="text-[65px] font-black pb-1 text-[#FF0A10] leading-none">
+          <h1 className="text-[65px] font-black pb-1 text-[#003e5b] leading-none">
             PLAYAS
           </h1>
           <p className="text-xl font-extrabold text-[#ffffff]">CERCA DE TI</p>
@@ -105,11 +145,11 @@ export default function PlayasPage() {
         <div className="w-full h-50 rounded-2xl mt-2 border-white border-4 relative overflow-hidden mb-1">
           <img
             src={BEACH_CAROUSEL_CONFIG.slides[currentSlide].image}
-            className="w-full h-full object-cover rounded-3xl transition-opacity duration-500"
+            className="w-full h-full object-cover rounded-2xl transition-opacity duration-500"
             alt="PLAYAS NEWS"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-2xl"></div>
 
           <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2">
             <img
@@ -175,7 +215,7 @@ export default function PlayasPage() {
                 label={badge.label}
                 isActive={selectedBadge === badge.id}
                 onClick={handleBadgeClick}
-                activeColor="#DC1217"
+                activeColor="#00324A"
                 activeBorderColor={badge.id === "todo" ? "#e1e1e1" : "#F3F3F3"}
               />
             ))}
@@ -183,12 +223,33 @@ export default function PlayasPage() {
         </div>
 
         <FilterableContent isVisible={!isFilterActive}>
-          <div className="flex items-center justify-center h-64 bg-gray-100 rounded-xl">
-            <div className="text-center">
-              <div className="text-6xl mb-4">🏖️</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Playas disponibles</h3>
-              <p className="text-gray-600 text-sm">{places.length} playas encontradas cerca de ti</p>
-            </div>
+          <PlaceCards
+            places={places}
+            category="beaches"
+            title="Playas mejor valoradas"
+            loading={loading}
+            error={error}
+            onPlaceClick={(place) => {
+              console.log("Playa seleccionada:", place);
+            }}
+            itemsPerPage={6}
+          />
+          <BeachCards />
+
+          <div className="mt-4">
+            <h2 className="text-2xl font-bold text-[#00324A] mb-4 text-center">
+              Explora más playas
+            </h2>
+            <LocationMultiGrid
+              places={places}
+              loading={loading}
+              error={error}
+              onPlaceClick={(place) => {
+                console.log("Playa seleccionada:", place);
+              }}
+              itemsPerPage={4}
+              userLocation={mapCenter || undefined}
+            />
           </div>
         </FilterableContent>
 
@@ -197,19 +258,24 @@ export default function PlayasPage() {
             places={filteredPlaces}
             loading={loading}
             error={error}
-            filterName={BEACH_BADGE_CONFIG.find(b => b.id === activeFilter)?.label || 'filtro'}
+            filterName={
+              BEACH_BADGE_CONFIG.find((b) => b.id === activeFilter)?.label ||
+              "filtro"
+            }
             totalMatches={totalMatches}
             onPlaceClick={(place) => {
-              console.log('Playa filtrada seleccionada:', place);
+              console.log("Playa filtrada seleccionada:", place);
               if (activeFilter) {
-                const contentAnalysis = analyzeContentMatch(place, activeFilter);
-                console.log('Análisis de contenido:', contentAnalysis);
+                const contentAnalysis = analyzeContentMatch(
+                  place,
+                  activeFilter
+                );
+                console.log("Análisis de contenido:", contentAnalysis);
               }
             }}
             userLocation={mapCenter || undefined}
           />
         </FilterableContent>
-
       </div>
     </div>
   );
