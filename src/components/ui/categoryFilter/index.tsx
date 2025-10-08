@@ -3,20 +3,22 @@ import React from "react";
 import {
   IoLocationSharp,
   IoHome,
-  IoCart, // <-- NUEVO ÍCONO IMPORTADO
-  IoFastFood,
-  IoCalendar,
-  IoFootball,
+  IoRestaurant,
+  IoWater,
+  IoMusicalNotes,
+  IoBook,
+  IoLeaf,
 } from "react-icons/io5";
 
+// Categorías que coinciden con el sistema @places/
 const CATEGORIES = [
   { id: "all", label: "Todo", icon: <IoLocationSharp size={22} /> },
-  { id: "lodging", label: "Hoteles", icon: <IoHome size={22} /> },
-  // --- LÍNEA MODIFICADA ---
-  { id: "shopping_mall", label: "Tiendas", icon: <IoCart size={22} /> },
-  { id: "restaurant", label: "Comidas", icon: <IoFastFood size={22} /> },
-  { id: "point_of_interest", label: "Eventos", icon: <IoCalendar size={22} /> },
-  { id: "stadium", label: "Estadios", icon: <IoFootball size={22} /> },
+  { id: "hotels", label: "Hoteles", icon: <IoHome size={22} /> },
+  { id: "restaurants", label: "Comida", icon: <IoRestaurant size={22} /> },
+  { id: "beaches", label: "Playas", icon: <IoWater size={22} /> },
+  { id: "discos", label: "Discos", icon: <IoMusicalNotes size={22} /> },
+  { id: "estudiar", label: "Estudiar", icon: <IoBook size={22} /> },
+  { id: "parques", label: "Parques", icon: <IoLeaf size={22} /> },
 ];
 
 interface CategoryFilterProps {

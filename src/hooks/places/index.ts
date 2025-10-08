@@ -8,7 +8,6 @@ export * from "./photos/usePlacesPhotos";
 export {
   CategoryConfigFactory,
   CATEGORY_CONFIGS,
-  getCategoryConfig,
   filterByKeywords,
 } from "./config/categoryConfigs";
 

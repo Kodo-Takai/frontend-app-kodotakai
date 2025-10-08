@@ -20,7 +20,7 @@ interface TopRatedCardProps {
     };
     place_id: string;
   };
-  category: "hotels" | "beaches" | "restaurants" | "destinations";
+  category: "hotels" | "beaches" | "restaurants" | "destinations" | "discos" | "estudiar" | "parques";
   onSelect?: (place: any) => void;
   index?: number;
 }

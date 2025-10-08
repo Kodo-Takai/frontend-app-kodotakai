@@ -4,7 +4,7 @@ import "./index.scss";
 
 interface TopRatedCarouselProps {
   places: any[];
-  category: "hotels" | "beaches" | "restaurants" | "destinations";
+  category: "hotels" | "beaches" | "restaurants" | "destinations" | "discos" | "estudiar" | "parques";
   title: string;
   loading?: boolean;
   error?: string | null;
@@ -43,10 +43,14 @@ export default function TopRatedCarousel({
 
     // Para restaurantes: aceptar si tiene descripción O precio O tipos/vicinity
     // Para hoteles: mantener el filtro estricto (descripción Y precio)
+    // Para nuevas categorías: usar filtro más flexible
     if (category === 'restaurants') {
       return hasBasicData && (hasDescription || hasPrice || hasTypes || hasVicinity);
-    } else {
+    } else if (category === 'hotels') {
       return hasBasicData && hasDescription && hasPrice;
+    } else {
+      // Para discos, estudiar, parques: filtro más flexible
+      return hasBasicData && (hasDescription || hasPrice || hasTypes || hasVicinity);
     }
   });
 

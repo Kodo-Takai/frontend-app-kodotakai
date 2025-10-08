@@ -1,39 +1,30 @@
 import type { Place, PlaceCategory, LatLng } from "../types";
 import { GoogleMapsService } from "./GoogleMapsService";
-import {
-  CategoryConfigFactory,
-  filterByKeywords,
-} from "../config/categoryConfigs";
+import { CategoryConfigFactory, filterByKeywords } from "../config/categoryConfigs";
 
-// Configuración de búsqueda inteligente
-const DEFAULT_MAX_RESULTS = 20;
-const SEARCH_RADII = [2000, 10000, 30000];
+// Configuración centralizada
+const CONFIG = {
+  DEFAULT_MAX_RESULTS: 20,
+  TEXT_SEARCH_SUFFIX: " cerca de mi",
+  MAX_TEXT_QUERIES: 10,
+  ALL_CATEGORY_TEXT_LIMIT: 3,
+  ALL_CATEGORY_SPECIFIC_TYPES: ["restaurant", "lodging", "tourist_attraction"]
+} as const;
 
 export class SmartSearchService {
-  /**
-   * Busca lugares de una categoría específica cerca de la ubicación del usuario
-   */
+  // Búsqueda principal de lugares por categoría
   static async searchPlaces(
     category: PlaceCategory,
     userLocation: LatLng,
-    maxResults: number = DEFAULT_MAX_RESULTS
+    maxResults: number = CONFIG.DEFAULT_MAX_RESULTS
   ): Promise<Place[]> {
     try {
       const config = CategoryConfigFactory.getConfig(category);
       const service = GoogleMapsService.createService();
-
-      const allResults = await this.performSearch(
-        service,
-        category,
-        userLocation,
-        config
-      );
+      const allResults = await this.performUnifiedSearch(service, userLocation, config);
       const uniqueResults = this.deduplicateResults(allResults);
-      const formattedPlaces = this.formatResults(uniqueResults, category);
-      const filteredPlaces = filterByKeywords(
-        formattedPlaces,
-        config.searchQueries
-      );
+      const formattedPlaces = this.formatResults(uniqueResults);
+      const filteredPlaces = this.applyFiltering(formattedPlaces, config, category);
 
       return filteredPlaces.slice(0, maxResults);
     } catch (error) {
@@ -41,104 +32,86 @@ export class SmartSearchService {
     }
   }
 
-  private static async performSearch(
+  // Estrategia de búsqueda unificada
+  private static async performUnifiedSearch(
     service: google.maps.places.PlacesService,
-    category: PlaceCategory,
     userLocation: LatLng,
     config: any
   ): Promise<google.maps.places.PlaceResult[]> {
-    const shouldUseTextSearch = this.shouldUseTextSearch(category);
-    const shouldUseHybridSearch = this.shouldUseHybridSearch(category);
+    const searchPromises: Promise<google.maps.places.PlaceResult[]>[] = [];
 
-    if (shouldUseTextSearch) {
-      return this.performTextSearch(service, config.searchQueries);
-    } else if (shouldUseHybridSearch) {
-      return this.performHybridSearch(service, userLocation, config);
-    } else {
-      return this.performNearbySearch(service, userLocation, config.type);
+    if (config.type === "establishment") {
+      // Búsqueda genérica + específica para variedad
+      searchPromises.push(this.performNearbySearch(service, userLocation, "establishment"));
+      CONFIG.ALL_CATEGORY_SPECIFIC_TYPES.forEach(type => {
+        searchPromises.push(this.performNearbySearch(service, userLocation, type));
+      });
+      
+      if (config.searchQueries?.length > 0) {
+        const limitedQueries = config.searchQueries.slice(0, CONFIG.ALL_CATEGORY_TEXT_LIMIT);
+        searchPromises.push(this.performTextSearch(service, limitedQueries));
+      }
+    } else if (config.type && config.type !== "establishment") {
+      // Búsqueda específica para categorías
+      searchPromises.push(this.performNearbySearch(service, userLocation, config.type));
+      
+      if (config.searchQueries?.length > 0) {
+        searchPromises.push(this.performTextSearch(service, config.searchQueries));
+      }
     }
+
+    const results = await Promise.all(searchPromises);
+    return results.flat();
   }
 
-  private static shouldUseTextSearch(category: PlaceCategory): boolean {
-    const textSearchCategories: PlaceCategory[] = [
-      "beaches",
-      "destinations",
-      "tourist_attraction",
-    ];
-    return textSearchCategories.includes(category);
+  // Aplicar filtrado según categoría
+  private static applyFiltering(formattedPlaces: Place[], config: any, category: PlaceCategory): Place[] {
+    if (category === 'all') {
+      return formattedPlaces.filter(place => !place.rating || place.rating >= config.minRating);
+    }
+    return filterByKeywords(formattedPlaces, config.searchQueries);
   }
 
-  private static shouldUseHybridSearch(category: PlaceCategory): boolean {
-    const hybridSearchCategories: PlaceCategory[] = ["restaurants", "hotels"];
-    return hybridSearchCategories.includes(category);
-  }
-
+  // Búsqueda por texto con límite de queries
   private static async performTextSearch(
     service: google.maps.places.PlacesService,
     searchQueries: string[]
   ): Promise<google.maps.places.PlaceResult[]> {
-    const textSearchPromises = searchQueries.map((query) =>
-      GoogleMapsService.searchByText(service, `${query} cerca de mi`)
+    const limitedQueries = searchQueries.length > CONFIG.MAX_TEXT_QUERIES 
+      ? searchQueries.slice(0, CONFIG.MAX_TEXT_QUERIES) 
+      : searchQueries;
+    
+    const textSearchPromises = limitedQueries.map((query) =>
+      GoogleMapsService.searchByText(service, `${query}${CONFIG.TEXT_SEARCH_SUFFIX}`)
     );
     const textResults = await Promise.all(textSearchPromises);
     return textResults.flat();
   }
 
-  private static async performHybridSearch(
-    service: google.maps.places.PlacesService,
-    userLocation: LatLng,
-    config: any
-  ): Promise<google.maps.places.PlaceResult[]> {
-    const nearbyResults = await this.performNearbySearch(
-      service,
-      userLocation,
-      config.type
-    );
-    const textResults = await this.performTextSearch(
-      service,
-      config.searchQueries
-    );
-
-    return [...nearbyResults, ...textResults];
-  }
-
+  // Búsqueda nearby delegada
   private static async performNearbySearch(
     service: google.maps.places.PlacesService,
     userLocation: LatLng,
     type: string
   ): Promise<google.maps.places.PlaceResult[]> {
-    const searchPromises = SEARCH_RADII.map(
-      (radius) =>
-        new Promise<google.maps.places.PlaceResult[]>((resolve) => {
-          service.nearbySearch(
-            { location: userLocation, radius, type },
-            (results, status) => {
-              if (status === "OK" && results) resolve(results);
-              else resolve([]);
-            }
-          );
-        })
-    );
-    return (await Promise.all(searchPromises)).flat();
+    return GoogleMapsService.searchNearby(service, userLocation, type);
   }
 
-  private static deduplicateResults(
-    results: google.maps.places.PlaceResult[]
-  ): google.maps.places.PlaceResult[] {
-    return results.reduce((acc, place) => {
-      if (!acc.find((p) => p.place_id === place.place_id)) {
-        acc.push(place);
+  // Eliminar duplicados por place_id
+  private static deduplicateResults(results: google.maps.places.PlaceResult[]): google.maps.places.PlaceResult[] {
+    const uniqueResults = new Map<string, google.maps.places.PlaceResult>();
+    results.forEach((place) => {
+      if (place.place_id && !uniqueResults.has(place.place_id)) {
+        uniqueResults.set(place.place_id, place);
       }
-      return acc;
-    }, [] as google.maps.places.PlaceResult[]);
+    });
+    return Array.from(uniqueResults.values());
   }
 
-  private static formatResults(
-    results: google.maps.places.PlaceResult[],
-    category: PlaceCategory
-  ): Place[] {
+  // Formatear resultados a formato Place
+  private static formatResults(results: google.maps.places.PlaceResult[]): Place[] {
     return results
-      .map((p) => GoogleMapsService.formatPlaceResult(p, category))
+      .map((p) => GoogleMapsService.formatPlaceResult(p))
       .filter((p): p is Place => p !== null);
   }
 }

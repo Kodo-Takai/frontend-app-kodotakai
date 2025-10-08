@@ -2,7 +2,7 @@ import TopRatedCarousel from "./TopRatedCarousel";
 import { useTopRatedPlaces } from "../../../hooks/places/topRated";
 
 interface TopRatedSectionProps {
-  category: "hotels" | "beaches" | "restaurants" | "destinations";
+  category: "hotels" | "beaches" | "restaurants" | "destinations" | "discos" | "estudiar" | "parques";
   title?: string;
   limit?: number;
   minRating?: number;
@@ -28,6 +28,9 @@ export default function TopRatedSection({
       beaches: " Top Playas mejor valoradas",
       restaurants: " Top Restaurantes mejor valorados",
       destinations: " Top Destinos mejor valorados",
+      discos: " Top Discotecas mejor valoradas",
+      estudiar: " Top Lugares para estudiar mejor valorados",
+      parques: " Top Parques mejor valorados",
     };
 
     return titles[category];
