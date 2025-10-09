@@ -1,4 +1,6 @@
+import { useState } from "react";
 import TopRatedCarousel from "./TopRatedCarousel";
+import PlaceModal from "../../ui/placeModal";
 import { useTopRatedPlaces } from "../../../hooks/places/topRated";
 
 interface TopRatedSectionProps {
@@ -19,6 +21,19 @@ export default function TopRatedSection({
     limit,
     minRating,
   });
+
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePlaceSelect = (place: any) => {
+    setSelectedPlace(place);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlace(null);
+  };
 
   const getTitle = () => {
     if (title) return title;
@@ -44,7 +59,17 @@ export default function TopRatedSection({
         title={getTitle()}
         loading={loading}
         error={error}
+        onSelect={handlePlaceSelect}
       />
+
+      {/* Modal para mostrar detalles del lugar */}
+      {selectedPlace && (
+        <PlaceModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          place={selectedPlace}
+        />
+      )}
     </div>
   );
 }

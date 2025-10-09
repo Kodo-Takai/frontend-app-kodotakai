@@ -8,6 +8,7 @@ interface TopRatedCarouselProps {
   title: string;
   loading?: boolean;
   error?: string | null;
+  onSelect?: (place: any) => void; 
 }
 
 export default function TopRatedCarousel({
@@ -16,12 +17,17 @@ export default function TopRatedCarousel({
   title,
   loading = false,
   error = null,
+  onSelect,
 }: TopRatedCarouselProps) {
   const [, setSelectedPlace] = useState<any>(null);
 
   const handlePlaceSelect = (place: any) => {
     setSelectedPlace(place);
-    console.log("Lugar seleccionado desde TopRatedCarousel:", place);
+    /* console.log("Lugar seleccionado desde TopRatedCarousel:", place); */
+
+    if (onSelect) {
+      onSelect(place);
+    }
   };
 
   const filteredPlaces = places.filter((place) => {
@@ -107,7 +113,7 @@ export default function TopRatedCarousel({
             key={place.place_id || index}
             place={place}
             category={category}
-            onSelect={handlePlaceSelect}
+            onSelect={handlePlaceSelect} 
             index={index}
           />
         ))}

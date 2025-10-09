@@ -16,9 +16,7 @@ export default function DestinationCards() {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState<
-    Place | EnrichedPlace | null
-  >(null);
+  const [selectedPlace, setSelectedPlace] = useState<Place | EnrichedPlace | null>(null);
 
   const handleVisit = (place: Place | EnrichedPlace) => {
     setSelectedPlace(place);
