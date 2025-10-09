@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import HeaderNavigationExplore from "../../components/ui/headerNavigationExplore";
 import Search from "../../components/ui/search/search";
 import SegmentedControl from "../../components/ui/segmentedControl";
-import { useNavigationAnimation } from "../../hooks/useNavigationAnimation";
 import BadgeWithIcon from "../../components/ui/badgeWithIcon";
 import { usePlaces } from "../../hooks/places";
 import { useIntelligentFiltering } from "../../hooks/useIntelligentFiltering";
@@ -11,6 +10,7 @@ import FilteredResults from "../../components/ui/filtering/FilteredResults";
 import { LocationMultiGrid } from "../../components/cards/locationMultiCard";
 import PlaceCards from "../../components/cards/placeCard";
 import BeachCards from "../../components/cards/beachCard";
+import CategoryWrapper from "../../components/layout/SmoothCategoryWrapper";
 
 const BEACH_CAROUSEL_CONFIG = {
   interval: 4000,
@@ -68,7 +68,6 @@ export default function PlayasPage() {
   const [selectedBadge, setSelectedBadge] = useState<string | null>("todo");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const animationClass = useNavigationAnimation();
 
   const { places, loading, error, mapCenter } = usePlaces({
     category: "beaches",
@@ -113,20 +112,11 @@ export default function PlayasPage() {
   }, []);
 
   return (
-    <div
-      className={`relative flex flex-col max-w-md mx-auto min-h-screen ${animationClass}`}
+    <CategoryWrapper
+      backgroundImage="/beach-background-section-explore.svg"
+      backgroundSize="170%"
+      backgroundPosition="top center"
     >
-      <div
-        className="absolute top-0 left-0 w-full h-140 sm:h-40 md:h-48 lg:h-56 bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url(/beach-background-section-explore.svg)",
-          backgroundSize: "170%",
-          backgroundPosition: "top center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
-
-      <div className="relative z-10 flex flex-col gap-3 p-6">
         <HeaderNavigationExplore />
 
         <div className="justify-center items-center text-center">
@@ -276,7 +266,6 @@ export default function PlayasPage() {
             userLocation={mapCenter || undefined}
           />
         </FilterableContent>
-      </div>
-    </div>
+    </CategoryWrapper>
   );
 }
