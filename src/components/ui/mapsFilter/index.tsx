@@ -1,38 +1,48 @@
-import React, { useState } from 'react';
-import { IoLocate, IoStarOutline, IoTimerOutline } from 'react-icons/io5';
+import React from 'react';
+import { FaListUl, FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 
-// Datos para los botones de filtro
-const filterCategories = [
-  { name: 'Todo',       icon: <IoLocate /> },
-  { name: 'Destacados', icon: <IoStarOutline /> },
-  { name: 'Cercanos',   icon: <IoTimerOutline /> },
-];
+// Definimos los tipos para las props
+type SecondaryFilterType = 'all' | 'featured' | 'nearby';
 
-const MapFilters = () => {
-  const [activeFilter, setActiveFilter] = useState('Todo');
+interface MapFiltersProps {
+  activeFilter: SecondaryFilterType;
+  onFilterChange: (filter: SecondaryFilterType) => void;
+}
 
+const MapFilters: React.FC<MapFiltersProps> = ({ activeFilter, onFilterChange }) => {
   return (
-    <div className="flex items-center space-x-2">
-      {filterCategories.map((category) => (
-        <button
-          key={category.name}
-          onClick={() => setActiveFilter(category.name)}
-          className={`
-            flex items-center gap-0.5 rounded-full px-1 py-2 text-sm font-semibold
-            transition-colors duration-300 ease-in-out focus:outline-none w-28
-            ${
-              activeFilter === category.name
-                ? 'bg-[#073247] text-white shadow-lg'
-                : 'bg-white text-gray-500 shadow-sm'
-            }
-          `}
-        >
-          <span className="text-xl">{category.icon}</span>
-          <span>{category.name}</span>
-        </button>
-      ))}
+    <div className="flex w-full justify-center space-x-2 rounded-full bg-gray-100 p-1">
+      {FILTERS.map((filter) => {
+        const isSelected = activeFilter === filter.id;
+        return (
+          <button
+            key={filter.id}
+            onClick={() => onFilterChange(filter.id as SecondaryFilterType)}
+            className={`
+              flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2 
+              text-sm font-semibold transition-all duration-300 ease-in-out
+              ${
+                isSelected
+                  // --- LÍNEA MODIFICADA ---
+                  ? 'bg-[#073247] text-white shadow-md' 
+                  : 'bg-transparent text-gray-500 hover:bg-gray-200'
+              }
+            `}
+          >
+            {filter.icon}
+            <span>{filter.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 };
+
+// Se definen los filtros aquí para que no se redeclaren en cada render
+const FILTERS = [
+  { id: 'all', label: 'Todo', icon: <FaListUl /> },
+  { id: 'featured', label: 'Destacados', icon: <FaStar /> },
+  { id: 'nearby', label: 'Cercanos', icon: <FaMapMarkerAlt /> },
+];
 
 export default MapFilters;
