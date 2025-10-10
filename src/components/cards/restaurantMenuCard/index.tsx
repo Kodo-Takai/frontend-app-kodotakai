@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { usePlaces } from "../../../hooks/places";
+import type { Place, EnrichedPlace } from "../../../hooks/places";
+import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
 interface Restaurant {
@@ -28,16 +30,13 @@ export default function RestaurantMenuCard() {
 
   const displayedRestaurants = restaurants.slice(0, 6);
 
-  const handleRestaurantClick = (restaurant: Restaurant) => {
-    console.log("Restaurante seleccionado:", restaurant);
-  };
-
   const RestaurantCard = ({ restaurant }: { restaurant: Restaurant }) => {
     const [imageErrors, setImageErrors] = useState<boolean[]>([
       false,
       false,
       false,
     ]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleImageError = (index: number) => {
       setImageErrors((prev) => {
@@ -45,6 +44,14 @@ export default function RestaurantMenuCard() {
         newErrors[index] = true;
         return newErrors;
       });
+    };
+
+    const handleOpenModal = () => {
+      setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+      setIsModalOpen(false);
     };
 
     // Procesar fotos del lugar enriquecido
@@ -86,89 +93,101 @@ export default function RestaurantMenuCard() {
     const images = getImages();
 
     return (
-      <div className="restaurant-menu-card-width shadow-sm" onClick={() => handleRestaurantClick(restaurant)}>
-        <div className="restaurant-menu-card-container">
-          <div className="restaurant-menu-card-header">
-            <div className="restaurant-menu-card-icon-column">
-              <img
-                src="/icons/food_icon.svg"
-                alt="Food"
-                className="restaurant-menu-card-food-icon"
-              />
-            </div>
-
-            <div className="restaurant-menu-card-info-column">
-              <div className="restaurant-menu-card-name">{restaurant.name}</div>
-              <div className="restaurant-menu-card-location">
-                {restaurant.vicinity || "Ubicación no disponible"}
+      <>
+        <div 
+          className="restaurant-menu-card-width shadow-sm" 
+          onClick={handleOpenModal}
+        >
+          <div className="restaurant-menu-card-container">
+            <div className="restaurant-menu-card-header">
+              <div className="restaurant-menu-card-icon-column">
+                <img
+                  src="/icons/food_icon.svg"
+                  alt="Food"
+                  className="restaurant-menu-card-food-icon"
+                />
               </div>
-            </div>
 
-            <div className="restaurant-menu-card-rating-column">
-              <div className="restaurant-menu-card-rating-container">
-                <div className="restaurant-menu-card-star-row">
-                  <FaStar className="restaurant-menu-card-star-icon" />
-                </div>
-                <div className="restaurant-menu-card-rating-text">
-                  {restaurant.rating?.toFixed(1) || "4.0"}
+              <div className="restaurant-menu-card-info-column">
+                <div className="restaurant-menu-card-name">{restaurant.name}</div>
+                <div className="restaurant-menu-card-location">
+                  {restaurant.vicinity || "Ubicación no disponible"}
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div className="restaurant-menu-card-images-section">
-            <div className="restaurant-menu-card-main-image">
-              <img
-                src={
-                  imageErrors[0]
-                    ? "https://picsum.photos/400/200?random=restaurant-error"
-                    : images[0]?.photo_url
-                }
-                alt={restaurant.name}
-                className="restaurant-menu-card-image"
-                loading="lazy"
-                onError={() => handleImageError(0)}
-              />
-              <div className="restaurant-menu-card-overlay">
-                <h3 className="restaurant-menu-card-overlay-title">PLATOS</h3>
-                <p className="restaurant-menu-card-overlay-text">Desde</p>
-                <p className="restaurant-menu-card-overlay-price">
-                  $30.000 COP
-                </p>
+              <div className="restaurant-menu-card-rating-column">
+                <div className="restaurant-menu-card-rating-container">
+                  <div className="restaurant-menu-card-star-row">
+                    <FaStar className="restaurant-menu-card-star-icon" />
+                  </div>
+                  <div className="restaurant-menu-card-rating-text">
+                    {restaurant.rating?.toFixed(1) || "4.0"}
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="restaurant-menu-card-secondary-images">
-              <div className="restaurant-menu-card-secondary-image">
+            <div className="restaurant-menu-card-images-section">
+              <div className="restaurant-menu-card-main-image">
                 <img
                   src={
-                    imageErrors[1]
+                    imageErrors[0]
                       ? "https://picsum.photos/400/200?random=restaurant-error"
-                      : images[1]?.photo_url
+                      : images[0]?.photo_url
                   }
                   alt={restaurant.name}
                   className="restaurant-menu-card-image"
                   loading="lazy"
-                  onError={() => handleImageError(1)}
+                  onError={() => handleImageError(0)}
                 />
+                <div className="restaurant-menu-card-overlay">
+                  <h3 className="restaurant-menu-card-overlay-title">PLATOS</h3>
+                  <p className="restaurant-menu-card-overlay-text">Desde</p>
+                  <p className="restaurant-menu-card-overlay-price">
+                    $30.000 COP
+                  </p>
+                </div>
               </div>
-              <div className="restaurant-menu-card-secondary-image">
-                <img
-                  src={
-                    imageErrors[2]
-                      ? "https://picsum.photos/400/200?random=restaurant-error"
-                      : images[2]?.photo_url
-                  }
-                  alt={restaurant.name}
-                  className="restaurant-menu-card-image"
-                  loading="lazy"
-                  onError={() => handleImageError(2)}
-                />
+
+              <div className="restaurant-menu-card-secondary-images">
+                <div className="restaurant-menu-card-secondary-image">
+                  <img
+                    src={
+                      imageErrors[1]
+                        ? "https://picsum.photos/400/200?random=restaurant-error"
+                        : images[1]?.photo_url
+                    }
+                    alt={restaurant.name}
+                    className="restaurant-menu-card-image"
+                    loading="lazy"
+                    onError={() => handleImageError(1)}
+                  />
+                </div>
+                <div className="restaurant-menu-card-secondary-image">
+                  <img
+                    src={
+                      imageErrors[2]
+                        ? "https://picsum.photos/400/200?random=restaurant-error"
+                        : images[2]?.photo_url
+                    }
+                    alt={restaurant.name}
+                    className="restaurant-menu-card-image"
+                    loading="lazy"
+                    onError={() => handleImageError(2)}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Modal para mostrar detalles del restaurante */}
+        <PlaceModal 
+          isOpen={isModalOpen} 
+          onClose={handleCloseModal} 
+          place={restaurant as Place | EnrichedPlace} 
+        />
+      </>
     );
   };
 

@@ -41,7 +41,7 @@ function AppContent() {
           <Route path="/register" element={<Register />} />
         </Route>
 
-        <Route element={<ProtectedRoute />}>
+
           <Route element={<MainLayout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/notifications" element={<Notifications />} />
@@ -56,7 +56,6 @@ function AppContent() {
           <Route path="/custom-profile" element={<CustomProfile />} />
           <Route path="/profile" element={<Profile />} />
           </Route>
-        </Route>
       </Routes>
     </>
   );

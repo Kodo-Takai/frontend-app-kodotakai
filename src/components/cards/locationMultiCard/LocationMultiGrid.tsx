@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import LocationMultiCard from "./LocationMultiCard";
+import PlaceModal from "../../ui/placeModal";
 import type { Place } from "../../../hooks/places";
 import "./index.scss";
 
@@ -35,12 +36,13 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
   places,
   loading,
   error,
-  onPlaceClick,
   itemsPerPage = DEFAULT_ITEMS_PER_PAGE,
   userLocation,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const sortedPlaces = useMemo(() => {
     if (!userLocation || places.length === 0) {
@@ -73,6 +75,16 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
       setCurrentPage((prev) => prev + 1);
       setIsLoadingMore(false);
     }, LOAD_MORE_DELAY);
+  };
+
+  const handlePlaceClick = (place: Place) => {
+    setSelectedPlace(place);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlace(null);
   };
 
   if (loading) {
@@ -121,7 +133,7 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
           <LocationMultiCard
             key={`${place.place_id}-${index}`}
             place={place}
-            onClick={onPlaceClick}
+            onClick={() => handlePlaceClick(place)}
           />
         ))}
       </div>
@@ -145,6 +157,15 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
             )}
           </button>
         </div>
+      )}
+
+      {/* Modal para mostrar detalles del lugar */}
+      {selectedPlace && (
+        <PlaceModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          place={selectedPlace}
+        />
       )}
     </div>
   );

@@ -189,7 +189,6 @@ export default function Explorar() {
         placeholder="Buscar lugares, hoteles, restaurantes..."
         className="mb-4"
       />
-
       <DestinationCards />
       <RestaurantMenuCard />
       <HotelsCard />
