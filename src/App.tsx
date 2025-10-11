@@ -26,6 +26,7 @@ import SplashScreen from "./components/common/splashScreen";
 import MainLayout from "./components/layout/mainLayout";
 import AuthLayout from "./components/layout/authLayout";
 import ProtectedRoute from "./components/layout/protectedRoute";
+import Agenda from "./pages/Agenda";
 
 function AppContent() {
   const isLoading = useSplashScreen();
@@ -41,11 +42,11 @@ function AppContent() {
           <Route path="/register" element={<Register />} />
         </Route>
 
-
-          <Route element={<MainLayout />}>
+        <Route element={<MainLayout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/explorar" element={<Explorar />} />
+          <Route path="/agenda" element={<Agenda />} />
           <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
           <Route path="/explorar/playas" element={<PlayasPage />} />
           <Route path="/explorar/hoteles" element={<HotelesPage />} />
@@ -55,7 +56,7 @@ function AppContent() {
           <Route path="/maps" element={<Maps />} />
           <Route path="/custom-profile" element={<CustomProfile />} />
           <Route path="/profile" element={<Profile />} />
-          </Route>
+        </Route>
       </Routes>
     </>
   );
