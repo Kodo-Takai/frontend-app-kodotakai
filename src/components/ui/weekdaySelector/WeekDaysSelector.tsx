@@ -1,5 +1,5 @@
-import React from 'react';
-import { type DayInfo } from '../daySelector/DaySelector';
+import React from "react";
+import { type DayInfo } from "../daySelector/DaySelector";
 
 interface WeekDaysSelectorProps {
   weekDays: DayInfo[];
@@ -16,18 +16,22 @@ const WeekDaysSelector: React.FC<WeekDaysSelectorProps> = ({
         <button
           key={index}
           onClick={() => onDaySelect(day.date)}
-          className={`flex-1 flex flex-col items-center justify-center py-3 px-2 rounded-xl transition-all duration-200 hover:scale-105 ${
+          className={`flex-1 text-sm flex flex-col items-center justify-center py-2 px-2 rounded-xl transition-all duration-200 hover:scale-105 ${
             day.isSelected
-              ? 'bg-black text-white'
+              ? "bg-[#BACB2C] text-[#151A00]"
               : day.isToday
-              ? 'bg-gray-100 text-black border-2 border-gray-300'
-              : 'bg-white text-gray-600 hover:bg-gray-50'
+              ? "bg-gray-100 text-[#151A00] border-2 border-gray-400"
+              : "bg-white/50 text-[#] hover:bg-gray-50 border-2 border-white/50"
           }`}
         >
-          <span className="text-xs font-medium mb-1">{day.dayName}</span>
-          <span className={`text-lg font-bold ${
-            day.isSelected ? 'text-[#B8F261]' : ''
-          }`}>
+          <span className="text-xs font-normal mb-1">
+            {day.dayName.charAt(0).toUpperCase() + day.dayName.slice(1, 3).toLowerCase()}
+          </span>
+          <span
+            className={`text-lg ${
+              day.isSelected ? "font-black text-[#151A00]" : "font-medium"
+            }`}
+          >
             {day.dayNumber}
           </span>
         </button>
