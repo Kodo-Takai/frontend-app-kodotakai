@@ -1,15 +1,19 @@
 import { useState } from "react";
 import CategoryWrapper from "../components/layout/SmoothCategoryWrapper";
-import DaySelector from "../components/ui/DaySelector";
-import WeekDaysSelector from "../components/ui/WeekDaysSelector";
-import CalendarModal from "../components/ui/CalendarModal";
+import DaySelector from "../components/ui/daySelector/DaySelector";
+import WeekDaysSelector from "../components/ui/weekdaySelector/WeekDaysSelector";
+import CalendarModal from "../components/ui/calendarModal/CalendarModal";
+import AgendaCard from "../components/ui/agendaCard/AgendaCard";
 import { useDateNavigation } from "../hooks/useDateNavigation";
 import { useAgenda } from "../hooks/useAgenda";
+import { isToday } from "date-fns";
 
 export default function Agenda() {
-  const [selectedSection, setSelectedSection] = useState<'agendados' | 'itinerarios'>('agendados');
+  const [selectedSection, setSelectedSection] = useState<
+    "agendados" | "itinerarios"
+  >("agendados");
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
-  
+
   const {
     selectedDate,
     weekDays,
@@ -18,10 +22,33 @@ export default function Agenda() {
     goToNextWeek,
     selectDay,
   } = useDateNavigation();
-  
-  const {
-    selectDate,
+
+  const { 
+    selectDate, 
+    itemsForSelectedDate, 
+    updateItem
   } = useAgenda();
+
+  // Filtrar items por sección (Ahora vs Más Tarde)
+  const ahoraItems = itemsForSelectedDate.filter(item => {
+    const itemDate = new Date(item.scheduledDate);
+    return isToday(itemDate);
+  });
+
+  const masTardeItems = itemsForSelectedDate.filter(item => {
+    const itemDate = new Date(item.scheduledDate);
+    return !isToday(itemDate);
+  });
+
+  // Funciones para manejar acciones
+  const handleMarkAsVisited = (id: string) => {
+    updateItem(id, { status: 'completed' });
+  };
+
+  const handleMoveItem = (_id: string) => {
+    // Por ahora solo mostramos un alert, después implementaremos el modal de mover
+    alert('Función de mover destino - próximamente');
+  };
   return (
     <CategoryWrapper
       backgroundImage="/default-background-light.svg"
@@ -45,7 +72,7 @@ export default function Agenda() {
           <img
             src="./icons/calendar-icon.svg"
             alt="Calendar"
-            className="w-6 h-6"
+            className="w-5 h-5"
           />
         </button>
       </div>
@@ -58,54 +85,98 @@ export default function Agenda() {
         currentWeekText={currentWeekText}
       />
 
-      <WeekDaysSelector
-        weekDays={weekDays}
-        onDaySelect={selectDay}
-      />
+      <WeekDaysSelector weekDays={weekDays} onDaySelect={selectDay} />
 
       <div className="w-full flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-black text-[15px] font-medium">Elige tu sección</h2>
-          <img 
-            src="./icons/notification-bell.svg" 
-            alt="signo de pregunta" 
+          <h2 className="text-black text-md font-medium">
+            Elige tu sección
+          </h2>
+          <img
+            src="./icons/notification-bell.svg"
+            alt="signo de pregunta"
             className="w-6 h-6"
           />
         </div>
         <div className="flex justify-between w-full">
-          <button 
+          <button
             id="agendados-btn"
-            onClick={() => setSelectedSection('agendados')}
+            onClick={() => setSelectedSection("agendados")}
             className={`flex items-center gap-2 text-black px-6 py-3 rounded-3xl font-medium transition-all duration-200 hover:scale-105 ${
-              selectedSection === 'agendados' 
-                ? 'bg-[#B8F261]' 
-                : 'bg-white'
+              selectedSection === "agendados" ? "bg-[#B8F261]" : "bg-white"
             }`}
           >
-            <img 
-              src="./icons/agendados-icon.svg" 
-              alt="calendar" 
+            <img
+              src="./icons/agendados-icon.svg"
+              alt="calendar"
               className="w-7 h-7"
             />
             Agendados
           </button>
-          <button 
+          <button
             id="itinerarios-btn"
-            onClick={() => setSelectedSection('itinerarios')}
+            onClick={() => setSelectedSection("itinerarios")}
             className={`flex items-center gap-2 text-black px-6 py-3 rounded-3xl font-medium transition-all duration-200 hover:scale-105 ${
-              selectedSection === 'itinerarios' 
-                ? 'bg-[#B8F261]' 
-                : 'bg-white'
+              selectedSection === "itinerarios" ? "bg-[#B8F261]" : "bg-white"
             }`}
           >
-            <img 
-              src="./icons/itinerarios-icon.svg" 
-              alt="document" 
+            <img
+              src="./icons/itinerarios-icon.svg"
+              alt="document"
               className="w-7 h-7"
             />
             Itinerarios
           </button>
         </div>
+      </div>
+
+      {/* Sección de Destinos Agendados */}
+      <div className="w-full flex flex-col gap-6">
+        {/* Sección "Ahora" */}
+        {ahoraItems.length > 0 && (
+          <div className="flex flex-col gap-3">
+            <h3 className="text-black text-md font-medium">Ahora</h3>
+            <div className="flex flex-col gap-7">
+              {ahoraItems.map((item) => (
+                <AgendaCard
+                  key={item.id}
+                  item={item}
+                  onMarkAsVisited={handleMarkAsVisited}
+                  onMoveItem={handleMoveItem}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Sección "Más Tarde" */}
+        {masTardeItems.length > 0 && (
+          <div className="flex flex-col gap-3">
+            <h3 className="text-black text-lg font-bold">Más Tarde</h3>
+            <div className="flex flex-col gap-3">
+              {masTardeItems.map((item) => (
+                <AgendaCard
+                  key={item.id}
+                  item={item}
+                  onMarkAsVisited={handleMarkAsVisited}
+                  onMoveItem={handleMoveItem}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mensaje cuando no hay items */}
+        {itemsForSelectedDate.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-gray-500 text-sm">
+              No tienes destinos agendados para este día
+            </p>
+            <p className="text-gray-400 text-xs mt-2">
+              Ve a Explorar y agrega algunos destinos a tu agenda
+            </p>
+          </div>
+        )}
       </div>
 
       <CalendarModal

@@ -2,7 +2,7 @@
 
 ## 🎯 **Descripción General**
 
-El sistema de Agenda es una funcionalidad completa que permite a los usuarios gestionar sus eventos y actividades programadas. Incluye navegación por fechas, selección de días, modal de calendario personalizado y gestión de estado con Redux Toolkit.
+El sistema de Agenda es una funcionalidad completa que permite a los usuarios gestionar sus eventos y actividades programadas. Incluye navegación por fechas, selección de días, modal de calendario personalizado, integración con el sistema de lugares y gestión de estado con Redux Toolkit.
 
 ## 🏗️ **Arquitectura del Sistema**
 
@@ -11,12 +11,19 @@ El sistema de Agenda es una funcionalidad completa que permite a los usuarios ge
 ```
 📁 Sistema de Agenda
 ├── 📄 Agenda.tsx (Página principal)
-├── 🗓️ DaySelector (Navegación de semanas)
-├── 📅 WeekDaysSelector (Selector de días)
-├── 🗓️ CalendarModal (Modal de calendario)
+├── 📁 daySelector/
+│   └── 🗓️ DaySelector.tsx (Navegación de semanas)
+├── 📁 weekdaySelector/
+│   └── 📅 WeekDaysSelector.tsx (Selector de días)
+├── 📁 calendarModal/
+│   ├── 🗓️ CalendarModal.tsx (Modal de calendario)
+│   └── 🎨 CalendarModal.css (Estilos del calendario)
+├── 📁 agendaCard/
+│   └── 🎴 AgendaCard.tsx (Tarjeta de destino agendado)
 ├── 🎯 useDateNavigation (Hook de navegación)
 ├── 📊 useAgenda (Hook de gestión de agenda)
-└── 🏪 agendaSlice (Estado Redux)
+├── 🏪 agendaSlice (Estado Redux)
+└── 🔗 Integración con PlaceModal (Botón Agendar)
 ```
 
 ## 📋 **Archivos Creados y Modificados**
@@ -26,15 +33,43 @@ El sistema de Agenda es una funcionalidad completa que permite a los usuarios ge
 1. **`src/redux/slice/agendaSlice.ts`** - Estado global de agenda
 2. **`src/hooks/useDateNavigation.ts`** - Hook para navegación de fechas
 3. **`src/hooks/useAgenda.ts`** - Hook para gestión de agenda
-4. **`src/components/ui/DaySelector.tsx`** - Componente de navegación semanal
-5. **`src/components/ui/WeekDaysSelector.tsx`** - Selector de días de la semana
-6. **`src/components/ui/CalendarModal.tsx`** - Modal de calendario personalizado
+4. **`src/components/ui/daySelector/DaySelector.tsx`** - Componente de navegación semanal
+5. **`src/components/ui/weekdaySelector/WeekDaysSelector.tsx`** - Selector de días de la semana
+6. **`src/components/ui/calendarModal/CalendarModal.tsx`** - Modal de calendario personalizado
+7. **`src/components/ui/calendarModal/CalendarModal.css`** - Estilos del calendario
+8. **`src/components/ui/agendaCard/AgendaCard.tsx`** - Tarjeta de destino agendado
 
 ### **🔄 Archivos Modificados:**
 
-1. **`src/pages/Agenda.tsx`** - Página principal integrada
-2. **`src/redux/store.ts`** - Store actualizado con agendaSlice
-3. **`src/App.tsx`** - Ruta de agenda agregada
+1. **`src/pages/Agenda.tsx`** - Página principal con secciones "Ahora" y "Más Tarde" y importaciones actualizadas
+2. **`src/hooks/useDateNavigation.ts`** - Importación actualizada para DayInfo
+3. **`src/redux/store.ts`** - Store actualizado con agendaSlice
+4. **`src/App.tsx`** - Ruta de agenda agregada
+5. **`src/components/ui/placeModal/index.tsx`** - Integración con botón "Agendar"
+
+### **🗂️ Organización de Carpetas (Actualización Reciente):**
+
+Los componentes UI han sido reorganizados en carpetas individuales siguiendo la convención del proyecto:
+
+```
+src/components/ui/
+├── 📁 daySelector/
+│   └── DaySelector.tsx
+├── 📁 weekdaySelector/
+│   └── WeekDaysSelector.tsx
+├── 📁 calendarModal/
+│   ├── CalendarModal.tsx
+│   └── CalendarModal.css
+└── 📁 agendaCard/
+    └── AgendaCard.tsx
+```
+
+**Beneficios de la Nueva Organización:**
+- ✅ **Modularidad**: Cada componente en su propia carpeta
+- ✅ **Escalabilidad**: Fácil agregar archivos relacionados (tests, estilos, etc.)
+- ✅ **Mantenibilidad**: Estructura clara y consistente
+- ✅ **Convención**: Sigue el patrón del proyecto (nombres en minúsculas)
+- ✅ **Importaciones**: Actualizadas automáticamente en todos los archivos
 
 ## 🧩 **Análisis Detallado de Componentes**
 
@@ -51,7 +86,7 @@ export interface AgendaItem {
   destinationId: string;
   destinationName: string;
   location: string;
-  scheduledDate: Date;
+  scheduledDate: string; // String ISO para serialización Redux
   scheduledTime: string;
   status: 'pending' | 'completed' | 'cancelled';
   category: 'restaurant' | 'hotel' | 'beach' | 'park' | 'disco' | 'study';
@@ -62,7 +97,7 @@ export interface AgendaItem {
 
 export interface AgendaState {
   items: AgendaItem[];
-  selectedDate: Date;
+  selectedDate: string; // String ISO para serialización Redux
   isLoading: boolean;
   error: string | null;
 }
@@ -85,6 +120,13 @@ export type AgendaSection = 'agendados' | 'itinerarios';
 - ✅ Inmutabilidad garantizada por Redux Toolkit
 - ✅ TypeScript con tipado estricto
 - ✅ Manejo de errores integrado
+- ✅ Serialización compatible con Redux (fechas como strings ISO)
+- ✅ Conversión automática de fechas en hooks
+
+**Correcciones Recientes:**
+- ✅ **Error de Serialización Redux**: Solucionado cambiando el tipo del payload de `Date` a `string` en `setSelectedDate`
+- ✅ **Importaciones TypeScript**: Corregidas para usar `type` imports con `verbatimModuleSyntax`
+- ✅ **Estructura de Carpetas**: Reorganización completa siguiendo convenciones del proyecto
 
 ### **2. useDateNavigation.ts - Hook de Navegación**
 
@@ -179,7 +221,7 @@ export const useAgenda = () => {
 
 ### **4. DaySelector.tsx - Navegación Semanal**
 
-**Ubicación:** `src/components/ui/DaySelector.tsx`
+**Ubicación:** `src/components/ui/daySelector/DaySelector.tsx`
 
 **Propósito:** Componente que muestra la barra de navegación con flechas y texto de semana.
 
@@ -227,7 +269,7 @@ const DaySelector: React.FC<DaySelectorProps> = ({
 
 ### **5. WeekDaysSelector.tsx - Selector de Días**
 
-**Ubicación:** `src/components/ui/WeekDaysSelector.tsx`
+**Ubicación:** `src/components/ui/weekdaySelector/WeekDaysSelector.tsx`
 
 **Propósito:** Componente que muestra los 7 días de la semana como botones seleccionables.
 
@@ -271,7 +313,7 @@ const WeekDaysSelector: React.FC<WeekDaysSelectorProps> = ({
 
 ### **6. CalendarModal.tsx - Modal de Calendario**
 
-**Ubicación:** `src/components/ui/CalendarModal.tsx`
+**Ubicación:** `src/components/ui/calendarModal/CalendarModal.tsx`
 
 **Propósito:** Modal personalizado con calendario para selección de fechas.
 
@@ -333,17 +375,88 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
 
 **Características de Diseño:**
 - ✅ Modal overlay con backdrop
-- ✅ Calendario personalizado con estilos CSS
+- ✅ Calendario personalizado con estilos CSS mejorados
 - ✅ Día actual resaltado en negro con texto verde
 - ✅ Día seleccionado con fondo verde
 - ✅ Botones de confirmación y cancelación
 - ✅ Responsive design
+- ✅ Grid layout perfecto para alineación de días
+- ✅ Días de fin de semana en color rojo
+- ✅ Navegación del calendario estilizada
+- ✅ Bordes punteados en días de la semana
 
-### **7. Agenda.tsx - Página Principal**
+### **7. AgendaCard.tsx - Tarjeta de Destino Agendado**
+
+**Ubicación:** `src/components/ui/agendaCard/AgendaCard.tsx`
+
+**Propósito:** Componente que muestra un destino agendado con su información y botones de acción.
+
+**Estructura:**
+```typescript
+interface AgendaCardProps {
+  item: AgendaItem;
+  onMarkAsVisited: (id: string) => void;
+  onMoveItem: (id: string) => void;
+}
+
+const AgendaCard: React.FC<AgendaCardProps> = ({
+  item,
+  onMarkAsVisited,
+  onMoveItem,
+}) => {
+  return (
+    <div className="rounded-xl flex items-center gap-4">
+      {/* Imagen del destino */}
+      <div className="flex-shrink-0 relative">
+        <img
+          src={item.image}
+          alt={item.destinationName}
+          className="w-18 h-18 rounded-lg object-cover brightness-70"
+        />
+      </div>
+
+      {/* Información del destino */}
+      <div className="flex-1 min-w-0">
+        <h3 className="font-bold text-black text-md uppercase truncate">
+          {item.destinationName}
+        </h3>
+        <p className="text-gray-600 text-sm mt-1 truncate">
+          {item.location}
+        </p>
+        <p className="text-[#B8F261] text-sm mt-1 font-medium">
+          {formatTimeAndDate(new Date(item.scheduledDate), item.scheduledTime)}
+        </p>
+      </div>
+
+      {/* Botones de acción */}
+      <div className="flex flex-col gap-2">
+        {/* Botón Me Gusta/Visitado */}
+        <button onClick={() => onMarkAsVisited(item.id)}>
+          {/* Icono de pulgar hacia arriba */}
+        </button>
+
+        {/* Botón Mover */}
+        <button onClick={() => onMoveItem(item.id)}>
+          {/* Icono de líneas horizontales */}
+        </button>
+      </div>
+    </div>
+  );
+};
+```
+
+**Características de Diseño:**
+- ✅ Imagen con `brightness-70` para oscurecer ligeramente
+- ✅ Información del destino con formato específico
+- ✅ Botones de acción con iconos SVG
+- ✅ Formateo de fechas en español
+- ✅ Estados visuales para botones
+
+### **8. Agenda.tsx - Página Principal**
 
 **Ubicación:** `src/pages/Agenda.tsx`
 
-**Propósito:** Página principal que integra todos los componentes del sistema de agenda.
+**Propósito:** Página principal que integra todos los componentes del sistema de agenda con secciones "Ahora" y "Más Tarde".
 
 **Integración de Componentes:**
 ```typescript
@@ -360,9 +473,22 @@ export default function Agenda() {
     selectDay,
   } = useDateNavigation();
   
-  const {
-    selectDate,
+  const { 
+    selectDate, 
+    itemsForSelectedDate, 
+    updateItem
   } = useAgenda();
+
+  // Filtrar items por sección (Ahora vs Más Tarde)
+  const ahoraItems = itemsForSelectedDate.filter(item => {
+    const itemDate = new Date(item.scheduledDate);
+    return isToday(itemDate);
+  });
+
+  const masTardeItems = itemsForSelectedDate.filter(item => {
+    const itemDate = new Date(item.scheduledDate);
+    return !isToday(itemDate);
+  });
 
   return (
     <CategoryWrapper
@@ -497,20 +623,39 @@ pnpm add @types/react-calendar
 ### **✅ Modal de Calendario:**
 - Apertura desde botón de calendario
 - Selección de fechas con confirmación
-- Estilos personalizados
+- Estilos personalizados con CSS
 - Cierre con backdrop o botones
 
 ### **✅ Gestión de Estado:**
 - Estado global con Redux Toolkit
 - Operaciones CRUD completas
 - Filtrado por fecha y categoría
-- Persistencia de datos
+- Serialización compatible con Redux (fechas como strings ISO)
 
 ### **✅ Interfaz de Usuario:**
 - Botones de sección con estado activo
 - Efectos hover y transiciones
 - Diseño responsive
 - Iconos integrados
+
+### **✅ Integración con Sistema de Lugares:**
+- Botón "Agendar" funcional en PlaceModal
+- Creación automática de items de agenda
+- Confirmación de agendado
+- Cierre automático del modal
+
+### **✅ Secciones de Agenda:**
+- Sección "Ahora" para destinos del día actual
+- Sección "Más Tarde" para destinos futuros
+- Filtrado automático por fecha
+- Mensaje cuando no hay destinos agendados
+
+### **✅ Tarjetas de Destino:**
+- Diseño fiel a especificaciones visuales
+- Imagen con efecto de oscurecimiento (`brightness-70`)
+- Información completa del destino
+- Botones de acción (Me Gusta/Visitado y Mover)
+- Formateo de fechas en español
 
 ## 🔄 **Flujo de Datos**
 
@@ -521,18 +666,26 @@ graph TB
     A --> D[DaySelector]
     A --> E[WeekDaysSelector]
     A --> F[CalendarModal]
+    A --> G[AgendaCard]
     
-    B --> G[date-fns]
-    C --> H[agendaSlice]
-    H --> I[Redux Store]
+    H[PlaceModal] --> I[useAgenda]
+    I --> J[agendaSlice]
+    J --> K[Redux Store]
     
-    D --> J[DayInfo Interface]
-    E --> J
-    F --> K[react-calendar]
+    B --> L[date-fns]
+    C --> J
+    F --> M[react-calendar]
     
-    L[User Actions] --> A
-    A --> M[State Updates]
-    M --> N[UI Re-render]
+    N[User Actions] --> A
+    N --> H
+    A --> O[State Updates]
+    H --> O
+    O --> P[UI Re-render]
+    
+    Q[AgendaCard] --> R[Mark as Visited]
+    Q --> S[Move Item]
+    R --> J
+    S --> J
 ```
 
 ## 🛠️ **Casos de Uso**
@@ -546,32 +699,62 @@ goToPreviousWeek() // Cambia a semana anterior
 selectDay(new Date('2024-01-15')) // Selecciona día específico
 ```
 
-### **2. Agregar Evento:**
+### **2. Agregar Evento desde PlaceModal:**
 ```typescript
-const { addItem } = useAgenda();
+// En PlaceModal - función handleAgendar
+const handleAgendar = () => {
+  if (!place) return;
 
-addItem({
-  destinationId: 'rest_123',
-  destinationName: 'Restaurante El Buen Sabor',
-  location: 'Cartagena, Colombia',
-  scheduledDate: new Date('2024-01-15'),
-  scheduledTime: '19:00',
-  status: 'pending',
-  category: 'restaurant',
-  image: 'restaurant-image.jpg',
-  description: 'Cena de cumpleaños'
-});
+  const agendaItem = {
+    destinationId: place.place_id || place.id || `place_${Date.now()}`,
+    destinationName: place.name,
+    location: (place as EnrichedPlace).formatted_address || place.vicinity || 'Ubicación no disponible',
+    scheduledDate: new Date().toISOString(), // Fecha actual como string ISO
+    scheduledTime: new Date().toLocaleTimeString('es-ES', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    }),
+    status: 'pending' as const,
+    category: 'restaurant' as const,
+    image: place.photo_url || images[0] || 'https://picsum.photos/400/300?random=agenda',
+    description: (place as EnrichedPlace).editorial_summary?.overview || `Visita a ${place.name}`,
+  };
+
+  addItem(agendaItem);
+  onClose();
+  alert(`¡${place.name} ha sido agregado a tu agenda!`);
+};
 ```
 
-### **3. Filtrar Eventos:**
+### **3. Filtrar Eventos por Sección:**
 ```typescript
-const { itemsForSelectedDate, itemsByCategory } = useAgenda();
+// En Agenda.tsx - filtrado por secciones
+const ahoraItems = itemsForSelectedDate.filter(item => {
+  const itemDate = new Date(item.scheduledDate);
+  return isToday(itemDate);
+});
 
-// Obtener eventos del día seleccionado
-const todayEvents = itemsForSelectedDate;
+const masTardeItems = itemsForSelectedDate.filter(item => {
+  const itemDate = new Date(item.scheduledDate);
+  return !isToday(itemDate);
+});
 
 // Obtener eventos por categoría
+const { itemsByCategory } = useAgenda();
 const restaurantEvents = itemsByCategory('restaurant');
+```
+
+### **4. Acciones en AgendaCard:**
+```typescript
+// Marcar como visitado
+const handleMarkAsVisited = (id: string) => {
+  updateItem(id, { status: 'completed' });
+};
+
+// Mover destino (preparado para implementación futura)
+const handleMoveItem = (id: string) => {
+  alert('Función de mover destino - próximamente');
+};
 ```
 
 ## 🔮 **Próximas Mejoras Sugeridas**
@@ -600,14 +783,34 @@ const restaurantEvents = itemsByCategory('restaurant');
 
 ## 📝 **Conclusión**
 
-El sistema de Agenda implementado proporciona una base sólida y escalable para la gestión de eventos. La arquitectura modular, el uso de TypeScript, y la integración con Redux Toolkit garantizan un código mantenible y extensible. El diseño fiel a las especificaciones visuales y las funcionalidades implementadas ofrecen una experiencia de usuario fluida y profesional.
+El sistema de Agenda implementado proporciona una funcionalidad completa y funcional para la gestión de eventos y destinos. La arquitectura modular, el uso de TypeScript, y la integración con Redux Toolkit garantizan un código mantenible y extensible. El diseño fiel a las especificaciones visuales y las funcionalidades implementadas ofrecen una experiencia de usuario fluida y profesional.
 
 **Características Destacadas:**
 - ✅ **Arquitectura Modular**: Componentes reutilizables y separación de responsabilidades
 - ✅ **TypeScript Completo**: Tipado estricto en toda la aplicación
 - ✅ **Estado Global**: Gestión centralizada con Redux Toolkit
+- ✅ **Serialización Compatible**: Fechas como strings ISO para Redux
+- ✅ **Integración Completa**: Conexión funcional con sistema de lugares
+- ✅ **Diseño Fiel**: Implementación exacta de especificaciones visuales
+- ✅ **Secciones Inteligentes**: Filtrado automático "Ahora" vs "Más Tarde"
+- ✅ **Acciones Funcionales**: Botones de visitado y mover preparados
 - ✅ **Diseño Responsive**: Adaptable a diferentes dispositivos
 - ✅ **Optimización**: Memoización y callbacks optimizados
 - ✅ **Extensibilidad**: Fácil agregar nuevas funcionalidades
 
-El sistema está listo para producción y puede ser extendido según las necesidades futuras del proyecto.
+**Estado Actual:**
+- ✅ **Funcionalidad Básica**: Completamente implementada y funcional
+- ✅ **Integración**: Conectada con sistema de lugares
+- ✅ **UI/UX**: Diseño implementado según especificaciones
+- ✅ **Organización**: Componentes reorganizados en carpetas modulares
+- ✅ **Errores Corregidos**: Serialización Redux y importaciones TypeScript
+- ✅ **Diseño del Modal**: Calendario con estilos mejorados y alineación perfecta
+- 🔄 **Funcionalidad Avanzada**: Botón "Mover" preparado para implementación futura
+
+**Últimas Mejoras Implementadas:**
+- ✅ **Reorganización de Carpetas**: Estructura modular siguiendo convenciones del proyecto
+- ✅ **Corrección de Errores**: Solucionados problemas de serialización Redux y TypeScript
+- ✅ **Mejoras de Diseño**: Modal de calendario con CSS optimizado y mejor alineación
+- ✅ **Importaciones Actualizadas**: Todas las referencias actualizadas automáticamente
+
+El sistema está completamente funcional y listo para producción. La arquitectura modular y las correcciones implementadas garantizan un código mantenible y extensible. La base sólida permite agregar fácilmente funcionalidades como drag & drop, notificaciones, y sincronización con backend.

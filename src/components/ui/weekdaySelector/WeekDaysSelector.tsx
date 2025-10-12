@@ -1,5 +1,5 @@
 import React from 'react';
-import { type DayInfo } from './DaySelector';
+import { type DayInfo } from '../daySelector/DaySelector';
 
 interface WeekDaysSelectorProps {
   weekDays: DayInfo[];

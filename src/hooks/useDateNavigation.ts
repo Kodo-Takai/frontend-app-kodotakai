@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays, subDays, isSameDay, isToday } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { type DayInfo } from '../components/ui/DaySelector';
+import { type DayInfo } from '../components/ui/daySelector/DaySelector';
 
 export const useDateNavigation = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());

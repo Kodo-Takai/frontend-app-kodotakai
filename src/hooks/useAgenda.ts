@@ -18,7 +18,7 @@ export const useAgenda = () => {
   // Obtener items del día seleccionado
   const getItemsForSelectedDate = useCallback(() => {
     return agenda.items.filter(item => 
-      isSameDay(new Date(item.scheduledDate), agenda.selectedDate)
+      isSameDay(new Date(item.scheduledDate), new Date(agenda.selectedDate))
     );
   }, [agenda.items, agenda.selectedDate]);
 
@@ -49,7 +49,7 @@ export const useAgenda = () => {
 
   // Cambiar fecha seleccionada
   const selectDate = useCallback((date: Date) => {
-    dispatch(setSelectedDate(date));
+    dispatch(setSelectedDate(date.toISOString()));
   }, [dispatch]);
 
   // Verificar si hay items en una fecha específica
@@ -62,7 +62,7 @@ export const useAgenda = () => {
   return {
     // Estado
     items: agenda.items,
-    selectedDate: agenda.selectedDate,
+    selectedDate: new Date(agenda.selectedDate), // Convertir de vuelta a Date para el componente
     isLoading: agenda.isLoading,
     error: agenda.error,
     

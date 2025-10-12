@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import type { EnrichedPlace, Place } from "../../../hooks/places";
 import { FaStar, FaPhoneAlt, FaMapMarkerAlt, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useAgenda } from "../../../hooks/useAgenda";
 
 export type PlaceModalProps = {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export type PlaceModalProps = {
 
 export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: PlaceModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { addItem } = useAgenda();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -82,6 +84,35 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
 
   const handleNextImage = () => {
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const handleAgendar = () => {
+    if (!place) return;
+
+    // Crear el item de agenda
+    const agendaItem = {
+      destinationId: place.place_id || place.id || `place_${Date.now()}`,
+      destinationName: place.name,
+      location: (place as EnrichedPlace).formatted_address || place.vicinity || 'Ubicación no disponible',
+      scheduledDate: new Date().toISOString(), // Fecha actual como string ISO
+      scheduledTime: new Date().toLocaleTimeString('es-ES', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }),
+      status: 'pending' as const,
+      category: 'restaurant' as const, // Por defecto, se puede mejorar después
+      image: place.photo_url || images[0] || 'https://picsum.photos/400/300?random=agenda',
+      description: (place as EnrichedPlace).editorial_summary?.overview || `Visita a ${place.name}`,
+    };
+
+    // Agregar a la agenda
+    addItem(agendaItem);
+    
+    // Cerrar el modal
+    onClose();
+    
+    // Mostrar confirmación (opcional)
+    alert(`¡${place.name} ha sido agregado a tu agenda!`);
   };
 
   if (!isOpen || !place) return null;
@@ -224,7 +255,7 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
             <button
               type="button"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2 font-semibold text-white shadow hover:bg-black"
-              onClick={() => { /* por ahora sin funcionalidad */ }}
+              onClick={handleAgendar}
             >
               Agendar
             </button>

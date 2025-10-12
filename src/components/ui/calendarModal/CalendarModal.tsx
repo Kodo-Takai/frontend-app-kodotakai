@@ -1,8 +1,8 @@
 import React from 'react';
 import Calendar from 'react-calendar';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import 'react-calendar/dist/Calendar.css';
+import './CalendarModal.css';
 
 interface CalendarModalProps {
   isOpen: boolean;
@@ -19,9 +19,9 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const handleDateChange = (date: Date | Date[]) => {
-    if (date instanceof Date) {
-      onDateSelect(date);
+  const handleDateChange = (value: any) => {
+    if (value instanceof Date) {
+      onDateSelect(value);
       onClose();
     }
   };
@@ -45,8 +45,6 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           <Calendar
             onChange={handleDateChange}
             value={selectedDate}
-            locale="es"
-            calendarType="ISO 8601"
             className="custom-calendar"
             tileClassName={({ date, view }) => {
               if (view === 'month') {
@@ -65,7 +63,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-2">Fecha seleccionada:</p>
           <p className="text-lg font-semibold text-black">
-            {format(selectedDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: es })}
+            {format(selectedDate, "EEEE, dd 'de' MMMM 'de' yyyy")}
           </p>
         </div>
 
@@ -88,63 +86,6 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           </button>
         </div>
       </div>
-
-      <style jsx global>{`
-        .custom-calendar {
-          width: 100%;
-          border: none;
-          font-family: inherit;
-        }
-        
-        .custom-calendar .react-calendar__tile {
-          border-radius: 8px;
-          margin: 2px;
-          padding: 8px;
-          font-weight: 500;
-        }
-        
-        .custom-calendar .react-calendar__tile:hover {
-          background-color: #f3f4f6;
-        }
-        
-        .custom-calendar .react-calendar__tile.today {
-          background-color: #000;
-          color: #B8F261;
-          font-weight: bold;
-        }
-        
-        .custom-calendar .react-calendar__tile.selected {
-          background-color: #B8F261;
-          color: #000;
-          font-weight: bold;
-        }
-        
-        .custom-calendar .react-calendar__navigation {
-          margin-bottom: 1rem;
-        }
-        
-        .custom-calendar .react-calendar__navigation button {
-          background-color: #f3f4f6;
-          border: none;
-          border-radius: 8px;
-          padding: 8px 12px;
-          font-weight: 600;
-        }
-        
-        .custom-calendar .react-calendar__navigation button:hover {
-          background-color: #e5e7eb;
-        }
-        
-        .custom-calendar .react-calendar__month-view__weekdays {
-          margin-bottom: 0.5rem;
-        }
-        
-        .custom-calendar .react-calendar__month-view__weekdays__weekday {
-          padding: 0.5rem;
-          font-weight: 600;
-          color: #6b7280;
-        }
-      `}</style>
     </div>
   );
 };

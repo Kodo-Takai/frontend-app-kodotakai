@@ -5,7 +5,7 @@ export interface AgendaItem {
   destinationId: string;
   destinationName: string;
   location: string;
-  scheduledDate: Date;
+  scheduledDate: string; // Cambiado a string ISO
   scheduledTime: string;
   status: 'pending' | 'completed' | 'cancelled';
   category: 'restaurant' | 'hotel' | 'beach' | 'park' | 'disco' | 'study';
@@ -16,7 +16,7 @@ export interface AgendaItem {
 
 export interface AgendaState {
   items: AgendaItem[];
-  selectedDate: Date;
+  selectedDate: string; // Cambiado a string ISO
   isLoading: boolean;
   error: string | null;
 }
@@ -25,7 +25,7 @@ export type AgendaSection = 'agendados' | 'itinerarios';
 
 const initialState: AgendaState = {
   items: [],
-  selectedDate: new Date(),
+  selectedDate: new Date().toISOString(),
   isLoading: false,
   error: null,
 };
@@ -34,7 +34,7 @@ const agendaSlice = createSlice({
   name: 'agenda',
   initialState,
   reducers: {
-    setSelectedDate: (state, action: PayloadAction<Date>) => {
+    setSelectedDate: (state, action: PayloadAction<string>) => {
       state.selectedDate = action.payload;
     },
     
@@ -62,7 +62,7 @@ const agendaSlice = createSlice({
       const { id, newDate, newTime } = action.payload;
       const item = state.items.find(item => item.id === id);
       if (item) {
-        item.scheduledDate = newDate;
+        item.scheduledDate = newDate.toISOString();
         if (newTime) {
           item.scheduledTime = newTime;
         }
