@@ -1,111 +1,128 @@
-.custom-calendar {
-  width: 100%;
-  border: none;
-  font-family: inherit;
-  background: white;
-}
-
-.custom-calendar .react-calendar__navigation {
+/* Modal de fondo */
+.calendar-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  justify-content: center;
+  z-index: 50;
 }
 
-.custom-calendar .react-calendar__navigation button {
-  background-color: #f3f4f6;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-weight: 600;
-  color: #374151;
-  cursor: pointer;
-  transition: background-color 0.2s;
+/* Contenedor del calendario */
+.calendar-container {
+  width: 100%;
 }
 
-.custom-calendar .react-calendar__navigation button:hover {
-  background-color: #e5e7eb;
-}
-
-.custom-calendar .react-calendar__navigation__label {
-  background-color: #f3f4f6;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-weight: 600;
-  color: #374151;
-  font-size: 1rem;
-}
-
-.custom-calendar .react-calendar__month-view__weekdays {
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-}
-
-.custom-calendar .react-calendar__month-view__weekdays__weekday {
-  padding: 0.5rem;
-  font-weight: 600;
-  color: #6b7280;
-  text-align: center;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px dotted #d1d5db;
-  flex: 1;
-}
-
-.custom-calendar .react-calendar__month-view__days {
+/* Días de la semana */
+.calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 2px;
+  margin-bottom: 8px;
 }
 
-.custom-calendar .react-calendar__tile {
-  border-radius: 8px;
-  padding: 8px;
-  font-weight: 500;
+.weekday {
+  padding: 8px 4px;
   text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Semanas del calendario */
+.calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+/* Días individuales */
+.calendar-day {
   min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
   border: none;
   background: transparent;
+  position: relative;
 }
 
-.custom-calendar .react-calendar__tile:hover {
+.calendar-day:hover {
   background-color: #f3f4f6;
 }
 
+.day-number {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
 /* Día actual */
-.custom-calendar .react-calendar__tile.today {
+.calendar-day.today {
   background-color: #000;
   color: #B8F261;
   font-weight: bold;
 }
 
+.calendar-day.today .day-number {
+  color: #B8F261;
+}
+
 /* Día seleccionado */
-.custom-calendar .react-calendar__tile.selected {
+.calendar-day.selected {
   background-color: #B8F261;
   color: #000;
   font-weight: bold;
 }
 
-.custom-calendar .react-calendar__tile--neighboringMonth {
+.calendar-day.selected .day-number {
+  color: #000;
+}
+
+/* Días de otros meses */
+.calendar-day.other-month {
   color: #9ca3af;
 }
 
-.custom-calendar .react-calendar__tile--weekend {
+.calendar-day.other-month .day-number {
+  color: #9ca3af;
+}
+
+/* Días de fin de semana */
+.calendar-day.weekend {
   color: #ef4444;
 }
 
-.custom-calendar .react-calendar__tile--weekend.today {
+.calendar-day.weekend .day-number {
+  color: #ef4444;
+}
+
+.calendar-day.weekend.today .day-number {
   color: #B8F261;
 }
 
-.custom-calendar .react-calendar__tile--weekend.selected {
+.calendar-day.weekend.selected .day-number {
+  color: #000;
+}
+
+/* Estados combinados */
+.calendar-day.other-month.weekend .day-number {
+  color: #9ca3af;
+}
+
+.calendar-day.other-month.today .day-number {
+  color: #B8F261;
+}
+
+.calendar-day.other-month.selected .day-number {
   color: #000;
 }

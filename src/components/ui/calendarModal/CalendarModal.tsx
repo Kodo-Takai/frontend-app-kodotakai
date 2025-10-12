@@ -1,7 +1,6 @@
-import React from 'react';
-import Calendar from 'react-calendar';
-import { format } from 'date-fns';
-import 'react-calendar/dist/Calendar.css';
+import React, { useState } from 'react';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
+import { es } from 'date-fns/locale';
 import './CalendarModal.css';
 
 interface CalendarModalProps {
@@ -17,17 +16,63 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
   selectedDate,
   onDateSelect,
 }) => {
+  const [currentMonth, setCurrentMonth] = useState(selectedDate);
+
   if (!isOpen) return null;
 
-  const handleDateChange = (value: any) => {
-    if (value instanceof Date) {
-      onDateSelect(value);
-      onClose();
-    }
+  const handleDateChange = (date: Date) => {
+    onDateSelect(date);
+    onClose();
   };
 
+  const handlePrevMonth = () => {
+    setCurrentMonth(subMonths(currentMonth, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(addMonths(currentMonth, 1));
+  };
+
+  // Generar las fechas del calendario
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(monthStart);
+  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Lunes como primer día
+  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+
+  const dateFormat = "d";
+  const rows = [];
+  let days = [];
+  let day = startDate;
+
+  while (day <= endDate) {
+    for (let i = 0; i < 7; i++) {
+      const cloneDay = day;
+      const isCurrentMonth = isSameMonth(day, monthStart);
+      const isSelected = isSameDay(day, selectedDate);
+      const isToday = isSameDay(day, new Date());
+      const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+
+      days.push(
+        <div
+          key={day.toString()}
+          className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}`}
+          onClick={() => handleDateChange(cloneDay)}
+        >
+          <span className="day-number">{format(day, dateFormat)}</span>
+        </div>
+      );
+      day = addDays(day, 1);
+    }
+    rows.push(
+      <div key={day.toString()} className="calendar-week">
+        {days}
+      </div>
+    );
+    days = [];
+  }
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
         {/* Header del modal */}
         <div className="flex justify-between items-center mb-6">
@@ -40,30 +85,46 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           </button>
         </div>
 
+        {/* Navegación del mes */}
+        <div className="flex justify-between items-center mb-4">
+          <button
+            onClick={handlePrevMonth}
+            className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+          >
+            <span className="text-gray-600">‹</span>
+          </button>
+          <h3 className="text-lg font-semibold text-black">
+            {format(currentMonth, "MMMM 'de' yyyy", { locale: es })}
+          </h3>
+          <button
+            onClick={handleNextMonth}
+            className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+          >
+            <span className="text-gray-600">›</span>
+          </button>
+        </div>
+
+        {/* Días de la semana */}
+        <div className="calendar-weekdays">
+          <div className="weekday">LUN</div>
+          <div className="weekday">MAR</div>
+          <div className="weekday">MIÉ</div>
+          <div className="weekday">JUE</div>
+          <div className="weekday">VIE</div>
+          <div className="weekday">SÁB</div>
+          <div className="weekday">DOM</div>
+        </div>
+
         {/* Calendario */}
-        <div className="mb-6">
-          <Calendar
-            onChange={handleDateChange}
-            value={selectedDate}
-            className="custom-calendar"
-            tileClassName={({ date, view }) => {
-              if (view === 'month') {
-                const today = new Date();
-                const isToday = date.toDateString() === today.toDateString();
-                const isSelected = date.toDateString() === selectedDate.toDateString();
-                
-                return `custom-tile ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`;
-              }
-              return '';
-            }}
-          />
+        <div className="calendar-container mb-6">
+          {rows}
         </div>
 
         {/* Fecha seleccionada */}
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-2">Fecha seleccionada:</p>
           <p className="text-lg font-semibold text-black">
-            {format(selectedDate, "EEEE, dd 'de' MMMM 'de' yyyy")}
+            {format(selectedDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: es })}
           </p>
         </div>
 

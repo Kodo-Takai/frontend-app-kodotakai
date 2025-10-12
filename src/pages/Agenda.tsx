@@ -3,7 +3,7 @@ import CategoryWrapper from "../components/layout/SmoothCategoryWrapper";
 import DaySelector from "../components/ui/daySelector/DaySelector";
 import WeekDaysSelector from "../components/ui/weekdaySelector/WeekDaysSelector";
 import CalendarModal from "../components/ui/calendarModal/CalendarModal";
-import AgendaCard from "../components/ui/agendaCard/AgendaCard";
+import AgendaCard from "../components/cards/agendaCard/AgendaCard";
 import { useDateNavigation } from "../hooks/useDateNavigation";
 import { useAgenda } from "../hooks/useAgenda";
 import { isToday } from "date-fns";
