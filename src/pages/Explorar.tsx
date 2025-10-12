@@ -30,7 +30,7 @@ export default function Explorar() {
   return (
     <PageWrapper>
       {/* Header */}
-      <div className="flex justify-between items-center mt-3">
+      <div className="flex justify-between items-center mt-5">
         <div className="flex flex-col gap-2.5">
           <h1
             style={{
