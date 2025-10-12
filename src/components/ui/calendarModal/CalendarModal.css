@@ -69,17 +69,17 @@
 /* Día actual */
 .calendar-day.today {
   background-color: #000;
-  color: #B8F261;
+  color: #BACB2C;
   font-weight: bold;
 }
 
 .calendar-day.today .day-number {
-  color: #B8F261;
+  color: #BACB2C;
 }
 
 /* Día seleccionado */
 .calendar-day.selected {
-  background-color: #B8F261;
+  background-color: #BACB2C;
   color: #000;
   font-weight: bold;
 }
@@ -107,7 +107,7 @@
 }
 
 .calendar-day.weekend.today .day-number {
-  color: #B8F261;
+  color: #BACB2C;
 }
 
 .calendar-day.weekend.selected .day-number {
@@ -120,7 +120,7 @@
 }
 
 .calendar-day.other-month.today .day-number {
-  color: #B8F261;
+  color: #BACB2C;
 }
 
 .calendar-day.other-month.selected .day-number {

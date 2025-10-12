@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { EnrichedPlace } from '../../hooks/places/types';
 
 export interface AgendaItem {
   id: string;
@@ -12,6 +13,8 @@ export interface AgendaItem {
   image: string;
   description?: string;
   notes?: string;
+  // Datos completos del lugar
+  placeData: EnrichedPlace;
 }
 
 export interface AgendaState {

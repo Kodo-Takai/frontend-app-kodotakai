@@ -3,16 +3,20 @@ import CategoryWrapper from "../components/layout/SmoothCategoryWrapper";
 import DaySelector from "../components/ui/daySelector/DaySelector";
 import WeekDaysSelector from "../components/ui/weekdaySelector/WeekDaysSelector";
 import CalendarModal from "../components/ui/calendarModal/CalendarModal";
+import MoveDestinationModal from "../components/ui/moveDestinationModal/MoveDestinationModal";
 import AgendaCard from "../components/cards/agendaCard/AgendaCard";
 import { useDateNavigation } from "../hooks/useDateNavigation";
 import { useAgenda } from "../hooks/useAgenda";
 import { isToday } from "date-fns";
+import type { AgendaItem } from "../redux/slice/agendaSlice";
 
 export default function Agenda() {
   const [selectedSection, setSelectedSection] = useState<
     "agendados" | "itinerarios"
   >("agendados");
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const [selectedItemToMove, setSelectedItemToMove] = useState<AgendaItem | null>(null);
 
   const {
     selectedDate,
@@ -23,7 +27,7 @@ export default function Agenda() {
     selectDay,
   } = useDateNavigation();
 
-  const { selectDate, itemsForSelectedDate, updateItem } = useAgenda();
+  const { selectDate, itemsForSelectedDate, updateItem, moveItem } = useAgenda();
 
   // Filtrar items por sección (Ahora vs Más Tarde)
   const ahoraItems = itemsForSelectedDate.filter((item) => {
@@ -41,9 +45,18 @@ export default function Agenda() {
     updateItem(id, { status: "completed" });
   };
 
-  const handleMoveItem = (_id: string) => {
-    // Por ahora solo mostramos un alert, después implementaremos el modal de mover
-    alert("Función de mover destino - próximamente");
+  const handleMoveItem = (id: string) => {
+    const item = itemsForSelectedDate.find(item => item.id === id);
+    if (item) {
+      setSelectedItemToMove(item);
+      setIsMoveModalOpen(true);
+    }
+  };
+
+  const handleMoveDestination = (id: string, newDate: Date, newTime: string) => {
+    moveItem(id, newDate, newTime);
+    setIsMoveModalOpen(false);
+    setSelectedItemToMove(null);
   };
   return (
     <div className="min-h-screen bg-[#EDEDE0]">
@@ -198,6 +211,18 @@ export default function Agenda() {
           selectDay(date);
         }}
       />
+
+      {selectedItemToMove && (
+        <MoveDestinationModal
+          isOpen={isMoveModalOpen}
+          onClose={() => {
+            setIsMoveModalOpen(false);
+            setSelectedItemToMove(null);
+          }}
+          item={selectedItemToMove}
+          onMoveDestination={handleMoveDestination}
+        />
+      )}
       </CategoryWrapper>
     </div>
   );

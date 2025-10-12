@@ -89,7 +89,7 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
   const handleAgendar = () => {
     if (!place) return;
 
-    // Crear el item de agenda
+    // Crear el item de agenda con TODOS los datos del lugar
     const agendaItem = {
       destinationId: place.place_id || place.id || `place_${Date.now()}`,
       destinationName: place.name,
@@ -103,6 +103,8 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
       category: 'restaurant' as const, // Por defecto, se puede mejorar después
       image: place.photo_url || images[0] || 'https://picsum.photos/400/300?random=agenda',
       description: (place as EnrichedPlace).editorial_summary?.overview || `Visita a ${place.name}`,
+      // GUARDAR TODOS LOS DATOS DEL LUGAR
+      placeData: place as EnrichedPlace,
     };
 
     // Agregar a la agenda

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 import './CalendarModal.css';
@@ -17,6 +17,20 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
   onDateSelect,
 }) => {
   const [currentMonth, setCurrentMonth] = useState(selectedDate);
+
+  // Prevenir scroll del fondo cuando el modal está abierto
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup: restaurar scroll cuando el componente se desmonta
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -72,9 +86,9 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 overflow-hidden">
       <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-        {/* Header del modal */}
+
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-black">Seleccionar Fecha</h2>
           <button
@@ -85,7 +99,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           </button>
         </div>
 
-        {/* Navegación del mes */}
+
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={handlePrevMonth}
@@ -104,7 +118,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           </button>
         </div>
 
-        {/* Días de la semana */}
+
         <div className="calendar-weekdays">
           <div className="weekday">LUN</div>
           <div className="weekday">MAR</div>
@@ -115,12 +129,12 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           <div className="weekday">DOM</div>
         </div>
 
-        {/* Calendario */}
+
         <div className="calendar-container mb-6">
           {rows}
         </div>
 
-        {/* Fecha seleccionada */}
+
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-2">Fecha seleccionada:</p>
           <p className="text-lg font-semibold text-black">
@@ -128,7 +142,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           </p>
         </div>
 
-        {/* Botones de acción */}
+
         <div className="flex gap-3 mt-6">
           <button
             onClick={onClose}
@@ -141,7 +155,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
               onDateSelect(selectedDate);
               onClose();
             }}
-            className="flex-1 py-3 px-4 bg-[#B8F261] text-black rounded-xl font-medium hover:bg-[#A8E251] transition-colors"
+            className="flex-1 py-3 px-4 bg-[#BACB2C] text-black rounded-xl font-medium hover:bg-[#A8E251] transition-colors"
           >
             Confirmar
           </button>
