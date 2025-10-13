@@ -35,7 +35,13 @@ export default function CodeInput({
     if (disabled) return;
     
     // Tomar solo el último carácter ingresado
-    const char = newValue.slice(-1);
+    let char = newValue.slice(-1);
+    // Normalizar a mayúscula y permitir solo A-Z y 0-9
+    char = char.toUpperCase();
+    if (!/^[A-Z0-9]$/.test(char) && char !== '') {
+      // Ignorar caracteres inválidos
+      return;
+    }
 
     const newDigits = [...digits];
     newDigits[index] = char;
@@ -77,7 +83,10 @@ export default function CodeInput({
     const pastedData = e.clipboardData.getData('text');
     
     // Tomar los primeros 'length' caracteres del texto pegado
-    const cleanedData = pastedData.slice(0, length);
+    const cleanedData = pastedData
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .slice(0, length);
     
     onChange(cleanedData);
     
@@ -114,6 +123,8 @@ export default function CodeInput({
             ref={(el) => { inputsRef.current[index] = el; }}
             type="text"
             inputMode="text"
+            autoCapitalize="characters"
+            pattern="[A-Z0-9]"
             maxLength={1}
             value={digit}
             disabled={disabled}
