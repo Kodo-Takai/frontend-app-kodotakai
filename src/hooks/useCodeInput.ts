@@ -9,16 +9,12 @@ export const requiredCode: CodeValidator = (v) =>
 export const exactLengthValidator = (len: number): CodeValidator => (v) =>
   v.length === len ? undefined : `El código debe tener exactamente ${len} dígitos`;
 
-export const numericOnlyValidator: CodeValidator = (v) =>
-  /^\d*$/.test(v) ? undefined : 'Solo se permiten números';
+
 
 // Validador compuesto común para códigos de 6 dígitos
 export const codeValidator = (v: string) => {
   const required = requiredCode(v);
   if (required) return required;
-  
-  const numeric = numericOnlyValidator(v);
-  if (numeric) return numeric;
   
   const exactLength = exactLengthValidator(6)(v);
   if (exactLength) return exactLength;

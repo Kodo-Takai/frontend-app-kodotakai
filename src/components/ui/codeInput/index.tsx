@@ -24,8 +24,9 @@ export default function CodeInput({
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const invalid = !!error;
 
-
-  const digits = value.split('').slice(0, length);
+  // Asegurar que value sea un string
+  const stringValue = String(value || '');
+  const digits = stringValue.split('').slice(0, length);
   while (digits.length < length) {
     digits.push('');
   }
@@ -33,17 +34,17 @@ export default function CodeInput({
   const handleChange = (index: number, newValue: string) => {
     if (disabled) return;
     
-    // Solo permite números
-    if (!/^\d*$/.test(newValue)) return;
+    // Tomar solo el último carácter ingresado
+    const char = newValue.slice(-1);
 
     const newDigits = [...digits];
-    newDigits[index] = newValue.slice(-1);
+    newDigits[index] = char;
 
     const newCode = newDigits.join('');
     onChange(newCode);
 
-    // Auto-focus al siguiente input si se ingresó un dígito
-    if (newValue && index < length - 1) {
+    // Auto-focus al siguiente input si se ingresó un carácter
+    if (char && index < length - 1) {
       inputsRef.current[index + 1]?.focus();
     }
   };
@@ -51,7 +52,7 @@ export default function CodeInput({
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (disabled) return;
 
-    // Backspace: borra el dígito actual y va al anterior
+    // Backspace: borra el carácter actual y va al anterior
     if (e.key === 'Backspace') {
       if (!digits[index] && index > 0) {
         inputsRef.current[index - 1]?.focus();
@@ -64,7 +65,6 @@ export default function CodeInput({
     else if (e.key === 'ArrowRight' && index < length - 1) {
       inputsRef.current[index + 1]?.focus();
     }
-
     else if (e.key === 'Enter') {
       onBlur?.();
     }
@@ -75,8 +75,15 @@ export default function CodeInput({
     
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text');
-    const numbers = pastedData.replace(/\D/g, '').slice(0, length);
-    onChange(numbers);
+    
+    // Tomar los primeros 'length' caracteres del texto pegado
+    const cleanedData = pastedData.slice(0, length);
+    
+    onChange(cleanedData);
+    
+    // Enfocar el último input lleno o el siguiente vacío
+    const focusIndex = Math.min(cleanedData.length, length - 1);
+    setTimeout(() => inputsRef.current[focusIndex]?.focus(), 0);
   };
 
   const handleFocus = (index: number) => {
@@ -106,7 +113,7 @@ export default function CodeInput({
             key={index}
             ref={(el) => { inputsRef.current[index] = el; }}
             type="text"
-            inputMode="numeric"
+            inputMode="text"
             maxLength={1}
             value={digit}
             disabled={disabled}
@@ -126,16 +133,13 @@ export default function CodeInput({
               }
               ${digit ? 'bg-blue-50 border-blue-300' : ''}
             `}
-            aria-label={`Dígito ${index + 1} de ${length}`}
+            aria-label={`Carácter ${index + 1} de ${length}`}
             autoComplete="one-time-code"
           />
         ))}
       </div>
-
-      {invalid && (
-        <p className="text-sm text-red-500 text-center mt-3 flex items-center justify-center gap-1">
-          {error}
-        </p>
+      {error && (
+        <p className="mt-2 text-sm text-red-600">{error}</p>
       )}
     </div>
   );
