@@ -1,11 +1,8 @@
 import { useState, useCallback } from "react";
-import { useField, required, emailValidator } from "./useField";
+import { useField, required, emailValidator, passwordValidator } from "./useField";
 import { useCodeInput, codeValidator } from "./useCodeInput";
 import { useForgotPasswordMutation, useResetPasswordMutation } from "../redux/api/authApi";
 import { useNavigate } from "react-router-dom";
-
-const minLengthValidator = (len: number) => (v: string) =>
-  v.length >= len ? undefined : `Debe tener al menos ${len} caracteres`;
 
 export function usePasswordRecovery() {
   const [forgotPassword] = useForgotPasswordMutation();
@@ -17,7 +14,7 @@ export function usePasswordRecovery() {
   // Campos usando diferentes hooks
   const email = useField("", [required, emailValidator]);
   const code = useCodeInput("", [codeValidator]);
-  const newPassword = useField("", [required, minLengthValidator(8)]);
+  const newPassword = useField("", [required, passwordValidator]); // Cambié aquí
   const confirmPassword = useField("", [required]);
 
   // Validación para confirmar contraseña
