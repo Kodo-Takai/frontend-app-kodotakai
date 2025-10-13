@@ -14,6 +14,7 @@ interface InputProps {
   name?: string;
   autoComplete?: string;
   disabled?: boolean;
+  showPasswordRequirements?: boolean;
 }
 
 export default function Input({
@@ -29,6 +30,7 @@ export default function Input({
   name,
   autoComplete,
   disabled = false,
+  showPasswordRequirements = false,
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const inputId = id || name || label || placeholder || 'input'; 
@@ -36,6 +38,38 @@ export default function Input({
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const getPasswordRequirements = () => {
+    if (type !== 'password' || !showPasswordRequirements) return null;
+    
+    const hasMinLength = value.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(value);
+    const hasNumber = /[0-9]/.test(value);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
+
+    return (
+      <div className="mt-2 text-xs text-gray-600">
+        <div className="grid grid-cols-2 gap-1">
+          <div className={`flex items-center gap-1 ${hasMinLength ? 'text-green-600' : 'text-gray-400'}`}>
+            <span>{hasMinLength ? '✓' : '○'}</span>
+            <span>Mínimo 8 caracteres</span>
+          </div>
+          <div className={`flex items-center gap-1 ${hasUpperCase ? 'text-green-600' : 'text-gray-400'}`}>
+            <span>{hasUpperCase ? '✓' : '○'}</span>
+            <span>Una mayúscula</span>
+          </div>
+          <div className={`flex items-center gap-1 ${hasNumber ? 'text-green-600' : 'text-gray-400'}`}>
+            <span>{hasNumber ? '✓' : '○'}</span>
+            <span>Un número</span>
+          </div>
+          <div className={`flex items-center gap-1 ${hasSpecialChar ? 'text-green-600' : 'text-gray-400'}`}>
+            <span>{hasSpecialChar ? '✓' : '○'}</span>
+            <span>Carácter especial</span>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -74,6 +108,8 @@ export default function Input({
         )}
       </div>
 
+      {getPasswordRequirements()}
+      
       {invalid && (
         <span className="text-sm text-red-500 mt-2" id={`${inputId}-error`}>
           {error}

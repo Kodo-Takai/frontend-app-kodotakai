@@ -48,7 +48,7 @@ export default function Register() {
         lastName={lastName}
         isValid={isValid}
         isLoading={isLoading}
-        errorMessage={errorMessage}
+        backendError={errorMessage}
         onSubmit={handleFormSubmit}
       />
     </div>
