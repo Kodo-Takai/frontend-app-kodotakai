@@ -1,5 +1,79 @@
 @import "tailwindcss";
-@import "./assets//fonts/SF-Pro-Display-Regular.woff2";
+
+/* Fuentes SF Pro Display */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./assets/fonts/SF-Pro-Display-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./assets/fonts/SF-Pro-Display-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./assets/fonts/SF-Pro-Display-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ========================================
+   VARIABLES CSS - SISTEMA DE COLORES
+   ======================================== */
+
+:root {
+  /* 🎨 COLORES PRIMARIOS (Agenda.tsx) */
+  --color-primary-dark:     #151A00;
+  --color-primary-accent:   #BACB2C;
+  --color-primary-light:    #EDEDE0;
+  --color-background-main:  #EDEDE0;
+
+  /* 🎨 VARIACIONES */
+  --color-primary-dark-hover:   #0F1400;
+  --color-primary-accent-hover: #A8E251;
+  --color-primary-light-hover:  #C5D9C7;
+
+  /* 🏷️ COLORES POR CATEGORÍA */
+  --color-category-red:      #FF0A10;
+  --color-category-red-hover: #DC1217;
+  --color-category-blue:     #003e5b;
+  --color-category-blue-hover: #00324A;
+  --color-category-maps:     #073247;
+
+  /* 🎨 COLORES SEMÁNTICOS */
+  --color-success: #10B981;
+  --color-error:   #EF4444;
+  --color-warning: #F59E0B;
+  --color-info:    #3B82F6;
+
+  /* 🎨 COLORES NEUTROS */
+  --color-white:    #FFFFFF;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-300: #D1D5DB;
+  --color-gray-400: #9CA3AF;
+  --color-gray-500: #6B7280;
+  --color-gray-600: #4B5563;
+
+  /* 🎨 COLORES DE TEXTO */
+  --color-text-primary:   var(--color-primary-dark);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-muted:     var(--color-gray-500);
+  --color-text-white:     var(--color-white);
+
+  /* 🎨 COLORES DE FONDO */
+  --color-bg-primary:   var(--color-background-main);
+  --color-bg-secondary: var(--color-white);
+  --color-bg-muted:     var(--color-gray-100);
+}
 
 @keyframes bubble-in {
   0% {

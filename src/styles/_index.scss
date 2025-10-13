@@ -1,12 +1,39 @@
 @use './_variables.scss' as *;
 @use './_mixins.scss' as *;
 
+/* ========================================
+   CLASES DE BOTONES - SISTEMA UNIFICADO
+   ======================================== */
 
+/* ===== Botones Primarios (Agenda.tsx) ===== */
+.btn--primary {
+  @include btn-primary;
+}
 
-/* ===== Botones ===== */
-/* —— Rojo Claro —— */
+.btn--secondary {
+  @include btn-secondary;
+}
+
+.btn--dark {
+  @include btn-dark;
+}
+
+/* ===== Botones por Categoría ===== */
+.btn--restaurant {
+  @include btn-restaurant;
+}
+
+.btn--beach {
+  @include btn-beach;
+}
+
+.btn--maps {
+  @include btn-maps;
+}
+
+/* ===== Botones Legacy (Compatibilidad) ===== */
 .btn--red-light {
-  @include btn-filled($btn-red, $btn-red-hover, $txt-white);
+  @include btn-filled($category-red, $category-red-hover, $white);
   box-shadow: $btn-shadow;
 
   &:disabled,
@@ -15,9 +42,8 @@
   }
 }
 
-/* —— Rojo Oscuro —— */
 .btn--red-dark {
-  @include btn-filled($btn-red-hover, $btn-red, $txt-white);
+  @include btn-filled($category-red-hover, $category-red, $white);
   box-shadow: $btn-shadow;
 
   &:disabled,
@@ -26,18 +52,17 @@
   }
 }
 
-/* —— Rojo con Borde —— */
 .btn--red-outline {
-  @include btn-outline($btn-red, $btn-red, $txt-white);
+  @include btn-outline($category-red, $category-red, $white);
 
   &:disabled,
   &.is-disabled {
     @include btn-disabled;
   }
 }
-/* —— Azul Claro —— */
+
 .btn--blue-light {
-  @include btn-filled($btn-blue, $btn-blue-hover, $txt-white);
+  @include btn-filled($category-blue, $category-blue-hover, $white);
   box-shadow: $btn-shadow;
 
   &:disabled,
@@ -46,9 +71,8 @@
   }
 }
 
-/* —— Azul Oscuro —— */
 .btn--blue-dark {
-  @include btn-filled($btn-blue-hover, $btn-blue, $txt-white);
+  @include btn-filled($category-blue-hover, $category-blue, $white);
   box-shadow: $btn-shadow;
 
   &:disabled,
@@ -57,25 +81,26 @@
   }
 }
 
-/* —— Azul con Borde —— */
 .btn--blue-outline {
-  @include btn-outline($btn-blue, $btn-blue, $txt-white);
+  @include btn-outline($category-blue, $category-blue, $white);
 
   &:disabled,
   &.is-disabled {
     @include btn-disabled;
   }
 }
-/* —— Deshabilitado (común para todos los botones) —— */
+
+/* ===== Botones Deshabilitados ===== */
 .btn--disabled,
 button[disabled].btn {
   @include btn-disabled;
 }
 
+/* ===== Variables CSS Adicionales ===== */
 :root {
-  --color-blueDark: #{$txt-blueDark};
-  --color-white:    #{$txt-white};
-  --color-blueLight: #{$txt-blueLight};
-  --color-btn-blue:       #{$btn-blue};
-  --color-btn-blue-hover: #{$btn-blue-hover};
+  --color-blueDark: #{$category-blue};
+  --color-white:    #{$white};
+  --color-blueLight: #{$category-blue-hover};
+  --color-btn-blue:       #{$category-blue};
+  --color-btn-blue-hover: #{$category-blue-hover};
 }

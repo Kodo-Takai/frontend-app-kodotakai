@@ -16,8 +16,12 @@
   box-shadow: $btn-shadow;
   cursor: pointer;
   
-  font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+
+// ========================================
+// MIXINS DE BOTONES - SISTEMA UNIFICADO
+// ========================================
 
 @mixin btn-filled($bg, $hover, $color) {
   @include btn-base;
@@ -29,7 +33,7 @@
   &:active { transform: translateY(0.5px); }
 }
 
-@mixin btn-outline($color, $hoverBg: transparent, $hoverTxt: $txt-white) {
+@mixin btn-outline($color, $hoverBg: transparent, $hoverTxt: $white) {
   @include btn-base;
   background: transparent;
   color: $color;
@@ -50,6 +54,40 @@
   box-shadow: none;
   cursor: not-allowed;
   opacity: .9;
+}
+
+// ========================================
+// MIXINS ESPECÍFICOS POR CATEGORÍA
+// ========================================
+
+// Botón primario (Agenda.tsx)
+@mixin btn-primary {
+  @include btn-filled($primary-accent, $primary-accent-hover, $primary-dark);
+}
+
+// Botón secundario (Agenda.tsx)
+@mixin btn-secondary {
+  @include btn-filled($primary-light, $primary-light-hover, $primary-dark);
+}
+
+// Botón oscuro (Agenda.tsx)
+@mixin btn-dark {
+  @include btn-filled($primary-dark, $primary-dark-hover, $primary-accent);
+}
+
+// Botón restaurante
+@mixin btn-restaurant {
+  @include btn-filled($category-red, $category-red-hover, $white);
+}
+
+// Botón playa
+@mixin btn-beach {
+  @include btn-filled($category-blue, $category-blue-hover, $white);
+}
+
+// Botón maps
+@mixin btn-maps {
+  @include btn-filled($category-maps, $category-maps-hover, $white);
 }
 
 @mixin btn-icon {

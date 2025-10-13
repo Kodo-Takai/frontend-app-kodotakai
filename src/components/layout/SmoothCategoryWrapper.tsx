@@ -26,7 +26,7 @@ const CategoryWrapper: React.FC<CategoryWrapperProps> = memo(({
   backgroundPosition = "top center",
   className = "",
   maxWidth = "max-w-md",
-  minHeight = "min-h-screen"
+  minHeight = "max-h-screen"
 }) => {
   // Preload de imagen de fondo para carga instantánea
   useEffect(() => {
