@@ -13,7 +13,7 @@ interface RegisterFormProps {
   lastName: any;
   isValid: boolean;
   isLoading: boolean;
-  errorMessage: string | null;
+  backendError: string | null;
   onSubmit: (e: React.FormEvent) => Promise<void>;
 }
 
@@ -26,7 +26,7 @@ export default function RegisterForm({
   lastName,
   isValid,
   isLoading,
-  errorMessage,
+  backendError,
   onSubmit
 }: RegisterFormProps) {
   return (
@@ -87,10 +87,11 @@ export default function RegisterForm({
         onBlur={password.onBlur}
         error={password.error}
         type="password"
-        placeholder="Mínimo 6 caracteres"
+        placeholder="Mínimo 8 caracteres con mayúscula, número y carácter especial"
         name="password"
         autoComplete="new-password"
         id="password"
+        showPasswordRequirements={true}
       />
 
       <Input
@@ -106,9 +107,9 @@ export default function RegisterForm({
         id="confirmPassword"
       />
 
-      {errorMessage && (
-        <div className="text-red-500 text-sm text-center p-2 bg-red-50 rounded-lg">
-          {errorMessage}
+      {backendError && (
+        <div className="text-red-500 text-sm text-center p-3 bg-red-50 rounded-lg border border-red-200">
+          {backendError}
         </div>
       )}
 

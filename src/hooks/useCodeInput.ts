@@ -9,16 +9,22 @@ export const requiredCode: CodeValidator = (v) =>
 export const exactLengthValidator = (len: number): CodeValidator => (v) =>
   v.length === len ? undefined : `El código debe tener exactamente ${len} dígitos`;
 
-export const numericOnlyValidator: CodeValidator = (v) =>
-  /^\d*$/.test(v) ? undefined : 'Solo se permiten números';
+
 
 // Validador compuesto común para códigos de 6 dígitos
 export const codeValidator = (v: string) => {
   const required = requiredCode(v);
   if (required) return required;
   
-  const numeric = numericOnlyValidator(v);
-  if (numeric) return numeric;
+  // Solo mayúsculas A-Z y números
+  if (!/^[A-Z0-9]*$/.test(v)) {
+    return 'Solo se permiten letras A–Z y números';
+  }
+
+  // No permitir minúsculas
+  if (/[a-z]/.test(v)) {
+    return 'El código debe estar en mayúsculas';
+  }
   
   const exactLength = exactLengthValidator(6)(v);
   if (exactLength) return exactLength;
@@ -51,7 +57,7 @@ export function useCodeInput(initialValue = '', validators: CodeValidator[] = [c
   }, [value, runValidation]);
 
   const isValid = !runValidation(value);
-  const isComplete = value.length >= (validators.find(v => v.toString().includes('exactLength')) ? 6 : value.length);
+  const isComplete = value.length === 6 && !runValidation(value);
 
   return {
     value,
