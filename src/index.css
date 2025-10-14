@@ -32,6 +32,7 @@
 :root {
   /* 🎨 COLORES PRIMARIOS (Agenda.tsx) */
   --color-primary-dark:     #151A00;
+  --color-primary-darker:     #090b00;
   --color-primary-accent:   #BACB2C;
   --color-primary-dark-accent:   #a3b02d;
   --color-primary-light:    #EDEDE0;

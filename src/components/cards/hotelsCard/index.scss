@@ -15,12 +15,12 @@
 
 .hotel-card-width {
     min-width: 300px;
-    max-width: 350px;
+    max-width: 300px;
     flex-shrink: 0;
-    background-color: #ffffff;
+    background-color: var(--color-primary-darker);
     border-radius: 20px;
     overflow: hidden;
-    border: 5px solid #ffffff;
+    border: 3px solid var(--color-primary-dark);
 
     @media (max-width: 640px) {
         min-width: 280px;
@@ -44,10 +44,20 @@
 .hotel-card-image-container img {
     width: 100%;
     height: 100%;
+    filter: brightness(0.8);
     object-fit: cover;
     transition: transform 0.3s ease;
 }
 
 .hotel-card-width:hover .hotel-card-image-container img {
     transform: scale(1.1);
+}
+
+.hotel-location-text {
+    height: 1.25rem; 
+    line-height: 1.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
 }
