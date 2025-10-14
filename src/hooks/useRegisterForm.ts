@@ -1,16 +1,16 @@
 import { useState, useCallback } from "react";
-import { useField, required, emailValidator } from "./useField"; // Importación agregada
-
-const minLengthValidator = (len: number) => (v: string) =>
-    v.length >= len ? undefined : `Debe tener al menos ${len} caracteres`;
+import { useField, required, emailValidator, passwordValidator, nameValidator } from "./useField";
 
 export function useRegisterForm() {
-    const firstName = useField("", [required]);
+    const name = useField("", [required, nameValidator]);
+    const lastName = useField("", [required, nameValidator]);
+    const username = useField("", [required, emailValidator]);
     const email = useField("", [required, emailValidator]);
-    const password = useField("", [required, minLengthValidator(8)]);
+    const password = useField("", [required, passwordValidator]);
     const confirmPassword = useField("", [required]);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [backendError, setBackendError] = useState<string | null>(null);
 
     // Validación extra para confirmar password
     const validateConfirmPassword = useCallback(() => {
@@ -23,7 +23,9 @@ export function useRegisterForm() {
     }, [confirmPassword, password]);
 
     const isValid =
-        firstName.isValid &&
+        name.isValid &&
+        lastName.isValid &&
+        username.isValid &&
         email.isValid &&
         password.isValid &&
         confirmPassword.isValid &&
@@ -33,24 +35,55 @@ export function useRegisterForm() {
         if (!isValid) return;
 
         setIsSubmitting(true);
+        setBackendError(null);
+        
         try {
             // 👉 Aquí deberías llamar a tu API/servicio real de registro
+            // const response = await registerUser({
+            //     username: username.value,
+            //     email: email.value,
+            //     password: password.value,
+            //     name: name.value,
+            //     lastName: lastName.value
+            // });
+            
+            // Simulación temporal
             await new Promise((resolve) => setTimeout(resolve, 1500));
 
             onSuccess(); // redirigir
+        } catch (error: any) {
+            // Manejo de errores del backend
+            if (error.response?.data?.message) {
+                const errorMessage = error.response.data.message;
+                
+                // Mapear errores específicos del backend a campos específicos
+                if (errorMessage.includes('usuario ya existe')) {
+                    username.setError('Este usuario ya está registrado');
+                } else if (errorMessage.includes('email ya está en uso')) {
+                    email.setError('Este email ya está registrado');
+                } else {
+                    setBackendError(errorMessage);
+                }
+            } else {
+                setBackendError('Error interno del servidor. Inténtalo de nuevo.');
+            }
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return {
-        firstName,
+        name,
+        lastName,
+        username,
         email,
         password,
         confirmPassword,
         validateConfirmPassword,
         isValid,
         isSubmitting,
+        backendError,
+        setBackendError,
         handleSubmit,
     };
 }

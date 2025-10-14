@@ -1,13 +1,5 @@
 import { apiSlice } from "./apiSlice";
-interface User {
-  id: string | number;
-  username?: string;
-  email?: string;
-  password?: string;
-  status?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-}
+
 interface LoginRequest {
   username: string;
   password: string;
@@ -19,6 +11,7 @@ interface RegisterRequest {
   email: string;
   name: string;
   lastName: string;
+  confirmPassword?: string;
 }
 
 // Estructura real que devuelve tu backend para LOGIN
@@ -58,7 +51,23 @@ export const authApi = apiSlice.injectEndpoints({
         body: userData,
       }),
     }),
+
+    forgotPassword: builder.mutation<{ message: string }, { email: string }>({
+      query: (data) => ({
+        url: "/api/auth/forgot-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    resetPassword: builder.mutation<{ message: string }, { email: string; code: string; password: string; confirmPassword: string }>({
+      query: (data) => ({
+        url: "/api/auth/reset-password",
+        method: "PATCH",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = authApi;
+export const { useLoginMutation, useRegisterMutation, useForgotPasswordMutation, useResetPasswordMutation } = authApi;

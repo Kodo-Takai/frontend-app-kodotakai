@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../../redux/api/authApi";
-import { required, emailValidator, useField } from "../useField";
+import { required, emailValidator, passwordValidator, nameValidator, useField } from "../useField";
 
 // Validador para confirmar contraseña
 const passwordConfirmValidator =
@@ -8,16 +8,6 @@ const passwordConfirmValidator =
   (value: string): string | undefined => {
     if (value !== password) {
       return "Las contraseñas no coinciden";
-    }
-    return undefined;
-  };
-
-// Validador para longitud mínima
-const minLength =
-  (min: number) =>
-  (value: string): string | undefined => {
-    if (value.length < min) {
-      return `Mínimo ${min} caracteres`;
     }
     return undefined;
   };
@@ -35,13 +25,13 @@ export const useRegister = () => {
   // Campos del formulario según lo que espera el backend
   const username = useField("", [required, emailValidator]); 
   const email = useField("", [required, emailValidator]); 
-  const password = useField("", [required, minLength(6)]);
+  const password = useField("", [required, passwordValidator]);
   const confirmPassword = useField("", [
     required,
     passwordConfirmValidator(password.value),
   ]);
-  const name = useField("", [required]); 
-  const lastName = useField("", [required]);
+  const name = useField("", [required, nameValidator]); 
+  const lastName = useField("", [required, nameValidator]);
 
   const isValid =
     username.isValid &&

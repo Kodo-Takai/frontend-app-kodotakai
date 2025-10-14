@@ -163,18 +163,84 @@ export const usePlacesSimple = (
         // 1. Búsqueda por texto (tiene la máxima prioridad)
         if (searchQuery) {
           setStatus(`Buscando "${searchQuery}"...`);
+          
+          // OBTENER LA UBICACIÓN DEL USUARIO PRIMERO
+          const userLocation = await getUserLocation();
+          setMapCenter(userLocation);
+
+          // Función para calcular distancia entre dos puntos
+          const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+            const R = 6371; // Radio de la Tierra en km
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lng2 - lng1) * (Math.PI / 180);
+            const a =
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * (Math.PI / 180)) *
+                Math.cos(lat2 * (Math.PI / 180)) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+          };
+
+          // CONFIGURACIÓN CORREGIDA: Priorizar por ubicación
           service.textSearch(
-            { query: searchQuery },
+            {
+              query: searchQuery,
+              // Usar location y radius para priorizar resultados cercanos
+              location: new google.maps.LatLng(userLocation.lat, userLocation.lng),
+              radius: 50000, // 50km de radio para priorizar cercanos
+            },
             (
               results: google.maps.places.PlaceResult[] | null,
               searchStatus: google.maps.places.PlacesServiceStatus
             ) => {
-              if (searchStatus === "OK" && results?.[0]) {
-                const place = formatPlaceResult(results[0]);
-                if (place) {
-                  setPlaces([place]);
-                  setMapCenter(place.location);
-                  setStatus(`Mostrando: ${place.name}`);
+              if (searchStatus === "OK" && results && results.length > 0) {
+                // Ordenar resultados por distancia al usuario
+                const sortedByDistance = results
+                  .filter((r) => r.geometry?.location)
+                  .map((r) => ({
+                    result: r,
+                    distance: calculateDistance(
+                      userLocation.lat,
+                      userLocation.lng,
+                      r.geometry!.location!.lat(),
+                      r.geometry!.location!.lng()
+                    ),
+                  }))
+                  .sort((a, b) => a.distance - b.distance);
+
+                // Tomar el más cercano
+                if (sortedByDistance.length > 0) {
+                  const closestResult = sortedByDistance[0].result;
+                  const place = formatPlaceResult(closestResult);
+                  
+                  if (place) {
+                    setPlaces([place]);
+                    setMapCenter(place.location);
+                    setStatus(`Mostrando: ${place.name} (${sortedByDistance[0].distance.toFixed(1)} km)`);
+                  } else {
+                    // Si el más cercano no cumple filtros de calidad, buscar el siguiente
+                    const nextValidPlace = sortedByDistance.slice(1).find(item => {
+                      const p = formatPlaceResult(item.result);
+                      return p !== null;
+                    });
+                    
+                    if (nextValidPlace) {
+                      const validPlace = formatPlaceResult(nextValidPlace.result);
+                      if (validPlace) {
+                        setPlaces([validPlace]);
+                        setMapCenter(validPlace.location);
+                        setStatus(`Mostrando: ${validPlace.name}`);
+                      }
+                    } else {
+                      setPlaces([]);
+                      setStatus("No se encontraron resultados de calidad.");
+                    }
+                  }
+                } else {
+                  setPlaces([]);
+                  setStatus("No se encontraron resultados.");
                 }
               } else {
                 setPlaces([]);
@@ -248,3 +314,4 @@ export const usePlacesSimple = (
 
   return { places, mapCenter, loading, status };
 };
+export default usePlacesSimple;
