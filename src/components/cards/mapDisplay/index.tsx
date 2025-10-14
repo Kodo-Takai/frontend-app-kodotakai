@@ -1,85 +1,134 @@
-import { useRef, useEffect, useState } from 'react';
-import type { Place } from '../../../hooks/places';
+// src/components/cards/mapDisplay/index.tsx
+import React, { useState, memo, useMemo } from 'react';
+import { GoogleMap, useJsApiLoader, Marker, InfoWindow, DirectionsRenderer } from '@react-google-maps/api';
+import { FaStar } from 'react-icons/fa';
+import type { Place } from '../../../hooks/places/usePlacesSimple';
 
 interface MapDisplayProps {
-  center: { lat: number; lng: number };
-  zoom: number;
   markers: Place[];
-  userLocation?: { lat: number; lng: number } | null;
+  center?: { lat: number; lng: number };
+  zoom?: number;
+  userLocation: { lat: number; lng: number } | null;
   onMarkerClick: (place: Place) => void;
+  destination: Place | null;
+  directions: google.maps.DirectionsResult | undefined;
 }
 
-export function MapDisplay({ center, zoom, markers, userLocation, onMarkerClick }: MapDisplayProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
-  const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
-  const userMarkerRef = useRef<google.maps.Marker | null>(null);
+const containerStyle = { width: '100%', height: '100%' };
+const mapOptions = {
+  disableDefaultUI: true,
+  zoomControl: true,
+};
 
-  useEffect(() => {
-    if (mapRef.current && !map) {
-      const newMap = new window.google.maps.Map(mapRef.current, {
-        center: center,
-        zoom: zoom,
-        disableDefaultUI: true,
-        mapId: 'YOUR_CUSTOM_MAP_ID' 
-      });
-      setMap(newMap);
-      infoWindowRef.current = new window.google.maps.InfoWindow();
+const libraries: ('places' | 'geocoding')[] = ['places', 'geocoding'];
+
+const MapDisplayComponent = ({ markers, center, zoom, userLocation, onMarkerClick, destination, directions }: MapDisplayProps) => {
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
+
+  const [activeMarker, setActiveMarker] = useState<Place | null>(null);
+
+  // --- SOLUCIÓN DE LÍNEA DINÁMICA CON NUEVO DISEÑO ---
+  const polylineOptions = useMemo(() => {
+    // Si hay un destino, la ruta es visible con estilo de puntos.
+    if (destination) {
+      return {
+        strokeOpacity: 0, // La línea sólida principal es invisible
+        icons: [
+          {
+            icon: {
+              path: window.google.maps.SymbolPath.CIRCLE, // Usamos círculos como símbolo
+              fillColor: 'red',      // Tu color verde para el relleno
+              fillOpacity: 1,           // Totalmente opacos
+              scale: 4,                 // Tamaño de cada punto
+              strokeWeight: 0,          // Sin borde para un look más limpio
+            },
+            offset: '0',      // Empezar a dibujar desde el inicio de la línea
+            repeat: '15px',   // Repetir un punto cada 15 píxeles
+          },
+        ],
+      };
     }
-  }, [mapRef, map, center, zoom]);
+    // Si no hay destino, la línea es completamente invisible.
+    return {
+      strokeOpacity: 0,
+    };
+  }, [destination]);
 
-  useEffect(() => {
-    if (map) {
-      map.panTo(center);
-      map.setZoom(zoom);
-    }
-  }, [map, center, zoom]);
 
-  useEffect(() => {
-    if (map && infoWindowRef.current) {
-      const infoWindow = infoWindowRef.current;
-      markersRef.current.forEach(marker => marker.setMap(null));
-      markersRef.current = [];
+  const handleMarkerClick = (marker: Place) => {
+    setActiveMarker(marker);
+    onMarkerClick(marker);
+  };
 
-      markers.forEach((place) => {
-        if (!place.location) return;
-        const marker = new window.google.maps.Marker({
-          position: place.location,
-          map: map,
-          title: place.name,
-          animation: window.google.maps.Animation.DROP,
-        });
-        
-        marker.addListener('click', () => {
-          // --- Contenido DETALLADO de la InfoWindow RESTAURADO ---
-          const contentString = `
-            <div style="font-family: sans-serif; width: 100%; max-width: 250px; color: #333; padding: 10px;">
-              ${place.photo_url ? `<img src="${place.photo_url}" alt="${place.name}" style="width: 100%; max-height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;" />` : ''}
-              <h4 style="margin: 0 0 5px 0; font-weight: 600; font-size: 16px;">${place.name}</h4>
-              ${place.rating ? `<p style="margin: 0; font-size: 14px; color: #f59e0b;">Calificación: ${place.rating} ★</p>`: ''}
-              ${place.category ? `<p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Categoría: ${place.category}</p>`: ''}
-            </div>
-          `;
-          
-          infoWindow.setContent(contentString);
-          infoWindow.open(map, marker);
-          
-          onMarkerClick(place);
-        });
-        markersRef.current.push(marker);
-      });
-    }
-  }, [map, markers, onMarkerClick]);
+  if (loadError) return <div>Error cargando el mapa: {loadError.message}</div>;
+  if (!isLoaded) return <div className="flex h-full w-full items-center justify-center bg-gray-300"><p>Cargando mapa...</p></div>;
 
-  useEffect(() => {
-    if (map && userLocation) {
-      if (!userMarkerRef.current) {
-        userMarkerRef.current = new window.google.maps.Marker({ map, icon: { path: window.google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }});
-      }
-      userMarkerRef.current.setPosition(userLocation);
-    }
-  }, [map, userLocation]);
+  return (
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={zoom}
+      options={mapOptions}
+    >
+      {/* Marcador para la ubicación del usuario */}
+      {userLocation && (
+        <Marker 
+          position={userLocation}
+          icon={{
+            path: window.google.maps.SymbolPath.CIRCLE, scale: 8,
+            fillColor: "#4285F4", fillOpacity: 1,
+            strokeWeight: 2, strokeColor: "white",
+          }}
+          title="Tu Ubicación"
+        />
+      )}
 
-  return <div ref={mapRef} style={{ width: '100%', height: '100%' }} />;
-}
+      {/* Marcadores de lugares */}
+      {!destination && markers.map((marker) => (
+        <Marker
+          key={marker.id}
+          position={marker.location}
+          onClick={() => handleMarkerClick(marker)}
+          animation={window.google.maps.Animation.DROP}
+          title={marker.name}
+        />
+      ))}
+      
+      {/* Marcador del destino */}
+      {destination && (
+         <Marker
+          key={destination.id}
+          position={destination.location}
+          icon={{ url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' }}
+          title={`Destino: ${destination.name}`}
+        />
+      )}
+
+      {/* InfoWindow para detalles */}
+      {activeMarker && !destination && (
+        <InfoWindow position={activeMarker.location} onCloseClick={() => setActiveMarker(null)}>
+          <div className="max-w-xs flex flex-col gap-2 p-1">
+            {activeMarker.photo_url && <img src={activeMarker.photo_url} alt={activeMarker.name} className="w-full h-24 object-cover rounded-md" />}
+            <h3 className="font-bold text-md">{activeMarker.name}</h3>
+            {activeMarker.rating && <div className="flex items-center gap-1 text-sm"><FaStar className="text-yellow-500" /><span>{activeMarker.rating}</span></div>}
+          </div>
+        </InfoWindow>
+      )}
+
+      {/* Renderizador de ruta */}
+      <DirectionsRenderer 
+        directions={directions}
+        options={{
+          suppressMarkers: true,
+          polylineOptions: polylineOptions, // <-- Usa la variable dinámica con el nuevo diseño
+        }}
+      />
+    </GoogleMap>
+  );
+};
+
+export const MapDisplay = memo(MapDisplayComponent);
