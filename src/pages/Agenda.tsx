@@ -67,7 +67,7 @@ export default function Agenda() {
   };
   return (
     <div 
-      className="min-h-screen relative"
+      className="min-h-screen relative pb-20"
       style={{ backgroundColor: 'var(--color-bg-primary)' }}
     >
       <PageWrapper
@@ -78,7 +78,7 @@ export default function Agenda() {
           <div className="flex justify-between items-center mt-5">
           <div className="flex flex-col gap-2.5">
             <h1
-              className="text-[40px] font-bold leading-[26px] tracking-[-2px]"
+              className="text-[40px] font-extrabold leading-[26px] tracking-[-2px]"
               style={{ 
                 color: 'var(--color-text-primary)'
               }}

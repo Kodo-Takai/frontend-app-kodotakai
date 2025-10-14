@@ -97,7 +97,6 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
         </ul>
       </nav>
 
-      <div className="h-20 md:hidden" aria-hidden="true" />
     </>
   );
 }

@@ -28,13 +28,18 @@ export default function Explorar() {
   };
 
   return (
+
+    <div 
+    className="min-h-screen relative pb-20"
+    style={{ backgroundColor: 'var(--color-bg-primary)' }}
+  >
     <PageWrapper>
       {/* Header */}
       <div className="flex justify-between items-center mt-5">
         <div className="flex flex-col gap-2.5">
           <h1
             style={{
-              color: "#000",
+              color: "var(--color-primary-dark)",
               fontSize: "40px",
               fontStyle: "normal",
               fontWeight: "800",
@@ -45,7 +50,7 @@ export default function Explorar() {
           </h1>
           <p
             style={{
-              color: "#000",
+              color: "var(--color-primary-dark)",
               fontSize: "15px",
               fontStyle: "normal",
               fontWeight: "500",
@@ -58,7 +63,7 @@ export default function Explorar() {
 
         <button
           onClick={handleNotificationsClick}
-          className="w-10 h-10 bg-[#FCFCFC] border-[2px] border-[#322C2C] rounded-xl flex items-center justify-center hover:bg-gray-50 hover:scale-105 hover:shadow-lg transition-all duration-300 ease-out cursor-pointer"
+          className="w-10 h-10 bg-[var(--color-primary-dark)] border-[2px] border-[#322C2C] rounded-xl flex items-center justify-center hover:bg-gray-50 hover:scale-105 hover:shadow-lg transition-all duration-300 ease-out cursor-pointer"
         >
           <img
             src="./icons/notification-bell.svg"
@@ -194,5 +199,6 @@ export default function Explorar() {
       <HotelsCard />
       <BeachCards />
     </PageWrapper>
+    </div>
   );
 }

@@ -21,7 +21,7 @@ const WeekDaysSelector: React.FC<WeekDaysSelectorProps> = ({
               ? "bg-[#151A00] text-[#D7D7CA]"
               : day.isToday
               ? "bg-[#D7D7CA] text-[#151A00] border-2 border-[#BACB2C]"
-              : "bg-[#D7D7CA] text-[#151A00] hover:bg-[#c1c1b6]"
+              : "bg-[#D7D7CA] text-[#151A00] hover:bg-[#c1c1b6] border-2 border-[var(--color-primary-dark)]"
           }`}
           style={{ animationDelay: `${index * 0.1}s` }}
         >

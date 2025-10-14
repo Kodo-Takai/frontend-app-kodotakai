@@ -23,7 +23,7 @@ const PageWrapper: React.FC<PageWrapperProps> = memo(({
   className = "",
   maxWidth = "max-w-md",
   padding = "p-6",
-  backgroundColor = "bg-white",
+  backgroundColor = "bg-transparent",
   minHeight = "min-h-screen"
 }) => {
   // Memoizar las clases del contenedor

@@ -14,6 +14,6 @@ const MainLayout: React.FC = () => {
       <BottomNav items={defaultItems} />
     </div>
   );
-};
+}; 
 
 export default MainLayout;
