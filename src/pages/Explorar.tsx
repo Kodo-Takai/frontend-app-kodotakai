@@ -84,14 +84,14 @@ export default function Explorar() {
         {/* Restaurants */}
         <div
           onClick={() => handleCategoryClick("restaurants")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[8%] left-[1.3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[8%] left-[1.3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
         >
           <img
             src="./restaurants-image.svg"
             className="object-cover w-full h-full"
             alt="Restaurants"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/15 to-black/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
             <p className="text-sm">Restaurants</p>
             <p className="text-xs">+24</p>
@@ -101,7 +101,7 @@ export default function Explorar() {
         {/* Playas */}
         <div
           onClick={() => handleCategoryClick("playas")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-20 h-20 top-[3%] right-[39%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-20 h-20 top-[3%] right-[39%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
           style={{ animationDelay: "0.1s" }}
         >
           <img
@@ -109,7 +109,7 @@ export default function Explorar() {
             className="object-cover w-full h-full"
             alt="Playas"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/15 to-black/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
             <p className="text-xs">Playas</p>
             <p className="text-xs">+12</p>
@@ -119,7 +119,7 @@ export default function Explorar() {
         {/* Hoteles */}
         <div
           onClick={() => handleCategoryClick("hoteles")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[3%] right-[2%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[3%] right-[2%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
           style={{ animationDelay: "0.2s" }}
         >
           <img
@@ -127,7 +127,7 @@ export default function Explorar() {
             className="object-cover w-full h-full"
             alt="Hoteles"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/15 to-black/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
             <p className="text-sm">Hoteles</p>
             <p className="text-xs">+18</p>
@@ -137,7 +137,7 @@ export default function Explorar() {
         {/* Discos */}
         <div
           onClick={() => handleCategoryClick("discos")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-22 h-22 top-[60%] left-[1%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-22 h-22 top-[60%] left-[1%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
           style={{ animationDelay: "0.3s" }}
         >
           <img
@@ -145,7 +145,7 @@ export default function Explorar() {
             className="object-cover w-full h-full"
             alt="A bailar"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/15 to-black/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
             <p className="text-xs">Discos</p>
             <p className="text-xs">+8</p>
@@ -155,7 +155,7 @@ export default function Explorar() {
         {/* Estudiar*/}
         <div
           onClick={() => handleCategoryClick("estudiar")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-34 h-34 top-[40%] left-[31%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-34 h-34 top-[40%] left-[31%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
           style={{ animationDelay: "0.4s" }}
         >
           <img
@@ -163,7 +163,7 @@ export default function Explorar() {
             className="object-cover w-full h-full"
             alt="Eventos"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/15 to-black/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
             <p className="text-sm">Estudiar</p>
             <p className="text-xs">+15</p>
@@ -173,7 +173,7 @@ export default function Explorar() {
         {/* Más */}
         <div
           onClick={() => handleCategoryClick("parques")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-19 h-19 top-[55%] right-[3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-19 h-19 top-[55%] right-[3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
           style={{ animationDelay: "0.5s" }}
         >
           <img
@@ -181,7 +181,7 @@ export default function Explorar() {
             className="object-cover w-full h-full"
             alt="Más"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/15 to-black/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
             <p className="text-xs">Parques</p>
             <p className="text-xs">+6</p>

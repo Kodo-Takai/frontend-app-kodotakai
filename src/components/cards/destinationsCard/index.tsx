@@ -43,7 +43,7 @@ export default function DestinationCards() {
         <FaStar
           key={`star-${i}`}
           className={`w-3 h-3 ${
-            i < fullStars ? "text-[#FF0C12]" : "text-gray-300"
+            i < fullStars ? "text-[var(--color-primary-accent)]" : "text-gray-300"
           }`}
         />
       ));
@@ -60,7 +60,7 @@ export default function DestinationCards() {
 
     return (
       <div
-        className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-4 border-white"
+        className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-3 border-[var(--color-primary-dark)]"
         onClick={() => handleVisit(place)}
       >
         {/* Imagen de fondo */}
@@ -84,9 +84,9 @@ export default function DestinationCards() {
           {/* Badge de rating en esquina superior izquierda */}
           {typeof place.rating === "number" && (
             <div className="absolute top-3 left-3 z-10">
-              <div className="flex items-center gap-1 bg-[#00324A] px-2 py-1 rounded-full ">
-                <FaStar className="w-3 h-3 text-[#FF0C12]" />
-                <span className="text-xs font-bold text-yellow-100">
+              <div className="flex items-center gap-1 bg-[var(--color-primary-light)] px-2 py-1 rounded-full ">
+                <FaStar className="w-3 h-3 text-[var(--color-primary-dark)]" />
+                <span className="text-xs font-bold text-[var(--color-primary-dark)]">
                   {place.rating.toFixed(1)}
                 </span>
               </div>
@@ -112,7 +112,7 @@ export default function DestinationCards() {
             </div>
 
             {/* Botón de visitar */}
-            <button className="w-full bg-white/90 border-4 border-gray-300 hover:bg-white text-gray-800 font-semibold py-1 px-4 rounded-xl transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-lg">
+            <button className="w-full bg-[var(--color-primary-accent)] border-4 border-[var(--color-primary-dark-accent)] hover:bg-[var(--color-primary-dark-accent)] text-[var(--color-primary-dark)] font-semibold py-1 px-4 rounded-2xl transition-all duration-200 backdrop-blur-sm flex items-center justify-center gap-2 text-lg">
               Visitar <TbLocationFilled className="w-4 h-4" />
             </button>
           </div>
@@ -129,7 +129,7 @@ export default function DestinationCards() {
           {Array.from({ length: 3 }, (_, i) => (
             <div key={`skeleton-${i}`} className="destination-card-width">
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
-                <div className="h-72 bg-gray-200" />
+                <div className="h-72 bg-[var(--color-primary-beige)]" />
               </div>
             </div>
           ))}
@@ -167,7 +167,7 @@ export default function DestinationCards() {
 
   return (
     <div className="w-full ">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 ">
+      <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4 ">
         Lugares que debes visitar
       </h2>
       {renderContent()}

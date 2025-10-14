@@ -11,7 +11,7 @@ export default function SegmentedControl({ options, selected, onChange }: Props)
     return (
         <div className="relative flex rounded-lg overflow-hidden w-full max-w-md mx-auto bg-[var(--color-primary-dark)] ">
             <div
-                className="absolute top-1 bottom-1 bg-[#D7D7CA] rounded-md shadow transition-transform duration-300 ease-out"
+                className="absolute top-1 bottom-1 bg-[var(--color-primary-beige)] rounded-md shadow transition-transform duration-300 ease-out"
                 style={{
                     width: `calc(${optionWidth}% - 1.4px)`,
                     transform: `translateX(calc(${selectedIndex * 100}% + 2px))`,
