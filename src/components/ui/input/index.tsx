@@ -103,7 +103,7 @@ export default function Input({
             onClick={handleTogglePassword}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"
           >
-            {showPassword ? <FaEyeSlash className="h-5 w-5" /> : <FaEye className="h-5 w-5" />}
+            {showPassword ? <FaEye className="h-5 w-5" /> : <FaEyeSlash className="h-5 w-5" />}
           </span>
         )}
       </div>
