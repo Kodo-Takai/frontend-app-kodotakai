@@ -109,7 +109,7 @@ export default function Input({
             className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
             style={{ color: 'var(--color-blue-light)' }}
           >
-            {showPassword ? <FaEyeSlash className="h-5 w-5" /> : <FaEye className="h-5 w-5" />}
+            {showPassword ? <FaEye className="h-5 w-5" /> : <FaEyeSlash className="h-5 w-5" />}
           </span>
         )}
       </div>

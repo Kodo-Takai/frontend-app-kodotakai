@@ -1,34 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useMemo } from "react";
-import type { RootState } from "../redux/store";
-import { useGetProfilesQuery } from "../redux/api/profileApi";
+import { useDispatch } from "react-redux";
 import { logout } from "../redux/slice/authSlice";
-import { decodeJwt } from "../utils/jwt";
+import { useProfile } from "../hooks/useProfile";
 
 export default function Profile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const token = useSelector((s: RootState) => s.auth.token);
-  const payload = useMemo(() => decodeJwt(token), [token]);
-  const profileIdFromToken = payload?.profileId as string | undefined;
-
-  const { data: profiles, isFetching } = useGetProfilesQuery();
-
-  const currentProfile = useMemo(() => {
-    if (!profiles || profiles.length === 0) return undefined;
-    if (profileIdFromToken)
-      return profiles.find((p) => p.id === profileIdFromToken);
-    if (payload?.email) return profiles.find((p) => p.email === payload.email);
-    return profiles[0];
-  }, [profiles, profileIdFromToken, payload]);
+  const { currentProfile, isFetching } = useProfile();
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");
   };
+
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center p-4 space-y-4" style={{ backgroundColor: 'var(--color-beige-light)' }}>
+    <div className="w-full h-full flex flex-col justify-center items-center p-4 bg-[#F6F6F6] space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between w-full">
         <h1 className="text-[28px] font-bold" style={{ color: 'var(--color-blue)' }}>Mi Perfil</h1>
         <div className="p-3 border-2 rounded-xl" style={{ borderColor: 'var(--color-blue)' }}>
@@ -46,6 +33,8 @@ export default function Profile() {
           </svg>
         </div>
       </div>
+
+      {/* Profile Info */}
       <div className="w-full flex items-center gap-4 py-4">
         <div className="w-[85px] h-[85px]">
           <img
@@ -90,6 +79,8 @@ export default function Profile() {
           )}
         </div>
       </div>
+
+      {/* Action Buttons */}
       <div className="w-full space-y-5">
         <div className="w-full flex gap-2">
           <button
@@ -127,6 +118,8 @@ export default function Profile() {
             <span className="font-bold" style={{ color: 'var(--color-green)' }}>Lvl: Nuevo Usuario</span>
           </button>
         </div>
+
+        {/* Stats Cards */}
         <div className="flex w-full gap-4">
           <div className="w-full justify-center flex flex-col items-center py-4 rounded-xl" style={{ backgroundColor: 'var(--color-beige)' }}>
             <svg
@@ -163,7 +156,9 @@ export default function Profile() {
             <span className="font-bold" style={{ color: 'var(--color-blue)' }}>Insignias</span>
           </div>
         </div>
-        <div className="flex justify-center items-center w-full gap-4 py-2.5 px-4 rounded-xl" style={{ backgroundColor: 'var(--color-bone)' }}>
+
+        {/* Progress Card */}
+        <div className="bg-white flex justify-center items-center w-full gap-4 py-2.5 px-4 rounded-xl">
           <div className="px-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -174,8 +169,8 @@ export default function Profile() {
             >
               <path
                 d="m10.43 16.488-.777-.178c-1.47-.336-2.755-1.509-3.366-3.15l-.207-.558-.59-.083-.207-.035C3.15 12.068 1.39 9.95 1.39 7.206V5.931c0-.374.102-.69.26-.938v2.213c0 2.03 1.164 3.822 2.881 4.524l1.378.563V4.931H1.692c.251-.355.62-.552.958-.552h3.26V1.827h9.3V4.38h3.259c.337 0 .707.197.959.552h-4.219v7.362l1.38-.563c1.716-.702 2.88-2.493 2.88-4.524V4.991c.158.248.26.565.26.94v1.275c0 2.833-1.876 4.998-4.1 5.313l-.59.083-.208.557c-.61 1.642-1.894 2.815-3.364 3.15l-.777.178v5.753h4.52v.551h-9.3v-.552h4.52z"
-                stroke="var(--color-blue)"
-                stroke-width="2"
+                stroke="#00324A"
+                strokeWidth="2"
               />
             </svg>
           </div>
@@ -196,6 +191,8 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Menu Options */}
       <div className="flex flex-col gap-12 justify-center mt-4">
         <div className="flex items-center gap-8">
           <svg
@@ -253,6 +250,8 @@ export default function Profile() {
           <span className="font-bold text-lg">Configuración</span>
         </div>
       </div>
+
+      {/* Logout Button */}
       <div className="flex justify-end w-full mt-4">
         <button
           className="flex gap-4 items-center justify-center py-3 px-8 rounded-xl"
