@@ -9,19 +9,21 @@ export type PlaceModalProps = {
   onClose: () => void;
   place: (Place | EnrichedPlace) | null;
   maxImages?: number; // Límite de imágenes a mostrar (por defecto 10)
+  /**
+   * Nuevo prop: si se proporciona, se llama con el place cuando el usuario
+   * pulsa "Visitar". El padre puede usar esto para iniciar la navegación.
+   */
+  onVisit?: (place: Place | EnrichedPlace) => void;
 };
 
-export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: PlaceModalProps) {
+export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVisit }: PlaceModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addItem } = useAgenda();
 
   useEffect(() => {
     if (!isOpen) return;
 
-    // Resetear el índice de imagen cuando se abre el modal
     setCurrentImageIndex(0);
-
-    // Prevenir scroll del body cuando el modal está abierto
     document.body.style.overflow = "hidden";
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -35,15 +37,13 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
-  // Procesar todas las imágenes disponibles
   const images = useMemo(() => {
     if (!place) return [];
 
     const imageList: string[] = [];
-
-    // Intentar obtener múltiples fotos del lugar enriquecido
     const enriched = place as any;
     if (enriched.photos && Array.isArray(enriched.photos)) {
       enriched.photos.forEach((photo: any) => {
@@ -52,17 +52,14 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
       });
     }
 
-    // Si hay photo_url principal, agregarlo si no está en la lista
     if (place.photo_url && !imageList.includes(place.photo_url)) {
       imageList.unshift(place.photo_url);
     }
 
-    // Si no hay imágenes, usar placeholder
     if (imageList.length === 0) {
       imageList.push("https://picsum.photos/800/450?random=place-modal-fallback");
     }
 
-    // Limitar el número de imágenes
     return imageList.slice(0, maxImages);
   }, [place, maxImages]);
 
@@ -89,31 +86,21 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
   const handleAgendar = () => {
     if (!place) return;
 
-    // Crear el item de agenda con TODOS los datos del lugar
     const agendaItem = {
       destinationId: place.place_id || place.id || `place_${Date.now()}`,
       destinationName: place.name,
       location: (place as EnrichedPlace).formatted_address || place.vicinity || 'Ubicación no disponible',
-      scheduledDate: new Date().toISOString(), // Fecha actual como string ISO
-      scheduledTime: new Date().toLocaleTimeString('es-ES', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      }),
+      scheduledDate: new Date().toISOString(),
+      scheduledTime: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
       status: 'pending' as const,
-      category: 'restaurant' as const, // Por defecto, se puede mejorar después
+      category: 'restaurant' as const,
       image: place.photo_url || images[0] || 'https://picsum.photos/400/300?random=agenda',
       description: (place as EnrichedPlace).editorial_summary?.overview || `Visita a ${place.name}`,
-      // GUARDAR TODOS LOS DATOS DEL LUGAR
       placeData: place as EnrichedPlace,
     };
 
-    // Agregar a la agenda
     addItem(agendaItem);
-    
-    // Cerrar el modal
     onClose();
-    
-    // Mostrar confirmación (opcional)
     alert(`¡${place.name} ha sido agregado a tu agenda!`);
   };
 
@@ -121,8 +108,26 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
 
   const description = (place as EnrichedPlace).editorial_summary?.overview;
   const address = (place as EnrichedPlace).formatted_address || place.vicinity;
-
   const stop = (e: React.MouseEvent) => e.stopPropagation();
+
+  // Nuevo handler local para el botón "Visitar"
+  const handleVisitClick = () => {
+    if (!place) return;
+    // Si el padre nos dio un onVisit, llamarlo para que inicie la navegación en el mapa
+    if (onVisit) {
+      onVisit(place);
+      onClose();
+      return;
+    }
+    // Si no hay onVisit, abrir google maps en nueva pestaña como fallback
+    if (mapsUrl) {
+      window.open(mapsUrl, "_blank", "noopener,noreferrer");
+      onClose();
+    } else {
+      // Si no hay mapsUrl, simplemente no hacer nada (o podrías mostrar un toast)
+      alert("No hay una ubicación disponible para abrir en Google Maps.");
+    }
+  };
 
   const modalContent = (
     <div
@@ -145,7 +150,6 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
 
         {/* Carrusel de imágenes */}
         <div className="relative h-56 w-full overflow-hidden sm:h-64 group">
-          {/* Imagen actual */}
           <img
             src={images[currentImageIndex]}
             alt={`${place.name} - Imagen ${currentImageIndex + 1}`}
@@ -153,7 +157,6 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
             loading="lazy"
           />
 
-          {/* Rating badge */}
           {typeof place.rating === "number" && (
             <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[#00324A] px-3 py-1 text-white">
               <FaStar className="h-4 w-4 text-[#FF0C12]" />
@@ -161,10 +164,8 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
             </div>
           )}
 
-          {/* Controles del carrusel - solo si hay más de 1 imagen */}
           {images.length > 1 && (
             <>
-              {/* Botón anterior */}
               <button
                 onClick={handlePrevImage}
                 className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 text-gray-800 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white flex items-center justify-center"
@@ -173,7 +174,6 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
                 <FaChevronLeft className="h-4 w-4" />
               </button>
 
-              {/* Botón siguiente */}
               <button
                 onClick={handleNextImage}
                 className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 text-gray-800 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white flex items-center justify-center"
@@ -182,23 +182,19 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
                 <FaChevronRight className="h-4 w-4" />
               </button>
 
-              {/* Indicadores de puntos */}
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
                 {images.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
                     className={`h-1.5 rounded-full transition-all duration-300 ${
-                      index === currentImageIndex
-                        ? "w-6 bg-white"
-                        : "w-1.5 bg-white/60 hover:bg-white/80"
+                      index === currentImageIndex ? "w-6 bg-white" : "w-1.5 bg-white/60 hover:bg-white/80"
                     }`}
                     aria-label={`Ir a imagen ${index + 1}`}
                   />
                 ))}
               </div>
 
-              {/* Contador de imágenes */}
               <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
                 {currentImageIndex + 1} / {images.length}
               </div>
@@ -206,7 +202,6 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
           )}
         </div>
 
-        {/* Miniaturas de imágenes - solo si hay más de 1 imagen */}
         {images.length > 1 && (
           <div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
             {images.map((img, index) => (
@@ -214,17 +209,10 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
                 className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                  index === currentImageIndex
-                    ? "border-[#00324A] scale-105"
-                    : "border-gray-200 opacity-60 hover:opacity-100"
+                  index === currentImageIndex ? "border-[#00324A] scale-105" : "border-gray-200 opacity-60 hover:opacity-100"
                 }`}
               >
-                <img
-                  src={img}
-                  alt={`Miniatura ${index + 1}`}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+                <img src={img} alt={`Miniatura ${index + 1}`} className="w-full h-full object-cover" loading="lazy" />
               </button>
             ))}
           </div>
@@ -262,32 +250,23 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5 }: Pl
               Agendar
             </button>
 
-            {mapsUrl ? (
-              <a
-                href={mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 font-semibold text-gray-800 shadow-sm transition hover:bg-gray-200"
-              >
-                <FaMapMarkerAlt className="h-4 w-4" />
-                <span>Visitar</span>
-              </a>
-            ) : (
-              <button
-                type="button"
-                disabled
-                className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-4 py-2 font-semibold text-gray-400"
-              >
-                <FaMapMarkerAlt className="h-4 w-4" />
-                <span>Visitar</span>
-              </button>
-            )}
+            {/* Aqui: llamamos a onVisit si viene del padre; si no, abrimos mapsUrl */}
+            <button
+              type="button"
+              onClick={handleVisitClick}
+              disabled={!mapsUrl && !onVisit}
+              className={`inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 font-semibold text-gray-800 shadow-sm transition hover:bg-gray-200 ${
+                (!mapsUrl && !onVisit) ? "cursor-not-allowed opacity-50" : ""
+              }`}
+            >
+              <FaMapMarkerAlt className="h-4 w-4" />
+              <span>Visitar</span>
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
 
-  // Renderizar el modal usando un portal para que esté fuera del contenedor animado
   return createPortal(modalContent, document.body);
 }

@@ -343,6 +343,10 @@ const Maps = () => {
                     console.log("Lugar seleccionado:", place);
                   }}
                   itemsPerPage={6}
+                  onVisit={(place) => {
+    // Importante: estos 2 estados disparan tu efecto que calcula las rutas
+                  setSelectedPlace(place as Place);
+                  setNavigationDestination(place as Place);}}
                 />
               </div>
             )}
