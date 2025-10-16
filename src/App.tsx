@@ -40,9 +40,6 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
-        </Route>
-
-        <Route element={<MainLayout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/explorar" element={<Explorar />} />
@@ -56,6 +53,9 @@ function AppContent() {
           <Route path="/maps" element={<Maps />} />
           <Route path="/custom-profile" element={<CustomProfile />} />
           <Route path="/profile" element={<Profile />} />
+        </Route>
+
+        <Route element={<MainLayout />}>
         </Route>
       </Routes>
     </>

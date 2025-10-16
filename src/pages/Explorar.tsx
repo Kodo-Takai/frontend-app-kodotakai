@@ -88,7 +88,8 @@ export default function Explorar() {
         {/* Restaurants */}
         <div
           onClick={() => handleCategoryClick("restaurants")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[8%] left-[1.3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[8%] left-[1.3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
+          style={{ borderColor: 'var(--color-blue-dark)' }}
         >
           <img
             src="./restaurants-image.svg"
@@ -105,8 +106,8 @@ export default function Explorar() {
         {/* Playas */}
         <div
           onClick={() => handleCategoryClick("playas")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-20 h-20 top-[3%] right-[39%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
-          style={{ animationDelay: "0.1s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-20 h-20 top-[3%] right-[39%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
+          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.1s" }}
         >
           <img
             src="./playas-image.svg"
@@ -123,8 +124,8 @@ export default function Explorar() {
         {/* Hoteles */}
         <div
           onClick={() => handleCategoryClick("hoteles")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[3%] right-[2%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
-          style={{ animationDelay: "0.2s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[3%] right-[2%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
+          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.2s" }}
         >
           <img
             src="./hotels-image.svg"
@@ -141,8 +142,8 @@ export default function Explorar() {
         {/* Discos */}
         <div
           onClick={() => handleCategoryClick("discos")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-22 h-22 top-[60%] left-[1%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
-          style={{ animationDelay: "0.3s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-22 h-22 top-[60%] left-[1%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
+          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.3s" }}
         >
           <img
             src="./discos-image.svg"
@@ -159,8 +160,8 @@ export default function Explorar() {
         {/* Estudiar*/}
         <div
           onClick={() => handleCategoryClick("estudiar")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-34 h-34 top-[40%] left-[31%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
-          style={{ animationDelay: "0.4s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-34 h-34 top-[40%] left-[31%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
+          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.4s" }}
         >
           <img
             src="./estudiar-image.svg"
@@ -177,8 +178,8 @@ export default function Explorar() {
         {/* Más */}
         <div
           onClick={() => handleCategoryClick("parques")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-19 h-19 top-[55%] right-[3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3 border-[var(--color-primary-dark)]"
-          style={{ animationDelay: "0.5s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-19 h-19 top-[55%] right-[3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
+          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.5s" }}
         >
           <img
             src="./parques-image.svg"
