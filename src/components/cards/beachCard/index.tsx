@@ -85,7 +85,7 @@ export default function BeachCards() {
         <FaStar
           key={`beach-star-${i}`}
           className="w-3 h-3"
-          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-beige-dark)" }}
+          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-bone)" }}
         />
       ));
 
@@ -110,7 +110,7 @@ export default function BeachCards() {
               <div className="beach-card-title-section">
                 <div className="beach-card-experience-text">
                   <img
-                    src="/icons/red-compass.svg"
+                    src="/icons/playas_icons/beach.svg"
                     alt="Compass"
                     width="30"
                     height="30"
@@ -142,7 +142,7 @@ export default function BeachCards() {
                 className="beach-card-nav-button"
               >
                 <img
-                  src="/icons/white-arrow-left.svg"
+                  src="/icons/Arrow-Left-Black.svg"
                   alt="Anterior"
                   width="18"
                   height="18"
@@ -227,7 +227,7 @@ export default function BeachCards() {
                 className="beach-card-nav-button"
               >
                 <img
-                  src="/icons/white-arrow-right.svg"
+                  src="/icons/Arrow-Right-Black.svg"
                   alt="Siguiente"
                   width="18"
                   height="18"
@@ -311,7 +311,7 @@ export default function BeachCards() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         Visita estas Playas
       </h2>
       {renderContent()}

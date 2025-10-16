@@ -123,38 +123,55 @@ export default function WeatherPill({
   return (
   <div
     className={twMerge(
-      "relative h-16 w-44 rounded-2xl overflow-hidden max-w-xs sm:max-w-sm mx-auto",
+      "relative h-auto w-44 rounded-2xl overflow-hidden max-w-xs sm:max-w-sm mx-auto",
       className
     )}
     aria-label="Clima actual"
     role="group"
   >
-    <div className="absolute inset-0 rounded-2xl" style={{ backgroundColor: 'var(--color-blue-dark)' }} />
+    <div className="absolute inset-0 rounded-2xl" style={{ backgroundColor: 'var(--color-blue)' }} />
     <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10" />
     
-    <div className="relative h-full flex items-center justify-center">
-      <div className="flex flex-col">
+    <div className="relative h-full flex items-center px-3">
+      {/* Contenido de texto - 70% */}
+      <div className="w-[70%] flex flex-col justify-center">
         <div className={twMerge(
-          "text-white text-2xl leading-none select-none shrink-0 flex items-center gap-1.5",
+          "text-[var(--color-green)] text-3xl leading-none select-none shrink-0 flex items-center",
           textContainerClassName
         )}>
           {loading ? (
-            <div className="h-6 w-14 rounded bg-white/20 animate-pulse" />
+            <div className="h-5 w-12 rounded bg-white/20 animate-pulse" />
           ) : error ? (
             <span className="text-sm font-bold text-yellow-300" title={error}>⚠️</span>
           ) : (
             <>
               <span className="font-extrabold">{temp ?? "–"}</span>
-              <span className="font-semibold">°C</span>
-              {iconByTemp(temp ?? undefined)}
+              <span className="font-extrabold">°C</span>
             </>
           )}
         </div>
 
         {showWindInfo && (
-          <span className="text-[10px] text-white/80 truncate max-w-[12rem]">
+          <span 
+            className="text-[10px] text-[var(--color-bone)]"
+            style={{
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              maxWidth: '100%'
+            }}
+          >
             {loading ? "Cargando…" : error ? (locationStatus === 'denied' ? "Activa el GPS" : "Reintenta") : windStr}
           </span>
+        )}
+      </div>
+
+      {/* Icono - 30% */}
+      <div className="w-[30%] flex justify-center items-center">
+        {!loading && !error && (
+          <div className="text-[var(--color-bone)]/90 text-4xl">
+            {iconByTemp(temp ?? undefined)}
+          </div>
         )}
       </div>
     </div>

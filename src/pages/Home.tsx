@@ -4,48 +4,95 @@ import SummaryCard from "../components/cards/summaryCard";
 import DestinationCards from "../components/cards/destinationsCard";
 import BeachCards from "../components/cards/beachCard";
 import RestaurantCards from "../components/cards/restaurantCard";
+import PageWrapper from "../components/layout/SmoothPageWrapper";
+import { useProfile } from "../hooks/useProfile";
 
-interface HomeProps {
-  user: {
-    name: string;
-  };
-}
-
-const user: HomeProps["user"] = {
-  name: "",
-};
 export default function Home() {
-  const userName = user?.name?.trim() || "Nombre y apellido";
+  const { currentProfile, isFetching } = useProfile();
+  
+  // Función para truncar texto si es muy largo
+  const truncateText = (text: string, maxLength: number = 20) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
+  // Obtener el nombre completo del usuario
+  const getFullName = () => {
+    if (isFetching) return "Cargando...";
+    if (!currentProfile) return "Usuario";
+    
+    const name = currentProfile.name || "";
+    const lastName = currentProfile.lastName || "";
+    const fullName = `${name} ${lastName}`.trim();
+    
+    return fullName || "Usuario";
+  };
+
+  const userName = truncateText(getFullName());
 
   return (
-    <div className="flex flex-col gap-4 max-w-md mx-auto p-6 justify-center items-center pb-25" style={{ backgroundColor: 'var(--color-bone)' }}>
-      <div className="flex flex-row justify-between w-full">
-        <div className="flex flex-col items-start w-full">
-          <h1 className="font-semibold text-md text-left" style={{ color: 'var(--color-blue)' }}>Hola,</h1>
-          <span className="font-extrabold text-xl" style={{ color: 'var(--color-blue)' }}>
+    <div 
+    className="min-h-screen relative pb-20"
+    style={{ backgroundColor: 'var(--color-bg-primary)' }}
+  >
+    <PageWrapper>
+    <div className="flex items-center mt-7">
+        
+
+        <div className="flex flex-col w-[85%] gap-1">
+          <h1
+            style={{
+              color: "var(--color-primary-dark)",
+              fontSize: "15px",
+              fontStyle: "normal",
+              fontWeight: "700",
+              lineHeight: "22px",
+            }}
+          >
+            Hola!,
+          </h1>
+          <p
+            style={{
+              color: "var(--color-primary-dark)",
+              height: "40px",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              maxWidth: "100%",
+              fontSize: "40px",
+              fontStyle: "normal",
+              fontWeight: "800",
+              lineHeight: "26px",
+              letterSpacing: "-0.5px",
+            }}
+          >
             {userName}
-          </span>
+          </p>
         </div>
-        <button
-          className="w-10 h-10 border-[2px] rounded-xl flex items-center justify-center hover:scale-105 hover:shadow-lg transition-all duration-300 ease-out cursor-pointer"
-          style={{ 
-            backgroundColor: 'var(--color-blue)', 
-            borderColor: 'var(--color-blue-dark)'
-          }}
-        >
-          <img
-            src="./icons/notification-bell.svg"
-            alt="Notificaciones"
-            className="w-6 h-6"
-          />
-        </button>
+
+        <div className="w-[15%] flex justify-end">
+          <button
+            className="w-11 h-11 rounded-xl flex items-center justify-center hover:scale-105 transition-all shadow-sm duration-300 ease-out cursor-pointer"
+            style={{ 
+              backgroundColor: 'var(--color-blue-dark)', 
+            }}
+          >
+            <img
+              src="./icons/AI_Icon_2.svg"
+              alt="Notificaciones"
+              className="w-7 h-7"
+            />
+          </button>
+        </div>
       </div>
+
       <Search/>
       <WhatsNewCards />
       <SummaryCard />
       <DestinationCards />
       <BeachCards />
       <RestaurantCards />
+    </PageWrapper>
     </div>
   );
 }

@@ -75,12 +75,13 @@ export default function Agenda() {
         minHeight="min-h-full"
         className="relative"
       >
-          <div className="flex justify-between items-center mt-5">
+          <div className="flex justify-between items-center mt-7">
           <div className="flex flex-col gap-2.5">
             <h1
               className="text-[40px] font-extrabold leading-[26px] tracking-[-2px]"
               style={{ 
-                color: 'var(--color-text-primary)'
+                color: 'var(--color-text-primary)',
+                height: "30px",
               }}
             >
               AGENDA
@@ -94,17 +95,15 @@ export default function Agenda() {
           </div>
 
           <button
-            onClick={() => setIsCalendarModalOpen(true)}
+            className="w-11 h-11 rounded-xl flex items-center justify-center hover:scale-105 transition-all shadow-sm duration-300 ease-out cursor-pointer"
             style={{ 
-              animationDelay: "0.3s",
-              backgroundColor: 'var(--color-primary-dark)'
+              backgroundColor: 'var(--color-blue-dark)', 
             }}
-            className="w-10 h-10 rounded-lg flex items-center justify-center hover:shadow-lg cursor-pointer"
           >
             <img
-              src="./icons/calendar-icon.svg"
-              alt="Calendar"
-              className="w-5 h-5"
+              src="./icons/AI_Icon_2.svg"
+              alt="Notificaciones"
+              className="w-7 h-7"
             />
           </button>
         </div>

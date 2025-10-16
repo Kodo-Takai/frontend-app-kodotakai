@@ -112,7 +112,7 @@ export default function DestinationCards() {
             </div>
 
             {/* Botón de visitar */}
-            <button className="w-full bg-[var(--color-primary-accent)] border-4 border-[var(--color-primary-dark-accent)] hover:bg-[var(--color-primary-dark-accent)] text-[var(--color-primary-dark)] font-semibold py-1 px-4 rounded-2xl transition-all duration-200 backdrop-blur-sm flex items-center justify-center gap-2 text-lg">
+            <button className="w-full bg-[var(--color-primary-accent)] hover:bg-[var(--color-green-dark)] text-[var(--color-blue)] font-semibold py-2 px-4 rounded-2xl transition-all duration-200 backdrop-blur-sm flex items-center justify-center gap-2 text-lg">
               Visitar <TbLocationFilled className="w-4 h-4" />
             </button>
           </div>
@@ -128,7 +128,7 @@ export default function DestinationCards() {
         <div className="destination-scroll">
           {Array.from({ length: 3 }, (_, i) => (
             <div key={`skeleton-${i}`} className="destination-card-width">
-              <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
+              <div className="rounded-xl overflow-hidden animate-pulse">
                 <div className="h-72 bg-[var(--color-primary-beige)]" />
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function DestinationCards() {
 
   return (
     <div className="w-full ">
-      <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4 ">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         Lugares que debes visitar
       </h2>
       {renderContent()}

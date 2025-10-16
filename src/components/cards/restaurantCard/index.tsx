@@ -36,16 +36,16 @@ export default function RestaurantCards() {
         <FaStar
           key={`restaurant-star-${i}`}
           className={`w-3 h-3 ${
-            i < fullStars ? "text-red-600" : "text-gray-300"
+            i < fullStars ? "text-[var(--color-green)]" : "text-[var(--color-bone)]"
           }`}
-          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-beige-dark)" }}
+          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-bone)" }}
         />
       ));
 
       return (
         <div className="flex items-center gap-1">
           {stars}
-          <span className="text-white text-xs font-semibold ml-1">
+          <span className="text-[var(--color-bone)] text-xs font-semibold ml-1">
             {rating.toFixed(1)}
           </span>
         </div>
@@ -67,7 +67,7 @@ export default function RestaurantCards() {
             <div className="restaurant-card-title-section">
               <div className="restaurant-card-experience-text">
                 <img
-                  src="/icons/red-compass.svg"
+                  src="/icons/rest_icon3.svg"
                   alt="Compass"
                   width="30"
                   height="30"
@@ -87,7 +87,7 @@ export default function RestaurantCards() {
             </div>
 
             <div className="restaurant-card-description-row">
-              <MdPlace className="w-3 h-3 text-gray-400 flex-shrink-0" />
+              <MdPlace className="w-4 h-4 text-[var(--color-blue)] flex-shrink-0" />
               <span className="line-clamp-2">
                 {restaurant.vicinity ||
                   "Descubre este increíble restaurante y vive una experiencia culinaria única"}
@@ -115,7 +115,7 @@ export default function RestaurantCards() {
 
               <div className="restaurant-card-type-overlay">
                 <img
-                  src="/icons/food_icon.svg"
+                  src="/icons/rest_icon3.svg"
                   alt="Food"
                   width="16"
                   height="16"
@@ -137,7 +137,7 @@ export default function RestaurantCards() {
             </button>
 
             <button className="restaurant-card-red-button">
-              <FaHeart className="w-4 h-4" />
+              <FaHeart className="w-4 h-4 text-[var(--color-blue)]" />
             </button>
           </div>
         </div>

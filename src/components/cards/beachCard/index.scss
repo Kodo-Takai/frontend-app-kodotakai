@@ -17,9 +17,9 @@
   min-width: 300px;
   max-width: 350px;
   flex-shrink: 0;
-  background-color: var(--color-bone);
+  background-color: var(--color-blue);
   border-radius: 20px;
-  border: 2px solid var(--color-blue);
+  border: 4px solid var(--color-beige);
   padding: 15px;
   transition: transform 0.3s ease-in-out;
   cursor: pointer;
@@ -64,7 +64,7 @@
   font-size: 10px;
   font-weight: 600;
   margin-bottom: 5px;
-  color: var(--color-blue);
+  color: var(--color-beige);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1.2;
@@ -85,9 +85,9 @@
 }
 
 .beach-card-experience-label {
-  font-size: 10px;
-  font-weight: 400;
-  color: var(--color-blue);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-beige);
   text-transform: uppercase;
   line-height: 5px;
   letter-spacing: -3%;
@@ -96,7 +96,7 @@
 .beach-card-beach-name {
   font-size: 30px;
   font-weight: 900;
-  color: var(--color-blue);
+  color: var(--color-beige);
   line-height: 40px;
   letter-spacing: -1px;
   margin: 0;
@@ -110,9 +110,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
-  color: var(--color-blue-light);
+  font-size: 13px;
+  color: var(--color-beige);
   line-height: 1.3;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .beach-card-image-section {
@@ -155,13 +158,15 @@
 }
 
 .beach-card-image-main {
-  border: 2px solid var(--color-bone);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 3px solid var(--color-bone);
+  box-shadow: 0 4px 8px rgba(0, 4, 4, 0.4);
 }
 
 .beach-card-image-back {
-  opacity: 0.8;
-  filter: brightness(0.9);
+  filter: brightness(0.6);
+  border: 3px solid var(--color-bone);
+  box-shadow: 0 4px 8px rgba(0, 4, 4, 0.4);
+
 }
 
 .beach-card-nav-button {
@@ -171,13 +176,13 @@
   width: 30px;
   color: white;
   height: 30px;
-  background-color: var(--color-blue);
+  background-color: var(--color-beige);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background-color: var(--color-blue-dark);
+    background-color: var(--color-beige-dark);
     transform: scale(1.05);
   }
 
@@ -217,7 +222,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--color-beige-dark);
+  background-color: var(--color-blue-dark);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 
@@ -237,10 +242,10 @@
   gap: 4px;
   padding: 8px 12px;
   background-color: var(--color-green);
-  color: white;
+  color: var(--color-blue);
   border: none;
   border-radius: 15px;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease-in-out;

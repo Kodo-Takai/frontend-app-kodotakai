@@ -35,13 +35,14 @@ export default function Explorar() {
   >
     <PageWrapper>
       {/* Header */}
-      <div className="flex justify-between items-center mt-5">
-        <div className="flex flex-col gap-2.5">
+      <div className="flex justify-between items-center mt-7">
+        <div className="flex flex-col gap-1">
           <h1
             style={{
               color: "var(--color-primary-dark)",
               fontSize: "40px",
               fontStyle: "normal",
+              height: "40px",
               fontWeight: "800",
               lineHeight: "26px",
             }}
@@ -53,7 +54,7 @@ export default function Explorar() {
               color: "var(--color-primary-dark)",
               fontSize: "15px",
               fontStyle: "normal",
-              fontWeight: "500",
+              fontWeight: "700",
               lineHeight: "22px",
             }}
           >
@@ -62,19 +63,17 @@ export default function Explorar() {
         </div>
 
         <button
-          onClick={handleNotificationsClick}
-          className="w-10 h-10 border-[2px] rounded-xl flex items-center justify-center hover:scale-105 hover:shadow-lg transition-all duration-300 ease-out cursor-pointer"
-          style={{ 
-            backgroundColor: 'var(--color-blue)', 
-            borderColor: 'var(--color-blue-dark)'
-          }}
-        >
-          <img
-            src="./icons/notification-bell.svg"
-            alt="Notificaciones"
-            className="w-6 h-6"
-          />
-        </button>
+            className="w-11 h-11 rounded-xl flex items-center justify-center hover:scale-105 transition-all shadow-sm duration-300 ease-out cursor-pointer"
+            style={{ 
+              backgroundColor: 'var(--color-blue-dark)', 
+            }}
+          >
+            <img
+              src="./icons/AI_Icon_2.svg"
+              alt="Notificaciones"
+              className="w-7 h-7"
+            />
+          </button>
       </div>
 
       <SegmentedControl

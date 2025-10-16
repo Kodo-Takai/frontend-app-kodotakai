@@ -59,10 +59,12 @@ html, body {
 
   /* 🎨 VARIACIONES (derivadas de los 4 colores base) */
   --color-blue-dark:    #1E3F4F;  /* Blue más oscuro */
-  --color-blue-light:   #4A7A8A;  /* Blue más claro */
-  --color-green-dark:   #B8C84A;  /* Green más oscuro */
+  --color-blue-darker:    #0e222c;  /* Blue más oscuro */
+  --color-blue-light:   rgba(94, 131, 144, 0.474);  /* Blue más claro */
+  --color-green-dark:   #9baa3b;  /* Green más oscuro */
+  --color-green-darker:   #747e31;  /* Green más oscuro */
   --color-green-light:  #E8F06A;  /* Green más claro */
-  --color-beige-dark:   #F5D4A0;  /* Beige más oscuro */
+  --color-beige-dark:   #dfbe8b;  /* Beige más oscuro */
   --color-beige-light:  #FFF4E0;  /* Beige más claro */
 
   /* 🎨 COLORES SEMÁNTICOS (usando la paleta base) */
@@ -94,6 +96,36 @@ html, body {
   --color-primary-light:    var(--color-beige);
   --color-background-main:  var(--color-bone);
   --color-white:            var(--color-bone);
+}
+
+/* ========================================
+   ESTILOS GLOBALES PARA INPUTS Y PLACEHOLDERS
+   ======================================== */
+
+/* Estilos para placeholders en inputs */
+input::placeholder {
+  color: var(--color-blue);
+  opacity: 1; /* Asegura que el color se aplique correctamente */
+}
+
+/* Estilos específicos para el componente Search */
+input[type="text"]::placeholder {
+  color: var(--color-blue);
+  opacity: 1;
+}
+
+/* Estilos más específicos para el componente Search */
+.search-input::placeholder {
+  color: var(--color-blue);
+  opacity: 1;
+}
+
+/* Estilos para inputs de formularios */
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="tel"]::placeholder {
+  color: var(--color-blue);
+  opacity: 1;
 }
 
 @keyframes bubble-in {
