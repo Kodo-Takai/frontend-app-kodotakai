@@ -16,8 +16,12 @@
   box-shadow: $btn-shadow;
   cursor: pointer;
   
-  font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+
+// ========================================
+// MIXINS DE BOTONES - SISTEMA UNIFICADO
+// ========================================
 
 @mixin btn-filled($bg, $hover, $color) {
   @include btn-base;
@@ -29,7 +33,7 @@
   &:active { transform: translateY(0.5px); }
 }
 
-@mixin btn-outline($color, $hoverBg: transparent, $hoverTxt: $txt-white) {
+@mixin btn-outline($color, $hoverBg: transparent, $hoverTxt: $white) {
   @include btn-base;
   background: transparent;
   color: $color;
@@ -50,6 +54,45 @@
   box-shadow: none;
   cursor: not-allowed;
   opacity: .9;
+}
+
+// ========================================
+// MIXINS ESPECÍFICOS POR CATEGORÍA
+// ========================================
+
+// Botón primario (Blue)
+@mixin btn-primary {
+  @include btn-filled($blue, $blue-dark, $bone);
+}
+
+// Botón secundario (Green)
+@mixin btn-secondary {
+  @include btn-filled($green, $green-dark, $blue);
+}
+
+// Botón acento (Beige)
+@mixin btn-accent {
+  @include btn-filled($beige, $beige-dark, $blue);
+}
+
+// Botón neutral (Bone)
+@mixin btn-neutral {
+  @include btn-filled($bone, $beige-light, $blue);
+}
+
+// Botón restaurante (usando blue)
+@mixin btn-restaurant {
+  @include btn-filled($blue, $blue-dark, $bone);
+}
+
+// Botón playa (usando green)
+@mixin btn-beach {
+  @include btn-filled($green, $green-dark, $blue);
+}
+
+// Botón maps (usando blue)
+@mixin btn-maps {
+  @include btn-filled($blue, $blue-dark, $bone);
 }
 
 @mixin btn-icon {

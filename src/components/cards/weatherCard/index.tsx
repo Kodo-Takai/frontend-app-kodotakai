@@ -129,7 +129,7 @@ export default function WeatherPill({
     aria-label="Clima actual"
     role="group"
   >
-    <div className="absolute inset-0 rounded-2xl bg-[#073247]" />
+    <div className="absolute inset-0 rounded-2xl" style={{ backgroundColor: 'var(--color-blue-dark)' }} />
     <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10" />
     
     <div className="relative h-full flex items-center justify-center">

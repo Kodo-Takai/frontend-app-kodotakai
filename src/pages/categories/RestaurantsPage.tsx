@@ -125,10 +125,10 @@ export default function RestaurantsPage() {
         <HeaderNavigationExplore />
 
         <div className="justify-center items-center text-center mt-3 mb-5">
-          <h1 className="text-[42px] font-black pb-1 text-[#FF0A10] leading-none tracking-[-0.03em]">
+          <h1 className="text-[42px] font-black pb-1 leading-none tracking-[-0.03em]" style={{ color: 'var(--color-green)' }}>
             RESTAURANTES
           </h1>
-          <p className="text-xl font-bold text-[#ffffff]">CERCA DE TI</p>
+          <p className="text-xl font-bold" style={{ color: 'var(--color-bone)' }}>CERCA DE TI</p>
         </div>
 
         <SegmentedControl
@@ -146,23 +146,23 @@ export default function RestaurantsPage() {
 
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-3xl"></div>
 
-          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2">
+          <div className="absolute top-3 right-3 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2" style={{ backgroundColor: 'var(--color-bone)' }}>
             <img
               src="/icons/red-compass.svg"
               alt="Location"
               className="w-4 h-4"
             />
-            <span className="text-xs font-semibold text-gray-800">
+            <span className="text-xs font-semibold" style={{ color: 'var(--color-blue)' }}>
               Usamos tu ubicación!
             </span>
           </div>
 
           <div className="absolute bottom-7 left-4 text-left">
-            <h2 className="text-white text-2xl font-extrabold mb-1 leading-none">
+            <h2 className="text-2xl font-extrabold mb-1 leading-none" style={{ color: 'var(--color-bone)' }}>
               {CAROUSEL_CONFIG.slides[currentSlide].titleFirst} <br />
               {CAROUSEL_CONFIG.slides[currentSlide].titleRest}
             </h2>
-            <p className="text-white/80 text-sm">
+            <p className="text-sm" style={{ color: 'var(--color-beige-light)' }}>
               {CAROUSEL_CONFIG.slides[currentSlide].subtitle}
             </p>
           </div>
@@ -174,9 +174,12 @@ export default function RestaurantsPage() {
                 onClick={() => setCurrentSlide(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   index === currentSlide
-                    ? "bg-white scale-125"
-                    : "bg-white/50 hover:bg-white/70"
+                    ? "scale-125"
+                    : "hover:opacity-70"
                 }`}
+                style={{ 
+                  backgroundColor: currentSlide === index ? 'var(--color-bone)' : 'var(--color-beige-light)'
+                }}
               />
             ))}
           </div>
@@ -210,8 +213,8 @@ export default function RestaurantsPage() {
                 label={badge.label}
                 isActive={selectedBadge === badge.id}
                 onClick={handleBadgeClick}
-                activeColor="#DC1217"
-                activeBorderColor={badge.id === "todo" ? "#e1e1e1" : "#F3F3F3"}
+                activeColor="var(--color-green)"
+                activeBorderColor={badge.id === "todo" ? "var(--color-beige-dark)" : "var(--color-beige-light)"}
               />
             ))}
           </div>
@@ -240,7 +243,7 @@ export default function RestaurantsPage() {
           />
 
           <div className="mt-4">
-            <h2 className="text-2xl font-bold text-[#00324A] mb-4 text-center">
+            <h2 className="text-2xl font-bold mb-4 text-center" style={{ color: 'var(--color-blue)' }}>
               Explora más restaurantes
             </h2>
             <LocationMultiGrid

@@ -1,5 +1,5 @@
 .top-rated-card {
-  @apply relative w-80 h-64 rounded-2xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-lg border border-gray-200;
+  @apply relative w-80 h-64 rounded-2xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 border border-[var(--color-primary-light)];
 }
 
 .top-rated-card:hover {
@@ -20,7 +20,7 @@
   left: 0;
   right: 0;
   padding: 1rem;
-  color: white;
+  color: var(--color-primary-light);
   z-index: 2;
   margin-bottom: 15px;
 }
@@ -32,7 +32,7 @@
   right: 12px;
   width: 32px;
   height: 32px;
-  background-color: white;
+  background-color: var(--color-primary-light);
   color: #ff0007;
   border-radius: 50%;
   display: flex;
@@ -69,11 +69,11 @@
 }
 
 .top-rated-star-empty {
-  @apply text-gray-300;
+  @apply text-[var(--color-primary-dark)];
 }
 
 .top-rated-rating {
-  @apply text-white text-sm font-semibold ml-1;
+  @apply text-[var(--color-primary-light)] text-sm font-semibold ml-1;
 }
 
 .top-rated-title {
@@ -81,7 +81,7 @@
 }
 
 .top-rated-description {
-  @apply text-sm text-white/90 mb-2 line-clamp-2;
+  @apply text-sm text-[var(--color-primary-light)]/90 mb-2 line-clamp-2;
 }
 
 .top-rated-price {
@@ -96,7 +96,7 @@
 }
 
 .top-rated-address {
-  @apply text-xs text-white/80 line-clamp-1;
+  @apply text-xs text-[var(--color-primary-light)]/80 line-clamp-1;
 }
 
 .top-rated-carousel {
@@ -116,10 +116,10 @@
   width: 250px;
   height: 320px;
   flex-shrink: 0;
-  background-color: #ffffff;
+  background-color: var(--color-primary-light);
   border-radius: 25px;
   overflow: hidden;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--color-primary-beige);
   position: relative;
   cursor: pointer;
   display: flex;
@@ -164,10 +164,10 @@
   width: 250px;
   height: 320px;
   flex-shrink: 0;
-  background-color: #f3f4f6;
+  background-color: var(--color-primary-beige);
   border-radius: 25px;
   overflow: hidden;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--color-primary-beige);
   position: relative;
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   display: flex;

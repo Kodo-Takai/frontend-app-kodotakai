@@ -16,12 +16,12 @@ const WeekDaysSelector: React.FC<WeekDaysSelectorProps> = ({
         <button
           key={index}
           onClick={() => onDaySelect(day.date)}
-          className={`flex-1 text-sm flex flex-col items-center justify-center py-2 px-2 rounded-xl transition-all duration-200 hover:scale-105 animate-bubble-in ${
+          className={`flex-1 text-sm flex flex-col items-center justify-center py-4 px-2 rounded-lg transition-all duration-200 hover:scale-105 animate-bubble-in ${
             day.isSelected
-              ? "bg-[#BACB2C] text-[#151A00]"
+              ? "bg-[var(--color-green)] text-[var(--color-blue)]"
               : day.isToday
-              ? "bg-gray-100 text-[#151A00] border-2 border-gray-400"
-              : "bg-white/50 text-[#] hover:bg-gray-50 border-2 border-white/50"
+              ? "bg-[var(--color-beige)] text-[var(--color-blue)] "
+              : "bg-[var(--color-beige)] text-[var(--color-blue)] hover:bg-[var(--color-beige)]"
           }`}
           style={{ animationDelay: `${index * 0.1}s` }}
         >
@@ -31,7 +31,7 @@ const WeekDaysSelector: React.FC<WeekDaysSelectorProps> = ({
           </span>
           <span
             className={`text-lg ${
-              day.isSelected ? "font-black text-[#151A00]" : "font-medium"
+              day.isSelected ? "font-extrabold text-[var(--color-blue)]" : "font-semibold"
             }`}
           >
             {day.dayNumber}
