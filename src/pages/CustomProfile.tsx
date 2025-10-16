@@ -225,10 +225,11 @@ export default function CustomProfile() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center p-4 space-y-6 bg-[#F6F6F6]">
+    <div className="w-full h-full flex flex-col justify-center items-center p-4 space-y-6" style={{ backgroundColor: 'var(--color-beige-light)' }}>
       <div className="flex justify-between items-center w-full">
         <button
-          className="border-[#322C2C] border-[2px] p-3 rounded-xl"
+          className="border-[2px] p-3 rounded-xl"
+          style={{ borderColor: 'var(--color-blue)' }}
           disabled={isSaving}
           onClick={handleBackClick}
         >
@@ -243,20 +244,23 @@ export default function CustomProfile() {
               fill-rule="evenodd"
               clip-rule="evenodd"
               d="M6.61.933a.53.53 0 0 0-.75.05L.902 6.65a.53.53 0 0 0 0 .7l4.958 5.666a.531.531 0 0 0 .8-.7L2.472 7.532h10.163a.531.531 0 0 0 0-1.062H2.472L6.66 1.683a.53.53 0 0 0-.05-.75"
-              fill="#322C2C"
+              fill="var(--color-blue)"
             />
           </svg>
         </button>
-        <h1 className="text-[#322C2C] text-[28px] font-extrabold flex items-center gap-2">
+        <h1 className="text-[28px] font-extrabold flex items-center gap-2" style={{ color: 'var(--color-blue)' }}>
           Editar perfil
           {hasUnsavedChanges && (
-            <span className="text-[#DC1217] text-sm">•</span>
+            <span className="text-sm" style={{ color: 'var(--color-green)' }}>•</span>
           )}
         </h1>
         <button
           className={`relative p-3 rounded-xl disabled:opacity-60 transition-all duration-200 ${
-            hasUnsavedChanges ? "bg-[#DC1217] animate-pulse" : "bg-[#00324A]"
+            hasUnsavedChanges ? "animate-pulse" : ""
           }`}
+          style={{ 
+            backgroundColor: hasUnsavedChanges ? 'var(--color-green)' : 'var(--color-blue)'
+          }}
           onClick={onSave}
           disabled={isSaving || isFetching || !currentProfile}
           title={
@@ -273,7 +277,7 @@ export default function CustomProfile() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="m.71 9 4 3 9-11" stroke="#fff" stroke-width="1.5" />
+            <path d="m.71 9 4 3 9-11" stroke="var(--color-bone)" stroke-width="1.5" />
           </svg>
         </button>
       </div>
@@ -293,7 +297,7 @@ export default function CustomProfile() {
       <div className="flex w-full flex-col px-2">
         <h2 className="font-bold text-[22px]">Datos Personales</h2>
         <div className="flex flex-col space-y-1 mt-2">
-          <span className="font-semibold text-[#00324A]">Nombres</span>
+          <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>Nombres</span>
           <Input
             id="name"
             label="Nombre"
@@ -304,7 +308,7 @@ export default function CustomProfile() {
           />
         </div>
         <div className="flex flex-col space-y-1">
-          <span className="font-semibold text-[#00324A]">Apellidos</span>
+          <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>Apellidos</span>
           <Input
             id="name"
             label="Apellidos"
@@ -316,7 +320,7 @@ export default function CustomProfile() {
         </div>
         <div className="flex gap-4">
           <div className="flex flex-col space-y-1 w-full">
-            <span className="font-semibold text-[#00324A]">Género</span>
+            <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>Género</span>
             <CustomSelect
               id="gender"
               name="gender"
@@ -332,7 +336,7 @@ export default function CustomProfile() {
             />
           </div>
           <div className="flex flex-col space-y-1 w-full">
-            <span className="font-semibold text-[#00324A]">
+            <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>
               Fecha de nacimiento
             </span>
             <CustomDateInput
@@ -348,7 +352,7 @@ export default function CustomProfile() {
       <div className="flex w-full flex-col px-2 mt-4">
         <h2 className="font-bold text-[22px]">Contacto Personal</h2>
         <div className="flex flex-col space-y-1 mt-2">
-          <span className="font-semibold text-[#00324A]">Dirección</span>
+          <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>Dirección</span>
           <Input
             id="name"
             label="Dirección"
@@ -359,7 +363,7 @@ export default function CustomProfile() {
           />
         </div>
         <div className="flex flex-col space-y-1">
-          <span className="font-semibold text-[#00324A]">Teléfono</span>
+          <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>Teléfono</span>
           <Input
             id="name"
             label="Teléfono"
@@ -371,22 +375,23 @@ export default function CustomProfile() {
         </div>
       </div>
       {isFetching && (
-        <p className="text-sm text-gray-500">Cargando perfil...</p>
+        <p className="text-sm" style={{ color: 'var(--color-blue-light)' }}>Cargando perfil...</p>
       )}
       {!isFetching && !currentProfile && (
-        <p className="text-sm text-red-600">
+        <p className="text-sm" style={{ color: 'var(--color-green)' }}>
           No se encontró un perfil para el usuario.
         </p>
       )}
 
       {/* Modal de confirmación para salir sin guardar */}
       {showExitModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full space-y-4">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="rounded-xl p-6 max-w-sm w-full space-y-4" style={{ backgroundColor: 'var(--color-bone)' }}>
             <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4" style={{ backgroundColor: 'var(--color-beige)' }}>
                 <svg
-                  className="h-6 w-6 text-yellow-600"
+                  className="h-6 w-6"
+                  style={{ color: 'var(--color-blue)' }}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -399,10 +404,10 @@ export default function CustomProfile() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
+              <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-blue)' }}>
                 ¿Seguro que deseas salir?
               </h3>
-              <p className="text-sm text-gray-600 mb-6">
+              <p className="text-sm mb-6" style={{ color: 'var(--color-blue-light)' }}>
                 Tienes cambios sin guardar que se perderán si sales ahora.
               </p>
             </div>
@@ -410,14 +415,23 @@ export default function CustomProfile() {
             <div className="flex space-x-3">
               <button
                 onClick={handleDiscardAndExit}
-                className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-gray-300 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="flex-1 px-4 py-2 text-sm font-medium rounded-lg focus:outline-none focus:ring-2"
+                style={{ 
+                  color: 'var(--color-blue)', 
+                  backgroundColor: 'var(--color-beige)', 
+                  borderColor: 'var(--color-beige-dark)'
+                }}
                 disabled={isSaving}
               >
                 Descartar
               </button>
               <button
                 onClick={handleSaveAndExit}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-[#00324A] border border-transparent rounded-lg hover:bg-[#004060] focus:outline-none focus:ring-2 focus:ring-[#00324A] disabled:opacity-60"
+                className="flex-1 px-4 py-2 text-sm font-medium border border-transparent rounded-lg focus:outline-none focus:ring-2 disabled:opacity-60"
+                style={{ 
+                  color: 'var(--color-bone)', 
+                  backgroundColor: 'var(--color-blue)'
+                }}
                 disabled={isSaving}
               >
                 {isSaving ? "Guardando..." : "Guardar"}
@@ -426,7 +440,10 @@ export default function CustomProfile() {
 
             <button
               onClick={() => setShowExitModal(false)}
-              className="w-full px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="w-full px-4 py-2 text-sm font-medium focus:outline-none"
+              style={{ 
+                color: 'var(--color-blue-light)'
+              }}
               disabled={isSaving}
             >
               Cancelar

@@ -11,7 +11,7 @@ interface MapFiltersProps {
 
 const MapFilters: React.FC<MapFiltersProps> = ({ activeFilter, onFilterChange }) => {
   return (
-    <div className="flex w-full justify-center space-x-2 rounded-full bg-gray-100 p-1">
+    <div className="flex w-full justify-center space-x-2 rounded-full p-1" style={{ backgroundColor: 'var(--color-beige-light)' }}>
       {FILTERS.map((filter) => {
         const isSelected = activeFilter === filter.id;
         return (
@@ -21,13 +21,12 @@ const MapFilters: React.FC<MapFiltersProps> = ({ activeFilter, onFilterChange })
             className={`
               flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2 
               text-sm font-semibold transition-all duration-300 ease-in-out
-              ${
-                isSelected
-                  // --- LÍNEA MODIFICADA ---
-                  ? 'bg-[#073247] text-white shadow-md' 
-                  : 'bg-transparent text-gray-500 hover:bg-gray-200'
-              }
+              ${isSelected ? 'shadow-md' : 'bg-transparent hover:opacity-70'}
             `}
+            style={{
+              backgroundColor: isSelected ? 'var(--color-blue-dark)' : 'transparent',
+              color: isSelected ? 'var(--color-bone)' : 'var(--color-blue-light)'
+            }}
           >
             {filter.icon}
             <span>{filter.label}</span>

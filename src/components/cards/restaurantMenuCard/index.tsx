@@ -201,20 +201,20 @@ export default function RestaurantMenuCard() {
                 {/* HEADER */}
                 <div className="restaurant-menu-card-header flex items-center justify-between">
                   {/* Icono */}
-                  <div className="restaurant-menu-card-icon w-8 h-8 bg-gray-300 rounded"></div>
+                  <div className="restaurant-menu-card-icon w-8 h-8 bg-[var(--color-primary-dark-beige)] rounded"></div>
 
                   {/* Nombre + dirección */}
                   <div className="flex flex-col flex-grow mx-3">
-                    <div className="h-5 bg-gray-300 rounded mb-2 w-3/4"></div>
-                    <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                    <div className="h-5 bg-[var(--color-primary-dark-beige)] rounded mb-2 w-3/4"></div>
+                    <div className="h-3 bg-[var(--color-primary-dark-beige)] rounded w-1/2"></div>
                   </div>
 
                   {/* Rating */}
-                  <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                  <div className="w-10 h-10 bg-[var(--color-primary-dark-beige)] rounded-full"></div>
                 </div>
 
                 {/* IMÁGENES */}
-                <div className="restaurant-menu-card-images-section bg-gray-300 mt-3 rounded-xl"></div>
+                <div className="restaurant-menu-card-images-section bg-[var(--color-primary-dark-beige)] mt-3 rounded-xl"></div>
               </div>
             </div>
           ))}
@@ -256,7 +256,7 @@ export default function RestaurantMenuCard() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
+      <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4">
         Y donde comeremos hoy?
       </h2>
       {renderContent()}

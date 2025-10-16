@@ -49,21 +49,21 @@ export default function Input({
     const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
 
     return (
-      <div className="mt-2 text-xs text-gray-600">
+      <div className="mt-2 text-xs" style={{ color: 'var(--color-blue-light)' }}>
         <div className="grid grid-cols-2 gap-1">
-          <div className={`flex items-center gap-1 ${hasMinLength ? 'text-green-600' : 'text-gray-400'}`}>
+          <div className={`flex items-center gap-1 ${hasMinLength ? '' : ''}`} style={{ color: hasMinLength ? 'var(--color-green)' : 'var(--color-blue-light)' }}>
             <span>{hasMinLength ? '✓' : '○'}</span>
             <span>Mínimo 8 caracteres</span>
           </div>
-          <div className={`flex items-center gap-1 ${hasUpperCase ? 'text-green-600' : 'text-gray-400'}`}>
+          <div className={`flex items-center gap-1 ${hasUpperCase ? '' : ''}`} style={{ color: hasUpperCase ? 'var(--color-green)' : 'var(--color-blue-light)' }}>
             <span>{hasUpperCase ? '✓' : '○'}</span>
             <span>Una mayúscula</span>
           </div>
-          <div className={`flex items-center gap-1 ${hasNumber ? 'text-green-600' : 'text-gray-400'}`}>
+          <div className={`flex items-center gap-1 ${hasNumber ? '' : ''}`} style={{ color: hasNumber ? 'var(--color-green)' : 'var(--color-blue-light)' }}>
             <span>{hasNumber ? '✓' : '○'}</span>
             <span>Un número</span>
           </div>
-          <div className={`flex items-center gap-1 ${hasSpecialChar ? 'text-green-600' : 'text-gray-400'}`}>
+          <div className={`flex items-center gap-1 ${hasSpecialChar ? '' : ''}`} style={{ color: hasSpecialChar ? 'var(--color-green)' : 'var(--color-blue-light)' }}>
             <span>{hasSpecialChar ? '✓' : '○'}</span>
             <span>Carácter especial</span>
           </div>
@@ -76,7 +76,7 @@ export default function Input({
     <div className="mb-6">
       <div className="relative">
         {icon && (
-          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: 'var(--color-blue-light)' }}>
             {icon}
           </span>
         )}
@@ -91,8 +91,13 @@ export default function Input({
           placeholder={placeholder}
           autoComplete={autoComplete}
           className={`block w-full px-4 py-4 pr-10 text-sm rounded-2xl border focus:outline-none ${
-            invalid ? 'border-red-500' : 'border-[#DEDEDE]'
-          } bg-[#EEEEEE] text-[#AEAEAE]`}
+            invalid ? '' : ''
+          }`}
+          style={{
+            borderColor: invalid ? 'var(--color-blue)' : 'var(--color-beige)',
+            backgroundColor: 'var(--color-beige)',
+            color: 'var(--color-blue-light)'
+          }}
           aria-invalid={invalid}
           aria-describedby={invalid ? `${inputId}-error` : undefined}
           disabled={disabled}
@@ -101,9 +106,10 @@ export default function Input({
         {type === 'password' && (
           <span
             onClick={handleTogglePassword}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+            style={{ color: 'var(--color-blue-light)' }}
           >
-            {showPassword ? <FaEyeSlash className="h-5 w-5" /> : <FaEye className="h-5 w-5" />}
+            {showPassword ? <FaEye className="h-5 w-5" /> : <FaEyeSlash className="h-5 w-5" />}
           </span>
         )}
       </div>
@@ -111,7 +117,7 @@ export default function Input({
       {getPasswordRequirements()}
       
       {invalid && (
-        <span className="text-sm text-red-500 mt-2" id={`${inputId}-error`}>
+        <span className="text-sm mt-2" style={{ color: 'var(--color-blue)' }} id={`${inputId}-error`}>
           {error}
         </span>
       )}

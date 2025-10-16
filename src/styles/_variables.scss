@@ -1,20 +1,60 @@
-// Red
-$btn-red:        #DC1217;  // claro
-$btn-red-hover:  #B71317;  // oscuro
+// ========================================
+// PALETA DE COLORES DEFINITIVA - KODOTAKAI
+// Solo 4 colores: Blue, Green, Beige, Bone
+// ========================================
 
-// Blue
-$btn-blue:       #00324A;  // claro
-$btn-blue-hover: #002334;  // oscuro
+// 🎨 COLORES PRIMARIOS (Paleta definitiva)
+$blue:      #295B72;  // Blue principal
+$green:     #D1DC5A;  // Green principal
+$beige:     #FCE4C0;  // Beige principal
+$bone:      #FFFFF0;  // Bone principal
 
-// Neutral/disabled
-$btn-neutral:     #E1E1E1;
-$btn-neutral-txt: #8F8F8F;
+// 🎨 VARIACIONES (derivadas de los 4 colores base)
+$blue-dark:    #1E3F4F;  // Blue más oscuro
+$blue-light:   #4A7A8A;  // Blue más claro
+$green-dark:   #B8C84A;  // Green más oscuro
+$green-light:  #E8F06A;  // Green más claro
+$beige-dark:   #F5D4A0;  // Beige más oscuro
+$beige-light:  #FFF4E0;  // Beige más claro
 
-// Texto
-$txt-white: #FFFFFF;
-$txt-blueDark: #003D57;
-$txt-blueLight: #126281;
+// 🎨 COLORES SEMÁNTICOS (usando la paleta base)
+$success: $green;
+$error:   $blue;
+$warning: $beige;
+$info:    $blue;
 
-// Forma / sombra (si usas sombra global en btn-base)
+// 🎨 COLORES DE TEXTO
+$text-primary:   $blue;
+$text-secondary: $blue-dark;
+$text-muted:     $blue-light;
+$text-white:     $bone;
+
+// 🎨 COLORES DE FONDO
+$bg-primary:   $bone;
+$bg-secondary: $beige;
+$bg-muted:     $beige-light;
+
+// 🎨 COLORES DE BOTONES
+$btn-primary:   $blue;
+$btn-secondary: $green;
+$btn-accent:    $beige;
+$btn-neutral:   $bone;
+
+// 🎨 COMPATIBILIDAD (mapeo de nombres antiguos)
+$primary-dark:     $blue;
+$primary-accent:   $green;
+$primary-light:    $beige;
+$background-main:  $bone;
+$white:            $bone;
+
+// 🎨 BOTONES (Compatibilidad con sistema existente)
+$btn-red:        $blue;
+$btn-red-hover:  $blue-dark;
+$btn-blue:       $blue;
+$btn-blue-hover: $blue-dark;
+$btn-neutral:    $beige-light;
+$btn-neutral-txt: $blue-light;
+
+// 🎨 FORMA Y SOMBRAS
 $btn-radius: 16px;
 $btn-shadow: 0 10px 24px rgba(0,0,0,.12);

@@ -16,17 +16,21 @@
 }
 
 .restaurant-menu-card-width {
+  margin-left: 0.3rem;
   width: 340px;
   height: 300px;
   flex-shrink: 0;
-  background-color: #ffffff;
+  background-color: var(--color-primary-dark);
+  border: 6px solid var(--color-primary-light);
   border-radius: 20px;
   padding: 15px;
   transition: transform 0.3s ease-in-out;
   cursor: pointer;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.15);
+
 
   &:hover {
-    transform: scale(1.02);
+    transform: scale(1.01);
   }
 
   @media (max-width: 640px) {
@@ -56,14 +60,15 @@
 .restaurant-menu-card-icon-column {
   display: flex;
   align-items: center;
+  padding: 2px;
   justify-content: center;
   width: 100%;
   height: 100%;
 }
 
 .restaurant-menu-card-food-icon {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
 }
 
@@ -80,7 +85,7 @@
 .restaurant-menu-card-name {
   font-size: 18px;
   font-weight: 700;
-  color: #00324a;
+  color: var(--color-primary-light);
   line-height: 20px;
   letter-spacing: -0.5px;
   margin: 0;
@@ -99,7 +104,7 @@
 .restaurant-menu-card-location {
   font-size: 12px;
   font-weight: 400;
-  color: #6b7280;
+  color: color-mix(in srgb, var(--color-primary-light) 70%, transparent);
   line-height: 14px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -115,7 +120,8 @@
 }
 
 .restaurant-menu-card-rating-container {
-  background-color: #dc1217;
+  background-color: var(--color-primary-dark-accent);
+  border: 2px solid var(--color-primary-light);
   border-radius: 12px;
   padding: 8px;
   display: flex;
@@ -134,13 +140,13 @@
 .restaurant-menu-card-star-icon {
   width: 16px;
   height: 16px;
-  color: #fcfcfc;
+  color: var(--color-primary-light);
 }
 
 .restaurant-menu-card-rating-text {
   font-size: 17px;
   font-weight: 600;
-  color: #fcfcfc;
+  color: var(--color-primary-light);
   line-height: 16px;
 }
 
@@ -156,6 +162,7 @@
 }
 
 .restaurant-menu-card-main-image {
+  border: 3px solid var(--color-primary-light);
   flex: 0 0 45%;
   height: 100%;
   border-radius: 12px;
@@ -168,11 +175,11 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 1rem;
+  padding: 0.7rem;
   background: linear-gradient(
     to top,
     rgb(0, 0, 0) 0%,
-    rgb(0, 0, 0) 20%,
+    rgb(0, 0, 0) 30%,
     transparent 100%
   );
   z-index: 1;
@@ -180,21 +187,21 @@
 
 .restaurant-menu-card-overlay-title {
   font-size: 1.5rem;
-  color: white;
+  color: var(--color-primary-light);
   font-weight: 700;
   margin: 0;
   text-transform: uppercase;
 }
 
 .restaurant-menu-card-overlay-text {
-  color: white;
+  color: var(--color-primary-light);
   margin: 0.2rem 0 0 0;
   font-size: 0.9rem;
 }
 
 .restaurant-menu-card-overlay-price {
-  color: #e60000;
-  font-weight: 900;
+  color: var(--color-primary-accent);
+  font-weight: 800;
   font-size: 1rem;
   margin: 0.2rem 0 0 0;
 }
@@ -209,6 +216,8 @@
 
 .restaurant-menu-card-secondary-image {
   flex: 1;
+  border: 3px solid var(--color-primary-beige);
+
   border-radius: 12px;
   overflow: hidden;
   position: relative;
@@ -229,7 +238,7 @@
   }
 
   .restaurant-menu-card-width {
-    width: 340px;
+    width: 330px;
     height: 280px;
   }
 
