@@ -2,10 +2,11 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import RegisterForm from "../components/form/registerForm";
 import { useRegister } from "../hooks/auth/useRegister";
+import { useToast } from "../hooks/useToast";
 
 export default function Register() {
   const navigate = useNavigate();
-  const { 
+  const {
     username,
     email,
     password,
@@ -15,12 +16,30 @@ export default function Register() {
     isValid,
     isLoading,
     errorMessage,
-    handleFormSubmit
+    register,
   } = useRegister();
+  const { success: toastSuccess, error: toastError } = useToast();
+
+  const handleSubmitWithToast = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid || isLoading) return;
+    const result = await register();
+    if (result?.success) {
+      toastSuccess(result.data);
+      navigate("/login", {
+        state: {
+          message: "Cuenta creada exitosamente. Por favor inicia sesión.",
+          username: username.value,
+        },
+      });
+    } else {
+      toastError("Error al registrarse");
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg justify-center">
-      <div 
+      <div
         className="cursor-pointer text-gray-500"
         onClick={() => navigate(-1)}
         aria-label="Regresar"
@@ -35,8 +54,8 @@ export default function Register() {
       </h2>
 
       <p className="text-gray-500 text-sm mb-6">
-        Crea una cuenta para que puedas comenzar una nueva 
-        aventura y disfrutar la experiencia al máximo
+        Crea una cuenta para que puedas comenzar una nueva aventura y disfrutar
+        la experiencia al máximo
       </p>
 
       <RegisterForm
@@ -49,7 +68,7 @@ export default function Register() {
         isValid={isValid}
         isLoading={isLoading}
         backendError={errorMessage}
-        onSubmit={handleFormSubmit}
+        onSubmit={handleSubmitWithToast}
       />
     </div>
   );

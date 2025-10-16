@@ -12,9 +12,15 @@ import {
 import { decodeJwt } from "../utils/jwt";
 import { useNavigate } from "react-router-dom";
 import { useImageUpload } from "../hooks/useImageUpload";
+import { useToast } from "../hooks/useToast";
 
 export default function CustomProfile() {
   const navigate = useNavigate();
+  const {
+    success: toastSuccess,
+    error: toastError,
+    warning: toastWarning,
+  } = useToast();
   const token = useSelector((s: RootState) => s.auth.token);
   const payload = useMemo(() => decodeJwt(token), [token]);
   const profileIdFromToken = payload?.profileId as string | undefined;
@@ -134,13 +140,13 @@ export default function CustomProfile() {
         }).unwrap();
 
         setOriginalData((prev) => ({ ...prev, profileImage: imageUrl }));
-        alert("Imagen de perfil actualizada correctamente");
+        toastSuccess({ message: "Imagen de perfil actualizada correctamente" });
       }
     } catch (error) {
       console.error("Error al actualizar imagen:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Error al subir la imagen";
-      alert(errorMessage);
+      toastError({ message: errorMessage });
     }
   };
 
@@ -161,7 +167,7 @@ export default function CustomProfile() {
     if (phone.trim()) body.phone = phone.trim();
 
     if (Object.keys(body).length === 0) {
-      alert("No hay cambios para guardar");
+      toastWarning({ message: "No hay cambios para guardar" });
       return;
     }
 
@@ -185,7 +191,7 @@ export default function CustomProfile() {
       setOriginalData(updatedData);
       setHasUnsavedChanges(false);
 
-      alert("Perfil actualizado correctamente");
+      toastSuccess({ message: "Perfil actualizado correctamente" });
 
       navigate("/profile");
     } catch (err: unknown) {
@@ -195,7 +201,7 @@ export default function CustomProfile() {
       const dataMsg = e?.data?.message as unknown;
       const msg =
         dataMsg || `No se pudo actualizar el perfil (HTTP ${status ?? ""})`;
-      alert(Array.isArray(msg) ? msg.join("\n") : String(msg));
+      toastError(Array.isArray(msg) ? msg.join("\n") : String(msg));
     }
   };
 
