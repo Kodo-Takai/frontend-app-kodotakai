@@ -43,7 +43,7 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
             onError={handleImageError}
           />
 
-          <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-[#090b00] to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-[var(--color-blue)] to-transparent" />
 
           <div className="absolute top-2 left-2 flex gap-1">
             <div className="flex items-center gap-3 bg-[var(--color-primary-light)] rounded-xl px-3 py-1 text-lg font-medium text-[var(--color-primary-dark)]">

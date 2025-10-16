@@ -120,10 +120,10 @@ export default function PlayasPage() {
         <HeaderNavigationExplore />
 
         <div className="justify-center items-center text-center">
-          <h1 className="text-[65px] font-black pb-1 text-[#003e5b] leading-none">
+          <h1 className="text-[65px] font-black pb-1 leading-none" style={{ color: 'var(--color-blue)' }}>
             PLAYAS
           </h1>
-          <p className="text-xl font-extrabold text-[#ffffff]">CERCA DE TI</p>
+          <p className="text-xl font-extrabold" style={{ color: 'var(--color-bone)' }}>CERCA DE TI</p>
         </div>
 
         <SegmentedControl
@@ -141,23 +141,23 @@ export default function PlayasPage() {
 
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-2xl"></div>
 
-          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2">
+          <div className="absolute top-3 right-3 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2" style={{ backgroundColor: 'var(--color-bone)' }}>
             <img
               src="/icons/red-compass.svg"
               alt="Location"
               className="w-4 h-4"
             />
-            <span className="text-xs font-semibold text-gray-800">
+            <span className="text-xs font-semibold" style={{ color: 'var(--color-blue)' }}>
               Usamos tu ubicación!
             </span>
           </div>
 
           <div className="absolute bottom-7 left-4 text-left">
-            <h2 className="text-white text-2xl font-extrabold mb-1 leading-none">
+            <h2 className="text-2xl font-extrabold mb-1 leading-none" style={{ color: 'var(--color-bone)' }}>
               {BEACH_CAROUSEL_CONFIG.slides[currentSlide].titleFirst} <br />
               {BEACH_CAROUSEL_CONFIG.slides[currentSlide].titleRest}
             </h2>
-            <p className="text-white/80 text-sm">
+            <p className="text-sm" style={{ color: 'var(--color-beige-light)' }}>
               {BEACH_CAROUSEL_CONFIG.slides[currentSlide].subtitle}
             </p>
           </div>
@@ -169,9 +169,12 @@ export default function PlayasPage() {
                 onClick={() => setCurrentSlide(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   index === currentSlide
-                    ? "bg-white scale-125"
-                    : "bg-white/50 hover:bg-white/70"
+                    ? "scale-125"
+                    : "hover:opacity-70"
                 }`}
+                style={{ 
+                  backgroundColor: currentSlide === index ? 'var(--color-bone)' : 'var(--color-beige-light)'
+                }}
               />
             ))}
           </div>
@@ -205,8 +208,8 @@ export default function PlayasPage() {
                 label={badge.label}
                 isActive={selectedBadge === badge.id}
                 onClick={handleBadgeClick}
-                activeColor="#00324A"
-                activeBorderColor={badge.id === "todo" ? "#e1e1e1" : "#F3F3F3"}
+                activeColor="var(--color-blue)"
+                activeBorderColor={badge.id === "todo" ? "var(--color-beige-dark)" : "var(--color-beige-light)"}
               />
             ))}
           </div>
@@ -227,7 +230,7 @@ export default function PlayasPage() {
           <BeachCards />
 
           <div className="mt-4">
-            <h2 className="text-2xl font-bold text-[#00324A] mb-4 text-center">
+            <h2 className="text-2xl font-bold mb-4 text-center" style={{ color: 'var(--color-blue)' }}>
               Explora más playas
             </h2>
             <LocationMultiGrid

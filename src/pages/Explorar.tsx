@@ -63,7 +63,11 @@ export default function Explorar() {
 
         <button
           onClick={handleNotificationsClick}
-          className="w-10 h-10 bg-[var(--color-primary-dark)] border-[2px] border-[#322C2C] rounded-xl flex items-center justify-center hover:bg-gray-50 hover:scale-105 hover:shadow-lg transition-all duration-300 ease-out cursor-pointer"
+          className="w-10 h-10 border-[2px] rounded-xl flex items-center justify-center hover:scale-105 hover:shadow-lg transition-all duration-300 ease-out cursor-pointer"
+          style={{ 
+            backgroundColor: 'var(--color-blue)', 
+            borderColor: 'var(--color-blue-dark)'
+          }}
         >
           <img
             src="./icons/notification-bell.svg"
@@ -92,7 +96,7 @@ export default function Explorar() {
             alt="Restaurants"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 font-semibold" style={{ color: 'var(--color-bone)' }}>
             <p className="text-sm">Restaurants</p>
             <p className="text-xs">+24</p>
           </div>
@@ -110,7 +114,7 @@ export default function Explorar() {
             alt="Playas"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 font-semibold" style={{ color: 'var(--color-bone)' }}>
             <p className="text-xs">Playas</p>
             <p className="text-xs">+12</p>
           </div>
@@ -128,7 +132,7 @@ export default function Explorar() {
             alt="Hoteles"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 font-semibold" style={{ color: 'var(--color-bone)' }}>
             <p className="text-sm">Hoteles</p>
             <p className="text-xs">+18</p>
           </div>
@@ -146,7 +150,7 @@ export default function Explorar() {
             alt="A bailar"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 font-semibold" style={{ color: 'var(--color-bone)' }}>
             <p className="text-xs">Discos</p>
             <p className="text-xs">+8</p>
           </div>
@@ -164,7 +168,7 @@ export default function Explorar() {
             alt="Eventos"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 font-semibold" style={{ color: 'var(--color-bone)' }}>
             <p className="text-sm">Estudiar</p>
             <p className="text-xs">+15</p>
           </div>
@@ -182,7 +186,7 @@ export default function Explorar() {
             alt="Más"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95 transition-all duration-300 group-hover:from-black/10 group-hover:to-black/70"></div>
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 text-white font-semibold">
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 font-semibold" style={{ color: 'var(--color-bone)' }}>
             <p className="text-xs">Parques</p>
             <p className="text-xs">+6</p>
           </div>

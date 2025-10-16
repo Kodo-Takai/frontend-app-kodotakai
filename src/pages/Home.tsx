@@ -19,16 +19,16 @@ export default function Home() {
   const userName = user?.name?.trim() || "Nombre y apellido";
 
   return (
-    <div className="flex flex-col gap-4 max-w-md mx-auto p-6 bg-white justify-center items-center pb-25">
+    <div className="flex flex-col gap-4 max-w-md mx-auto p-6 justify-center items-center pb-25" style={{ backgroundColor: 'var(--color-bone)' }}>
       <div className="flex flex-row justify-between w-full">
         <div className="flex flex-col items-start w-full">
           <h1 className="font-semibold text-md text-left">Hola,</h1>
-          <span className="font-extrabold text-xl text-red-600">
+          <span className="font-extrabold text-xl" style={{ color: 'var(--color-green)' }}>
             {userName}
           </span>
         </div>
-        <div className="bg-white relative mt-6 border border-gray-600 rounded-lg p-2 shadow-sm">
-          <FaBell className="text-gray-600" size={15} />
+        <div className="relative mt-6 border rounded-lg p-2 shadow-sm" style={{ backgroundColor: 'var(--color-bone)', borderColor: 'var(--color-beige-dark)' }}>
+          <FaBell size={15} style={{ color: 'var(--color-blue-light)' }} />
         </div>
       </div>
       <Search/>

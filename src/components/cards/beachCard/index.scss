@@ -17,7 +17,7 @@
   min-width: 300px;
   max-width: 350px;
   flex-shrink: 0;
-  background-color: #ffffff;
+  background-color: var(--color-bone);
   border-radius: 20px;
   padding: 15px;
   transition: transform 0.3s ease-in-out;
@@ -63,7 +63,7 @@
   font-size: 10px;
   font-weight: 600;
   margin-bottom: 5px;
-  color: #00324a;
+  color: var(--color-blue);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1.2;
@@ -86,7 +86,7 @@
 .beach-card-experience-label {
   font-size: 10px;
   font-weight: 400;
-  color: #00324a;
+  color: var(--color-blue);
   text-transform: uppercase;
   line-height: 5px;
   letter-spacing: -3%;
@@ -95,7 +95,7 @@
 .beach-card-beach-name {
   font-size: 30px;
   font-weight: 900;
-  color: #00324a;
+  color: var(--color-blue);
   line-height: 40px;
   letter-spacing: -1px;
   margin: 0;
@@ -110,7 +110,7 @@
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: #6b7280;
+  color: var(--color-blue-light);
   line-height: 1.3;
 }
 
@@ -154,7 +154,7 @@
 }
 
 .beach-card-image-main {
-  border: 2px solid #ffffff;
+  border: 2px solid var(--color-bone);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -170,13 +170,13 @@
   width: 30px;
   color: white;
   height: 30px;
-  background-color: #00324a;
+  background-color: var(--color-blue);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background-color: #002334;
+    background-color: var(--color-blue-dark);
     transform: scale(1.05);
   }
 
@@ -216,12 +216,12 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #d1d5db;
+  background-color: var(--color-beige-dark);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 
   &.active {
-    background-color: #dc1217;
+    background-color: var(--color-green);
   }
 
   &:hover {
@@ -235,7 +235,7 @@
   justify-content: center;
   gap: 4px;
   padding: 8px 12px;
-  background-color: #dc1217;
+  background-color: var(--color-green);
   color: white;
   border: none;
   border-radius: 15px;
@@ -245,7 +245,7 @@
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background-color: #b71317;
+    background-color: var(--color-green-dark);
     transform: translateY(-1px);
   }
 }

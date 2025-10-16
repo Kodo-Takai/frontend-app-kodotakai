@@ -51,7 +51,7 @@ export default function LoginForm({
       />
 
       {errorMessage && (
-        <div className="text-red-500 text-sm text-center p-2 bg-red-50 rounded-lg">
+        <div className="text-sm text-center p-2 rounded-lg" style={{ color: 'var(--color-green)', backgroundColor: 'var(--color-beige-light)' }}>
           {errorMessage}
         </div>
       )}
@@ -59,7 +59,7 @@ export default function LoginForm({
       <Button
         className="flex items-center justify-center gap-2"
         type="submit"
-        variant="red"
+        variant="blue"
         disabled={!isValid || isLoading}
         loading={isLoading}
       >
@@ -70,15 +70,15 @@ export default function LoginForm({
       <div className="mt-4 text-center">
         <a
           href="/forgot-password"
-          className="text-sm text-[#6D7178] hover:underline"
+          className="text-sm text-[var(--color-blue)] hover:underline font-medium"
         >
           ¿Olvidaste tu contraseña?
         </a>
       </div>
 
-      <p className="mt-6 text-center text-sm">
+      <p className="mt-6 text-center text-sm font-medium" style={{ color: 'var(--color-blue-light)' }}>
         ¿No tienes una cuenta?{" "}
-        <a href="/register" className="text-blue-500 hover:underline">
+        <a href="/register" className="hover:underline" style={{ color: 'var(--color-green)' }}>
           Regístrate ahora
         </a>
       </p>

@@ -5,17 +5,21 @@
    CLASES DE BOTONES - SISTEMA UNIFICADO
    ======================================== */
 
-/* ===== Botones Primarios (Agenda.tsx) ===== */
+/* ===== Botones Primarios (Paleta Definitiva) ===== */
 .btn--primary {
-  @include btn-primary;
+  @include btn-primary;  // Blue
 }
 
 .btn--secondary {
-  @include btn-secondary;
+  @include btn-secondary;  // Green
 }
 
-.btn--dark {
-  @include btn-dark;
+.btn--accent {
+  @include btn-accent;  // Beige
+}
+
+.btn--neutral {
+  @include btn-neutral;  // Bone
 }
 
 /* ===== Botones por Categoría ===== */
@@ -31,9 +35,9 @@
   @include btn-maps;
 }
 
-/* ===== Botones Legacy (Compatibilidad) ===== */
+/* ===== Botones Legacy (Compatibilidad con nueva paleta) ===== */
 .btn--red-light {
-  @include btn-filled($category-red, $category-red-hover, $white);
+  @include btn-filled($blue, $blue-dark, $bone);
   box-shadow: $btn-shadow;
 
   &:disabled,
@@ -43,7 +47,7 @@
 }
 
 .btn--red-dark {
-  @include btn-filled($category-red-hover, $category-red, $white);
+  @include btn-filled($blue-dark, $blue, $bone);
   box-shadow: $btn-shadow;
 
   &:disabled,
@@ -53,7 +57,7 @@
 }
 
 .btn--red-outline {
-  @include btn-outline($category-red, $category-red, $white);
+  @include btn-outline($blue, $blue, $bone);
 
   &:disabled,
   &.is-disabled {
@@ -62,7 +66,7 @@
 }
 
 .btn--blue-light {
-  @include btn-filled($category-blue, $category-blue-hover, $white);
+  @include btn-filled($green, $green-dark, $blue);
   box-shadow: $btn-shadow;
 
   &:disabled,
@@ -72,7 +76,7 @@
 }
 
 .btn--blue-dark {
-  @include btn-filled($category-blue-hover, $category-blue, $white);
+  @include btn-filled($green-dark, $green, $blue);
   box-shadow: $btn-shadow;
 
   &:disabled,
@@ -82,7 +86,7 @@
 }
 
 .btn--blue-outline {
-  @include btn-outline($category-blue, $category-blue, $white);
+  @include btn-outline($green, $green, $blue);
 
   &:disabled,
   &.is-disabled {
@@ -98,9 +102,9 @@ button[disabled].btn {
 
 /* ===== Variables CSS Adicionales ===== */
 :root {
-  --color-blueDark: #{$category-blue};
-  --color-white:    #{$white};
-  --color-blueLight: #{$category-blue-hover};
-  --color-btn-blue:       #{$category-blue};
-  --color-btn-blue-hover: #{$category-blue-hover};
+  --color-blueDark: #{$blue};
+  --color-white:    #{$bone};
+  --color-blueLight: #{$blue-light};
+  --color-btn-blue:       #{$blue};
+  --color-btn-blue-hover: #{$blue-dark};
 }

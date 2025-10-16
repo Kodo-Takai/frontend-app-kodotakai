@@ -38,7 +38,7 @@ export default function RestaurantCards() {
           className={`w-3 h-3 ${
             i < fullStars ? "text-red-600" : "text-gray-300"
           }`}
-          style={{ color: i < fullStars ? "#DC1217" : "#D1D5DB" }}
+          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-beige-dark)" }}
         />
       ));
 

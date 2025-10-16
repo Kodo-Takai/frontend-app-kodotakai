@@ -25,7 +25,7 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
   return (
     <div 
       className="rounded-2xl overflow-hidden p-4 animate-bubble-in hover:scale-101 transition-transform duration-300 ease-out"
-      style={{ backgroundColor: '#D7D7CA' }}
+      style={{ backgroundColor: 'var(--color-beige)' }}
     >
       {/* Sección Superior - Imagen con burbuja de fecha/hora */}
       <div className="relative h-22">
@@ -37,7 +37,8 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
         
         {/* Burbuja de fecha/hora */}
         <div 
-          className="absolute top-2 left-2 bg-[#EDEDE0] rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-md"
+          className="absolute top-2 left-2 rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-md"
+          style={{ backgroundColor: 'var(--color-bone)' }}
         >
           {/* Icono de reloj */}
           <svg
@@ -82,8 +83,8 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
           onClick={() => onMoveItem(item.id)}
           className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-normal transition-all duration-200 hover:scale-105"
           style={{ 
-            backgroundColor: 'var(--color-primary-dark)',
-            color: 'var(--color-white)'
+            backgroundColor: 'var(--color-blue)',
+            color: 'var(--color-bone)'
           }}
         >
           <span>Postergar</span>
@@ -106,8 +107,8 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
               : 'hover:opacity-90'
           }`}
           style={{ 
-            backgroundColor: 'var(--color-primary-light)',
-            color: 'var(--color-text-primary)'
+            backgroundColor: 'var(--color-green)',
+            color: 'var(--color-blue)'
           }}
         >
           <span>Visitado</span>

@@ -24,11 +24,11 @@ const DaySelector: React.FC<DaySelectorProps> = ({
   currentWeekText,
 }) => {
   return (
-    <div className="bg-[#D7D7CA] w-full h-[37px] flex items-center justify-between px-2 text-[#151A00] text-[14px] rounded-lg">
+    <div className="bg-[var(--color-primary-dark)] w-full h-[37px] flex items-center justify-between px-2 text-[var(--color-primary-light)] text-[14px] rounded-lg">
       {/* Botón flecha izquierda */}
       <button
         onClick={onPreviousWeek}
-        className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#151A00] hover:scale-105 transition-all duration-200"
+        className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-105 transition-all duration-200"
       >
         <img
           src="./icons/white-arrow-left.svg"
@@ -43,7 +43,7 @@ const DaySelector: React.FC<DaySelectorProps> = ({
       {/* Botón flecha derecha */}
       <button
         onClick={onNextWeek}
-        className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#151A00] hover:scale-105 transition-all duration-200"
+        className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--color-primary-light)] hover:scale-105 transition-all duration-200"
       >
         <img
           src="./icons/white-arrow-right.svg"
