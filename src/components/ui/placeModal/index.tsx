@@ -131,19 +131,25 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm overflow-y-auto"
+      className="fixed inset-0 z-[1000] flex items-center justify-center backdrop-blur-sm overflow-y-auto"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
       onClick={onClose}
       aria-modal
       role="dialog"
     >
       <div
-        className="relative w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl my-8"
+        className="relative w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl my-8"
+        style={{ backgroundColor: 'var(--color-bone)' }}
         onClick={stop}
       >
         <button
           onClick={onClose}
           aria-label="Cerrar"
-          className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow hover:bg-white"
+          className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full shadow"
+          style={{ 
+            backgroundColor: 'var(--color-bone)',
+            color: 'var(--color-blue)'
+          }}
         >
           <FaTimes className="h-4 w-4" />
         </button>
@@ -158,8 +164,8 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
           />
 
           {typeof place.rating === "number" && (
-            <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[#00324A] px-3 py-1 text-white">
-              <FaStar className="h-4 w-4 text-[#FF0C12]" />
+            <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full px-3 py-1" style={{ backgroundColor: 'var(--color-blue)', color: 'var(--color-bone)' }}>
+              <FaStar className="h-4 w-4" style={{ color: 'var(--color-green)' }} />
               <span className="text-sm font-semibold">{place.rating.toFixed(1)}</span>
             </div>
           )}
@@ -219,11 +225,11 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
         )}
 
         <div className="p-4 sm:p-6">
-          <h3 className="mb-1 text-xl font-bold text-gray-900 sm:text-2xl">{place.name}</h3>
+          <h3 className="mb-1 text-xl font-bold sm:text-2xl" style={{ color: 'var(--color-blue)' }}>{place.name}</h3>
 
           {address && (
-            <div className="mb-3 flex items-start gap-2 text-gray-700">
-              <FaMapMarkerAlt className="mt-1 h-4 w-4 flex-shrink-0 text-gray-500" />
+            <div className="mb-3 flex items-start gap-2" style={{ color: 'var(--color-blue)' }}>
+              <FaMapMarkerAlt className="mt-1 h-4 w-4 flex-shrink-0" style={{ color: 'var(--color-blue-light)' }} />
               <span className="text-sm sm:text-base">{address}</span>
             </div>
           )}

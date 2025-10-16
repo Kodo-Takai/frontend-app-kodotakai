@@ -1,23 +1,22 @@
-// Colores de fondo
-$btn-red: #DC1217;
-$btn-red-hover: #B71317;
-$btn-red-active: #A01015; // Color más oscuro para el tap en móvil
+// Colores de fondo - Paleta Definitiva (valores SCSS)
+$btn-red: #D1DC5A;        // Green para botón primario
+$btn-red-hover: #B8C84A;  // Green más oscuro
+$btn-red-active: #B8C84A; // Green más oscuro
 
-$btn-blue: #00324A;
-$btn-blue-hover: #002334;
-$btn-blue-active: #001A28; // Color más oscuro para el tap en móvil
+$btn-blue: #295B72;       // Blue para botón secundario
+$btn-blue-hover: #1E3F4F; // Blue más oscuro
+$btn-blue-active: #1E3F4F; // Blue más oscuro
 
-$btn-neutral: #E1E1E1;
-$btn-neutral-txt: #8F8F8F;
+$btn-neutral: #FCE4C0;    // Beige para botón neutral
+$btn-neutral-dark: #dec08f;    // Beige para botón neutral
+$btn-neutral-txt: #295B72; // Blue para texto
 
 // Propiedades comunes del botón
 $btn-radius: 16px;
-$btn-shadow: 0 10px 24px rgba(0,0,0,.12);
 
 .btn {
   border: none;
   border-radius: $btn-radius;
-  box-shadow: $btn-shadow;
   cursor: pointer;
   
   // Eliminar el tap highlight en móviles
@@ -28,10 +27,10 @@ $btn-shadow: 0 10px 24px rgba(0,0,0,.12);
   -ms-user-select: none;
   user-select: none;
   
-  // Variante roja
+  // Variante roja (ahora Green)
   &.btn--red {
     background-color: $btn-red;
-    color: white;
+    color: #FFFFF0;
     
     // Hover solo en dispositivos que lo soporten (desktop)
     @media (hover: hover) and (pointer: fine) {
@@ -51,7 +50,7 @@ $btn-shadow: 0 10px 24px rgba(0,0,0,.12);
   // Variante azul
   &.btn--blue {
     background-color: $btn-blue;
-    color: white;
+    color: #FFFFF0;
     
     // Hover solo en dispositivos que lo soporten (desktop)
     @media (hover: hover) and (pointer: fine) {
@@ -90,14 +89,15 @@ $btn-shadow: 0 10px 24px rgba(0,0,0,.12);
   
   // Estado disabled para todas las variantes
   &[disabled] {
-    background-color: $btn-neutral !important;
-    color: $btn-neutral-txt !important;
+    background-color: $btn-blue !important;
+    color: $btn-blue-active !important;
+    
     cursor: not-allowed;
     
     // Sin efectos hover ni active cuando está disabled
     &:hover,
     &:active {
-      background-color: $btn-neutral !important;
+      background-color: $btn-blue !important;
       transform: none !important;
     }
   }

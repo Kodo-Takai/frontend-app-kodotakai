@@ -43,17 +43,17 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
             onError={handleImageError}
           />
 
-          <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-[var(--color-blue)] to-transparent" />
 
           <div className="absolute top-2 left-2 flex gap-1">
-            <div className="flex items-center gap-0.5 bg-white rounded-lg px-1 py-0.5 text-sm font-medium text-[#00324A]">
-              <FaStar className="text-[#00324A]" />
+            <div className="flex items-center gap-3 bg-[var(--color-primary-light)] rounded-xl px-3 py-1 text-lg font-medium text-[var(--color-primary-dark)]">
+              <FaStar className="text-[var(--color-primary-dark)]" />
               {hotel.rating ?? "-"}
             </div>
           </div>
 
-          <div className="absolute bottom-3 right-2 text-white rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
-            <span className="text-2xl font-extrabold text-[#FF0007] leading-none">
+          <div className="absolute bottom-3 right-2 text-[var(--color-primary-light)] rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
+            <span className="text-2xl font-extrabold text-[var(--color-primary-accent)] leading-none">
               {(() => {
                 const businessStatus = (hotel as any).business_status;
                 const isOpenNow = (hotel as any).is_open_now;
@@ -88,11 +88,11 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
           </div>
         </div>
 
-        <div className="p-3">
-          <h3 className="text-xl font-extrabold text-[#00324A] line-clamp-1 uppercase">
+        <div className="px-3 py-4">
+          <h3 className="text-xl font-extrabold text-[var(--color-primary-beige)] line-clamp-1 uppercase">
             {hotel.name}
           </h3>
-          <p className="text-sm text-black mt-1 line-clamp-2 overflow-hidden text-ellipsis">
+          <p className="text-sm text-[var(--color-primary-beige)] mt-1 pb- hotel-location-text">
             {(hotel as any).formatted_address ||
               hotel.vicinity ||
               "Ubicación no disponible"}
@@ -124,17 +124,17 @@ export default function HotelCards({
   if (loading) {
     return (
       <div className="w-full">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4">
           A descansar un momento
         </h2>
         <div className="hotel-scroll shadow-sm">
           {Array.from({ length: 5 }, (_, i) => (
             <div key={`hotel-skeleton-${i}`} className="hotel-card-width">
               <div className="rounded-xl overflow-hidden animate-pulse">
-                <div className="h-60 bg-gray-200" />
+                <div className="h-60 bg-[var(--color-primary-beige)]" />
                 <div className="p-3 space-y-2">
-                  <div className="h-4 bg-gray-300 rounded w-3/4" />
-                  <div className="h-3 bg-gray-300 rounded w-full" />
+                  <div className="h-4 bg-[var(--color-primary-beige)] rounded w-3/4" />
+                  <div className="h-3 bg-[var(--color-primary-beige)] rounded w-full" />
                 </div>
               </div>
             </div>
@@ -180,7 +180,7 @@ export default function HotelCards({
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
+      <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4">
         A descansar un momento
       </h2>
       <div className="hotel-scroll">

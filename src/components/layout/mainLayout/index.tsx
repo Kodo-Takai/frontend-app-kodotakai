@@ -8,12 +8,12 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow bg-gray-100">
+      <main className="flex-grow bg-[var(--color-bone)]">
         <Outlet />
       </main>
       <BottomNav items={defaultItems} />
     </div>
   );
-};
+}; 
 
 export default MainLayout;

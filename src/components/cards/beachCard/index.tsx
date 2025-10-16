@@ -85,7 +85,7 @@ export default function BeachCards() {
         <FaStar
           key={`beach-star-${i}`}
           className="w-3 h-3"
-          style={{ color: i < fullStars ? "#DC1217" : "#D1D5DB" }}
+          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-beige-dark)" }}
         />
       ));
 

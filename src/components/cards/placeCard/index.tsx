@@ -52,7 +52,7 @@ export default function PlaceCards({
       <FaStar
         key={`star-${i}`}
         className="place-card-star"
-        style={{ color: i < fullStars ? "#DC1217" : "#D1D5DB" }}
+        style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-beige-dark)" }}
       />
     ));
     return (

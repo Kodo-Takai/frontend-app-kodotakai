@@ -18,7 +18,7 @@ import { useNavigation } from "../hooks/places/useNavigation.ts";
 import PlaceCards from "../components/cards/placeCard/index.tsx";
 
 // --- TIPOS Y CONSTANTES ---
-type LatLng = { lat: number; lng: number };
+type SecondaryFilterType = 'all' | 'featured' | 'nearby';
 const MINIMUM_RATING_FOR_FEATURED = 4.5;
 const NEARBY_RADIUS_KM = 1.5;
 
@@ -28,7 +28,7 @@ const Maps = () => {
   const [zoom, setZoom] = useState<number>(15);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeCategories, setActiveCategories] = useState<string>("all");
-  const [secondaryFilter, setSecondaryFilter] = useState<string>("all");
+  const [secondaryFilter, setSecondaryFilter] = useState<SecondaryFilterType>("all");
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [navigationDestination, setNavigationDestination] =
     useState<Place | null>(null);
@@ -198,7 +198,7 @@ const Maps = () => {
   ]);
 
   return (
-    <div className="flex flex-col bg-gray-200">
+    <div className="flex flex-col" style={{ backgroundColor: 'var(--color-beige-light)' }}>
       {/* --- SECCIÓN DEL MAPA --- */}
       <div className="relative h-[70vh]">
         <div id="map" className="h-full w-full">
@@ -225,7 +225,8 @@ const Maps = () => {
             </div>
             <button
               onClick={toggleFilters}
-              className="flex-shrink-0 rounded-lg bg-white p-3 text-gray-700 shadow-md"
+              className="flex-shrink-0 rounded-lg p-3 shadow-md"
+              style={{ backgroundColor: 'var(--color-bone)', color: 'var(--color-blue-light)' }}
               aria-label="Filtros"
             >
               <FaSlidersH size={20} />
@@ -241,7 +242,7 @@ const Maps = () => {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`transform rounded-b-2xl bg-white p-4 pt-24 z-50 shadow-xl ${
+            className={`transform rounded-b-2xl p-4 pt-24 z-50 shadow-xl ${
               isFilterVisible ? "translate-y-0" : "-translate-y-full"
             }`}
           >
@@ -254,19 +255,19 @@ const Maps = () => {
       </div>
 
       {/* --- SECCIÓN INFERIOR CON DISEÑO Y ESTRUCTURA CORREGIDOS --- */}
-      <div className="bg-white rounded-t-2xl shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)] pt-4 pb-8 flex-grow">
+      <div className="rounded-t-2xl shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)] pt-4 pb-8 flex-grow" style={{ backgroundColor: 'var(--color-bone)' }}>
         <div className="w-full max-w-sm mx-auto px-4 flex flex-col gap-4">
           {/*-- Handle y Encabezado del Panel --*/}
           <div>
-            <div className="w-10 h-1.5 bg-gray-300 rounded-full mx-auto mb-4"></div>
+            <div className="w-10 h-1.5 rounded-full mx-auto mb-4" style={{ backgroundColor: 'var(--color-beige-dark)' }}></div>
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-3xl font-black tracking-wide text-gray-900">
+                <h3 className="text-3xl font-black tracking-wide" style={{ color: 'var(--color-blue)' }}>
                   MAPA
                 </h3>
-                <p className="text-gray-500">Busca lugares cerca de ti</p>
+                <p style={{ color: 'var(--color-blue-light)' }}>Busca lugares cerca de ti</p>
               </div>
-              <button className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-red-500 rounded-xl text-white shadow-md">
+              <button className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl shadow-md" style={{ backgroundColor: 'var(--color-green)', color: 'var(--color-bone)' }}>
                 <IoLocationSharp size={24} />
               </button>
             </div>
@@ -274,7 +275,7 @@ const Maps = () => {
 
           {/*-- Píldora de estado y botones de navegación --*/}
           <div className="w-full flex items-center gap-2">
-            <div className="flex-grow flex items-center justify-between rounded-full bg-[#073247] p-2 pl-5 text-white shadow-lg">
+                <div className="flex-grow flex items-center justify-between rounded-full p-2 pl-5 shadow-lg" style={{ backgroundColor: 'var(--color-blue-dark)', color: 'var(--color-bone)' }}>
               <div className="flex items-center gap-4">
                 <IoLocationOutline
                   size={28}
@@ -284,7 +285,7 @@ const Maps = () => {
                   <p className="font-bold text-sm truncate max-w-[150px]">
                     {displayTitle}
                   </p>
-                  <p className="text-xs text-white/80 truncate max-w-[150px]">
+                  <p className="text-xs truncate max-w-[150px]" style={{ color: 'var(--color-beige-light)' }}>
                     {displaySubtitle}
                   </p>
                 </div>
@@ -292,7 +293,8 @@ const Maps = () => {
               <div className="pr-1">
                 <button
                   onClick={handleResetLocation}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-800 shadow"
+                  className="flex h-9 w-9 items-center justify-center rounded-full shadow"
+                  style={{ backgroundColor: 'var(--color-bone)', color: 'var(--color-blue)' }}
                 >
                   <IoSync size={20} />
                 </button>
@@ -301,7 +303,8 @@ const Maps = () => {
             {navigationDestination ? (
               <button
                 onClick={handleStopNavigation}
-                className="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white shadow-lg text-xl font-bold"
+                className="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-full shadow-lg text-xl font-bold"
+                style={{ backgroundColor: 'var(--color-green)', color: 'var(--color-bone)' }}
               >
                 X
               </button>
@@ -309,7 +312,8 @@ const Maps = () => {
               <button
                 onClick={handleStartNavigation}
                 disabled={!selectedPlace || !userPosition}
-                className="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#073247] shadow-lg disabled:opacity-50"
+                className="flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-full shadow-lg disabled:opacity-50"
+                style={{ backgroundColor: 'var(--color-bone)', color: 'var(--color-blue-dark)' }}
               >
                 <IoNavigate size={24} />
               </button>

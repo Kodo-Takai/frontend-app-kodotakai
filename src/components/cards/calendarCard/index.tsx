@@ -30,7 +30,7 @@ export default function CalendarCard() {
       </div>
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden h-full flex flex-col">
         {/* Header con día de la semana */}
-        <div className="bg-[#073247] px-2 py-1 border-b border-gray-200 flex-shrink-0">
+        <div className="px-2 py-1 border-b border-gray-200 flex-shrink-0" style={{ backgroundColor: 'var(--color-blue-dark)' }}>
           <p className="text-xs font-medium text-white text-center uppercase tracking-wide">
             {capitalizedMonth}
           </p>

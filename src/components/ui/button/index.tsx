@@ -21,7 +21,7 @@ export default function Button({
   return (
     <button
       disabled={isDisabled}
-      className={`btn btn--${variant} w-full py-3 text-white font-semibold rounded-lg transition-all duration-300 ${className}`}
+      className={`btn btn--${variant} w-full py-4 text-[var(--color-bone)] font-semibold rounded-lg transition-all duration-300 ${className}`}
       aria-busy={loading}
       {...rest}
     >

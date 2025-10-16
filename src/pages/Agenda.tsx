@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CategoryWrapper from "../components/layout/SmoothCategoryWrapper";
+import PageWrapper from "../components/layout/SmoothPageWrapper";
 import DaySelector from "../components/ui/daySelector/DaySelector";
 import WeekDaysSelector from "../components/ui/weekdaySelector/WeekDaysSelector";
 import CalendarModal from "../components/ui/calendarModal/CalendarModal";
@@ -65,29 +66,40 @@ export default function Agenda() {
     setSelectedItemToMove(null);
   };
   return (
-    <div className="min-h-screen bg-[#EDEDE0]">
-      <CategoryWrapper
-        backgroundImage="/default-background-light.svg"
-        backgroundSize="100%"
-        backgroundPosition="top center"
+    <div 
+      className="min-h-screen relative pb-20"
+      style={{ backgroundColor: 'var(--color-bg-primary)' }}
+    >
+      <PageWrapper
+        backgroundColor="bg-transparent"
+        minHeight="min-h-full"
+        className="relative"
       >
-        <div className="flex justify-between items-center mt-5">
+          <div className="flex justify-between items-center mt-5">
           <div className="flex flex-col gap-2.5">
             <h1
-              className="text-[#151A00] text-[40px] font-extrabold leading-[26px] tracking-[-2px] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
-              style={{ animationDelay: "0.1s" }}
+              className="text-[40px] font-extrabold leading-[26px] tracking-[-2px]"
+              style={{ 
+                color: 'var(--color-text-primary)'
+              }}
             >
               AGENDA
             </h1>
-            <p className="text-[#151A00] text-[15px] font-medium leading-[22px]">
+            <p 
+              className="text-[15px] font-normal leading-[22px]"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
               Qué tenemos planeado hoy?
             </p>
           </div>
 
           <button
             onClick={() => setIsCalendarModalOpen(true)}
-            style={{ animationDelay: "0.3s" }}
-            className="w-10 h-10 bg-[#151A00] rounded-lg flex items-center justify-center hover:shadow-lg cursor-pointer animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+            style={{ 
+              animationDelay: "0.3s",
+              backgroundColor: 'var(--color-primary-dark)'
+            }}
+            className="w-10 h-10 rounded-lg flex items-center justify-center hover:shadow-lg cursor-pointer"
           >
             <img
               src="./icons/calendar-icon.svg"
@@ -107,13 +119,17 @@ export default function Agenda() {
 
         <WeekDaysSelector weekDays={weekDays} onDaySelect={selectDay} />
 
-        <div className="w-full flex flex-col gap-3 mt-2">
+        <div className="w-full flex flex-col gap-3">
           <div className="flex justify-between items-center">
-            <h2 className="text-[#151A00] text-md font-bold">
+            <h2 
+              className="text-[14px] font-semibold"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
               Elige tu sección
             </h2>
             <svg
-              className="w-5 h-5 text-[#151A00]"
+              className="w-5 h-5"
+              style={{ color: 'var(--color-text-primary)' }}
               fill="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
@@ -125,11 +141,16 @@ export default function Agenda() {
             <button
               id="agendados-btn"
               onClick={() => setSelectedSection("agendados")}
-              className={`group flex items-center gap-2 text-[#151A00] px-6 py-2.5 rounded-2xl font-medium animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out ${
-                selectedSection === "agendados"
-                  ? "bg-[#151A00] text-[#BACB2C]"
-                  : "bg-[#D3E5D5]"
-              }`}
+              className="group flex items-center gap-2 px-6 py-3 rounded-[20px] font-medium animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+              style={{
+                animationDelay: "0.1s",
+                color: selectedSection === "agendados" 
+                  ? 'var(--color-primary-dark)' 
+                  : 'var(--color-primary-light)',
+                backgroundColor: selectedSection === "agendados" 
+                  ? 'var(--color-primary-accent)' 
+                  : 'var(--color-primary-dark)'
+              }}
             >
               <img
                 src={
@@ -144,13 +165,17 @@ export default function Agenda() {
             </button>
             <button
               id="itinerarios-btn"
-              style={{ animationDelay: "0.1s" }}
+              style={{ 
+                animationDelay: "0.3s",
+                color: selectedSection === "itinerarios" 
+                  ? 'var(--color-primary-dark)' 
+                  : 'var(--color-primary-light)',
+                backgroundColor: selectedSection === "itinerarios" 
+                  ? 'var(--color-primary-accent)' 
+                  : 'var(--color-primary-dark)'
+              }}
               onClick={() => setSelectedSection("itinerarios")}
-              className={`group flex items-center gap-2 text-[#151A00] px-6 py-2.5 rounded-2xl font-medium animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out ${
-                selectedSection === "itinerarios"
-                  ? "bg-[#151A00] text-[#BACB2C]"
-                  : "bg-[#D3E5D5]"
-              }`}
+              className="group flex items-center gap-2 px-6 py-2.5 rounded-[20px] font-medium animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
             >
               <img
                 src={
@@ -171,7 +196,12 @@ export default function Agenda() {
           {/* Sección "Ahora" */}
           {ahoraItems.length > 0 && (
             <div className="flex flex-col gap-3">
-              <h3 className="text-black text-md font-bold">Ahora</h3>
+              <h3 
+                className="text-[14px] font-semibold"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                Ahora
+              </h3>
               <div className="flex flex-col gap-4">
                 {ahoraItems.map((item) => (
                   <AgendaCard
@@ -188,7 +218,12 @@ export default function Agenda() {
           {/* Sección "Más Tarde" */}
           {masTardeItems.length > 0 && (
             <div className="flex flex-col gap-3">
-              <h3 className="text-black text-lg font-bold">Más Tarde</h3>
+              <h3 
+                className="text-lg font-bold"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                Más Tarde
+              </h3>
               <div className="flex flex-col gap-3">
                 {masTardeItems.map((item) => (
                   <AgendaCard
@@ -205,10 +240,16 @@ export default function Agenda() {
           {/* Mensaje cuando no hay items */}
           {itemsForSelectedDate.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-gray-500 text-sm">
+              <p 
+                className="text-sm"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
                 No tienes destinos agendados para este día
               </p>
-              <p className="text-gray-400 text-xs mt-2">
+              <p 
+                className="text-xs mt-2"
+                style={{ color: 'var(--color-gray-400)' }}
+              >
                 Ve a Explorar y agrega algunos destinos a tu agenda
               </p>
             </div>
@@ -236,7 +277,7 @@ export default function Agenda() {
             onMoveDestination={handleMoveDestination}
           />
         )}
-      </CategoryWrapper>
+      </PageWrapper>
     </div>
   );
 }
