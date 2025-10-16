@@ -24,9 +24,10 @@ import ParquesPage from "./pages/categories/ParquesPage";
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import MainLayout from "./components/layout/mainLayout";
-import AuthLayout from "./components/layout/authLayout";
+import AuthLayout from "./components/layout/AuthLayout";
 import ProtectedRoute from "./components/layout/protectedRoute";
 import Agenda from "./pages/Agenda";
+import { NavigationProvider } from "./context/navigationContext";
 
 function AppContent() {
   const isLoading = useSplashScreen();
@@ -34,30 +35,32 @@ function AppContent() {
   return (
     <>
       <SplashScreen visible={!isLoading} />
-      <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/register" element={<Register />} />
-        </Route>
+      <NavigationProvider>
+        <Routes>
+          <Route path="/" element={<Welcome />} />
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
 
-        <Route element={<MainLayout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/explorar" element={<Explorar />} />
-          <Route path="/agenda" element={<Agenda />} />
-          <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
-          <Route path="/explorar/playas" element={<PlayasPage />} />
-          <Route path="/explorar/hoteles" element={<HotelesPage />} />
-          <Route path="/explorar/discos" element={<DiscosPage />} />
-          <Route path="/explorar/estudiar" element={<EstudiarPage />} />
-          <Route path="/explorar/parques" element={<ParquesPage />} />
-          <Route path="/maps" element={<Maps />} />
-          <Route path="/custom-profile" element={<CustomProfile />} />
-          <Route path="/profile" element={<Profile />} />
-        </Route>
-      </Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/explorar" element={<Explorar />} />
+            <Route path="/agenda" element={<Agenda />} />
+            <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
+            <Route path="/explorar/playas" element={<PlayasPage />} />
+            <Route path="/explorar/hoteles" element={<HotelesPage />} />
+            <Route path="/explorar/discos" element={<DiscosPage />} />
+            <Route path="/explorar/estudiar" element={<EstudiarPage />} />
+            <Route path="/explorar/parques" element={<ParquesPage />} />
+            <Route path="/maps" element={<Maps />} />
+            <Route path="/custom-profile" element={<CustomProfile />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+        </Routes>
+      </NavigationProvider>
     </>
   );
 }
