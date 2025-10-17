@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { usePlaces } from "../../../hooks/places";
-import type { Place, EnrichedPlace } from "../../../hooks/places";
+import { usePlaces, type Place, type EnrichedPlace } from "../../../hooks/places";
 import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
+
+// --- IMPORTACIONES AÑADIDAS PARA LA NUEVA LÓGICA ---
+import { useNavigate } from "react-router-dom";
+import { useNavigationContext } from "../../../context/navigationContext";
+import { useAgenda } from "../../../hooks/useAgenda";
 
 interface HotelsCardProps {
   places?: EnrichedPlace[];
@@ -11,48 +15,45 @@ interface HotelsCardProps {
   error?: string | null;
 }
 
-const HotelCard = ({ hotel }: { hotel: Place }) => {
+const HotelCard = ({ 
+  hotel, 
+  onOpenModal,
+}: { 
+  hotel: EnrichedPlace,
+  onOpenModal: (hotel: EnrichedPlace) => void,
+  onNavigate: (hotel: EnrichedPlace) => void,
+  onAgenda: (hotel: EnrichedPlace) => void,
+}) => {
   const [imageError, setImageError] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const handleImageError = () => setImageError(true);
 
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   return (
-    <>
-      <div
-        className="hotel-card-width shadow-sm"
-        onClick={handleOpenModal}
-      >
-        <div className="hotel-card-image-container">
-          <img
-            src={
-              imageError
-                ? "https://picsum.photos/400/200?random=hotel-error"
-                : hotel.photo_url ||
-                  "https://picsum.photos/400/200?random=hotel-default"
-            }
-            alt={hotel.name}
-            onError={handleImageError}
-          />
+    <div
+      className="hotel-card-width shadow-sm"
+      onClick={() => onOpenModal(hotel)}
+    >
+      <div className="hotel-card-image-container">
+        <img
+          src={
+            imageError
+              ? "https://picsum.photos/400/200?random=hotel-error"
+              : hotel.photo_url ||
+                "https://picsum.photos/400/200?random=hotel-default"
+          }
+          alt={hotel.name}
+          onError={handleImageError}
+        />
 
-          <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-[var(--color-blue)] to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-[var(--color-blue)] to-transparent" />
 
-          <div className="absolute top-2 left-2 flex gap-1">
-            <div className="flex items-center gap-3 bg-[var(--color-primary-light)] rounded-2xl px-3 py-1 text-lg font-medium text-[var(--color-primary-dark)]">
-              <FaStar className="text-[var(--color-primary-dark)]" />
-              {hotel.rating ?? "-"}
-            </div>
+        <div className="absolute top-2 left-2 flex gap-1">
+          <div className="flex items-center gap-3 bg-[var(--color-primary-light)] rounded-2xl px-3 py-1 text-lg font-medium text-[var(--color-primary-dark)]">
+            <FaStar className="text-[var(--color-primary-dark)]" />
+            {hotel.rating ?? "-"}
           </div>
+        </div>
 
-          <div className="absolute bottom-3 right-2 text-[var(--color-primary-light)] rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
+        <div className="absolute bottom-3 right-2 text-[var(--color-primary-light)] rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
             <span className="text-2xl font-extrabold text-[var(--color-primary-accent)] leading-none">
               {(() => {
                 const businessStatus = (hotel as any).business_status;
@@ -86,9 +87,9 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
               })()}
             </span>
           </div>
-        </div>
+      </div>
 
-        <div className="px-3 py-4">
+      <div className="px-3 py-4">
           <h3 className="text-xl font-extrabold text-[var(--color-blue-dark)] line-clamp-1 uppercase">
             {hotel.name}
           </h3>
@@ -99,10 +100,6 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
           </p>
         </div>
       </div>
-
-      {/* Modal para mostrar detalles del hotel */}
-      <PlaceModal isOpen={isModalOpen} onClose={handleCloseModal} place={hotel} />
-    </>
   );
 };
 
@@ -111,15 +108,55 @@ export default function HotelCards({
   loading: propLoading,
   error: propError,
 }: HotelsCardProps = {}) {
+  // --- LÓGICA DE NAVEGACIÓN Y ESTADO CENTRALIZADO ---
   const { places: hookPlaces, loading: hookLoading } = usePlaces({
     category: "hotels",
     enableEnrichment: true,
     maxResults: 6,
   });
 
+  const { setInitialDestination } = useNavigationContext();
+  const navigate = useNavigate();
+  const { addItem } = useAgenda();
+
+  const [selectedPlace, setSelectedPlace] = useState<EnrichedPlace | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const displayedHotels = (propPlaces || hookPlaces).slice(0, 5);
   const loading = propLoading !== undefined ? propLoading : hookLoading;
   const error = propError;
+
+  const handleOpenModal = (hotel: EnrichedPlace) => {
+    setSelectedPlace(hotel);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlace(null);
+  };
+  
+  const handleNavigation = (hotel: EnrichedPlace) => {
+    setInitialDestination(hotel);
+    navigate('/maps');
+  };
+
+  const handleAgenda = (hotel: EnrichedPlace) => {
+    const agendaItem = {
+        destinationId: hotel.place_id || hotel.id || `place_${Date.now()}`,
+        destinationName: hotel.name,
+        location: hotel.formatted_address || hotel.vicinity || "Ubicación no disponible",
+        scheduledDate: new Date().toISOString(),
+        scheduledTime: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
+        status: "pending" as const,
+        category: "hotel" as const, // Categoría ajustada
+        image: hotel.photo_url || "https://picsum.photos/400/300?random=hotel",
+        description: hotel.editorial_summary?.overview || `Visita a ${hotel.name}`,
+        placeData: hotel,
+    };
+    addItem(agendaItem);
+    alert(`${hotel.name} ha sido agregado a tu agenda.`);
+  };
 
   if (loading) {
     return (
@@ -180,10 +217,26 @@ export default function HotelCards({
         A descansar un momento
       </h2>
       <div className="hotel-scroll">
-        {displayedHotels.map((hotel, index) => (
-          <HotelCard key={hotel.place_id || `hotel-${index}`} hotel={hotel} />
+        {displayedHotels.map((hotel) => (
+          <HotelCard 
+            key={hotel.place_id} 
+            hotel={hotel}
+            onOpenModal={handleOpenModal}
+            onNavigate={handleNavigation}
+            onAgenda={handleAgenda}
+          />
         ))}
       </div>
+
+      {/* --- MODAL ÚNICO Y CENTRALIZADO --- */}
+      {selectedPlace && (
+        <PlaceModal 
+          isOpen={isModalOpen} 
+          onClose={handleCloseModal} 
+          place={selectedPlace} 
+          onVisit={() => handleNavigation(selectedPlace)}
+        />
+      )}
     </div>
   );
 }

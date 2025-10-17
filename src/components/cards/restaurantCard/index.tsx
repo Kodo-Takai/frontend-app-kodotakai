@@ -2,13 +2,16 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt, FaHeart } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { usePlaces } from "../../../hooks/places";
-import type { Place } from "../../../hooks/places";
-import "./index.scss";
+import { usePlaces, type Place, type EnrichedPlace } from "../../../hooks/places";
 import PlaceModal from "../../ui/placeModal";
-interface Restaurant extends Place {
-  // Restaurant extends Place interface
-}
+import "./index.scss";
+
+// --- IMPORTACIONES PARA NAVEGACIÓN Y AGENDA ---
+import { useNavigate } from "react-router-dom";
+import { useNavigationContext } from "../../../context/navigationContext";
+import { useAgenda } from "../../../hooks/useAgenda";
+
+interface Restaurant extends EnrichedPlace {}
 
 export default function RestaurantCards() {
   const { places: restaurants, loading } = usePlaces({
@@ -17,103 +20,100 @@ export default function RestaurantCards() {
     maxResults: 6,
   });
 
+  // --- ESTADO Y HOOKS EN EL COMPONENTE PADRE ---
+  const { setInitialDestination } = useNavigationContext();
+  const navigate = useNavigate();
+  const { addItem } = useAgenda();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<Restaurant | null>(null);
+
+  const handleOpenModal = (restaurant: Restaurant) => {
+    setSelectedPlace(restaurant);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlace(null);
+  };
+
+  const handleNavigation = (restaurant: Restaurant) => {
+    setInitialDestination(restaurant);
+    navigate('/maps');
+  };
+
   const displayedRestaurants = restaurants.slice(0, 6);
 
   const RestaurantCard = ({ restaurant }: { restaurant: Restaurant }) => {
     const [imageError, setImageError] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const handleImageError = () => {
-      setImageError(true);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const handleImageError = () => setImageError(true);
+
+    const handleVisitFromMenu = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setMenuOpen(false);
+      handleNavigation(restaurant);
+    };
+
+    const handleAgendarFromMenu = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setMenuOpen(false);
+      const agendaItem = { /* tu lógica de agendaItem */ };
+      addItem(agendaItem);
+      alert(`${restaurant.name} ha sido agregado a tu agenda.`);
     };
 
     const renderStars = (rating?: number) => {
-      if (!rating) return null;
-
-      const fullStars = Math.floor(rating);
-      const stars = Array.from({ length: 5 }, (_, i) => (
-        <FaStar
-          key={`restaurant-star-${i}`}
-          className={`w-3 h-3 ${
-            i < fullStars
-              ? "text-[var(--color-green)]"
-              : "text-[var(--color-bone)]"
-          }`}
-          style={{
-            color: i < fullStars ? "var(--color-green)" : "var(--color-bone)",
-          }}
-        />
-      ));
-
-      return (
-        <div className="flex items-center gap-1">
-          {stars}
-          <span className="text-[var(--color-bone)] text-xs font-semibold ml-1">
-            {rating.toFixed(1)}
-          </span>
-        </div>
-      );
-    };
-    const handleOpenModal = () => {
-      setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-      setIsModalOpen(false);
+        if (!rating) return null;
+        const fullStars = Math.floor(rating);
+        const stars = Array.from({ length: 5 }, (_, i) => (
+          <FaStar
+            key={`restaurant-star-${i}`}
+            className="w-3 h-3"
+            color={i < fullStars ? "var(--color-green)" : "#D1D5DB"}
+          />
+        ));
+        return (
+          <div className="flex items-center gap-1">
+            {stars}
+            <span className="text-white text-xs font-semibold ml-1">
+              {rating.toFixed(1)}
+            </span>
+          </div>
+        );
     };
 
     return (
-      <div className="restaurant-card-width">
+      <div className="restaurant-card-width" onClick={() => handleOpenModal(restaurant)}>
         <div className="restaurant-card-container">
           <div className="restaurant-card-header">
             <div className="restaurant-card-title-section">
               <div className="restaurant-card-experience-text">
-                <img
-                  src="/icons/rest_icon3.svg"
-                  alt="Compass"
-                  width="30"
-                  height="30"
-                  className="restaurant-card-compass-icon"
-                />
+                <img src="/icons/rest_icon3.svg" alt="Compass" width="30" height="30" className="restaurant-card-compass-icon" />
               </div>
-
               <div className="restaurant-card-name-section">
-                <div className="restaurant-card-experience-label">
-                  EXPERIMENTA NUEVOS SABORES
-                </div>
-
-                <h3 className="restaurant-card-restaurant-name">
-                  {restaurant.name}
-                </h3>
+                <div className="restaurant-card-experience-label">EXPERIMENTA NUEVOS SABORES</div>
+                <h3 className="restaurant-card-restaurant-name">{restaurant.name}</h3>
               </div>
             </div>
-
             <div className="restaurant-card-description-row">
-              <MdPlace className="w-4 h-4 text-[var(--color-blue)] flex-shrink-0" />
-              <span className="line-clamp-2">
-                {restaurant.vicinity ||
-                  "Descubre este increíble restaurante y vive una experiencia culinaria única"}
-              </span>
+              <MdPlace className="w-3 h-3 text-gray-400 flex-shrink-0" />
+              <span className="line-clamp-2">{restaurant.vicinity || "Descubre este increíble restaurante"}</span>
             </div>
           </div>
 
           <div className="restaurant-card-image-section">
             <div className="restaurant-card-image-container">
               <img
-                src={
-                  imageError
-                    ? "https://picsum.photos/400/200?random=restaurant-error"
-                    : restaurant.photo_url
-                }
+                src={imageError ? "https://picsum.photos/400/200?random=restaurant-error" : restaurant.photo_url}
                 alt={restaurant.name}
                 className="restaurant-card-image"
                 loading="lazy"
                 onError={handleImageError}
               />
-
-              <div className="restaurant-card-rating-overlay">
-                {renderStars(restaurant.rating)}
-              </div>
-
+              
+              <div className="restaurant-card-rating-overlay">{renderStars(restaurant.rating)}</div>
               <div className="restaurant-card-type-overlay">
                 <img
                   src="/icons/rest_icon3.svg"
@@ -130,24 +130,19 @@ export default function RestaurantCards() {
           <div className="restaurant-card-footer">
             <button
               className="restaurant-card-location-center"
-              onClick={handleOpenModal}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenModal(restaurant);
+              }}
             >
               <TbLocationFilled className="w-4 h-4 text-white" />
-              <span className="text-white text-sm font-medium">
-                Visítalo ahora
-              </span>
+              <span className="text-white text-sm font-medium">Visítalo ahora</span>
             </button>
-
-            <button className="restaurant-card-red-button">
+            <button className="restaurant-card-red-button" onClick={(e) => e.stopPropagation()}>
               <FaHeart className="w-4 h-4 text-[var(--color-blue)]" />
             </button>
           </div>
         </div>
-        <PlaceModal
-          place={restaurant}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-        />
       </div>
     );
   };
@@ -188,11 +183,8 @@ export default function RestaurantCards() {
 
     return (
       <div className="restaurant-scroll">
-        {displayedRestaurants.map((restaurant, index) => (
-          <RestaurantCard
-            key={`${restaurant.name}-${index}`}
-            restaurant={restaurant}
-          />
+        {displayedRestaurants.map((restaurant) => (
+          <RestaurantCard key={restaurant.place_id || restaurant.id} restaurant={restaurant as Restaurant} />
         ))}
       </div>
     );
@@ -204,6 +196,15 @@ export default function RestaurantCards() {
         Restaurantes mejor valorados
       </h2>
       {renderContent()}
+      
+      {selectedPlace && (
+        <PlaceModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          place={selectedPlace}
+          onVisit={handleNavigation}
+        />
+      )}
     </div>
   );
 }
