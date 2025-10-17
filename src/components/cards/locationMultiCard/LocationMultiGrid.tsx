@@ -6,8 +6,6 @@ import "./index.scss";
 // --- 1. IMPORTACIONES PARA NAVEGACIÓN Y ACCIONES ---
 import { useNavigate } from "react-router-dom";
 import { useNavigationContext } from "../../../context/navigationContext";
-import { useAgenda } from "../../../hooks/useAgenda";
-import { FiMoreVertical } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 
 // --- Constantes y Utilidades ---
@@ -36,7 +34,6 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
 
   const { setInitialDestination } = useNavigationContext();
   const navigate = useNavigate();
-  const { addItem } = useAgenda();
 
   const sortedPlaces = useMemo(() => {
     // ... tu lógica de ordenamiento ...
@@ -57,22 +54,6 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
 
   // --- 4. SUB-COMPONENTE DE TARJETA CON NUEVO DISEÑO Y LÓGICA ---
   const LocationMultiCard = ({ place }: { place: Place }) => {
-    const [menuOpen, setMenuOpen] = useState(false);
-
-    const handleVisitFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      handleNavigation(place);
-    };
-
-    const handleAgendarFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      const agendaItem = { /* tu lógica de agendaItem */ };
-      addItem(agendaItem);
-      alert(`${place.name} agregado a la agenda.`);
-    };
-
     return (
       // Contenedor principal con estilos de la imagen de ejemplo
       <div 
@@ -85,24 +66,7 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
             src={place.photo_url || 'https://picsum.photos/300/200'} 
             alt={place.name} 
           />
-          {/* Botón de Menú */}
-          <button
-            className="absolute top-2 right-2 z-20 p-1.5 bg-white/80 backdrop-blur-sm rounded-full shadow"
-            onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
-          >
-            <FiMoreVertical size={16} />
-          </button>
-          {/* Menú Desplegable */}
-          {menuOpen && (
-            <div className="absolute right-2 top-10 z-30 w-40 rounded-lg bg-white shadow-xl border" onClick={e => e.stopPropagation()}>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleVisitFromMenu}>
-                Visitar en Mapa
-              </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleAgendarFromMenu}>
-                Agendar
-              </button>
-            </div>
-          )}
+
         </div>
         <div className="p-4">
           {/* Título del lugar */}

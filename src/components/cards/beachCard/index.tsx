@@ -9,7 +9,6 @@ import "./index.scss";
 // --- IMPORTACIONES PARA NAVEGACIÓN Y AGENDA ---
 import { useNavigate } from "react-router-dom";
 import { useNavigationContext } from "../../../context/navigationContext";
-import { useAgenda } from "../../../hooks/useAgenda";
 
 // Extender EnrichedPlace para mayor consistencia
 interface Beach extends EnrichedPlace {}
@@ -24,7 +23,6 @@ export default function BeachCards() {
   // --- ESTADO Y HOOKS EN EL COMPONENTE PADRE ---
   const { setInitialDestination } = useNavigationContext();
   const navigate = useNavigate();
-  const { addItem } = useAgenda(); // Asumo que necesitas esto para la opción 'Agendar'
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Beach | null>(null);
@@ -87,22 +85,6 @@ export default function BeachCards() {
     };
 
     const handleImageError = () => setImageError(true);
-
-
-    const handleAgendarFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation(); // Evita que se cierre el menú o abra el modal subyacente
-      setMenuOpen(false); // Cierra el menú
-      // Aquí va tu lógica existente para agendar, que ya funciona bien.
-      const agendaItem = { 
-        id: beach.place_id, 
-        name: beach.name, 
-        vicinity: beach.vicinity, 
-        latitude: beach.geometry?.location.lat, 
-        longitude: beach.geometry?.location.lng 
-      };
-      addItem(agendaItem);
-      alert(`¡${beach.name} ha sido agregado a tu agenda!`);
-    };
 
     const renderStars = (rating?: number) => {
       if (!rating) return null;

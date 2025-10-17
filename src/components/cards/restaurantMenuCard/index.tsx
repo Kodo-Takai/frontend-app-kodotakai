@@ -7,7 +7,6 @@ import "./index.scss";
 // --- 1. IMPORTACIONES PARA NAVEGACIÓN Y AGENDA ---
 import { useNavigate } from "react-router-dom";
 import { useNavigationContext } from "../../../context/navigationContext";
-import { useAgenda } from "../../../hooks/useAgenda";
 
 interface Restaurant extends EnrichedPlace {}
 
@@ -21,7 +20,6 @@ export default function RestaurantMenuCard() {
   // --- 2. ESTADO Y HOOKS EN EL COMPONENTE PADRE ---
   const { setInitialDestination } = useNavigationContext();
   const navigate = useNavigate();
-  const { addItem } = useAgenda();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Restaurant | null>(null);
@@ -71,20 +69,6 @@ export default function RestaurantMenuCard() {
     };
     
     const images = getImages();
-
-    const handleVisitFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      handleNavigation(restaurant);
-    };
-
-    const handleAgendarFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      const agendaItem = { /* Tu lógica de agendaItem */ };
-      addItem(agendaItem);
-      alert(`${restaurant.name} ha sido agregado a tu agenda.`);
-    };
     
     return (
       // Clic en toda la tarjeta abre el modal

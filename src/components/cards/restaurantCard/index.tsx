@@ -2,14 +2,13 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt, FaHeart } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { usePlaces, type Place, type EnrichedPlace } from "../../../hooks/places";
+import { usePlaces, type EnrichedPlace } from "../../../hooks/places";
 import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
 // --- IMPORTACIONES PARA NAVEGACIÓN Y AGENDA ---
 import { useNavigate } from "react-router-dom";
 import { useNavigationContext } from "../../../context/navigationContext";
-import { useAgenda } from "../../../hooks/useAgenda";
 
 interface Restaurant extends EnrichedPlace {}
 
@@ -23,7 +22,6 @@ export default function RestaurantCards() {
   // --- ESTADO Y HOOKS EN EL COMPONENTE PADRE ---
   const { setInitialDestination } = useNavigationContext();
   const navigate = useNavigate();
-  const { addItem } = useAgenda();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Restaurant | null>(null);
@@ -50,20 +48,6 @@ export default function RestaurantCards() {
     const [menuOpen, setMenuOpen] = useState(false);
     const handleImageError = () => setImageError(true);
 
-    const handleVisitFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      handleNavigation(restaurant);
-    };
-
-    const handleAgendarFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      const agendaItem = { /* tu lógica de agendaItem */ };
-      addItem(agendaItem);
-      alert(`${restaurant.name} ha sido agregado a tu agenda.`);
-    };
-
     const renderStars = (rating?: number) => {
         if (!rating) return null;
         const fullStars = Math.floor(rating);
@@ -71,13 +55,13 @@ export default function RestaurantCards() {
           <FaStar
             key={`restaurant-star-${i}`}
             className="w-3 h-3"
-            color={i < fullStars ? "var(--color-green)" : "#D1D5DB"}
+            color={i < fullStars ? "var(--color-green)" : "var(--color-bone)"}
           />
         ));
         return (
           <div className="flex items-center gap-1">
             {stars}
-            <span className="text-white text-xs font-semibold ml-1">
+            <span className="text-[var(--color-bone)] text-xs font-semibold ml-1">
               {rating.toFixed(1)}
             </span>
           </div>
