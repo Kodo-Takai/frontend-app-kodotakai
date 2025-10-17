@@ -133,7 +133,7 @@ export default function DestinationCards() {
           {Array.from({ length: 3 }, (_, i) => (
             <div key={`skeleton-${i}`} className="destination-card-width">
               <div className="rounded-xl overflow-hidden animate-pulse">
-                <div className="h-72 bg-[var(--color-primary-beige)]" />
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}

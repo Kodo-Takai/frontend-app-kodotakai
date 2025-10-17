@@ -1,5 +1,4 @@
 import { useState } from "react";
-import CategoryWrapper from "../components/layout/SmoothCategoryWrapper";
 import PageWrapper from "../components/layout/SmoothPageWrapper";
 import DaySelector from "../components/ui/daySelector/DaySelector";
 import WeekDaysSelector from "../components/ui/weekdaySelector/WeekDaysSelector";
@@ -236,18 +235,18 @@ export default function Agenda() {
 
           {/* Mensaje cuando no hay items */}
           {itemsForSelectedDate.length === 0 && (
-            <div className="text-center py-8">
+            <div className="text-center py-15">
               <p 
-                className="text-sm"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="text-md font-extrabold"
+                style={{ color: 'var(--color-blue)' }}
               >
-                No tienes destinos agendados para este día
+                No tienes destinos agendados para hoy :c
               </p>
               <p 
-                className="text-xs mt-2"
-                style={{ color: 'var(--color-gray-400)' }}
+                className="text-xs font-medium mt-2"
+                style={{ color: 'var(--color-blue)' }}
               >
-                Ve a Explorar y agrega algunos destinos a tu agenda
+                Dale un vistazo a unos destinos y agregalos a tu agenda
               </p>
             </div>
           )}

@@ -159,10 +159,10 @@ export default function RestaurantCards() {
           {Array.from({ length: 6 }, (_, i) => (
             <div
               key={`restaurant-skeleton-${i}`}
-              className="restaurant-card-width"
+              className="restaurant-card-width-skeleton"
             >
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
-                <div className="h-72 bg-gray-200" />
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}

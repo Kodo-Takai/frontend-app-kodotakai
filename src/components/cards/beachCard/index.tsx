@@ -280,9 +280,9 @@ export default function BeachCards() {
       return (
         <div className="beach-scroll">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={`beach-skeleton-${i}`} className="beach-card-width">
+            <div key={`beach-skeleton-${i}`} className="beach-card-width-skeleton">
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
-                <div className="h-72 bg-gray-200" />
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}

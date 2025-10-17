@@ -29,6 +29,18 @@
   }
 }
 
+// Clase para skeleton loading - solo dimensiones, sin colores
+.restaurant-card-width-skeleton {
+  min-width: 300px;
+  max-width: 350px;
+  flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    min-width: 280px;
+    max-width: 320px;
+  }
+}
+
 .restaurant-card-container {
   display: flex;
   flex-direction: column;

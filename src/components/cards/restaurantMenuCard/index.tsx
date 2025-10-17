@@ -196,25 +196,9 @@ export default function RestaurantMenuCard() {
       return (
         <div className="restaurant-menu-scroll">
           {Array.from({ length: 3 }, (_, i) => (
-            <div key={`restaurant-menu-skeleton-${i}`} className="restaurant-menu-card-width">
-              <div className="restaurant-menu-card-container animate-pulse">
-                {/* HEADER */}
-                <div className="restaurant-menu-card-header flex items-center justify-between">
-                  {/* Icono */}
-                  <div className="restaurant-menu-card-icon w-8 h-8 bg-[var(--color-primary-dark-beige)] rounded"></div>
-
-                  {/* Nombre + dirección */}
-                  <div className="flex flex-col flex-grow mx-3">
-                    <div className="h-5 bg-[var(--color-primary-dark-beige)] rounded mb-2 w-3/4"></div>
-                    <div className="h-3 bg-[var(--color-primary-dark-beige)] rounded w-1/2"></div>
-                  </div>
-
-                  {/* Rating */}
-                  <div className="w-10 h-10 bg-[var(--color-primary-dark-beige)] rounded-full"></div>
-                </div>
-
-                {/* IMÁGENES */}
-                <div className="restaurant-menu-card-images-section bg-[var(--color-primary-dark-beige)] mt-3 rounded-xl"></div>
+            <div key={`restaurant-menu-skeleton-${i}`} className="restaurant-menu-card-width-skeleton">
+              <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}

@@ -129,13 +129,9 @@ export default function HotelCards({
         </h2>
         <div className="hotel-scroll shadow-sm">
           {Array.from({ length: 5 }, (_, i) => (
-            <div key={`hotel-skeleton-${i}`} className="hotel-card-width">
+            <div key={`hotel-skeleton-${i}`} className="hotel-card-width-skeleton">
               <div className="rounded-xl overflow-hidden animate-pulse">
-                <div className="h-60 bg-[var(--color-primary-beige)]" />
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-[var(--color-primary-beige)] rounded w-3/4" />
-                  <div className="h-3 bg-[var(--color-primary-beige)] rounded w-full" />
-                </div>
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}

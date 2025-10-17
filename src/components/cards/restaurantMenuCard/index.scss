@@ -39,6 +39,19 @@
   }
 }
 
+// Clase para skeleton loading - solo dimensiones, sin colores
+.restaurant-menu-card-width-skeleton {
+  margin-left: 0.3rem;
+  width: 340px;
+  height: 300px;
+  flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    width: 300px;
+    height: 280px;
+  }
+}
+
 .restaurant-menu-card-container {
   display: flex;
   flex-direction: column;

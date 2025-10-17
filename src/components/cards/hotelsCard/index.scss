@@ -28,6 +28,18 @@
   }
 }
 
+// Clase para skeleton loading - solo dimensiones, sin colores
+.hotel-card-width-skeleton {
+  min-width: 300px;
+  max-width: 300px;
+  flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    min-width: 280px;
+    max-width: 320px;
+  }
+}
+
 .hotel-card-container {
   display: flex;
   flex-direction: column;

@@ -30,7 +30,7 @@ const NAV_STYLES = {
   link: {
     base: "group flex items-center justify-center select-none transition-all duration-200 w-12 h-12 rounded-full relative z-10 flex-shrink-0",
     active: "text-[var(--color-blue-dark)]",
-    inactive: "text-[var(--color-green)] hover:text-white",
+    inactive: "text-[var(--color-green)] hover:text-[var(--color-green-dark)]",
   },
 } as const;
 
@@ -99,8 +99,8 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
                 >
                   <Icon
                     size={24}
-                    className={`transition-transform duration-200 ${
-                      isActive ? "scale-110" : "scale-100"
+                    className={`transition-transform duration-200 hover:scale-120 ${
+                      isActive ? "scale-125" : "scale-100"
                     }`}
                   />
                 </NavLink>
