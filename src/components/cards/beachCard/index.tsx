@@ -2,17 +2,18 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { usePlaces, type Place } from "../../../hooks/places";
+import { FiMoreVertical } from "react-icons/fi"; // Importar ícono de menú
+import { usePlaces, type Place, type EnrichedPlace } from "../../../hooks/places";
 import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
-interface Beach extends Place {
-  photos?: Array<{
-    photo_url: string;
-    rating?: number;
-    vicinity?: string;
-  }>;
-}
+// --- IMPORTACIONES PARA NAVEGACIÓN Y AGENDA ---
+import { useNavigate } from "react-router-dom";
+import { useNavigationContext } from "../../../context/navigationContext";
+import { useAgenda } from "../../../hooks/useAgenda";
+
+// Extender EnrichedPlace para mayor consistencia
+interface Beach extends EnrichedPlace {}
 
 export default function BeachCards() {
   const { places: beaches, loading } = usePlaces({
@@ -21,8 +22,27 @@ export default function BeachCards() {
     maxResults: 6,
   });
 
-  const handleVisit = (beach: Beach) => {
-    console.log("Visitando playa:", beach);
+  // --- ESTADO Y HOOKS EN EL COMPONENTE PADRE ---
+  const { setInitialDestination } = useNavigationContext();
+  const navigate = useNavigate();
+  const { addItem } = useAgenda(); // Asumo que necesitas esto para la opción 'Agendar'
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<Beach | null>(null);
+
+  const handleOpenModal = (beach: Beach) => {
+    setSelectedPlace(beach);
+    setIsModalOpen(true);
+  };
+  
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlace(null);
+  };
+
+  const handleNavigation = (beach: Beach) => {
+    setInitialDestination(beach);
+    navigate('/maps');
   };
 
   const displayedBeaches = beaches.slice(0, 6);
@@ -30,34 +50,37 @@ export default function BeachCards() {
   const BeachCard = ({ beach }: { beach: Beach }) => {
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
     const [imageError, setImageError] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false); // Estado para el menú desplegable
 
     const getProcessedPhotos = () => {
       if (!beach.photos || beach.photos.length === 0) {
         return [];
       }
 
-      return beach.photos.slice(0, 3).map((photo) => {
+      // Asegúrate de que las fotos tengan el formato correcto
+      return beach.photos.slice(0, 3).map((photo: any) => { // Uso 'any' temporalmente si la inferencia es compleja
         if (typeof photo === "object" && "getUrl" in photo) {
           return {
-            photo_url: (photo as any).getUrl({ maxWidth: 400, maxHeight: 300 }),
+            photo_url: photo.getUrl({ maxWidth: 400, maxHeight: 300 }),
           };
         }
         return {
-          photo_url: (photo as any).photo_url || beach.photo_url,
+          photo_url: photo.photo_url || beach.photo_url,
         };
       });
     };
 
     const processedPhotos = getProcessedPhotos();
 
-    const nextPhoto = () => {
+    const nextPhoto = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Evita que se propague el clic al div principal
       if (processedPhotos.length > 0) {
         setCurrentPhotoIndex((prev) => (prev + 1) % processedPhotos.length);
       }
     };
 
-    const prevPhoto = () => {
+    const prevPhoto = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Evita que se propague el clic al div principal
       if (processedPhotos.length > 0) {
         setCurrentPhotoIndex((prev) =>
           prev === 0 ? processedPhotos.length - 1 : prev - 1
@@ -65,16 +88,28 @@ export default function BeachCards() {
       }
     };
 
-    const handleImageError = () => {
-      setImageError(true);
+    const handleImageError = () => setImageError(true);
+
+    // --- MANEJADORES PARA EL MENÚ ---
+    const handleVisitFromMenu = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Evita que se cierre el menú o abra el modal subyacente
+      setMenuOpen(false); // Cierra el menú
+      handleNavigation(beach); // Inicia la navegación directa al mapa
     };
 
-    const handleOpenModal = () => {
-      setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-      setIsModalOpen(false);
+    const handleAgendarFromMenu = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Evita que se cierre el menú o abra el modal subyacente
+      setMenuOpen(false); // Cierra el menú
+      // Aquí va tu lógica existente para agendar, que ya funciona bien.
+      const agendaItem = { 
+        id: beach.place_id, 
+        name: beach.name, 
+        vicinity: beach.vicinity, 
+        latitude: beach.geometry?.location.lat, 
+        longitude: beach.geometry?.location.lng 
+      };
+      addItem(agendaItem);
+      alert(`¡${beach.name} ha sido agregado a tu agenda!`);
     };
 
     const renderStars = (rating?: number) => {
@@ -100,172 +135,204 @@ export default function BeachCards() {
     };
 
     return (
-      <>
-        <div
-          className="beach-card-width shadow-sm"
-          onClick={() => handleVisit(beach)}
-        >
-          <div className="beach-card-container">
-            <div className="beach-card-header">
-              <div className="beach-card-title-section">
-                <div className="beach-card-experience-text">
-                  <img
-                    src="/icons/red-compass.svg"
-                    alt="Compass"
-                    width="30"
-                    height="30"
-                    className="beach-card-compass-icon"
-                  />
-                </div>
-
-                <div className="beach-card-name-section">
-                  <div className="beach-card-experience-label">
-                    EXPERIMENTA NUEVAS PLAYAS
-                  </div>
-                  <h3 className="beach-card-beach-name">{beach.name}</h3>
-                </div>
+      // Clic en la tarjeta abre el modal
+      <div 
+        className="beach-card-width shadow-sm"
+        onClick={() => handleOpenModal(beach)}
+      >
+        <div className="beach-card-container">
+          <div className="beach-card-header">
+            <div className="beach-card-title-section">
+              <div className="beach-card-experience-text">
+                <img
+                  src="/icons/red-compass.svg"
+                  alt="Compass"
+                  width="30"
+                  height="30"
+                  className="beach-card-compass-icon"
+                />
               </div>
 
-              <div className="beach-card-description-row">
-                <MdPlace className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                <span className="line-clamp-2">
-                  {beach.vicinity ||
-                    "Descubre esta increíble playa y vive una experiencia única en la costa colombiana"}
-                </span>
+              <div className="beach-card-name-section">
+                <div className="beach-card-experience-label">
+                  EXPERIMENTA NUEVAS PLAYAS
+                </div>
+                <h3 className="beach-card-beach-name">{beach.name}</h3>
               </div>
             </div>
 
-            <div className="beach-card-image-section">
-              <button
-                onClick={prevPhoto}
-                disabled={processedPhotos.length <= 1}
-                className="beach-card-nav-button"
-              >
-                <img
-                  src="/icons/white-arrow-left.svg"
-                  alt="Anterior"
-                  width="18"
-                  height="18"
-                  className="beach-card-arrow-icon"
-                />
-              </button>
-
-              <div className="beach-card-image-container">
-                {processedPhotos.map((photo, index) => {
-                  const getImagePosition = (photoIndex: number) => {
-                    const totalPhotos = processedPhotos.length;
-                    const relativePosition =
-                      (photoIndex - currentPhotoIndex + totalPhotos) %
-                      totalPhotos;
-
-                    switch (relativePosition) {
-                      case 0:
-                        return {
-                          position: "center",
-                          transform: "translateX(0) rotate(0deg)",
-                          zIndex: 3,
-                          hasBorder: true,
-                        };
-                      case 1:
-                        return {
-                          position: "right",
-                          transform: "translateX(50px) rotate(10deg)",
-                          zIndex: 1,
-                          hasBorder: false,
-                        };
-                      case 2:
-                        return {
-                          position: "left",
-                          transform: "translateX(-50px) rotate(-10deg)",
-                          zIndex: 2,
-                          hasBorder: false,
-                        };
-                      default:
-                        return {
-                          position: "hidden",
-                          transform: "translateX(0) rotate(0deg)",
-                          zIndex: 0,
-                          hasBorder: false,
-                        };
-                    }
-                  };
-
-                  const imageStyle = getImagePosition(index);
-
-                  if (imageStyle.position === "hidden") return null;
-
-                  return (
-                    <img
-                      key={`${beach.name}-${index}`}
-                      src={
-                        imageError
-                          ? "https://picsum.photos/97/114?random=error"
-                          : photo.photo_url ||
-                            "https://picsum.photos/97/114?random=beach-default"
-                      }
-                      alt={beach.name}
-                      className={`beach-card-image ${
-                        imageStyle.hasBorder
-                          ? "beach-card-image-main"
-                          : "beach-card-image-back"
-                      }`}
-                      style={{
-                        transform: imageStyle.transform,
-                        zIndex: imageStyle.zIndex,
-                      }}
-                      loading="lazy"
-                      onError={handleImageError}
-                      onClick={() => setCurrentPhotoIndex(index)}
-                    />
-                  );
-                })}
-              </div>
-
-              <button
-                onClick={nextPhoto}
-                disabled={processedPhotos.length <= 1}
-                className="beach-card-nav-button"
-              >
-                <img
-                  src="/icons/white-arrow-right.svg"
-                  alt="Siguiente"
-                  width="18"
-                  height="18"
-                  className="beach-card-arrow-icon"
-                />
-              </button>
-            </div>
-
-            <div className="beach-card-footer">
-              <div className="beach-card-rating-display">
-                {renderStars(beach.rating)}
-              </div>
-
-              <div className="beach-card-indicators">
-                {processedPhotos.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`beach-card-indicator ${
-                      index === currentPhotoIndex ? "active" : ""
-                    }`}
-                    onClick={() => setCurrentPhotoIndex(index)}
-                  />
-                ))}
-              </div>
-
-              <button
-                onClick={handleOpenModal}
-                className="beach-card-visit-button"
-              >
-                Visitar <TbLocationFilled className="w-3 h-3" />
-              </button>
+            <div className="beach-card-description-row">
+              <MdPlace className="w-3 h-3 text-gray-400 flex-shrink-0" />
+              <span className="line-clamp-2">
+                {beach.vicinity || "Descubre esta increíble playa y vive una experiencia única en la costa colombiana"}
+              </span>
             </div>
           </div>
-        </div>
 
-        {/* Modal fuera del contenedor de la tarjeta */}
-        <PlaceModal isOpen={isModalOpen} onClose={handleCloseModal} place={beach} />
-      </>
+          <div className="beach-card-image-section">
+            {/* --- Botón del menú desplegable --- */}
+            <button
+              className="absolute top-2 right-2 z-20 p-1 bg-white/90 rounded-full shadow-md"
+              onClick={(e) => {
+                e.stopPropagation(); // Evita que al hacer clic en el botón se abra el modal
+                setMenuOpen(v => !v);
+              }}
+              aria-label="Más opciones"
+            >
+              <FiMoreVertical />
+            </button>
+
+            {/* --- Menú desplegable --- */}
+            {menuOpen && (
+              <div 
+                className="absolute right-2 top-10 z-30 w-40 rounded-lg bg-white shadow-xl border" 
+                onClick={e => e.stopPropagation()} // Evita que el clic dentro del menú propague al div principal
+              >
+                <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleVisitFromMenu}>
+                  Visitar en Mapa
+                </button>
+                <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleAgendarFromMenu}>
+                  Agendar
+                </button>
+              </div>
+            )}
+            
+            {/* Carrusel de imágenes */}
+            <button
+              onClick={prevPhoto}
+              disabled={processedPhotos.length <= 1}
+              className="beach-card-nav-button"
+            >
+              <img
+                src="/icons/white-arrow-left.svg"
+                alt="Anterior"
+                width="18"
+                height="18"
+                className="beach-card-arrow-icon"
+              />
+            </button>
+
+            <div className="beach-card-image-container">
+              {processedPhotos.map((photo, index) => {
+                const getImagePosition = (photoIndex: number) => {
+                  const totalPhotos = processedPhotos.length;
+                  const relativePosition =
+                    (photoIndex - currentPhotoIndex + totalPhotos) %
+                    totalPhotos;
+
+                  switch (relativePosition) {
+                    case 0:
+                      return {
+                        position: "center",
+                        transform: "translateX(0) rotate(0deg)",
+                        zIndex: 3,
+                        hasBorder: true,
+                      };
+                    case 1:
+                      return {
+                        position: "right",
+                        transform: "translateX(50px) rotate(10deg)",
+                        zIndex: 1,
+                        hasBorder: false,
+                      };
+                    case 2:
+                      return {
+                        position: "left",
+                        transform: "translateX(-50px) rotate(-10deg)",
+                        zIndex: 2,
+                        hasBorder: false,
+                      };
+                    default:
+                      return {
+                        position: "hidden",
+                        transform: "translateX(0) rotate(0deg)",
+                        zIndex: 0,
+                        hasBorder: false,
+                      };
+                  }
+                };
+
+                const imageStyle = getImagePosition(index);
+
+                if (imageStyle.position === "hidden") return null;
+
+                return (
+                  <img
+                    key={`${beach.name}-${index}`}
+                    src={
+                      imageError
+                        ? "https://picsum.photos/97/114?random=error"
+                        : photo.photo_url ||
+                          "https://picsum.photos/97/114?random=beach-default"
+                    }
+                    alt={beach.name}
+                    className={`beach-card-image ${
+                      imageStyle.hasBorder
+                        ? "beach-card-image-main"
+                        : "beach-card-image-back"
+                    }`}
+                    style={{
+                      transform: imageStyle.transform,
+                      zIndex: imageStyle.zIndex,
+                    }}
+                    loading="lazy"
+                    onError={handleImageError}
+                    onClick={(e) => { 
+                      e.stopPropagation(); // Evita que se abra el modal
+                      setCurrentPhotoIndex(index); 
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            <button
+              onClick={nextPhoto}
+              disabled={processedPhotos.length <= 1}
+              className="beach-card-nav-button"
+            >
+              <img
+                src="/icons/white-arrow-right.svg"
+                alt="Siguiente"
+                width="18"
+                height="18"
+                className="beach-card-arrow-icon"
+              />
+            </button>
+          </div>
+
+          <div className="beach-card-footer">
+            <div className="beach-card-rating-display">
+              {renderStars(beach.rating)}
+            </div>
+
+            <div className="beach-card-indicators">
+              {processedPhotos.map((_, index) => (
+                <button
+                  key={index}
+                  className={`beach-card-indicator ${
+                    index === currentPhotoIndex ? "active" : ""
+                  }`}
+                  onClick={(e) => { 
+                    e.stopPropagation(); // Evita que se abra el modal
+                    setCurrentPhotoIndex(index); 
+                  }}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // Evita que el clic se propague al div principal
+                handleOpenModal(beach); // Este botón abre el modal
+              }}
+              className="beach-card-visit-button"
+            >
+              Visitar <TbLocationFilled className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      </div>
     );
   };
 
@@ -302,8 +369,8 @@ export default function BeachCards() {
 
     return (
       <div className="beach-scroll">
-        {displayedBeaches.map((beach, index) => (
-          <BeachCard key={`${beach.name}-${index}`} beach={beach} />
+        {displayedBeaches.map((beach) => (
+          <BeachCard key={beach.place_id || beach.id} beach={beach as Beach} />
         ))}
       </div>
     );
@@ -315,6 +382,16 @@ export default function BeachCards() {
         Visita estas Playas
       </h2>
       {renderContent()}
+
+      {/* El Modal vive aquí, una sola vez, y se conecta a la navegación */}
+      {selectedPlace && (
+        <PlaceModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          place={selectedPlace}
+          onVisit={handleNavigation}
+        />
+      )}
     </div>
   );
 }
