@@ -240,7 +240,7 @@ export default function RestaurantMenuCard() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         Y donde comeremos hoy?
       </h2>
       {renderContent()}

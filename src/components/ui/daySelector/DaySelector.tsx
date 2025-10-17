@@ -24,7 +24,7 @@ const DaySelector: React.FC<DaySelectorProps> = ({
   currentWeekText,
 }) => {
   return (
-    <div className="bg-[var(--color-blue)] w-full h-[40px] flex items-center justify-between px-2 text-[var(--color-bone)] text-[16px] rounded-2xl">
+    <div className="bg-[var(--color-blue-dark)] w-full h-[40px] flex items-center justify-between px-2 text-[var(--color-bone)] text-[16px] rounded-2xl">
       {/* Botón flecha izquierda */}
       <button
         onClick={onPreviousWeek}

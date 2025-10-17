@@ -32,8 +32,8 @@
   right: 12px;
   width: 32px;
   height: 32px;
-  background-color: var(--color-primary-light);
-  color: #ff0007;
+  background-color: var(--color-blue);
+  color: var(--color-beige);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -43,7 +43,6 @@
   line-height: 1;
   text-align: center;
   z-index: 3;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
 }
 
@@ -60,11 +59,11 @@
 }
 
 .top-rated-star-full {
-  color: #ff0007;
+  color: var(--color-green);
 }
 
 .top-rated-star-half {
-  color: #ff0007;
+  color: var(--color-green);
   opacity: 0.5;
 }
 
@@ -85,7 +84,7 @@
 }
 
 .top-rated-price {
-  color: #ff0007;
+  color: var(--color-green);
   font-weight: bold;
   font-size: 1.125rem;
   margin-bottom: 0.5rem;

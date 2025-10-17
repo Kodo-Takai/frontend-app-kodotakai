@@ -12,15 +12,7 @@ export default function Explorar() {
   const [selectedOption, setSelectedOption] = useState("Todo");
   const navigate = useNavigate();
 
-  // Función para manejar la búsqueda
-  const handleSearch = (_query: string) => {
-    // Búsqueda implementada
-  };
 
-  // Función para navegar a notificaciones
-  const handleNotificationsClick = () => {
-    navigate("/notifications");
-  };
 
   // Función para navegar a categorías
   const handleCategoryClick = (category: string) => {
@@ -63,17 +55,17 @@ export default function Explorar() {
         </div>
 
         <button
-            className="w-11 h-11 rounded-xl flex items-center justify-center hover:scale-105 transition-all shadow-sm duration-300 ease-out cursor-pointer"
-            style={{ 
-              backgroundColor: 'var(--color-blue-dark)', 
-            }}
-          >
-            <img
-              src="./icons/AI_Icon_2.svg"
-              alt="Notificaciones"
-              className="w-7 h-7"
-            />
-          </button>
+              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer animate-bubble-in"
+              style={{
+                backgroundColor: "var(--color-green)",
+              }}
+            >
+              <img
+                src="./icons/ai-function-icon-2.svg"
+                alt="Notificaciones"
+                className="w-8 h-8 opacity-85"
+              />
+            </button>
       </div>
 
       <SegmentedControl
@@ -192,11 +184,6 @@ export default function Explorar() {
         </div>
       </div>
 
-      <Search
-        onSearch={handleSearch}
-        placeholder="Buscar lugares, hoteles, restaurantes..."
-        className="mb-4"
-      />
       <DestinationCards />
       <RestaurantMenuCard />
       <HotelsCard />

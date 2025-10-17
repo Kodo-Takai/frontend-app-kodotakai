@@ -92,12 +92,9 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
       <div className="location-multi-grid">
         <div className="location-multi-grid-container">
           {Array.from({ length: DEFAULT_ITEMS_PER_PAGE }).map((_, index) => (
-            <div key={index} className="location-multi-skeleton">
-              <div className="location-multi-skeleton-image"></div>
-              <div className="location-multi-skeleton-content">
-                <div className="location-multi-skeleton-title"></div>
-                <div className="location-multi-skeleton-location"></div>
-                <div className="location-multi-skeleton-rating"></div>
+            <div key={index} className="location-multi-skeleton-simple">
+              <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}
@@ -127,7 +124,7 @@ const LocationMultiGrid: React.FC<LocationMultiGridProps> = ({
   }
 
   return (
-    <div className="location-multi-grid">
+    <div className="location-multi-grid mb-30">
       <div className="location-multi-grid-container">
         {displayedPlaces.map((place, index) => (
           <LocationMultiCard

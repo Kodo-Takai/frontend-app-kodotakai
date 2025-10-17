@@ -126,6 +126,7 @@ export default function HotelesPage() {
       backgroundImage="/hotels-background-section-explore.svg"
       backgroundSize="130%"
       backgroundPosition="top center"
+      className="pb-20"
     >
         <HeaderNavigationExplore />
 
@@ -235,8 +236,8 @@ export default function HotelesPage() {
 
           <HotelsCard places={places} loading={loading} error={error} />
 
-          <div className="mt-4">
-            <h2 className="text-2xl font-bold mb-4 text-center" style={{ color: 'var(--color-blue)' }}>
+          <div className="mt-10">
+            <h2 className="text-2xl font-extrabold mb-2 text-[var(--color-text-primary)] text-center" style={{ color: 'var(--color-blue)' }}>
               Explora más hoteles
             </h2>
             <LocationMultiGrid

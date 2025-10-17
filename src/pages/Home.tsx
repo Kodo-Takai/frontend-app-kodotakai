@@ -46,7 +46,7 @@ export default function Home() {
                 lineHeight: "22px",
               }}
             >
-              Bienvenido de nuevo !
+              Bienvenido de nuevo,
             </h1>
             <p
               style={{
@@ -69,7 +69,7 @@ export default function Home() {
 
           <div className="w-[15%] flex justify-end">
             <button
-              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer"
+              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer animate-bubble-in"
               style={{
                 backgroundColor: "var(--color-green)",
               }}

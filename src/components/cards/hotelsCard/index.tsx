@@ -46,7 +46,7 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
           <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-[var(--color-blue)] to-transparent" />
 
           <div className="absolute top-2 left-2 flex gap-1">
-            <div className="flex items-center gap-3 bg-[var(--color-primary-light)] rounded-xl px-3 py-1 text-lg font-medium text-[var(--color-primary-dark)]">
+            <div className="flex items-center gap-3 bg-[var(--color-primary-light)] rounded-2xl px-3 py-1 text-lg font-medium text-[var(--color-primary-dark)]">
               <FaStar className="text-[var(--color-primary-dark)]" />
               {hotel.rating ?? "-"}
             </div>
@@ -68,31 +68,31 @@ const HotelCard = ({ hotel }: { hotel: Place }) => {
 
                 if (businessStatus === "OPERATIONAL") {
                   if (isOpenNow === true) {
-                    return "Abierto ahora";
+                    return "ABIERTO AHORA";
                   } else if (isOpenNow === false) {
-                    return "Cerrado ahora";
+                    return "CERRADO AHORA";
                   } else {
-                    return "Abierto ahora";
+                    return "ABIERTO AHORA";
                   }
                 }
 
                 if (isOpenNow === true) {
-                  return "Abierto ahora";
+                  return "ABIERTO AHORA";
                 } else if (isOpenNow === false) {
-                  return "Cerrado ahora";
+                  return "CERRADO AHORA";
                 }
 
-                return "Consulta aquí";
+                return "CONSULTA AQUÍ";
               })()}
             </span>
           </div>
         </div>
 
         <div className="px-3 py-4">
-          <h3 className="text-xl font-extrabold text-[var(--color-primary-beige)] line-clamp-1 uppercase">
+          <h3 className="text-xl font-extrabold text-[var(--color-blue-dark)] line-clamp-1 uppercase">
             {hotel.name}
           </h3>
-          <p className="text-sm text-[var(--color-primary-beige)] mt-1 pb- hotel-location-text">
+          <p className="text-sm text-[var(--color-blue-dark)] mt-1 font-medium hotel-location-text">
             {(hotel as any).formatted_address ||
               hotel.vicinity ||
               "Ubicación no disponible"}
@@ -176,7 +176,7 @@ export default function HotelCards({
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         A descansar un momento
       </h2>
       <div className="hotel-scroll">
