@@ -4,8 +4,10 @@ import CalendarCard from "../calendarCard";
 
 export default function SummaryCard() {
   return (
-    <div className="w-full h-57">
-      <h1 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">Resumen de Hoy</h1>
+    <div className="w-full h-57 mb-3">
+      <h1 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
+        Resumen de Hoy
+      </h1>
       <div className="grid grid-cols-5 gap-2 h-32">
         <div className="col-span-3 h-full">
           <MapsCard className="w-full h-full" />

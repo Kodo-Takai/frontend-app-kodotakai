@@ -23,13 +23,16 @@ export default function CalendarCard() {
 
   return (
     <div className="w-full relative">
-        {/* Espirales del calendario superpuestas */}
-        <div className="absolute -top-[6px] left-0 right-0 flex justify-between items-center px-4 z-30">
-          <div className="w-3 h-5 bg-[var(--color-blue)] rounded-full"></div>
-          <div className="w-3 h-5 bg-[var(--color-blue)] rounded-full"></div>
-        </div>
+      {/* Espirales del calendario superpuestas */}
+      <div className="absolute -top-[6px] left-0 right-0 flex justify-between items-center px-4 z-30">
+        <div className="w-3 h-5 bg-[var(--color-blue-dark)] rounded-full"></div>
+        <div className="w-3 h-5 bg-[var(--color-blue-dark)] rounded-full"></div>
+      </div>
       {/* Calendario */}
-        <div className="rounded-2xl overflow-hidden h-full flex flex-col bg-[var(--color-beige-dark)]/20 border-3 border-[var(--color-beige-dark)]/40 relative" style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}>
+      <div
+        className="rounded-2xl bg-[var(--color-green)] overflow-hidden h-full flex flex-col border-4 border-[var(--color-green-dark)]/30 relative"
+        style={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.07)" }}
+      >
         {/* Header con día de la semana */}
         <div className="flex-shrink-0">
           <p className="text-xs py-1 font-medium text-[var(--color-blue)] text-center tracking-wide">
@@ -39,13 +42,12 @@ export default function CalendarCard() {
 
         {/* Contenido principal */}
         <div className="flex flex-col justify-center items-center ">
-             <p className="text-lg py-1 font-extrabold leading-0 text-[var(--color-blue)] text-center ">
-              {capitalizedDay}
-            </p>
-            <span className="text-6xl py-1 font-extrabold text-[var(--color-green)] leading-none">
-              {dayNumber}
-            </span>
-        
+          <p className="text-lg py-1 font-extrabold leading-0 text-[var(--color-blue)] text-center ">
+            {capitalizedDay}
+          </p>
+          <span className="text-6xl py-1 font-extrabold text-[var(--color-blue-dark)] leading-none">
+            {dayNumber}
+          </span>
         </div>
       </div>
     </div>

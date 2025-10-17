@@ -16,7 +16,9 @@ export default function DestinationCards() {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState<Place | EnrichedPlace | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<
+    Place | EnrichedPlace | null
+  >(null);
 
   const handleVisit = (place: Place | EnrichedPlace) => {
     setSelectedPlace(place);
@@ -43,7 +45,9 @@ export default function DestinationCards() {
         <FaStar
           key={`star-${i}`}
           className={`w-3 h-3 ${
-            i < fullStars ? "text-[var(--color-primary-accent)]" : "text-gray-300"
+            i < fullStars
+              ? "text-[var(--color-primary-accent)]"
+              : "text-[var(--color-bone)]"
           }`}
         />
       ));
@@ -112,7 +116,7 @@ export default function DestinationCards() {
             </div>
 
             {/* Botón de visitar */}
-            <button className="w-full bg-[var(--color-primary-accent)] hover:bg-[var(--color-green-dark)] text-[var(--color-blue)] font-semibold py-2 px-4 rounded-2xl transition-all duration-200 backdrop-blur-sm flex items-center justify-center gap-2 text-lg">
+            <button className="w-full bg-[var(--color-primary-accent)] hover:bg-[var(--color-green-dark)] text-[var(--color-blue-dark)] font-semibold py-2 px-4 rounded-2xl transition-all duration-200 backdrop-blur-sm flex items-center justify-center gap-2 text-lg">
               Visitar <TbLocationFilled className="w-4 h-4" />
             </button>
           </div>

@@ -5,7 +5,7 @@ import { useRegister } from "../hooks/auth/useRegister";
 
 export default function Register() {
   const navigate = useNavigate();
-  const { 
+  const {
     username,
     email,
     password,
@@ -15,28 +15,44 @@ export default function Register() {
     isValid,
     isLoading,
     errorMessage,
-    handleFormSubmit
+    handleFormSubmit,
   } = useRegister();
 
   return (
-    <div className="max-w-md mx-auto p-6 rounded-lg justify-center" style={{ backgroundColor: 'var(--color-bone)' }}>
-      <div 
+    <div
+      className="max-w-md mx-auto p-6 rounded-lg justify-center"
+      style={{ backgroundColor: "var(--color-bone)" }}
+    >
+      <div
         className="cursor-pointer"
         onClick={() => navigate(-1)}
         aria-label="Regresar"
       >
-        <div className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors" style={{ backgroundColor: 'var(--color-blue)', color: 'var(--color-bone)' }}>
+        <div
+          className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
+          style={{
+            backgroundColor: "var(--color-blue)",
+            color: "var(--color-bone)",
+          }}
+        >
           <FaArrowLeft className="w-4 h-4" />
         </div>
       </div>
 
-      <h2 className="text-[40px] font-extrabold mb-4 mt-4 font-sf-pro tracking-tight leading-10" style={{ color: 'var(--color-blue)' }}>
-        Crea tu <span style={{ color: 'var(--color-green)' }}>nueva</span> <br /> cuenta
+      <h2
+        className="text-[40px] font-extrabold mb-4 mt-4 font-sf-pro tracking-tight leading-10"
+        style={{ color: "var(--color-blue)" }}
+      >
+        Crea tu <span style={{ color: "var(--color-green)" }}>nueva</span>{" "}
+        <br /> cuenta
       </h2>
 
-      <p className="text-sm mb-6 font-medium" style={{ color: 'var(--color-blue-light)' }}>
-        Crea una cuenta para que puedas comenzar una nueva 
-        aventura y disfrutar la experiencia al máximo
+      <p
+        className="text-sm mb-6 font-medium"
+        style={{ color: "var(--color-blue)" }}
+      >
+        Crea una cuenta para que puedas comenzar una nueva aventura y disfrutar
+        la experiencia al máximo
       </p>
 
       <RegisterForm

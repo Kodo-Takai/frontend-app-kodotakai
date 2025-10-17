@@ -85,7 +85,9 @@ export default function BeachCards() {
         <FaStar
           key={`beach-star-${i}`}
           className="w-3 h-3"
-          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-bone)" }}
+          style={{
+            color: i < fullStars ? "var(--color-green)" : "var(--color-bone)",
+          }}
         />
       ));
 
@@ -264,7 +266,11 @@ export default function BeachCards() {
         </div>
 
         {/* Modal fuera del contenedor de la tarjeta */}
-        <PlaceModal isOpen={isModalOpen} onClose={handleCloseModal} place={beach} />
+        <PlaceModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          place={beach}
+        />
       </>
     );
   };
@@ -310,7 +316,7 @@ export default function BeachCards() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-3">
       <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         Visita estas Playas
       </h2>

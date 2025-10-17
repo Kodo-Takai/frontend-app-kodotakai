@@ -24,8 +24,9 @@ const HIDDEN_ROUTES = ["/", "/login", "/register", "/onboarding", "/terms"];
 
 const NAV_STYLES = {
   container: "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden",
-  list: "flex items-center gap-1 h-18 px-7 bg-[var(--color-blue-dark)] border-3 rounded-full border-[var(--color-beige)] relative",
-  indicator: "absolute w-12 h-12 bg-[var(--color-green)] rounded-full transition-all duration-300 ease-out",
+  list: "flex items-center gap-2 h-18 px-7 bg-[var(--color-blue-dark)] border-2 rounded-full border-[var(--color-beige)] relative",
+  indicator:
+    "absolute w-12 h-12 bg-[var(--color-green)] rounded-full transition-all duration-300 ease-out",
   link: {
     base: "group flex items-center justify-center select-none transition-all duration-200 w-12 h-12 rounded-full relative z-10 flex-shrink-0",
     active: "text-[var(--color-blue-dark)]",

@@ -29,16 +29,18 @@ export default function RestaurantCards() {
     const renderStars = (rating?: number) => {
       if (!rating) return null;
 
-    
-
       const fullStars = Math.floor(rating);
       const stars = Array.from({ length: 5 }, (_, i) => (
         <FaStar
           key={`restaurant-star-${i}`}
           className={`w-3 h-3 ${
-            i < fullStars ? "text-[var(--color-green)]" : "text-[var(--color-bone)]"
+            i < fullStars
+              ? "text-[var(--color-green)]"
+              : "text-[var(--color-bone)]"
           }`}
-          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-bone)" }}
+          style={{
+            color: i < fullStars ? "var(--color-green)" : "var(--color-bone)",
+          }}
         />
       ));
 
@@ -51,14 +53,13 @@ export default function RestaurantCards() {
         </div>
       );
     };
-      const handleOpenModal = () => {
-        setIsModalOpen(true);
-      };
+    const handleOpenModal = () => {
+      setIsModalOpen(true);
+    };
 
-      const handleCloseModal = () => {
-        setIsModalOpen(false);
-      };
-
+    const handleCloseModal = () => {
+      setIsModalOpen(false);
+    };
 
     return (
       <div className="restaurant-card-width">
@@ -129,7 +130,8 @@ export default function RestaurantCards() {
           <div className="restaurant-card-footer">
             <button
               className="restaurant-card-location-center"
-              onClick={handleOpenModal}>
+              onClick={handleOpenModal}
+            >
               <TbLocationFilled className="w-4 h-4 text-white" />
               <span className="text-white text-sm font-medium">
                 Visítalo ahora
@@ -198,7 +200,7 @@ export default function RestaurantCards() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         Restaurantes mejor valorados
       </h2>
       {renderContent()}
