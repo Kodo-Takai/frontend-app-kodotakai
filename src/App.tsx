@@ -25,15 +25,16 @@ import TravelerType from "./pages/TravelerType";
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import MainLayout from "./components/layout/mainLayout";
-import AuthLayout from "./components/layout/authLayout";
-import ProtectedRoute from "./components/layout/protectedRoute";
+import AuthLayout from "./components/layout/AuthLayout";
 import Agenda from "./pages/Agenda";
+import CustomToastContainer from "./components/ui/toast";
 
 function AppContent() {
   const isLoading = useSplashScreen();
 
   return (
     <>
+      <CustomToastContainer />
       <SplashScreen visible={!isLoading} />
       <Routes>
         <Route path="/" element={<Welcome />} />
