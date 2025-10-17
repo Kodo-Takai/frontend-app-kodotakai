@@ -2,36 +2,30 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-export default function TravelerType() {
+export default function TravelPreferences() {
   const navigate = useNavigate();
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
 
-  const travelerTypes = [
-    "Relax",
-    "Cultural",
-    "Nocturno",
-    "Ecológico/a",
-    "Fotógrafo",
-    "Aventurero",
-    "Gastronómico",
-  ];
+  const travelerTypes = ["Económico", "Medio", "Premium"];
 
-  const travelingTypes = ["Solo/a", "En pareja", "En familia", "Con amigos"];
   const travelingDescription = [
-    "Mi propio guía y compañía",
-    "Dos almas, una aventura",
-    "Momentos para recordar juntos",
-    "Donde vamos, la pasamos bien",
+    "Lo importante es vivir la experiencia",
+    "Un punto justo entre precio y confort",
+    "Me gusta viajar sin límites",
   ];
 
-  const travelTime = ["1 día", "Fin de semana", "3 a 5 días", "1 semana o más"];
+  const travelTime = [
+    "Caminando",
+    "En bicicleta",
+    "En auto",
+    "En transporte público",
+  ];
 
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
-
   return (
     <section
       className="mx-auto p-6 rounded-lg justify-center"
@@ -72,13 +66,13 @@ export default function TravelerType() {
         ></div>
         <div
           className="px-6.5 py-1.5 rounded-full"
-          style={{ backgroundColor: "var(--color-beige)" }}
+          style={{ backgroundColor: "var(--color-green)" }}
         >
           {" "}
         </div>
         <div
           className="px-6.5 py-1.5 rounded-full"
-          style={{ backgroundColor: "var(--color-beige)" }}
+          style={{ backgroundColor: "var(--color-green)" }}
         ></div>
       </div>
       <div className="mt-6">
@@ -87,13 +81,13 @@ export default function TravelerType() {
             className="text-lg font-bold"
             style={{ color: "var(--color-blue)" }}
           >
-            ¡Cuéntanos un poco sobre ti viajando!
+            ¡Últimos detalles para personalizar tu viaje!
           </span>
           <p
             className="text-sm mb-6"
             style={{ color: "var(--color-blue-light)" }}
           >
-            Así sabremos qué tipo de experiencias te harán feliz
+            Cuéntanos cómo quieres vivir tu experiencia.
           </p>
         </div>
         <div className="space-y-8">
@@ -102,43 +96,10 @@ export default function TravelerType() {
               className="font-medium text-[16px]"
               style={{ color: "var(--color-blue)" }}
             >
-              Eres un viajero...
+              Cuando viajas, prefieres...
             </span>
             <div className="flex flex-wrap gap-2 mt-2">
-              {travelerTypes.map((type) => {
-                const isSelected = selectedTypes.includes(type);
-                return (
-                  <div
-                    key={type}
-                    onClick={() => toggleType(type)}
-                    className="px-4 py-1.5 rounded-xl cursor-pointer text-[14px]"
-                    style={{
-                      backgroundColor: isSelected
-                        ? "var(--color-green-light)"
-                        : "var(--color-beige-light)",
-                      border: `1px solid ${
-                        isSelected
-                          ? "var(--color-green-dark)"
-                          : "var(--color-beige-dark)"
-                      }`,
-                      color: "var(--color-blue)",
-                    }}
-                  >
-                    {type}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          <div>
-            <span
-              className="font-medium text-[16px]"
-              style={{ color: "var(--color-blue)" }}
-            >
-              Viajas normalmente...
-            </span>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {travelingTypes.map((type, index) => {
+              {travelerTypes.map((type, index) => {
                 const isSelected = selectedTypes.includes(type);
                 return (
                   <div
@@ -171,7 +132,7 @@ export default function TravelerType() {
               className="font-medium text-[16px]"
               style={{ color: "var(--color-blue)" }}
             >
-              Tus viajes suelen durar...
+              Y moverte...
             </span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelTime.map((type) => {
@@ -180,7 +141,7 @@ export default function TravelerType() {
                   <div
                     key={type}
                     onClick={() => toggleType(type)}
-                    className="w-full px-4 py-1.5 rounded-xl cursor-pointer text-[14px]"
+                    className="px-4 py-1.5 rounded-xl cursor-pointer text-[14px]"
                     style={{
                       backgroundColor: isSelected
                         ? "var(--color-green-light)"
