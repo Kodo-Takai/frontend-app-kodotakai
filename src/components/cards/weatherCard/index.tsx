@@ -158,19 +158,19 @@ export default function WeatherPill({
       />
       <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10" />
 
-      <div className="relative h-full flex items-center px-3">
+      <div className="relative h-full flex items-center px-3 py-1">
         {/* Contenido de texto - 70% */}
         <div className="w-[70%] flex flex-col justify-center">
           <div
             className={twMerge(
-              "text-[var(--color-green)] text-3xl leading-none select-none shrink-0 flex items-center",
+              "text-[var(--color-green)] text-3xl leading-0 select-none shrink-0 flex items-center h-9",
               textContainerClassName
             )}
           >
             {loading ? (
-              <div className="h-5 w-12 rounded bg-white/20 animate-pulse" />
+              <div className="h-8 w-12 rounded bg-white/20 animate-pulse" />
             ) : error ? (
-              <span className="text-sm font-bold text-yellow-300" title={error}>
+              <span className="text-sm font-bold text-[var(--color-green)]" title={error}>
                 ⚠️
               </span>
             ) : (

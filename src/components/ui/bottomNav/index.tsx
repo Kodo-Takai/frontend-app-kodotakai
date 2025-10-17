@@ -74,7 +74,7 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
             <div
               className={NAV_STYLES.indicator}
               style={{
-                left: `calc(1.75rem + ${activeIndex * 52}px)`,
+                left: `calc(1.75rem + ${activeIndex * 56}px)`,
                 top: "50%",
                 transform: "translateY(-50%)",
               }}

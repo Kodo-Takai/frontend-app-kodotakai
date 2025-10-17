@@ -37,7 +37,7 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
         
         {/* Burbuja de fecha/hora */}
         <div 
-          className="absolute top-2 left-2 rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-md"
+          className="absolute top-2 left-2 rounded-xl px-3.5 py-1 flex items-center gap-2 shadow-md"
           style={{ backgroundColor: 'var(--color-bone)' }}
         >
           {/* Icono de reloj */}
@@ -52,8 +52,8 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
           
           {/* Texto de fecha/hora */}
           <span 
-            className="text-sm font-regular"
-            style={{ color: 'var(--color-text-primary)' }}
+            className="text-sm font-medium"
+            style={{ color: 'var(--color-blue)' }}
           >
             {formatTimeAndDate(new Date(item.scheduledDate), item.scheduledTime)}
           </span>
@@ -63,13 +63,13 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
       {/* Sección Central - Información del destino */}
       <div className="py-1">
         <h3 
-          className="font-medium text-lg uppercase truncate"
+          className="font-extrabold text-lg uppercase truncate"
           style={{ color: 'var(--color-text-primary)' }}
         >
           {item.destinationName}
         </h3>
         <p 
-          className="text-sm mb-2"
+          className="text-sm font-medium mb-2"
           style={{ color: 'var(--color-text-primary)' }}
         >
           {item.location}
@@ -83,7 +83,7 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
           onClick={() => onMoveItem(item.id)}
           className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-normal transition-all duration-200 hover:scale-105"
           style={{ 
-            backgroundColor: 'var(--color-blue)',
+            backgroundColor: 'var(--color-blue-dark)',
             color: 'var(--color-bone)'
           }}
         >
@@ -101,14 +101,14 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
         {/* Botón Visitado */}
         <button
           onClick={() => onMarkAsVisited(item.id)}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg font-medium transition-all duration-200 hover:scale-105 ${
+          className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
             item.status === 'completed' 
               ? 'opacity-75' 
               : 'hover:opacity-90'
           }`}
           style={{ 
             backgroundColor: 'var(--color-green)',
-            color: 'var(--color-blue)'
+            color: 'var(--color-blue-dark)'
           }}
         >
           <span>Visitado</span>
