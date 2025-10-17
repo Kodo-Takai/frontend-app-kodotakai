@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import FormLogin from "../components/form/loginForm";
 import WelcomeScreens from "../components/layout/welcomeScreen";
 import { useAuth } from "../hooks/auth/useAuth";
+import { useToast } from "../hooks/useToast";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { success: toastSuccess, error: toastError } = useToast();
   const {
     showWelcomeScreens,
     completeWelcomeScreens,
@@ -15,8 +17,20 @@ export default function Login() {
     isValid,
     isLoading,
     errorMessage,
-    handleFormSubmit,
+    login,
   } = useAuth();
+
+  const handleSubmitWithToast = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid || isLoading) return;
+    const result = await login();
+    if (result?.success) {
+      // Use backend messages (data.message or message)
+      toastSuccess(result.data);
+    } else {
+      toastError("Credenciales inválidas");
+    }
+  };
 
   if (showWelcomeScreens) {
     return <WelcomeScreens onComplete={completeWelcomeScreens} />;
@@ -72,7 +86,7 @@ export default function Login() {
         isValid={isValid}
         isLoading={isLoading}
         errorMessage={errorMessage}
-        onSubmit={handleFormSubmit}
+        onSubmit={handleSubmitWithToast}
       />
     </div>
   );
