@@ -20,6 +20,7 @@ import HotelesPage from "./pages/categories/HotelesPage";
 import DiscosPage from "./pages/categories/DiscosPage";
 import EstudiarPage from "./pages/categories/EstudiarPage";
 import ParquesPage from "./pages/categories/ParquesPage";
+import TravelerType from "./pages/TravelerType";
 // Import Hooks and Components
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
@@ -40,6 +41,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register-travel" element={<TravelerType />} />
         </Route>
 
         <Route element={<MainLayout />}>
