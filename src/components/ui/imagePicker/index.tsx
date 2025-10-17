@@ -41,7 +41,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
           className="w-full h-full rounded-full object-cover"
           alt="Foto de perfil"
         />
-        <div className="absolute bottom-0 right-0 translate-y-[10px] translate-x-[20px] bg-white rounded-full p-3 border border-gray-200 ">
+        <div className="absolute bottom-0 right-0 translate-y-[10px] translate-x-[20px] bg-[var(--color-bone)] rounded-full p-3 border border-gray-200 animate-bubble-in">
           {isUploading ? (
             <div className="animate-spin">
               <svg

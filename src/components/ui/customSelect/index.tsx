@@ -105,15 +105,19 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         disabled={disabled}
         className={`
           block w-full px-4 py-4 pr-10 text-sm rounded-2xl border text-left
-          transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#00324A]/20
+          transition-all duration-200 focus:outline-none focus:ring-2
           ${
             disabled
               ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
-              : "bg-[#EEEEEE] border-[#DEDEDE] hover:border-[#00324A]/30 cursor-pointer"
+              : "cursor-pointer"
           }
-          ${selectedOption ? "text-[#322C2C]" : "text-[#AEAEAE]"}
-          ${isOpen ? "border-[#00324A] ring-2 ring-[#00324A]/20" : ""}
+          ${isOpen ? "ring-2" : ""}
         `}
+        style={{
+          backgroundColor: disabled ? "var(--color-gray-100)" : "var(--color-beige)",
+          borderColor: disabled ? "var(--color-gray-200)" : isOpen ? "var(--color-blue)" : "var(--color-beige)",
+          color: selectedOption ? "var(--color-blue)" : "var(--color-blue-light)",
+        }}
       >
         <span className="block truncate">
           {selectedOption ? selectedOption.label : placeholder}
@@ -121,9 +125,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
         <span className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
           <svg
-            className={`h-4 w-4 text-[#AEAEAE] transition-transform duration-200 ${
+            className={`h-4 w-4 transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
+            style={{ color: "var(--color-blue)" }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -139,29 +144,31 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-[#DEDEDE] rounded-xl shadow-lg overflow-hidden">
+        <div 
+          className="absolute z-50 w-full mt-1 border rounded-xl shadow-lg overflow-hidden"
+          style={{ 
+            backgroundColor: "var(--color-bone)", 
+            borderColor: "var(--color-beige)" 
+          }}
+        >
           <ul className="max-h-60 overflow-auto py-1">
             {options.map((option, index) => (
               <li key={option.value}>
                 <button
                   type="button"
                   onClick={() => handleSelect(option.value)}
-                  className={`
-                    w-full px-4 py-3 text-sm text-left transition-colors duration-150
-                    hover:bg-[#00324A]/5 focus:outline-none focus:bg-[#00324A]/5
-                    ${highlightedIndex === index ? "bg-[#00324A]/10" : ""}
-                    ${
-                      option.value === value
-                        ? "bg-[#00324A]/10 text-[#00324A] font-medium"
-                        : "text-[#322C2C]"
-                    }
-                  `}
+                  className="w-full px-4 py-3 text-sm text-left transition-colors duration-150 focus:outline-none"
+                  style={{
+                    backgroundColor: highlightedIndex === index ? "var(--color-beige)" : "transparent",
+                    color: option.value === value ? "var(--color-blue)" : "var(--color-blue)",
+                  }}
                 >
                   <span className="flex items-center justify-between">
                     {option.label}
                     {option.value === value && (
                       <svg
-                        className="h-4 w-4 text-[#00324A]"
+                        className="h-4 w-4"
+                        style={{ color: "var(--color-blue)" }}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >

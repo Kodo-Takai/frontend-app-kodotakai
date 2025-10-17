@@ -16,15 +16,15 @@ export default function Profile() {
 
   return (
     <div
-      className="min-h-screen relative pb-20"
+      className="min-h-screen relative pb-30"
       style={{ backgroundColor: "var(--color-bg-primary)" }}
     >
       <PageWrapper>
-        <div className="w-full h-full flex flex-col items-center px-6">
+        <div className="w-full h-full flex flex-col items-center px-2">
           
           {/* Título - Espaciado personalizable */}
-          <div className="flex items-center justify-between w-full mt-7 mb-8">
-            <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-center w-full mt-7 mb-4">
+            <div className="flex flex-col gap-1 text-center">
               <h1 className="text-[15px] font-bold leading-[22px] text-[var(--color-text-primary)]">
                 Tu
               </h1>
@@ -35,8 +35,8 @@ export default function Profile() {
           </div>
 
           {/* Foto de perfil - Espaciado personalizable */}
-          <div className="relative mb-6">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[var(--color-green)]">
+          <div className="relative mb-3">
+            <div className="w-28 h-28 rounded-2xl overflow-hidden border-5 border-[var(--color-blue)]/10">
               <img
                 src={currentProfile?.photo || "/profilePic.webp"}
                 className="w-full h-full object-cover"
@@ -46,7 +46,7 @@ export default function Profile() {
           </div>
 
           {/* Nombre completo - Espaciado personalizable */}
-          <div className="text-center mb-3">
+          <div className="text-center">
             {isFetching ? (
               <span className="text-2xl font-bold text-[var(--color-text-muted)]">
                 Cargando...
@@ -63,9 +63,9 @@ export default function Profile() {
           </div>
 
           {/* Email - Espaciado personalizable */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-5">
             {currentProfile?.email ? (
-              <p className="text-lg opacity-70 text-[var(--color-text-primary)]">
+              <p className="text-md opacity-70 text-[var(--color-text-primary)]">
                 {currentProfile.email}
               </p>
             ) : (
@@ -76,14 +76,14 @@ export default function Profile() {
           </div>
 
           {/* Tarjetas de estadísticas - Espaciado personalizable */}
-          <div className="w-full flex gap-4 mb-8">
+          <div className="w-full flex gap-3 mb-5">
             {/* Tarjeta Destinos visitados */}
-            <div className="flex-1 bg-[var(--color-green)] rounded-xl p-4 flex flex-col items-center justify-center">
-              <div className="w-8 h-8 mb-2 flex items-center justify-center">
+            <div className="flex-1 bg-[var(--color-green)] rounded-2xl py-2 px-3 flex items-center gap-3 hover:scale-105 transition-all duration-300 animate-bubble-in">
+              <div className="w-8 h-8 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
+                  width="30"
+                  height="30"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -93,21 +93,23 @@ export default function Profile() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-bold text-[var(--color-text-primary)] mb-1">
-                Destinos visitados
-              </span>
-              <span className="text-2xl font-bold text-[var(--color-text-primary)]">
-                0
-              </span>
+              <div className="flex flex-col">
+                <span className="text-sm text-center font-bold text-[var(--color-text-primary)]">
+                  Agendados
+                </span>
+                <span className="text-lg text-center font-bold text-[var(--color-text-primary)]">
+                  0
+                </span>
+              </div>
             </div>
 
             {/* Tarjeta Se unió el */}
-            <div className="flex-1 bg-[var(--color-green)] rounded-xl p-4 flex flex-col items-center justify-center">
-              <div className="w-8 h-8 mb-2 flex items-center justify-center">
+            <div className="flex-1 bg-[var(--color-green)] rounded-2xl px-3 flex items-center gap-4 hover:scale-105 transition-all duration-300 animate-bubble-in">
+              <div className="w-8 h-8 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
+                  width="30"
+                  height="30"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -117,21 +119,23 @@ export default function Profile() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-bold text-[var(--color-text-primary)] mb-1">
-                Se unió el:
-              </span>
-              <span className="text-2xl font-bold text-[var(--color-text-primary)]">
-                00/00/0000
-              </span>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-center text-[var(--color-text-primary)]">
+                  Se unió el:
+                </span>
+                <span className="text-lg font-bold text-[var(--color-text-primary)]">
+                  00/00/0000
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Opciones de menú - Espaciado personalizable */}
-          <div className="w-full space-y-4 mb-8">
+          <div className="w-full space-y-2 mb-7">
             {/* Editar Perfil */}
             <button
               onClick={() => navigate("/custom-profile")}
-              className="w-full flex items-center gap-4 p-4 rounded-xl hover:scale-105 transition-all duration-200 bg-[var(--color-btn-primary)]"
+              className="w-full flex items-center gap-4 p-4 rounded-3xl hover:scale-105 transition-all border-5 border-[var(--color-beige)] duration-200 bg-[var(--color-btn-primary)]"
             >
               <div className="w-6 h-6 flex items-center justify-center">
                 <svg
@@ -172,7 +176,7 @@ export default function Profile() {
             {/* Ver Historial */}
             <button
               onClick={() => navigate("/agenda")}
-              className="w-full flex items-center gap-4 p-4 rounded-xl hover:scale-105 transition-all duration-200 bg-[var(--color-btn-primary)]"
+              className="w-full flex items-center gap-4 p-4 rounded-3xl hover:scale-105 transition-all border-5 border-[var(--color-beige)] duration-200 bg-[var(--color-btn-primary)]"
             >
               <div className="w-6 h-6 flex items-center justify-center">
                 <svg
@@ -215,15 +219,15 @@ export default function Profile() {
           </div>
 
           {/* Botón de cerrar sesión - Espaciado personalizable */}
-          <div className="w-full flex justify-center">
+          <div className="w-full flex justify-end">
             <button
-              className="flex gap-4 items-center justify-center py-3 px-8 rounded-xl hover:scale-105 transition-all duration-200 bg-[var(--color-btn-neutral)] border border-[var(--color-text-primary)]"
+              className="flex gap-4 border-3 items-center justify-center py-2.5 px-5 rounded-2xl hover:scale-105 transition-all duration-200 bg-[var(--color-btn-neutral)] border-[var(--color-blue)]/60"
               onClick={handleLogout}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="17"
-                height="24"
+                width="14"
+                height="20"
                 viewBox="0 0 17 24"
                 fill="none"
                 className="transition-all duration-300"
@@ -233,7 +237,7 @@ export default function Profile() {
                   fill="var(--color-text-primary)"
                 />
               </svg>
-              <span className="font-bold text-[var(--color-text-primary)]">Cerrar Sesión</span>
+              <span className="font-extrabold text-md text-[var(--color-blue)]">Cerrar Sesión</span>
             </button>
           </div>
         </div>
