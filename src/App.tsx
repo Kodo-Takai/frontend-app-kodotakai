@@ -38,14 +38,14 @@ function AppContent() {
     <>
       <CustomToastContainer />
       <SplashScreen visible={!isLoading} />
-      <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/register-travel" element={<TravelerType />} />
-        </Route>
+      <NavigationProvider>
+        <Routes>
+          <Route path="/" element={<Welcome />} />
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
 
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Home />} />
