@@ -75,13 +75,20 @@ export default function TravelerType() {
   const travelerTypesSet = new Set(travelerTypes);
   const travelingTypesSet = new Set(travelingTypes);
   const travelTimeSet = new Set(travelTime);
-  const travelerTypesCount = selectedTypes.filter((t) => travelerTypesSet.has(t)).length;
-  const travelingTypesCount = selectedTypes.filter((t) => travelingTypesSet.has(t)).length;
-  const travelTimeCount = selectedTypes.filter((t) => travelTimeSet.has(t)).length;
+  const travelerTypesCount = selectedTypes.filter((t) =>
+    travelerTypesSet.has(t)
+  ).length;
+  const travelingTypesCount = selectedTypes.filter((t) =>
+    travelingTypesSet.has(t)
+  ).length;
+  const travelTimeCount = selectedTypes.filter((t) =>
+    travelTimeSet.has(t)
+  ).length;
   const travelerTypesValid = travelerTypesCount >= 1 && travelerTypesCount <= 3;
   const travelingTypesValid = travelingTypesCount === 1;
   const travelTimeValid = travelTimeCount === 1;
-  const isFormValid = travelerTypesValid && travelingTypesValid && travelTimeValid;
+  const isFormValid =
+    travelerTypesValid && travelingTypesValid && travelTimeValid;
 
   return (
     <section
@@ -155,7 +162,12 @@ export default function TravelerType() {
             >
               Eres un viajero...
             </span>
-            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige de 1 a 3)</span>
+            <span
+              className="ml-2 text-xs"
+              style={{ color: "var(--color-blue-light)" }}
+            >
+              (elige de 1 a 3)
+            </span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelerTypes.map((type) => {
                 const isSelected = selectedTypes.includes(type);
@@ -189,7 +201,12 @@ export default function TravelerType() {
             >
               Viajas normalmente...
             </span>
-            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige 1)</span>
+            <span
+              className="ml-2 text-xs"
+              style={{ color: "var(--color-blue-light)" }}
+            >
+              (elige 1)
+            </span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelingTypes.map((type, index) => {
                 const isSelected = selectedTypes.includes(type);
@@ -226,7 +243,12 @@ export default function TravelerType() {
             >
               Tus viajes suelen durar...
             </span>
-            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige 1)</span>
+            <span
+              className="ml-2 text-xs"
+              style={{ color: "var(--color-blue-light)" }}
+            >
+              (elige 1)
+            </span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelTime.map((type) => {
                 const isSelected = selectedTypes.includes(type);

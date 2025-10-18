@@ -56,8 +56,12 @@ export default function TravelActivities() {
   // Validación
   const activitiesSet = new Set(travelerTimes);
   const placeTypesSet = new Set(travelingLocal);
-  const activitiesCount = selectedTypes.filter((t) => activitiesSet.has(t)).length;
-  const placeTypesCount = selectedTypes.filter((t) => placeTypesSet.has(t)).length;
+  const activitiesCount = selectedTypes.filter((t) =>
+    activitiesSet.has(t)
+  ).length;
+  const placeTypesCount = selectedTypes.filter((t) =>
+    placeTypesSet.has(t)
+  ).length;
   const activitiesValid = activitiesCount >= 2 && activitiesCount <= 5;
   const placeTypesValid = placeTypesCount >= 1 && placeTypesCount <= 3;
   const isFormValid = activitiesValid && placeTypesValid;
@@ -133,7 +137,12 @@ export default function TravelActivities() {
             >
               Te encanta cuando puedes...
             </span>
-            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige de 2 a 5)</span>
+            <span
+              className="ml-2 text-xs"
+              style={{ color: "var(--color-blue-light)" }}
+            >
+              (elige de 2 a 5)
+            </span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelerTimes.map((type) => {
                 const isSelected = selectedTypes.includes(type);
@@ -167,7 +176,12 @@ export default function TravelActivities() {
             >
               Te atraen más los lugares...
             </span>
-            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige de 1 a 3)</span>
+            <span
+              className="ml-2 text-xs"
+              style={{ color: "var(--color-blue-light)" }}
+            >
+              (elige de 1 a 3)
+            </span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelingLocal.map((type) => {
                 const isSelected = selectedTypes.includes(type);

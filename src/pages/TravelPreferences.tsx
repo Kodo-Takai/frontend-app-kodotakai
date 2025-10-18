@@ -55,7 +55,9 @@ export default function TravelPreferences() {
   const budgetSet = new Set(travelerTypes);
   const transportSet = new Set(travelTime);
   const budgetCount = selectedTypes.filter((t) => budgetSet.has(t)).length;
-  const transportCount = selectedTypes.filter((t) => transportSet.has(t)).length;
+  const transportCount = selectedTypes.filter((t) =>
+    transportSet.has(t)
+  ).length;
   const budgetValid = budgetCount === 1;
   const transportValid = transportCount >= 1 && transportCount <= 2;
   const isFormValid = budgetValid && transportValid;
@@ -131,7 +133,12 @@ export default function TravelPreferences() {
             >
               Cuando viajas, prefieres...
             </span>
-            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige 1)</span>
+            <span
+              className="ml-2 text-xs"
+              style={{ color: "var(--color-blue-light)" }}
+            >
+              (elige 1)
+            </span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelerTypes.map((type, index) => {
                 const isSelected = selectedTypes.includes(type);
@@ -168,7 +175,12 @@ export default function TravelPreferences() {
             >
               Y moverte...
             </span>
-            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige de 1 a 2)</span>
+            <span
+              className="ml-2 text-xs"
+              style={{ color: "var(--color-blue-light)" }}
+            >
+              (elige de 1 a 2)
+            </span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelTime.map((type) => {
                 const isSelected = selectedTypes.includes(type);
