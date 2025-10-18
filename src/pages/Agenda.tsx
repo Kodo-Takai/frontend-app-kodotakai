@@ -15,10 +15,11 @@ import type { AgendaItem } from "../redux/slice/agendaSlice";
 export default function Agenda() {
   const [searchParams] = useSearchParams();
   const [selectedSection, setSelectedSection] = useState<
-    "agendados" | "itinerarios"
+    "agendado s" | "itinerarios"
   >("agendados");
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const [isPostponeModalOpen, setIsPostponeModalOpen] = useState(false);
   const [selectedItemToMove, setSelectedItemToMove] =
     useState<AgendaItem | null>(null);
   const { showAIOverlay, isAIActive } = useAI();
@@ -40,8 +41,18 @@ export default function Agenda() {
     selectDay,
   } = useDateNavigation();
 
-  const { selectDate, itemsForSelectedDate, updateItem, moveItem } =
+  const { selectDate, itemsForSelectedDate, moveItem, removeItem } =
     useAgenda();
+
+  // Sincronizar la fecha seleccionada entre useDateNavigation y useAgenda
+  React.useEffect(() => {
+    selectDate(selectedDate);
+  }, [selectedDate, selectDate]);
+
+  // Sincronizar también cuando se carga la página por primera vez
+  React.useEffect(() => {
+    selectDate(selectedDate);
+  }, []); // Solo ejecutar una vez al montar el componente
 
   // Filtrar items por sección (Ahora vs Más Tarde)
   const ahoraItems = itemsForSelectedDate.filter((item) => {
@@ -55,15 +66,25 @@ export default function Agenda() {
   });
 
   // Funciones para manejar acciones
-  const handleMarkAsVisited = (id: string) => {
-    updateItem(id, { status: "completed" });
-  };
-
-  const handleMoveItem = (id: string) => {
+  const handlePostpone = (id: string) => {
     const item = itemsForSelectedDate.find((item) => item.id === id);
     if (item) {
       setSelectedItemToMove(item);
-      setIsMoveModalOpen(true);
+      setIsPostponeModalOpen(true);
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta actividad?')) {
+      removeItem(id);
+    }
+  };
+
+  const handlePostponeConfirm = (newDate: Date, newTime?: string) => {
+    if (selectedItemToMove && newTime) {
+      moveItem(selectedItemToMove.id, newDate, newTime);
+      setIsPostponeModalOpen(false);
+      setSelectedItemToMove(null);
     }
   };
 
@@ -102,6 +123,7 @@ export default function Agenda() {
     setIsMoveModalOpen(false);
     setSelectedItemToMove(null);
   };
+
   return (
     <div 
       className="min-h-screen relative pb-20"
@@ -129,11 +151,11 @@ export default function Agenda() {
             >
               Qué tenemos planeado hoy?
             </p>
-          </div>
+            </div>
 
           <button
               onClick={handleAIClick}
-              className="w-12 h-12 rounded-xl flex items-center justify-center hover:scale-90 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] cursor-pointer animate-bubble-in relative z-[9997]"
+              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer animate-bubble-in"
               style={{
                 backgroundColor: "var(--color-green)",
                 border: "3px solid var(--color-green-dark)",
@@ -145,7 +167,7 @@ export default function Agenda() {
                 className="w-8 h-8 opacity-85 hover:scale-80 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
               />
             </button>
-        </div>
+            </div>
 
         <DaySelector
           weekDays={weekDays}
@@ -179,7 +201,7 @@ export default function Agenda() {
               id="agendados-btn"
               onClick={() => setSelectedSection("agendados")}
               className="group flex items-center gap-2 px-6 py-3 rounded-[20px] font-bold animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
-              style={{
+              style={{ 
                 animationDelay: "0.1s",
                 color: selectedSection === "agendados" 
                   ? 'var(--color-beige)' 
@@ -243,8 +265,8 @@ export default function Agenda() {
                   <AgendaCard
                     key={item.id}
                     item={item}
-                    onMarkAsVisited={handleMarkAsVisited}
-                    onMoveItem={handleMoveItem}
+                    onPostpone={handlePostpone}
+                    onDelete={handleDelete}
                   />
                 ))}
               </div>
@@ -265,8 +287,8 @@ export default function Agenda() {
                   <AgendaCard
                     key={item.id}
                     item={item}
-                    onMarkAsVisited={handleMarkAsVisited}
-                    onMoveItem={handleMoveItem}
+                    onPostpone={handlePostpone}
+                    onDelete={handleDelete}
                   />
                 ))}
               </div>
@@ -290,7 +312,7 @@ export default function Agenda() {
               </p>
             </div>
           )}
-        </div>
+      </div>
 
         <CalendarModal
           isOpen={isCalendarModalOpen}
@@ -311,6 +333,27 @@ export default function Agenda() {
             }}
             item={selectedItemToMove}
             onMoveDestination={handleMoveDestination}
+          />
+        )}
+
+        {selectedItemToMove && (
+          <CalendarModal
+            isOpen={isPostponeModalOpen}
+            onClose={() => {
+              setIsPostponeModalOpen(false);
+              setSelectedItemToMove(null);
+            }}
+            selectedDate={new Date(selectedItemToMove.scheduledDate)}
+            onDateSelect={(date) => {
+              // Actualizar la fecha seleccionada
+              setSelectedItemToMove({
+                ...selectedItemToMove,
+                scheduledDate: date.toISOString()
+              });
+            }}
+            mode="postpone"
+            onConfirm={handlePostponeConfirm}
+            currentTime={selectedItemToMove.scheduledTime}
           />
         )}
       </PageWrapper>
