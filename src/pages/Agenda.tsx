@@ -94,7 +94,7 @@ export default function Agenda() {
           </div>
 
           <button
-              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer animate-bubble-in"
+              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all duration-300 ease-out cursor-pointer animate-bubble-in"
               style={{
                 backgroundColor: "var(--color-green)",
               }}

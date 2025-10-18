@@ -20,11 +20,11 @@ export default function Profile() {
       style={{ backgroundColor: "var(--color-bg-primary)" }}
     >
       <PageWrapper>
-        <div className="w-full h-full flex flex-col items-center px-2">
+        <div className="w-full h-full flex flex-col px-2">
           
           {/* Título - Espaciado personalizable */}
-          <div className="flex items-center justify-center w-full mt-7 mb-4">
-            <div className="flex flex-col gap-1 text-center">
+          <div className="flex items-center w-full mt-7 mb-6">
+            <div className="flex flex-col gap-1">
               <h1 className="text-[15px] font-bold leading-[22px] text-[var(--color-text-primary)]">
                 Tu
               </h1>
@@ -34,98 +34,75 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Foto de perfil - Espaciado personalizable */}
-          <div className="relative mb-3">
-            <div className="w-28 h-28 rounded-2xl overflow-hidden border-5 border-[var(--color-blue)]/10">
-              <img
-                src={currentProfile?.photo || "/profilePic.webp"}
-                className="w-full h-full object-cover"
-                alt="Foto de perfil"
-              />
-            </div>
-          </div>
-
-          {/* Nombre completo - Espaciado personalizable */}
-          <div className="text-center">
-            {isFetching ? (
-              <span className="text-2xl font-bold text-[var(--color-text-muted)]">
-                Cargando...
-              </span>
-            ) : currentProfile ? (
-              <span className="text-2xl font-bold text-[var(--color-text-primary)]">
-                {`${currentProfile.name || "Nombre"} ${currentProfile.lastName || "Apellidos"}`.trim()}
-              </span>
-            ) : (
-              <span className="text-2xl font-bold text-[var(--color-text-muted)]">
-                Usuario Anónimo
-              </span>
-            )}
-          </div>
-
-          {/* Email - Espaciado personalizable */}
-          <div className="text-center mb-5">
-            {currentProfile?.email ? (
-              <p className="text-md opacity-70 text-[var(--color-text-primary)]">
-                {currentProfile.email}
-              </p>
-            ) : (
-              <p className="text-lg opacity-70 text-[var(--color-text-muted)]">
-                No hay email disponible
-              </p>
-            )}
-          </div>
-
-          {/* Tarjetas de estadísticas - Espaciado personalizable */}
-          <div className="w-full flex gap-3 mb-5">
-            {/* Tarjeta Destinos visitados */}
-            <div className="flex-1 bg-[var(--color-green)] rounded-2xl py-2 px-3 flex items-center gap-3 hover:scale-105 transition-all duration-300 animate-bubble-in">
-              <div className="w-8 h-8 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-                    fill="var(--color-text-primary)"
-                  />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-center font-bold text-[var(--color-text-primary)]">
-                  Agendados
-                </span>
-                <span className="text-lg text-center font-bold text-[var(--color-text-primary)]">
-                  0
-                </span>
+          {/* Sección de perfil con foto e información */}
+          <div className="flex gap-4 mb-6 h-32">
+            {/* Columna de imagen - 40% */}
+            <div className="w-2/5 flex items-center justify-center">
+              <div className="w-full h-full rounded-3xl overflow-hidden border-5 border-[var(--color-blue)]/50 flex items-center justify-center">
+                <img
+                  src={currentProfile?.photo || "/profilePic.webp"}
+                  className="w-full h-full object-cover"
+                  alt="Foto de perfil"
+                />
               </div>
             </div>
 
-            {/* Tarjeta Se unió el */}
-            <div className="flex-1 bg-[var(--color-green)] rounded-2xl px-3 flex items-center gap-4 hover:scale-105 transition-all duration-300 animate-bubble-in">
-              <div className="w-8 h-8 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
-                    fill="var(--color-text-primary)"
-                  />
-                </svg>
+            {/* Columna de información - 60% */}
+            <div className="w-3/5 flex flex-col justify-center gap-2">
+              {/* Nombre completo - Altura fija para evitar saltos */}
+              <div className="h-12 flex items-center">
+                {isFetching ? (
+                  <span className="text-2xl font-bold text-[var(--color-text-muted)]">
+                    Cargando...
+                  </span>
+                ) : currentProfile ? (
+                  <span className="text-xl leading-5 font-extrabold text-[var(--color-text-primary)]">
+                    {`${currentProfile.name || "Nombre"} ${currentProfile.lastName || "Apellidos"}`.trim()}
+                  </span>
+                ) : (
+                  <span className="text-2xl font-bold text-[var(--color-text-muted)]">
+                    Usuario Anónimo
+                  </span>
+                )}
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-center text-[var(--color-text-primary)]">
-                  Se unió el:
-                </span>
-                <span className="text-lg font-bold text-[var(--color-text-primary)]">
-                  00/00/0000
-                </span>
+
+              {/* Email */}
+              <div className="h-6 flex items-center">
+                {currentProfile?.email ? (
+                  <p className="text-md font-medium text-[var(--color-blue)]">
+                    {currentProfile.email}
+                  </p>
+                ) : (
+                  <p className="text-lg opacity-70 text-[var(--color-text-muted)]">
+                    No hay email disponible
+                  </p>
+                )}
+              </div>
+
+              {/* Tarjeta Se unió el */}
+              <div className="bg-[var(--color-green)] rounded-2xl px-3 flex items-center gap-1 hover:scale-105 transition-all duration-300 animate-bubble-in">
+                <div className="w-9 h-9 flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                      fill="var(--color-text-primary)"
+                    />
+                  </svg>
+                </div>
+                <div className="flex flex-col p-1">
+                  <span className="text-xs font-bold text-center text-[var(--color-text-primary)]">
+                    Se unió el:
+                  </span>
+                  <span className="text-lg font-extrabold text-[var(--color-text-primary)]">
+                    00/00/0000
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -221,7 +198,7 @@ export default function Profile() {
           {/* Botón de cerrar sesión - Espaciado personalizable */}
           <div className="w-full flex justify-end">
             <button
-              className="flex gap-4 border-3 items-center justify-center py-2.5 px-5 rounded-2xl hover:scale-105 transition-all duration-200 bg-[var(--color-btn-neutral)] border-[var(--color-blue)]/60"
+              className="flex gap-4 border-4 items-center justify-center py-2.5 px-5 rounded-2xl hover:scale-105 transition-all duration-200 bg-[var(--color-btn-neutral)] border-[var(--color-blue)]"
               onClick={handleLogout}
             >
               <svg
@@ -237,7 +214,7 @@ export default function Profile() {
                   fill="var(--color-text-primary)"
                 />
               </svg>
-              <span className="font-extrabold text-md text-[var(--color-blue)]">Cerrar Sesión</span>
+              <span className="font-bold text-md text-[var(--color-blue)]/80">Cerrar Sesión</span>
             </button>
           </div>
         </div>
