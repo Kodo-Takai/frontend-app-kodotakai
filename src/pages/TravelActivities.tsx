@@ -14,7 +14,7 @@ export default function TravelActivities() {
     "Hacer senderismo",
     "Relajarte en la playa",
     "Probar comida típica",
-    "Salir de fista o bares",
+    "Salir de fiesta o bares",
     "Vivir aventuras o deportes extremos",
     "Conectar con la naturaleza",
     "Ir a eventos locales",
@@ -29,10 +29,38 @@ export default function TravelActivities() {
   ];
 
   const toggleType = (type: string) => {
-    setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    );
+    const activitiesSet = new Set(travelerTimes);
+    const placeTypesSet = new Set(travelingLocal);
+    setSelectedTypes((prev) => {
+      const isSelected = prev.includes(type);
+      if (activitiesSet.has(type)) {
+        const current = prev.filter((t) => activitiesSet.has(t));
+        if (isSelected) {
+          return prev.filter((t) => t !== type);
+        }
+        if (current.length >= 5) return prev; // max 5
+        return [...prev, type];
+      }
+      if (placeTypesSet.has(type)) {
+        const current = prev.filter((t) => placeTypesSet.has(t));
+        if (isSelected) {
+          return prev.filter((t) => t !== type);
+        }
+        if (current.length >= 3) return prev; // max 3
+        return [...prev, type];
+      }
+      return prev;
+    });
   };
+
+  // Validación
+  const activitiesSet = new Set(travelerTimes);
+  const placeTypesSet = new Set(travelingLocal);
+  const activitiesCount = selectedTypes.filter((t) => activitiesSet.has(t)).length;
+  const placeTypesCount = selectedTypes.filter((t) => placeTypesSet.has(t)).length;
+  const activitiesValid = activitiesCount >= 2 && activitiesCount <= 5;
+  const placeTypesValid = placeTypesCount >= 1 && placeTypesCount <= 3;
+  const isFormValid = activitiesValid && placeTypesValid;
   return (
     <section
       className="mx-auto p-6 rounded-lg justify-center"
@@ -105,6 +133,7 @@ export default function TravelActivities() {
             >
               Te encanta cuando puedes...
             </span>
+            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige de 2 a 5)</span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelerTimes.map((type) => {
                 const isSelected = selectedTypes.includes(type);
@@ -138,6 +167,7 @@ export default function TravelActivities() {
             >
               Te atraen más los lugares...
             </span>
+            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige de 1 a 3)</span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelingLocal.map((type) => {
                 const isSelected = selectedTypes.includes(type);
@@ -172,7 +202,10 @@ export default function TravelActivities() {
           backgroundColor: "var(--color-green)",
           color: "var(--color-blue)",
           border: "1px solid var(--color-green-dark)",
+          opacity: isFormValid ? 1 : 0.6,
+          cursor: isFormValid ? "pointer" : "not-allowed",
         }}
+        disabled={!isFormValid}
         onClick={() => {
           const activitiesSet = new Set(travelerTimes);
           const placeTypesSet = new Set(travelingLocal);

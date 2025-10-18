@@ -28,10 +28,37 @@ export default function TravelPreferences() {
   ];
 
   const toggleType = (type: string) => {
-    setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    );
+    const budgetSet = new Set(travelerTypes);
+    const transportSet = new Set(travelTime);
+    setSelectedTypes((prev) => {
+      const isSelected = prev.includes(type);
+      // Presupuesto: exactamente 1 (radio-like)
+      if (budgetSet.has(type)) {
+        const withoutBudget = prev.filter((t) => !budgetSet.has(t));
+        if (isSelected) return prev; // no quitar para mantener selección única
+        return [...withoutBudget, type];
+      }
+      // Transporte: min 1, max 2
+      if (transportSet.has(type)) {
+        const current = prev.filter((t) => transportSet.has(t));
+        if (isSelected) {
+          return prev.filter((t) => t !== type);
+        }
+        if (current.length >= 2) return prev; // máximo 2
+        return [...prev, type];
+      }
+      return prev;
+    });
   };
+
+  // Validación
+  const budgetSet = new Set(travelerTypes);
+  const transportSet = new Set(travelTime);
+  const budgetCount = selectedTypes.filter((t) => budgetSet.has(t)).length;
+  const transportCount = selectedTypes.filter((t) => transportSet.has(t)).length;
+  const budgetValid = budgetCount === 1;
+  const transportValid = transportCount >= 1 && transportCount <= 2;
+  const isFormValid = budgetValid && transportValid;
   return (
     <section
       className="mx-auto p-6 rounded-lg justify-center"
@@ -104,6 +131,7 @@ export default function TravelPreferences() {
             >
               Cuando viajas, prefieres...
             </span>
+            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige 1)</span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelerTypes.map((type, index) => {
                 const isSelected = selectedTypes.includes(type);
@@ -140,6 +168,7 @@ export default function TravelPreferences() {
             >
               Y moverte...
             </span>
+            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige de 1 a 2)</span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelTime.map((type) => {
                 const isSelected = selectedTypes.includes(type);
@@ -174,7 +203,10 @@ export default function TravelPreferences() {
           backgroundColor: "var(--color-green)",
           color: "var(--color-blue)",
           border: "1px solid var(--color-green-dark)",
+          opacity: isFormValid ? 1 : 0.6,
+          cursor: isFormValid ? "pointer" : "not-allowed",
         }}
+        disabled={!isFormValid}
         onClick={async () => {
           const budgetSet = new Set(travelerTypes);
           const transportSet = new Set(travelTime);

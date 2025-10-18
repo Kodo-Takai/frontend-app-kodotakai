@@ -31,10 +31,57 @@ export default function TravelerType() {
   const travelTime = ["1 día", "Fin de semana", "3 a 5 días", "1 semana o más"];
 
   const toggleType = (type: string) => {
-    setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    );
+    const travelerTypesSet = new Set(travelerTypes);
+    const travelingTypesSet = new Set(travelingTypes);
+    const travelTimeSet = new Set(travelTime);
+
+    setSelectedTypes((prev) => {
+      const isSelected = prev.includes(type);
+
+      // Grupo: Eres un viajero... (min 1, max 3)
+      if (travelerTypesSet.has(type)) {
+        const currentGroup = prev.filter((t) => travelerTypesSet.has(t));
+        if (isSelected) {
+          // Quitar si ya estaba seleccionado
+          return prev.filter((t) => t !== type);
+        }
+        if (currentGroup.length >= 3) {
+          // No permitir más de 3
+          return prev;
+        }
+        return [...prev, type];
+      }
+
+      // Grupo: Viajas normalmente... (exactamente 1)
+      if (travelingTypesSet.has(type)) {
+        const withoutGroup = prev.filter((t) => !travelingTypesSet.has(t));
+        // Selección exclusiva (similar a radio button); mantener si ya estaba
+        if (isSelected) return prev;
+        return [...withoutGroup, type];
+      }
+
+      // Grupo: Tus viajes suelen durar... (exactamente 1)
+      if (travelTimeSet.has(type)) {
+        const withoutGroup = prev.filter((t) => !travelTimeSet.has(t));
+        if (isSelected) return prev;
+        return [...withoutGroup, type];
+      }
+
+      return prev;
+    });
   };
+
+  // Validación por grupo
+  const travelerTypesSet = new Set(travelerTypes);
+  const travelingTypesSet = new Set(travelingTypes);
+  const travelTimeSet = new Set(travelTime);
+  const travelerTypesCount = selectedTypes.filter((t) => travelerTypesSet.has(t)).length;
+  const travelingTypesCount = selectedTypes.filter((t) => travelingTypesSet.has(t)).length;
+  const travelTimeCount = selectedTypes.filter((t) => travelTimeSet.has(t)).length;
+  const travelerTypesValid = travelerTypesCount >= 1 && travelerTypesCount <= 3;
+  const travelingTypesValid = travelingTypesCount === 1;
+  const travelTimeValid = travelTimeCount === 1;
+  const isFormValid = travelerTypesValid && travelingTypesValid && travelTimeValid;
 
   return (
     <section
@@ -108,6 +155,7 @@ export default function TravelerType() {
             >
               Eres un viajero...
             </span>
+            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige de 1 a 3)</span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelerTypes.map((type) => {
                 const isSelected = selectedTypes.includes(type);
@@ -141,6 +189,7 @@ export default function TravelerType() {
             >
               Viajas normalmente...
             </span>
+            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige 1)</span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelingTypes.map((type, index) => {
                 const isSelected = selectedTypes.includes(type);
@@ -177,6 +226,7 @@ export default function TravelerType() {
             >
               Tus viajes suelen durar...
             </span>
+            <span className="ml-2 text-xs" style={{ color: "var(--color-blue-light)" }}>(elige 1)</span>
             <div className="flex flex-wrap gap-2 mt-2">
               {travelTime.map((type) => {
                 const isSelected = selectedTypes.includes(type);
@@ -211,7 +261,10 @@ export default function TravelerType() {
           backgroundColor: "var(--color-green)",
           color: "var(--color-blue)",
           border: "1px solid var(--color-green-dark)",
+          opacity: isFormValid ? 1 : 0.6,
+          cursor: isFormValid ? "pointer" : "not-allowed",
         }}
+        disabled={!isFormValid}
         onClick={() => {
           // Split selectedTypes into the three groups based on available options
           const travelerTypesSet = new Set(travelerTypes);
