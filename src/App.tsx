@@ -28,10 +28,10 @@ import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import MainLayout from "./components/layout/mainLayout";
 import AuthLayout from "./components/layout/AuthLayout";
-import ProtectedRoute from "./components/layout/protectedRoute";
 import Agenda from "./pages/Agenda";
 import { NavigationProvider } from "./context/navigationContext";
 import CustomToastContainer from "./components/ui/toast";
+import { RegisterFlowProvider } from "./context/registerFlowContext";
 
 function AppContent() {
   const isLoading = useSplashScreen();
@@ -41,6 +41,7 @@ function AppContent() {
       <CustomToastContainer />
       <SplashScreen visible={!isLoading} />
       <NavigationProvider>
+        <RegisterFlowProvider>
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route element={<AuthLayout />}>
@@ -71,6 +72,7 @@ function AppContent() {
             <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>
+        </RegisterFlowProvider>
       </NavigationProvider>
     </>
   );

@@ -1,10 +1,14 @@
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useRegisterFlowContext } from "../context/useRegisterFlowContext";
+import { useRegisterFlow } from "../hooks/auth/useRegisterFlow";
 
 export default function TravelActivities() {
   const navigate = useNavigate();
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const { updateSelections } = useRegisterFlowContext();
+  const { goPreferences } = useRegisterFlow();
 
   const travelerTimes = [
     "Hacer senderismo",
@@ -168,6 +172,14 @@ export default function TravelActivities() {
           backgroundColor: "var(--color-green)",
           color: "var(--color-blue)",
           border: "1px solid var(--color-green-dark)",
+        }}
+        onClick={() => {
+          const activitiesSet = new Set(travelerTimes);
+          const placeTypesSet = new Set(travelingLocal);
+          const activities = selectedTypes.filter((t) => activitiesSet.has(t));
+          const placeTypes = selectedTypes.filter((t) => placeTypesSet.has(t));
+          updateSelections({ activities, placeTypes });
+          goPreferences();
         }}
       >
         Continuar

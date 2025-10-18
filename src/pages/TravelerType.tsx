@@ -1,10 +1,14 @@
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useRegisterFlowContext } from "../context/useRegisterFlowContext";
+import { useRegisterFlow } from "../hooks/auth/useRegisterFlow";
 
 export default function TravelerType() {
   const navigate = useNavigate();
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const { updateSelections } = useRegisterFlowContext();
+  const { goActivities } = useRegisterFlow();
 
   const travelerTypes = [
     "Relax",
@@ -207,6 +211,23 @@ export default function TravelerType() {
           backgroundColor: "var(--color-green)",
           color: "var(--color-blue)",
           border: "1px solid var(--color-green-dark)",
+        }}
+        onClick={() => {
+          // Split selectedTypes into the three groups based on available options
+          const travelerTypesSet = new Set(travelerTypes);
+          const travelingTypesSet = new Set(travelingTypes);
+          const travelTimeSet = new Set(travelTime);
+
+          const travelerTypesSelected = selectedTypes.filter((t) => travelerTypesSet.has(t));
+          const travelingWithSelected = selectedTypes.filter((t) => travelingTypesSet.has(t));
+          const travelDurationSelected = selectedTypes.filter((t) => travelTimeSet.has(t));
+
+          updateSelections({
+            travelerTypes: travelerTypesSelected,
+            travelingWith: travelingWithSelected,
+            travelDuration: travelDurationSelected,
+          });
+          goActivities();
         }}
       >
         Continuar

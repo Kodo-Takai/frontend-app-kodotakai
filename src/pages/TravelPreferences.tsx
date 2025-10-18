@@ -1,10 +1,16 @@
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useRegisterFlowContext } from "../context/useRegisterFlowContext";
+import { useRegisterFlow } from "../hooks/auth/useRegisterFlow";
+import { useToast } from "../hooks/useToast";
 
 export default function TravelPreferences() {
   const navigate = useNavigate();
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const { updateSelections } = useRegisterFlowContext();
+  const { completeAndSubmit } = useRegisterFlow();
+  const { success: toastSuccess, error: toastError } = useToast();
 
   const travelerTypes = ["Económico", "Medio", "Premium"];
 
@@ -168,6 +174,21 @@ export default function TravelPreferences() {
           backgroundColor: "var(--color-green)",
           color: "var(--color-blue)",
           border: "1px solid var(--color-green-dark)",
+        }}
+        onClick={async () => {
+          const budgetSet = new Set(travelerTypes);
+          const transportSet = new Set(travelTime);
+          const budget = selectedTypes.filter((t) => budgetSet.has(t)) as ("Económico" | "Medio" | "Premium")[];
+          const transport = selectedTypes.filter((t) => transportSet.has(t)) as ("Caminando" | "En bicicleta" | "En auto" | "En transporte público")[];
+          // Ensure final choices are included in the submit payload
+          updateSelections({ budget, transport });
+
+          const res = await completeAndSubmit({ budget, transport });
+          if (res.success) {
+            toastSuccess("Registro completado y preferencias guardadas");
+          } else {
+            toastError(res.error || "No se pudo completar el registro");
+          }
         }}
       >
         Continuar
