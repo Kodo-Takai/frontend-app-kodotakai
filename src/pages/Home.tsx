@@ -9,7 +9,7 @@ import { useAI } from "../context/aiContext";
 
 export default function Home() {
   const { currentProfile, isFetching } = useProfile();
-  const { showAIOverlay } = useAI();
+  const { showAIOverlay, isAIActive } = useAI();
 
   // Función para truncar texto si es muy largo
   const truncateText = (text: string, maxLength: number = 20) => {
@@ -32,6 +32,9 @@ export default function Home() {
   const userName = truncateText(getFullName());
 
   const handleAIClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevenir click si el overlay ya está activo
+    if (isAIActive) return;
+    
     const button = event.currentTarget;
     
     // Efecto de bounce/encogimiento del botón
@@ -98,6 +101,7 @@ export default function Home() {
               className="w-12 h-12 rounded-xl flex items-center justify-center hover:scale-90 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] cursor-pointer animate-bubble-in relative z-[9998]"
               style={{
                 backgroundColor: "var(--color-green)",
+                border: "3px solid var(--color-green-dark)",
               }}
             >
               <img

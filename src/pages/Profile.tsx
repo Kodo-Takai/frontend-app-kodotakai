@@ -37,10 +37,10 @@ export default function Profile() {
           {/* Sección de perfil con foto e información */}
           <div className="flex gap-4 mb-6 h-32">
             {/* Columna de imagen - 40% */}
-            <div className="w-2/5 flex items-center justify-center">
-              <div className="w-full h-full rounded-3xl overflow-hidden border-5 border-[var(--color-blue)]/50 flex items-center justify-center">
+            <div className="w-2/5 flex items-center justify-center animate-bubble-in">
+              <div className="w-full h-full rounded-3xl overflow-hidden border-5 border-[var(--color-blue)] flex items-center justify-center">
                 <img
-                  src={currentProfile?.photo || "/profilePic.webp"}
+                  src={currentProfile?.photo || "/kodi-full.png"}
                   className="w-full h-full object-cover"
                   alt="Foto de perfil"
                 />
@@ -112,7 +112,7 @@ export default function Profile() {
             {/* Editar Perfil */}
             <button
               onClick={() => navigate("/custom-profile")}
-              className="w-full flex items-center gap-4 p-4 rounded-3xl hover:scale-105 transition-all border-5 border-[var(--color-beige)] duration-200 bg-[var(--color-btn-primary)]"
+              className="animate-bubble-in w-full flex items-center gap-4 p-4 rounded-3xl hover:scale-105 transition-all border-5 border-[var(--color-beige)] duration-200 bg-[var(--color-btn-primary)]"
             >
               <div className="w-6 h-6 flex items-center justify-center">
                 <svg
@@ -153,7 +153,7 @@ export default function Profile() {
             {/* Ver Historial */}
             <button
               onClick={() => navigate("/agenda")}
-              className="w-full flex items-center gap-4 p-4 rounded-3xl hover:scale-105 transition-all border-5 border-[var(--color-beige)] duration-200 bg-[var(--color-btn-primary)]"
+              className="animate-bubble-in w-full flex items-center gap-4 p-4 rounded-3xl hover:scale-105 transition-all border-5 border-[var(--color-beige)] duration-200 bg-[var(--color-btn-primary)]"
             >
               <div className="w-6 h-6 flex items-center justify-center">
                 <svg
@@ -198,7 +198,7 @@ export default function Profile() {
           {/* Botón de cerrar sesión - Espaciado personalizable */}
           <div className="w-full flex justify-end">
             <button
-              className="flex gap-4 border-4 items-center justify-center py-2.5 px-5 rounded-2xl hover:scale-105 transition-all duration-200 bg-[var(--color-btn-neutral)] border-[var(--color-blue)]"
+              className="flex gap-4 border-3 items-center justify-center py-2.5 px-5 rounded-2xl hover:scale-105 transition-all duration-200 bg-[var(--color-btn-neutral)] border-[var(--color-blue)]"
               onClick={handleLogout}
             >
               <svg
@@ -214,7 +214,7 @@ export default function Profile() {
                   fill="var(--color-text-primary)"
                 />
               </svg>
-              <span className="font-bold text-md text-[var(--color-blue)]/80">Cerrar Sesión</span>
+              <span className="font-bold text-md text-[var(--color-blue)]">Cerrar Sesión</span>
             </button>
           </div>
         </div>
