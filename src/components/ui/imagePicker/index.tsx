@@ -37,16 +37,16 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
         onClick={handleImageClick}
       >
         <img
-          src={currentImage || "/profilePic.webp"}
+          src={currentImage || "/kodi-full.png"}
           className="w-full h-full rounded-full object-cover"
           alt="Foto de perfil"
         />
-        <div className="absolute bottom-0 right-0 translate-y-[10px] translate-x-[20px] bg-[var(--color-bone)] rounded-full p-3 border border-gray-200 animate-bubble-in">
+        <div className="absolute bottom-0 right-0 translate-y-[5px] translate-x-[5px] bg-[var(--color-bone)] rounded-full p-2.5 border border-gray-200 animate-bubble-in shadow-lg">
           {isUploading ? (
-            <div className="animate-spin">
+            <div className="flex items-center justify-center animate-spin">
               <svg
-                width="20"
-                height="20"
+                width="16"
+                height="16"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -60,14 +60,13 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
                   strokeLinecap="round"
                   strokeDasharray="31.416"
                   strokeDashoffset="31.416"
-                  className="animate-spin"
                 />
               </svg>
             </div>
           ) : (
             <svg
-              width="20"
-              height="20"
+              width="16"
+              height="16"
               viewBox="0 0 15 15"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
