@@ -9,12 +9,10 @@ import {
 export const RegisterFlowProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [credentials, setCredentialsState] = useState<RegisterCredentials | null>(
-    null
-  );
-  const [selections, setSelections] = useState<PreferencesSelections>(
-    emptySelections
-  );
+  const [credentials, setCredentialsState] =
+    useState<RegisterCredentials | null>(null);
+  const [selections, setSelections] =
+    useState<PreferencesSelections>(emptySelections);
 
   const setCredentials = (c: RegisterCredentials) => setCredentialsState(c);
   const updateSelections = (partial: Partial<PreferencesSelections>) =>
@@ -25,7 +23,13 @@ export const RegisterFlowProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const value = useMemo(
-    () => ({ credentials, selections, setCredentials, updateSelections, reset }),
+    () => ({
+      credentials,
+      selections,
+      setCredentials,
+      updateSelections,
+      reset,
+    }),
     [credentials, selections]
   );
 

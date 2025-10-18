@@ -5,7 +5,7 @@ import RegisterFlowInternal from "./registerFlowInternal";
 export const RegisterFlowProvider = _Provider;
 
 export function useRegisterFlowContext() {
-  const ctx = useContext(RegisterFlowInternal);
-  if (!ctx) throw new Error("useRegisterFlowContext must be used within RegisterFlowProvider");
-  return ctx;
+    const ctx = useContext(RegisterFlowInternal);
+    if (!ctx) throw new Error("useRegisterFlowContext must be used within RegisterFlowProvider");
+    return ctx;
 }

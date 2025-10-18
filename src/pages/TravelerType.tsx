@@ -218,9 +218,15 @@ export default function TravelerType() {
           const travelingTypesSet = new Set(travelingTypes);
           const travelTimeSet = new Set(travelTime);
 
-          const travelerTypesSelected = selectedTypes.filter((t) => travelerTypesSet.has(t));
-          const travelingWithSelected = selectedTypes.filter((t) => travelingTypesSet.has(t));
-          const travelDurationSelected = selectedTypes.filter((t) => travelTimeSet.has(t));
+          const travelerTypesSelected = selectedTypes.filter((t) =>
+            travelerTypesSet.has(t)
+          );
+          const travelingWithSelected = selectedTypes.filter((t) =>
+            travelingTypesSet.has(t)
+          );
+          const travelDurationSelected = selectedTypes.filter((t) =>
+            travelTimeSet.has(t)
+          );
 
           updateSelections({
             travelerTypes: travelerTypesSelected,

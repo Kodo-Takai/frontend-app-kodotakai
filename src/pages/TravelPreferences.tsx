@@ -178,8 +178,19 @@ export default function TravelPreferences() {
         onClick={async () => {
           const budgetSet = new Set(travelerTypes);
           const transportSet = new Set(travelTime);
-          const budget = selectedTypes.filter((t) => budgetSet.has(t)) as ("Económico" | "Medio" | "Premium")[];
-          const transport = selectedTypes.filter((t) => transportSet.has(t)) as ("Caminando" | "En bicicleta" | "En auto" | "En transporte público")[];
+          const budget = selectedTypes.filter((t) => budgetSet.has(t)) as (
+            | "Económico"
+            | "Medio"
+            | "Premium"
+          )[];
+          const transport = selectedTypes.filter((t) =>
+            transportSet.has(t)
+          ) as (
+            | "Caminando"
+            | "En bicicleta"
+            | "En auto"
+            | "En transporte público"
+          )[];
           // Ensure final choices are included in the submit payload
           updateSelections({ budget, transport });
 
