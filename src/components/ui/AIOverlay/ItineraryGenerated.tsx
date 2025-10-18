@@ -17,7 +17,7 @@ const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
   return (
     <div className="w-full">
       <div className="text-center mb-8">
-        {/* Imagen de KODI */}
+        {/* Imagen de KODII */}
         <div className="flex justify-center mb-2 mt-18">
           <img
             src="/check-kodi.png"
@@ -36,7 +36,7 @@ const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
           className="text-lg font-bold"
           style={{ color: 'var(--color-blue)' }}
         >
-          Tu itinerario personalizado está listo
+          Tu itinerario personalizado está aquí
         </p>
       </div>
 
