@@ -2,7 +2,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import RegisterForm from "../components/form/registerForm";
 import { useRegister } from "../hooks/auth/useRegister";
-import { useToast } from "../hooks/useToast";
+import { useRegisterFlow } from "../hooks/auth/useRegisterFlow";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -16,25 +16,22 @@ export default function Register() {
     isValid,
     isLoading,
     errorMessage,
-    register,
   } = useRegister();
-  const { success: toastSuccess, error: toastError } = useToast();
+  // Toast available if needed later
+  const { startFlow } = useRegisterFlow();
 
   const handleSubmitWithToast = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid || isLoading) return;
-    const result = await register();
-    if (result?.success) {
-      toastSuccess(result.data);
-      navigate("/login", {
-        state: {
-          message: "Cuenta creada exitosamente. Por favor inicia sesión.",
-          username: username.value,
-        },
-      });
-    } else {
-      toastError("Error al registrarse");
-    }
+    // Store creds in flow and go to next step. Registration will happen at the end.
+    startFlow({
+      username: username.value,
+      email: email.value,
+      password: password.value,
+      confirmPassword: confirmPassword.value,
+      name: name.value,
+      lastName: lastName.value,
+    });
   };
 
   return (

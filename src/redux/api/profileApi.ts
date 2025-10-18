@@ -55,9 +55,10 @@ export const profileApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { 
-  useGetProfilesQuery, 
+export const {
+  useGetProfilesQuery,
   useGetMyProfileQuery,
   useGetProfileByIdQuery,
-  useUpdateProfileMutation 
+  useUpdateProfileMutation,
+  useLazyGetProfilesQuery
 } = profileApi;
