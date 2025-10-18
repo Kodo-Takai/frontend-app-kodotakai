@@ -98,10 +98,10 @@ export const useAuth = () => {
         password: loginData.password,
       };
 
-  const result: LoginApiResponse = await loginMutation(loginRequest).unwrap();
+      const result: LoginApiResponse = await loginMutation(loginRequest).unwrap();
 
-  // Extraer token desde la estructura tipada
-  const userToken = result?.data?.access_token;
+      // Extraer token desde la estructura tipada
+      const userToken = result?.data?.access_token;
 
       if (!userToken) {
         return {
