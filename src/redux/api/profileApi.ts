@@ -25,10 +25,25 @@ export type ProfileUpdateRequest = Partial<
 
 export const profileApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    // Obtener todos los perfiles (admin)
     getProfiles: builder.query<Profile[], void>({
       query: () => ({ url: "/api/profiles", method: "GET" }),
       providesTags: ["User"],
     }),
+
+    // NUEVO: Obtener el perfil del usuario autenticado
+    getMyProfile: builder.query<Profile, void>({
+      query: () => ({ url: "/api/profiles/me", method: "GET" }),
+      providesTags: ["User"],
+    }),
+
+    // Obtener perfil por ID
+    getProfileById: builder.query<Profile, string>({
+      query: (id) => ({ url: `/api/profiles/${id}`, method: "GET" }),
+      providesTags: ["User"],
+    }),
+
+    // Actualizar perfil
     updateProfile: builder.mutation<Profile, { id: string; body: ProfileUpdateRequest }>({
       query: ({ id, body }) => ({
         url: `/api/profiles/${id}`,
@@ -40,4 +55,9 @@ export const profileApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetProfilesQuery, useUpdateProfileMutation } = profileApi;
+export const { 
+  useGetProfilesQuery, 
+  useGetMyProfileQuery,
+  useGetProfileByIdQuery,
+  useUpdateProfileMutation 
+} = profileApi;

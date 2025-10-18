@@ -8,6 +8,10 @@ interface CalendarModalProps {
   onClose: () => void;
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
+  // Nuevas props opcionales para el modo de postergar
+  mode?: 'select' | 'postpone';
+  onConfirm?: (date: Date, time?: string) => void;
+  currentTime?: string;
 }
 
 const CalendarModal: React.FC<CalendarModalProps> = ({
@@ -15,8 +19,14 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
   onClose,
   selectedDate,
   onDateSelect,
+  mode = 'select',
+  onConfirm,
+  currentTime,
 }) => {
   const [currentMonth, setCurrentMonth] = useState(selectedDate);
+  const [selectedTime, setSelectedTime] = useState<string>(
+    currentTime || '09:00'
+  );
 
   // Prevenir scroll del fondo cuando el modal está abierto
   useEffect(() => {
@@ -35,8 +45,23 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
   if (!isOpen) return null;
 
   const handleDateChange = (date: Date) => {
-    onDateSelect(date);
-    onClose();
+    if (mode === 'select') {
+      onDateSelect(date);
+      onClose();
+    } else {
+      // En modo postpone, solo actualizar la fecha seleccionada
+      onDateSelect(date);
+    }
+  };
+
+  const handleConfirm = () => {
+    if (mode === 'postpone' && onConfirm) {
+      onConfirm(selectedDate, selectedTime);
+      onClose();
+    } else {
+      onDateSelect(selectedDate);
+      onClose();
+    }
   };
 
   const handlePrevMonth = () => {
@@ -65,12 +90,24 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
       const isSelected = isSameDay(day, selectedDate);
       const isToday = isSameDay(day, new Date());
       const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+      
+      // Solo en modo postpone validar fechas pasadas
+      let isPastDate = false;
+      if (mode === 'postpone') {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        isPastDate = day < today;
+      }
 
       days.push(
         <div
           key={day.toString()}
-          className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}`}
-          onClick={() => handleDateChange(cloneDay)}
+          className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''} ${isPastDate ? 'past-date' : ''}`}
+          onClick={() => !isPastDate && handleDateChange(cloneDay)}
+          style={{ 
+            cursor: isPastDate ? 'not-allowed' : 'pointer',
+            opacity: isPastDate ? 0.4 : 1
+          }}
         >
           <span className="day-number">{format(day, dateFormat)}</span>
         </div>
@@ -86,11 +123,13 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 overflow-hidden">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-[60] overflow-hidden">
       <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
 
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-black">Seleccionar Fecha</h2>
+          <h2 className="text-xl font-bold text-black">
+            {mode === 'postpone' ? 'Postergar Actividad' : 'Seleccionar Fecha'}
+          </h2>
           <button
             onClick={onClose}
             className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
@@ -134,6 +173,27 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
           {rows}
         </div>
 
+        {/* Selector de Hora - Solo en modo postpone */}
+        {mode === 'postpone' && (
+          <div className="mb-6">
+            <label 
+              className="block text-sm font-medium mb-2 text-black"
+            >
+              Nueva Hora
+            </label>
+            <input
+              type="time"
+              value={selectedTime}
+              onChange={(e) => setSelectedTime(e.target.value)}
+              className="w-full p-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
+              style={{ 
+                backgroundColor: '#f9fafb',
+                borderColor: '#BACB2C',
+                color: '#000'
+              }}
+            />
+          </div>
+        )}
 
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-2">Fecha seleccionada:</p>
@@ -151,13 +211,10 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
             Cancelar
           </button>
           <button
-            onClick={() => {
-              onDateSelect(selectedDate);
-              onClose();
-            }}
+            onClick={handleConfirm}
             className="flex-1 py-3 px-4 bg-[#BACB2C] text-black rounded-xl font-medium hover:bg-[#A8E251] transition-colors"
           >
-            Confirmar
+            {mode === 'postpone' ? 'Confirmar' : 'Confirmar'}
           </button>
         </div>
       </div>
