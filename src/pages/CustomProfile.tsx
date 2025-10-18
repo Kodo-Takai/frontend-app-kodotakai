@@ -2,6 +2,7 @@ import Input from "../components/ui/input";
 import ImagePicker from "../components/ui/imagePicker";
 import CustomSelect from "../components/ui/customSelect";
 import CustomDateInput from "../components/ui/customDateInput";
+import PageWrapper from "../components/layout/SmoothPageWrapper";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
@@ -225,11 +226,15 @@ export default function CustomProfile() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center p-4 space-y-6" style={{ backgroundColor: 'var(--color-beige-light)' }}>
-      <div className="flex justify-between items-center w-full">
+    <div
+      className="min-h-screen relative pb-30"
+    >
+      <PageWrapper>
+        <div className="w-full h-full flex flex-col justify-center items-center p-4 space-y-6">
+          <div className="flex justify-between items-center w-full">
         <button
-          className="border-[2px] p-3 rounded-xl"
-          style={{ borderColor: 'var(--color-blue)' }}
+          className="border-[2px] border-[var(--color-blue)] p-3 rounded-xl animate-bubble-in"
+          style={{ backgroundColor: 'var(--color-blue)' }}
           disabled={isSaving}
           onClick={handleBackClick}
         >
@@ -244,7 +249,7 @@ export default function CustomProfile() {
               fill-rule="evenodd"
               clip-rule="evenodd"
               d="M6.61.933a.53.53 0 0 0-.75.05L.902 6.65a.53.53 0 0 0 0 .7l4.958 5.666a.531.531 0 0 0 .8-.7L2.472 7.532h10.163a.531.531 0 0 0 0-1.062H2.472L6.66 1.683a.53.53 0 0 0-.05-.75"
-              fill="var(--color-blue)"
+              fill="var(--color-bone)"
             />
           </svg>
         </button>
@@ -255,11 +260,11 @@ export default function CustomProfile() {
           )}
         </h1>
         <button
-          className={`relative p-3 rounded-xl disabled:opacity-60 transition-all duration-200 ${
+          className={`relative p-3 rounded-xl disabled:opacity-60 transition-all duration-200 animate-bubble-in ${
             hasUnsavedChanges ? "animate-pulse" : ""
           }`}
           style={{ 
-            backgroundColor: hasUnsavedChanges ? 'var(--color-green)' : 'var(--color-blue)'
+            backgroundColor: hasUnsavedChanges ? 'var(--color-green-dark)' : 'var(--color-green)'
           }}
           onClick={onSave}
           disabled={isSaving || isFetching || !currentProfile}
@@ -277,7 +282,7 @@ export default function CustomProfile() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="m.71 9 4 3 9-11" stroke="var(--color-bone)" stroke-width="1.5" />
+            <path d="m.71 9 4 3 9-11" stroke="var(--color-blue)" stroke-width="3" />
           </svg>
         </button>
       </div>
@@ -295,7 +300,7 @@ export default function CustomProfile() {
         </div>
       )}
       <div className="flex w-full flex-col px-2">
-        <h2 className="font-bold text-[22px]">Datos Personales</h2>
+        <h2 className="font-bold text-[var(--color-blue-dark)] text-[22px]">Datos Personales</h2>
         <div className="flex flex-col space-y-1 mt-2">
           <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>Nombres</span>
           <Input
@@ -318,8 +323,8 @@ export default function CustomProfile() {
             onChange={(e) => setLastName((e.target as HTMLInputElement).value)}
           />
         </div>
-        <div className="flex gap-4">
-          <div className="flex flex-col space-y-1 w-full">
+        <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-1">
             <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>Género</span>
             <CustomSelect
               id="gender"
@@ -335,7 +340,7 @@ export default function CustomProfile() {
               disabled={isSaving || isFetching}
             />
           </div>
-          <div className="flex flex-col space-y-1 w-full">
+          <div className="flex flex-col space-y-1">
             <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>
               Fecha de nacimiento
             </span>
@@ -350,7 +355,7 @@ export default function CustomProfile() {
         </div>
       </div>
       <div className="flex w-full flex-col px-2 mt-4">
-        <h2 className="font-bold text-[22px]">Contacto Personal</h2>
+        <h2 className="font-bold text-[var(--color-blue-dark)] text-[22px]">Contacto Personal</h2>
         <div className="flex flex-col space-y-1 mt-2">
           <span className="font-semibold" style={{ color: 'var(--color-blue)' }}>Dirección</span>
           <Input
@@ -451,6 +456,8 @@ export default function CustomProfile() {
           </div>
         </div>
       )}
+        </div>
+      </PageWrapper>
     </div>
   );
 }

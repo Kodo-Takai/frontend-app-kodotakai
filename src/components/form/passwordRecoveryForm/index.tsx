@@ -3,7 +3,7 @@ import { RiMailSendLine } from "react-icons/ri";
 import { IoLockClosedOutline } from "react-icons/io5";
 import Button from "../../ui/button";
 import Input from "../../ui/input";
-import CodeInput from "../../ui/codeInput"; 
+import CodeInput from "../../ui/codeInput";
 
 export default function PasswordRecoveryForm() {
   const {
@@ -28,10 +28,11 @@ export default function PasswordRecoveryForm() {
       {step === 1 && (
         <div className="flex flex-col">
           <div className="flex flex-col gap-2 mb-6">
-            <h1 className="text-4xl font-extrabold font-sf-pro">
-              ¿Olvidaste tu <span className="text-red-500">Contraseña?</span>
+            <h1 className="text-4xl font-extrabold font-sf-pro text-[var(--color-blue)]">
+              ¿Olvidaste tu{" "}
+              <span className="text-[var(--color-green)]">Contraseña?</span>
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-[var(--color-blue)] text-sm font-medium">
               Por favor, ingresa el email que está vinculado a tu cuenta para
               poder recuperar tu contraseña
             </p>
@@ -49,7 +50,7 @@ export default function PasswordRecoveryForm() {
           />
 
           {generalError && (
-            <div className="text-red-500 text-sm text-center p-2 bg-red-50 rounded-lg mb-4">
+            <div className="text-[var(--color-red)] text-sm text-center p-2 bg-[var(--color-bone)] rounded-lg mb-4">
               {generalError}
             </div>
           )}
@@ -70,12 +71,14 @@ export default function PasswordRecoveryForm() {
       {step === 2 && (
         <div>
           <div className="flex flex-col gap-4">
-            <h1 className="text-4xl font-extrabold font-sf-pro">
-              Ingresa el <span className="text-red-500">código</span> de tu
+            <h1 className="text-4xl font-extrabold font-sf-pro text-[var(--color-blue)]">
+              Ingresa el{" "}
+              <span className="text-[var(--color-green)]">código</span> de tu
               correo
             </h1>
-            <p className="text-gray-500 text-sm mb-6">
-              Ingresa el código de verificación que se envió a <strong>{email.value}</strong>
+            <p className="text-[var(--color-blue)] text-sm font-medium mb-6">
+              Ingresa el código de verificación que se envió a{" "}
+              <strong>{email.value}</strong>
             </p>
           </div>
 
@@ -96,8 +99,8 @@ export default function PasswordRecoveryForm() {
             </div>
           )}
 
-          <Button 
-            variant="blue" 
+          <Button
+            variant="blue"
             onClick={handleNextStep}
             disabled={!canProceedStep2}
             loading={isSubmitting}
@@ -153,14 +156,15 @@ export default function PasswordRecoveryForm() {
             </div>
           )}
 
-          <Button 
-            className="flex items-center justify-center gap-2" 
-            variant="blue" 
+          <Button
+            className="flex items-center justify-center gap-2"
+            variant="blue"
             onClick={handleSubmit}
             disabled={!canSubmitStep3}
             loading={isSubmitting}
           >
-            Restablecer Contraseña <IoLockClosedOutline className="w-5 h-5 font-bold" />
+            Restablecer Contraseña{" "}
+            <IoLockClosedOutline className="w-5 h-5 font-bold" />
           </Button>
         </div>
       )}

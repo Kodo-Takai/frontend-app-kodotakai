@@ -16,12 +16,12 @@ const WeekDaysSelector: React.FC<WeekDaysSelectorProps> = ({
         <button
           key={index}
           onClick={() => onDaySelect(day.date)}
-          className={`flex-1 text-sm flex flex-col items-center justify-center py-4 px-2 rounded-lg transition-all duration-200 hover:scale-105 animate-bubble-in ${
+          className={`flex-1 text-sm flex flex-col items-center justify-center py-5 px-2 rounded-xl transition-all duration-200 hover:scale-105 animate-bubble-in ${
             day.isSelected
-              ? "bg-[var(--color-green)] text-[var(--color-blue)]"
+              ? "bg-[var(--color-green)] text-[var(--color-blue)] border-3 border-[var(--color-green-dark)]"
               : day.isToday
-              ? "bg-[var(--color-beige)] text-[var(--color-blue)] "
-              : "bg-[var(--color-beige)] text-[var(--color-blue)] hover:bg-[var(--color-beige)]"
+              ? "bg-[var(--color-beige)] text-[var(--color-blue)] border-3 border-[var(--color-blue)]"
+              : "bg-[var(--color-beige)] text-[var(--color-blue)] hover:bg-[var(--color-beige)] border-3 border-[var(--color-beige)]"
           }`}
           style={{ animationDelay: `${index * 0.1}s` }}
         >
@@ -30,7 +30,7 @@ const WeekDaysSelector: React.FC<WeekDaysSelectorProps> = ({
               day.dayName.slice(1, 3).toLowerCase()}
           </span>
           <span
-            className={`text-lg ${
+            className={`text-xl ${
               day.isSelected ? "font-extrabold text-[var(--color-blue)]" : "font-semibold"
             }`}
           >

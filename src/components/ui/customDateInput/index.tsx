@@ -69,15 +69,19 @@ const CustomDateInput: React.FC<CustomDateInputProps> = ({
         disabled={disabled}
         className={`
           block w-full px-4 py-4 pr-12 text-sm rounded-2xl border text-left
-          transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#00324A]/20
+          transition-all duration-200 focus:outline-none focus:ring-2
           ${
             disabled
               ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
-              : "bg-[#EEEEEE] border-[#DEDEDE] hover:border-[#00324A]/30 cursor-pointer"
+              : "cursor-pointer"
           }
-          ${selectedDate ? "text-[#322C2C]" : "text-[#AEAEAE]"}
-          ${isOpen ? "border-[#00324A] ring-2 ring-[#00324A]/20" : ""}
+          ${isOpen ? "ring-2" : ""}
         `}
+        style={{
+          backgroundColor: disabled ? "var(--color-gray-100)" : "var(--color-beige)",
+          borderColor: disabled ? "var(--color-gray-200)" : isOpen ? "var(--color-blue)" : "var(--color-beige)",
+          color: selectedDate ? "var(--color-blue)" : "var(--color-blue-light)",
+        }}
       >
         <span className="block truncate">
           {selectedDate ? formatDisplayDate(selectedDate) : placeholder}
@@ -86,9 +90,10 @@ const CustomDateInput: React.FC<CustomDateInputProps> = ({
 
       <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
         <svg
-          className={`h-4 w-4 text-[#AEAEAE] transition-transform duration-200 ${
+          className={`h-4 w-4 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
+          style={{ color: "var(--color-blue)" }}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -103,7 +108,13 @@ const CustomDateInput: React.FC<CustomDateInputProps> = ({
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 mt-1 bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden custom-datepicker-wrapper">
+        <div 
+          className="absolute z-50 mt-1 border rounded-2xl shadow-xl overflow-hidden custom-datepicker-wrapper"
+          style={{ 
+            backgroundColor: "var(--color-bone)", 
+            borderColor: "var(--color-beige)" 
+          }}
+        >
           <DatePicker
             ref={datePickerRef}
             selected={selectedDate}

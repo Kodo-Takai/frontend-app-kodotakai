@@ -38,10 +38,15 @@ export default function Search({
   };
 
   return (
-    <div className={`relative w-full hover:scale-[1.01] transition-transform duration-300 ease-out ${className}`}>
+    <div
+      className={`relative w-full hover:scale-[1.01] transition-transform duration-300 ease-out ${className}`}
+    >
       <form onSubmit={handleSubmit} className="relative">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <FiSearch className="w-5 h-5" style={{ color: 'var(--color-blue)' }} />
+          <FiSearch
+            className="w-5 h-5"
+            style={{ color: "var(--color-blue)" }}
+          />
         </div>
 
         <input
@@ -50,11 +55,11 @@ export default function Search({
           value={value}
           onChange={handleInputChange}
           placeholder={placeholder}
-          className="w-full pl-12 pr-10 py-3 text-base rounded-xl focus:outline-none focus:ring-2"
+          className="w-full pl-12 pr-10 py-3 text-base rounded-xl focus:outline-none focus:ring-2 border-2 search-input"
           style={{
-            backgroundColor: 'var(--color-beige)',
-            color: 'var(--color-blue)',
-            borderColor: 'var(--color-blue)'
+            backgroundColor: "var(--color-beige)",
+            color: "var(--color-blue)",
+            borderColor: "var(--color-beige-dark)",
           }}
           autoComplete="off"
         />
@@ -64,7 +69,7 @@ export default function Search({
             type="button"
             onClick={clearSearch}
             className="absolute inset-y-0 right-0 pr-4 flex items-center"
-            style={{ color: 'var(--color-blue)' }}
+            style={{ color: "var(--color-blue)" }}
           >
             <FiX className="w-5 h-5" />
           </button>

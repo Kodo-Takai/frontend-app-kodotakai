@@ -24,7 +24,7 @@ import ParquesPage from "./pages/categories/ParquesPage";
 import { useSplashScreen } from "./hooks/useSplashScreen";
 import SplashScreen from "./components/common/splashScreen";
 import MainLayout from "./components/layout/mainLayout";
-import AuthLayout from "./components/layout/AuthLayout";
+import AuthLayout from "./components/layout/authLayout";
 import ProtectedRoute from "./components/layout/protectedRoute";
 import Agenda from "./pages/Agenda";
 import { NavigationProvider } from "./context/navigationContext";

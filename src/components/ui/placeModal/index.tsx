@@ -98,27 +98,91 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   const modalContent = (
-    <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm overflow-y-auto"
-      onClick={onClose}
-      aria-modal
-      role="dialog"
-    >
       <div
-        className="relative w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl my-8"
-        onClick={stop}
+        className="fixed inset-0 z-[1000] flex items-center justify-center backdrop-blur-sm overflow-y-auto"
+        style={{ backgroundColor: "rgba(41, 91, 114, 0.6)" }}
+        onClick={onClose}
+        aria-modal
+        role="dialog"
       >
-        <button onClick={onClose} aria-label="Cerrar" className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow hover:bg-white"><FaTimes className="h-4 w-4" /></button>
+        <div
+          className="relative w-[95vw] max-w-2xl max-h-[100vh] overflow-y-auto rounded-2xl shadow-xl my-8"
+          style={{ backgroundColor: "var(--color-bone)" }}
+          onClick={stop}
+        >
+        <button 
+          onClick={onClose} 
+          aria-label="Cerrar" 
+          className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full shadow transition-all duration-200 hover:scale-110"
+          style={{ 
+            backgroundColor: "var(--color-bone)", 
+            color: "var(--color-blue)" 
+          }}
+        >
+          <FaTimes className="h-5 w-5" />
+        </button>
         
         <div className="relative h-56 w-full overflow-hidden sm:h-64 group">
             <img src={images[currentImageIndex]} alt={`${place.name} - Imagen ${currentImageIndex + 1}`} className="h-full w-full object-cover transition-opacity duration-300" loading="lazy" />
-            {typeof place.rating === "number" && (<div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[#00324A] px-3 py-1 text-white"><FaStar className="h-4 w-4 text-[#FF0C12]" /><span className="text-sm font-semibold">{place.rating.toFixed(1)}</span></div>)}
+            {typeof place.rating === "number" && (
+              <div 
+                className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full px-3 py-1"
+                style={{ 
+                  backgroundColor: "var(--color-blue-dark)", 
+                  color: "var(--color-bone)" 
+                }}
+              >
+                <FaStar className="h-4 w-4" style={{ color: "var(--color-green)" }} />
+                <span className="text-sm font-semibold">{place.rating.toFixed(1)}</span>
+              </div>
+            )}
             {images.length > 1 && (
               <>
-                <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 text-gray-800 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white flex items-center justify-center" aria-label="Imagen anterior"><FaChevronLeft className="h-4 w-4" /></button>
-                <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 text-gray-800 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white flex items-center justify-center" aria-label="Imagen siguiente"><FaChevronRight className="h-4 w-4" /></button>
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">{images.map((_, index) => (<button key={index} onClick={() => setCurrentImageIndex(index)} className={`h-1.5 rounded-full transition-all duration-300 ${index === currentImageIndex ? "w-6 bg-white" : "w-1.5 bg-white/60 hover:bg-white/80"}`} aria-label={`Ir a imagen ${index + 1}`} />))}</div>
-                <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">{currentImageIndex + 1} / {images.length}</div>
+                <button 
+                  onClick={handlePrevImage} 
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center animate-bubble-in hover:scale-110" 
+                  style={{ 
+                    backgroundColor: "var(--color-bone)", 
+                    color: "var(--color-blue)" 
+                  }}
+                  aria-label="Imagen anterior"
+                >
+                  <FaChevronLeft className="h-4 w-4" />
+                </button>
+                <button 
+                  onClick={handleNextImage} 
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center animate-bubble-in hover:scale-110" 
+                  style={{ 
+                    backgroundColor: "var(--color-bone)", 
+                    color: "var(--color-blue)" 
+                  }}
+                  aria-label="Imagen siguiente"
+                >
+                  <FaChevronRight className="h-4 w-4" />
+                </button>
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {images.map((_, index) => (
+                    <button 
+                      key={index} 
+                      onClick={() => setCurrentImageIndex(index)} 
+                      className="h-1.5 rounded-full transition-all duration-300 hover:scale-125"
+                      style={{
+                        width: index === currentImageIndex ? "1.5rem" : "0.375rem",
+                        backgroundColor: index === currentImageIndex ? "var(--color-bone)" : "rgba(255, 255, 240, 0.6)"
+                      }}
+                      aria-label={`Ir a imagen ${index + 1}`} 
+                    />
+                  ))}
+                </div>
+                <div 
+                  className="absolute bottom-3 right-3 text-xs px-2 py-1 rounded-full"
+                  style={{ 
+                    backgroundColor: "var(--color-blue-dark)", 
+                    color: "var(--color-bone)" 
+                  }}
+                >
+                  {currentImageIndex + 1} / {images.length}
+                </div>
               </>
             )}
         </div>
@@ -126,7 +190,17 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
         {images.length > 1 && (
           <div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
             {images.map((img, index) => (
-              <button key={index} onClick={() => setCurrentImageIndex(index)} className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${index === currentImageIndex ? "border-[#00324A] scale-105" : "border-gray-200 opacity-60 hover:opacity-100"}`}>
+              <button 
+                key={index} 
+                onClick={() => setCurrentImageIndex(index)} 
+                className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-3 transition-all duration-200 hover:scale-110 animate-bubble-in"
+                style={{
+                  borderColor: index === currentImageIndex ? "var(--color-green)" : "transparent",
+                  borderWidth: index === currentImageIndex ? "3px" : "2px",
+                  transform: index === currentImageIndex ? "scale(1.05)" : "scale(1)",
+                  opacity: index === currentImageIndex ? "1" : "0.6"
+                }}
+              >
                 <img src={img} alt={`Miniatura ${index + 1}`} className="w-full h-full object-cover" loading="lazy" />
               </button>
             ))}
@@ -134,16 +208,58 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
         )}
 
         <div className="p-4 sm:p-6">
-          <h3 className="mb-1 text-xl font-bold text-gray-900 sm:text-2xl">{place.name}</h3>
+          <h3 
+            className="mb-1 text-xl font-bold sm:text-2xl"
+            style={{ color: "var(--color-blue)" }}
+          >
+            {place.name}
+          </h3>
           
-          {address && (<div className="mb-3 flex items-start gap-2 text-gray-700"><FaMapMarkerAlt className="mt-1 h-4 w-4 flex-shrink-0 text-gray-500" /><span className="text-sm sm:text-base">{address}</span></div>)}
-          {description && (<p className="mb-4 whitespace-pre-line text-sm leading-relaxed text-gray-700 sm:text-base">{description}</p>)}
-          {phone && (<div className="mt-4 flex items-center gap-2 text-gray-800"><FaPhoneAlt className="h-4 w-4 text-gray-500" /><span className="text-sm sm:text-base font-medium select-text">{phone}</span></div>)}
+          {address && (
+            <div className="mb-3 flex items-start gap-2">
+              <FaMapMarkerAlt 
+                className="mt-1 h-4 w-4 flex-shrink-0" 
+                style={{ color: "var(--color-blue-light)" }} 
+              />
+              <span 
+                className="text-sm sm:text-base"
+                style={{ color: "var(--color-blue)" }}
+              >
+                {address}
+              </span>
+            </div>
+          )}
+          {description && (
+            <p 
+              className="mb-4 whitespace-pre-line text-sm leading-relaxed sm:text-base"
+              style={{ color: "var(--color-blue)" }}
+            >
+              {description}
+            </p>
+          )}
+          {phone && (
+            <div className="mt-4 flex items-center gap-2">
+              <FaPhoneAlt 
+                className="h-4 w-4" 
+                style={{ color: "var(--color-blue-light)" }} 
+              />
+              <span 
+                className="text-sm sm:text-base font-medium select-text"
+                style={{ color: "var(--color-blue)" }}
+              >
+                {phone}
+              </span>
+            </div>
+          )}
           
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2 font-semibold text-white shadow hover:bg-black"
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold shadow animate-bubble-in transition-all duration-200 hover:scale-102"
+              style={{ 
+                backgroundColor: "var(--color-blue)", 
+                color: "var(--color-bone)" 
+              }}
               onClick={handleAgendar}
             >
               Agendar
@@ -151,7 +267,12 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
             <button
               type="button"
               onClick={handleVisit}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 font-semibold text-gray-800 shadow-sm transition hover:bg-gray-200"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 px-4 py-2 font-semibold shadow-sm transition-all duration-200 animate-bubble-in hover:scale-102"
+              style={{ 
+                borderColor: "var(--color-green-dark)", 
+                backgroundColor: "var(--color-green)", 
+                color: "var(--color-blue-dark)" 
+              }}
             >
               <FaMapMarkerAlt className="h-4 w-4" />
               <span>Visitar</span>

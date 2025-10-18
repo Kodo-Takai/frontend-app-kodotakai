@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FaStar, FaMapMarkerAlt, FaHeart } from "react-icons/fa";
-import { FiMoreVertical } from "react-icons/fi";
 import { usePlaces, type Place, type EnrichedPlace } from "../../../hooks/places";
 import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
@@ -8,7 +7,6 @@ import "./index.scss";
 // --- 1. IMPORTACIONES PARA NAVEGACIÓN Y AGENDA ---
 import { useNavigate } from "react-router-dom";
 import { useNavigationContext } from "../../../context/navigationContext";
-import { useAgenda } from "../../../hooks/useAgenda";
 
 interface Restaurant extends EnrichedPlace {}
 
@@ -22,7 +20,6 @@ export default function RestaurantMenuCard() {
   // --- 2. ESTADO Y HOOKS EN EL COMPONENTE PADRE ---
   const { setInitialDestination } = useNavigationContext();
   const navigate = useNavigate();
-  const { addItem } = useAgenda();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Restaurant | null>(null);
@@ -72,20 +69,6 @@ export default function RestaurantMenuCard() {
     };
     
     const images = getImages();
-
-    const handleVisitFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      handleNavigation(restaurant);
-    };
-
-    const handleAgendarFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      const agendaItem = { /* Tu lógica de agendaItem */ };
-      addItem(agendaItem);
-      alert(`${restaurant.name} ha sido agregado a tu agenda.`);
-    };
     
     return (
       // Clic en toda la tarjeta abre el modal
@@ -121,26 +104,7 @@ export default function RestaurantMenuCard() {
                 loading="lazy"
                 onError={() => handleImageError(0)}
               />
-              {/* --- MENÚ DESPLEGABLE AÑADIDO --- */}
-              <button
-                className="absolute top-2 right-2 z-20 p-1 bg-white/80 rounded-full shadow"
-                onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
-              >
-                <FiMoreVertical />
-              </button>
-              {menuOpen && (
-                <div 
-                  className="absolute right-2 top-10 z-30 w-40 rounded-lg bg-white shadow-xl border" 
-                  onClick={e => e.stopPropagation()}
-                >
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleVisitFromMenu}>
-                    Visitar en Mapa
-                  </button>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleAgendarFromMenu}>
-                    Agendar
-                  </button>
-                </div>
-              )}
+
               <div className="restaurant-menu-card-overlay">
                 <h3 className="restaurant-menu-card-overlay-title">PLATOS</h3>
                 <p className="restaurant-menu-card-overlay-text">Desde</p>
@@ -166,7 +130,13 @@ export default function RestaurantMenuCard() {
     if (loading) {
       return (
         <div className="restaurant-menu-scroll">
-          {/* ... Tu JSX de skeleton ... */}
+          {Array.from({ length: 3 }, (_, i) => (
+            <div key={`restaurant-menu-skeleton-${i}`} className="restaurant-menu-card-width-skeleton">
+              <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
+                <div className="h-72 bg-[var(--color-blue-light)]" />
+              </div>
+            </div>
+          ))}
         </div>
       );
     }
@@ -188,8 +158,8 @@ export default function RestaurantMenuCard() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4">
-        ¿Y donde comeremos hoy?
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
+        Y donde comeremos hoy?
       </h2>
       {renderContent()}
 
