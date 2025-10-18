@@ -54,10 +54,11 @@ export function useRegisterFlow() {
     const completeAndSubmit = async (override?: Partial<typeof selections>) => {
         if (!credentials) return { success: false, error: "No hay credenciales" };
 
-        // 1) Register user
+        // 1) Register user (tolerant to already-registered users)
         const reg = await register(credentials);
         if (!reg?.success) {
-            return { success: false, error: reg?.error || "Error en registro" };
+            // If register fails (e.g., user already exists), try to continue with login
+            console.warn("Registro falló, se intentará login de todas formas:", reg?.error);
         }
 
         // 2) Login to get tokens and set auth
@@ -66,7 +67,7 @@ export function useRegisterFlow() {
             password: credentials.password,
         });
         if (!loginRes?.success) {
-            return { success: false, error: loginRes?.error || "Error al iniciar sesión" };
+            return { success: false, error: loginRes?.error || (reg?.error ?? "Error al iniciar sesión") };
         }
 
         // 3) Persist preferences
