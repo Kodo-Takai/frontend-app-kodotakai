@@ -31,6 +31,8 @@ import { NavigationProvider } from "./context/navigationContext";
 import { AIProvider } from "./context/aiContext";
 import AIOverlay from "./components/ui/AIOverlay";
 import CustomToastContainer from "./components/ui/toast";
+import ConfettiEffect from "./components/ui/AIOverlay/ConfettiEffect";
+import { ConfettiProvider, useConfetti } from "./context/confettiContext";
 
 function AppContent() {
   const isLoading = useSplashScreen();
@@ -39,6 +41,18 @@ function AppContent() {
     <>
       <CustomToastContainer />
       <SplashScreen visible={!isLoading} />
+      <ConfettiProvider>
+        <AppWithConfetti />
+      </ConfettiProvider>
+    </>
+  );
+}
+
+function AppWithConfetti() {
+  const { showConfetti } = useConfetti();
+
+  return (
+    <>
       <AIProvider>
         <AIOverlay>
           <NavigationProvider>
@@ -69,6 +83,9 @@ function AppContent() {
           </NavigationProvider>
         </AIOverlay>
       </AIProvider>
+      
+      {/* Confetti global - por encima de todo */}
+      <ConfettiEffect show={showConfetti} />
     </>
   );
 }

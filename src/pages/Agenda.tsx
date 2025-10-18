@@ -133,7 +133,7 @@ export default function Agenda() {
 
           <button
               onClick={handleAIClick}
-              className="w-12 h-12 rounded-xl flex items-center justify-center hover:scale-90 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] cursor-pointer animate-bubble-in relative z-[9998]"
+              className="w-12 h-12 rounded-xl flex items-center justify-center hover:scale-90 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] cursor-pointer animate-bubble-in relative z-[9997]"
               style={{
                 backgroundColor: "var(--color-green)",
                 border: "3px solid var(--color-green-dark)",
