@@ -60,7 +60,7 @@ const TopRatedCard = memo(function TopRatedCard({
         <FaStar
           key={`full-${i}`}
           className="w-4 h-4"
-          style={{ color: "#FF0007" }}
+          style={{ color: "var(--color-green)" }}
         />
       );
     }
@@ -70,7 +70,7 @@ const TopRatedCard = memo(function TopRatedCard({
         <FaStar
           key="half"
           className="w-4 h-4"
-          style={{ color: "#FF0007", opacity: 0.5 }}
+          style={{ color: "var(--color-green)", opacity: 0.5 }}
         />
       );
     }
@@ -118,7 +118,7 @@ const TopRatedCard = memo(function TopRatedCard({
         </h3>
 
         {description && (
-          <p className="text-sm text-white/90 mb-2 line-clamp-2">{description}</p>
+          <p className="text-sm text-[var(--color-bone)] mb-2 line-clamp-2">{description}</p>
         )}
 
         <div className="flex flex-col items-end gap-1">
@@ -126,7 +126,7 @@ const TopRatedCard = memo(function TopRatedCard({
             {place.price_info ? (
               <span
                 className="font-extrabold uppercase text-lg"
-                style={{ color: "#FF0007" }}
+                style={{ color: 'var(--color-green)' }}
               >
                 {place.price_info.description}
               </span>

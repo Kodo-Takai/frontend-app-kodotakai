@@ -5,14 +5,14 @@ import { es } from 'date-fns/locale';
 
 interface AgendaCardProps {
   item: AgendaItem;
-  onMarkAsVisited: (id: string) => void;
-  onMoveItem: (id: string) => void;
+  onPostpone: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
 const AgendaCard: React.FC<AgendaCardProps> = ({
   item,
-  onMarkAsVisited,
-  onMoveItem,
+  onPostpone,
+  onDelete,
 }) => {
   const formatTimeAndDate = (date: Date, time: string) => {
     const dayName = format(date, 'EEEE', { locale: es });
@@ -37,7 +37,7 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
         
         {/* Burbuja de fecha/hora */}
         <div 
-          className="absolute top-2 left-2 rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-md"
+          className="absolute top-2 left-2 rounded-xl px-3.5 py-1 flex items-center gap-2 shadow-md"
           style={{ backgroundColor: 'var(--color-bone)' }}
         >
           {/* Icono de reloj */}
@@ -52,8 +52,8 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
           
           {/* Texto de fecha/hora */}
           <span 
-            className="text-sm font-regular"
-            style={{ color: 'var(--color-text-primary)' }}
+            className="text-sm font-medium"
+            style={{ color: 'var(--color-blue)' }}
           >
             {formatTimeAndDate(new Date(item.scheduledDate), item.scheduledTime)}
           </span>
@@ -63,13 +63,13 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
       {/* Sección Central - Información del destino */}
       <div className="py-1">
         <h3 
-          className="font-medium text-lg uppercase truncate"
+          className="font-extrabold text-lg uppercase truncate"
           style={{ color: 'var(--color-text-primary)' }}
         >
           {item.destinationName}
         </h3>
         <p 
-          className="text-sm mb-2"
+          className="text-sm font-medium mb-2"
           style={{ color: 'var(--color-text-primary)' }}
         >
           {item.location}
@@ -80,45 +80,42 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
       <div className="flex gap-5 pt-0">
         {/* Botón Postergar */}
         <button
-          onClick={() => onMoveItem(item.id)}
+          onClick={() => onPostpone(item.id)}
           className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-normal transition-all duration-200 hover:scale-105"
           style={{ 
-            backgroundColor: 'var(--color-blue)',
+            backgroundColor: 'var(--color-blue-dark)',
             color: 'var(--color-bone)'
           }}
         >
           <span>Postergar</span>
-          {/* Icono de postergar */}
+          {/* Icono de calendario */}
           <svg
             className="w-4 h-4"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
-            <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+            <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
           </svg>
         </button>
 
-        {/* Botón Visitado */}
+        {/* Botón Eliminar */}
         <button
-          onClick={() => onMarkAsVisited(item.id)}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg font-medium transition-all duration-200 hover:scale-105 ${
-            item.status === 'completed' 
-              ? 'opacity-75' 
-              : 'hover:opacity-90'
-          }`}
+          onClick={() => onDelete(item.id)}
+          className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105 hover:opacity-90"
           style={{ 
             backgroundColor: 'var(--color-green)',
             color: 'var(--color-blue)'
           }}
         >
-          <span>Visitado</span>
-          {/* Icono de pulgar arriba */}
+          <span>Eliminar</span>
+          {/* Icono de eliminar */}
           <svg
             className="w-4 h-4"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
-            <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.818a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+            <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
           </svg>
         </button>
       </div>

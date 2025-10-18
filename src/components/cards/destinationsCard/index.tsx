@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { TbLocationFilled } from "react-icons/tb";
-import { FaStar } from "react-icons/fa";
+import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
-import { FiMoreVertical } from "react-icons/fi";
 import { usePlaces, type EnrichedPlace } from "../../../hooks/places";
 import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
@@ -42,64 +41,46 @@ export default function DestinationCards() {
 
   const DestinationCard = ({ place }: { place: EnrichedPlace }) => {
     const [imageError, setImageError] = useState(false);
-    const [menuOpen, setMenuOpen] = useState(false);
     const handleImageError = () => setImageError(true);
-
-    const handleVisitFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      handleNavigation(place); // Esta es la navegación directa
-    };
-
-    const handleAgendarFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setMenuOpen(false);
-      // Tu lógica de agendar aquí
-      console.log("Agendar:", place.name);
-    };
     
     const renderStars = (rating?: number) => {
-      // Tu lógica de estrellas aquí
-      return null;
+      if (!rating) return null;
+
+      const fullStars = Math.floor(rating);
+      const stars = Array.from({ length: 5 }, (_, i) => (
+        <FaStar
+          key={`star-${i}`}
+          className={`w-3 h-3 ${
+            i < fullStars
+              ? "text-[var(--color-primary-accent)]"
+              : "text-[var(--color-bone)]"
+          }`}
+        />
+      ));
+
+      return (
+        <div className="flex items-center gap-1 mb-2">
+          {stars}
+          <span className="text-white text-xs font-semibold ml-1">
+            {rating.toFixed(1)}
+          </span>
+        </div>
+      );
     };
 
     return (
       <div
-        className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width"
+        className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-1 border-[var(--color-primary-dark)]"
         onClick={() => handleOpenModal(place)} // Clic general abre el modal
       >
         <div className="relative h-72 w-full overflow-hidden">
           <img
             src={imageError ? "..." : place.photo_url || "..."}
             alt={place.name}
-            className="w-full h-full object-cover group-hover:scale-125"
+            className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
             onError={handleImageError}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />
-
-          <button
-            className="absolute top-2 right-2 z-20 p-1 bg-white/90 rounded-full shadow-md"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen(v => !v);
-            }}
-          >
-            <FiMoreVertical />
-          </button>
-
-          {menuOpen && (
-            <div 
-              className="absolute right-2 top-10 z-30 w-40 rounded-lg bg-white shadow-xl border" 
-              onClick={e => e.stopPropagation()}
-            >
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleVisitFromMenu}>
-                Visitar en Mapa
-              </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleAgendarFromMenu}>
-                Agendar
-              </button>
-            </div>
-          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/80 to-transparent group-hover:from-black/85 group-hover:via-black/65 transition-all duration-1500 ease-in-out" />
           
           <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
             {renderStars(place.rating)}
@@ -112,7 +93,7 @@ export default function DestinationCards() {
             {/* --- CAMBIO PRINCIPAL: Este botón ahora abre el modal --- */}
             
             <button
-              className="className= w-full bg-[var(--color-primary-accent)] border-4 border-[var(--color-primary-dark-accent)] hover:bg-[var(--color-primary-dark-accent)] text-[var(--color-primary-dark)] font-semibold py-1 px-4 rounded-2xl transition-all duration-200 backdrop-blur-sm flex items-center justify-center gap-2 text-lg"
+              className="w-full bg-[var(--color-primary-accent)] hover:bg-[var(--color-green-dark)] text-[var(--color-blue-dark)] font-semibold py-2 px-4 rounded-2xl transition-all duration-200 backdrop-blur-sm flex items-center justify-center gap-2 text-lg"
               onClick={(e) => {
                 e.stopPropagation(); // Evita que el clic se propague al div padre
                 handleOpenModal(place); // Abre el modal en lugar de navegar
@@ -127,7 +108,36 @@ export default function DestinationCards() {
   };
 
   const renderContent = () => {
-    // ... tu lógica de loading y 'no hay lugares' ...
+    if (loading) {
+      return (
+        <div className="destination-scroll">
+          {Array.from({ length: 3 }, (_, i) => (
+            <div key={`skeleton-${i}`} className="destination-card-width">
+              <div className="rounded-xl overflow-hidden animate-pulse">
+                <div className="h-72 bg-[var(--color-blue-light)]" />
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (!displayedPlaces.length) {
+      return (
+        <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center mx-6">
+          <div className="text-gray-400 mb-3">
+            <FaMapMarkerAlt className="w-12 h-12 mx-auto" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            No hay lugares disponibles
+          </h3>
+          <p className="text-gray-600 text-sm">
+            No encontramos lugares cercanos en este momento.
+          </p>
+        </div>
+      );
+    }
+
     return (
       <div className="destination-scroll">
         {displayedPlaces.map((place) => (
@@ -138,8 +148,8 @@ export default function DestinationCards() {
   };
 
   return (
-    <div className="w-full">
-      <h2 className="text-xl font-bold ...">
+    <div className="w-full ">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         Lugares que debes visitar
       </h2>
       {renderContent()}

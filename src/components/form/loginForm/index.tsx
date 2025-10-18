@@ -18,7 +18,7 @@ export default function LoginForm({
   isValid,
   isLoading,
   errorMessage,
-  onSubmit
+  onSubmit,
 }: LoginFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -51,7 +51,13 @@ export default function LoginForm({
       />
 
       {errorMessage && (
-        <div className="text-sm text-center p-2 rounded-lg" style={{ color: 'var(--color-green)', backgroundColor: 'var(--color-beige-light)' }}>
+        <div
+          className="text-sm text-center p-2 rounded-lg"
+          style={{
+            color: "var(--color-green)",
+            backgroundColor: "var(--color-beige-light)",
+          }}
+        >
           {errorMessage}
         </div>
       )}
@@ -63,22 +69,29 @@ export default function LoginForm({
         disabled={!isValid || isLoading}
         loading={isLoading}
       >
-        {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'} 
+        {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
         <RiLock2Line />
       </Button>
 
       <div className="mt-4 text-center">
         <a
           href="/forgot-password"
-          className="text-sm text-[var(--color-blue)] hover:underline font-medium"
+          className="text-sm text-[var(--color-blue)] hover:underline font-bold"
         >
           ¿Olvidaste tu contraseña?
         </a>
       </div>
 
-      <p className="mt-6 text-center text-sm font-medium" style={{ color: 'var(--color-blue-light)' }}>
+      <p
+        className="mt-6 text-center text-sm font-medium"
+        style={{ color: "var(--color-blue)" }}
+      >
         ¿No tienes una cuenta?{" "}
-        <a href="/register" className="hover:underline" style={{ color: 'var(--color-green)' }}>
+        <a
+          href="/register"
+          className="hover:underline"
+          style={{ color: "var(--color-green)" }}
+        >
           Regístrate ahora
         </a>
       </p>

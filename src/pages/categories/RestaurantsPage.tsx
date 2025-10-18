@@ -242,8 +242,8 @@ export default function RestaurantsPage() {
             itemsPerPage={6}
           />
 
-          <div className="mt-4">
-            <h2 className="text-2xl font-bold mb-4 text-center" style={{ color: 'var(--color-blue)' }}>
+          <div className="mt-10">
+            <h2 className="text-2xl font-extrabold mb-2 text-[var(--color-text-primary)] text-center" style={{ color: 'var(--color-blue)' }}>
               Explora más restaurantes
             </h2>
             <LocationMultiGrid

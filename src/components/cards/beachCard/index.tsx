@@ -2,15 +2,13 @@ import { useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
 import { TbLocationFilled } from "react-icons/tb";
-import { FiMoreVertical } from "react-icons/fi"; // Importar ícono de menú
-import { usePlaces, type Place, type EnrichedPlace } from "../../../hooks/places";
+import { usePlaces, type EnrichedPlace } from "../../../hooks/places";
 import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
 // --- IMPORTACIONES PARA NAVEGACIÓN Y AGENDA ---
 import { useNavigate } from "react-router-dom";
 import { useNavigationContext } from "../../../context/navigationContext";
-import { useAgenda } from "../../../hooks/useAgenda";
 
 // Extender EnrichedPlace para mayor consistencia
 interface Beach extends EnrichedPlace {}
@@ -25,7 +23,6 @@ export default function BeachCards() {
   // --- ESTADO Y HOOKS EN EL COMPONENTE PADRE ---
   const { setInitialDestination } = useNavigationContext();
   const navigate = useNavigate();
-  const { addItem } = useAgenda(); // Asumo que necesitas esto para la opción 'Agendar'
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Beach | null>(null);
@@ -50,7 +47,6 @@ export default function BeachCards() {
   const BeachCard = ({ beach }: { beach: Beach }) => {
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
     const [imageError, setImageError] = useState(false);
-    const [menuOpen, setMenuOpen] = useState(false); // Estado para el menú desplegable
 
     const getProcessedPhotos = () => {
       if (!beach.photos || beach.photos.length === 0) {
@@ -90,28 +86,6 @@ export default function BeachCards() {
 
     const handleImageError = () => setImageError(true);
 
-    // --- MANEJADORES PARA EL MENÚ ---
-    const handleVisitFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation(); // Evita que se cierre el menú o abra el modal subyacente
-      setMenuOpen(false); // Cierra el menú
-      handleNavigation(beach); // Inicia la navegación directa al mapa
-    };
-
-    const handleAgendarFromMenu = (e: React.MouseEvent) => {
-      e.stopPropagation(); // Evita que se cierre el menú o abra el modal subyacente
-      setMenuOpen(false); // Cierra el menú
-      // Aquí va tu lógica existente para agendar, que ya funciona bien.
-      const agendaItem = { 
-        id: beach.place_id, 
-        name: beach.name, 
-        vicinity: beach.vicinity, 
-        latitude: beach.geometry?.location.lat, 
-        longitude: beach.geometry?.location.lng 
-      };
-      addItem(agendaItem);
-      alert(`¡${beach.name} ha sido agregado a tu agenda!`);
-    };
-
     const renderStars = (rating?: number) => {
       if (!rating) return null;
 
@@ -120,7 +94,9 @@ export default function BeachCards() {
         <FaStar
           key={`beach-star-${i}`}
           className="w-3 h-3"
-          style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-beige-dark)" }}
+          style={{
+            color: i < fullStars ? "var(--color-green)" : "var(--color-bone)",
+          }}
         />
       ));
 
@@ -144,13 +120,13 @@ export default function BeachCards() {
           <div className="beach-card-header">
             <div className="beach-card-title-section">
               <div className="beach-card-experience-text">
-                <img
-                  src="/icons/red-compass.svg"
-                  alt="Compass"
-                  width="30"
-                  height="30"
-                  className="beach-card-compass-icon"
-                />
+              <img
+                    src="/icons/playas_icons/beach.svg"
+                    alt="Compass"
+                    width="30"
+                    height="30"
+                    className="beach-card-compass-icon"
+                  />
               </div>
 
               <div className="beach-card-name-section">
@@ -170,32 +146,6 @@ export default function BeachCards() {
           </div>
 
           <div className="beach-card-image-section">
-            {/* --- Botón del menú desplegable --- */}
-            <button
-              className="absolute top-2 right-2 z-20 p-1 bg-white/90 rounded-full shadow-md"
-              onClick={(e) => {
-                e.stopPropagation(); // Evita que al hacer clic en el botón se abra el modal
-                setMenuOpen(v => !v);
-              }}
-              aria-label="Más opciones"
-            >
-              <FiMoreVertical />
-            </button>
-
-            {/* --- Menú desplegable --- */}
-            {menuOpen && (
-              <div 
-                className="absolute right-2 top-10 z-30 w-40 rounded-lg bg-white shadow-xl border" 
-                onClick={e => e.stopPropagation()} // Evita que el clic dentro del menú propague al div principal
-              >
-                <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleVisitFromMenu}>
-                  Visitar en Mapa
-                </button>
-                <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleAgendarFromMenu}>
-                  Agendar
-                </button>
-              </div>
-            )}
             
             {/* Carrusel de imágenes */}
             <button
@@ -203,13 +153,13 @@ export default function BeachCards() {
               disabled={processedPhotos.length <= 1}
               className="beach-card-nav-button"
             >
-              <img
-                src="/icons/white-arrow-left.svg"
-                alt="Anterior"
-                width="18"
-                height="18"
-                className="beach-card-arrow-icon"
-              />
+                <img
+                  src="/icons/Arrow-Left-Black.svg"
+                  alt="Anterior"
+                  width="18"
+                  height="18"
+                  className="beach-card-arrow-icon"
+                />
             </button>
 
             <div className="beach-card-image-container">
@@ -291,13 +241,13 @@ export default function BeachCards() {
               disabled={processedPhotos.length <= 1}
               className="beach-card-nav-button"
             >
-              <img
-                src="/icons/white-arrow-right.svg"
-                alt="Siguiente"
-                width="18"
-                height="18"
-                className="beach-card-arrow-icon"
-              />
+                <img
+                  src="/icons/Arrow-Right-Black.svg"
+                  alt="Siguiente"
+                  width="18"
+                  height="18"
+                  className="beach-card-arrow-icon"
+                />
             </button>
           </div>
 
@@ -341,9 +291,9 @@ export default function BeachCards() {
       return (
         <div className="beach-scroll">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={`beach-skeleton-${i}`} className="beach-card-width">
+            <div key={`beach-skeleton-${i}`} className="beach-card-width-skeleton">
               <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
-                <div className="h-72 bg-gray-200" />
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}
@@ -377,8 +327,8 @@ export default function BeachCards() {
   };
 
   return (
-    <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
+    <div className="w-full mb-3">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         Visita estas Playas
       </h2>
       {renderContent()}

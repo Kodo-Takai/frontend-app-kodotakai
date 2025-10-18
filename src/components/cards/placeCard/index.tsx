@@ -74,7 +74,7 @@ export default function PlaceCards({
       <FaStar
         key={`star-${i}`}
         className="place-card-star"
-        style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-beige-dark)" }}
+        style={{ color: i < fullStars ? "var(--color-green)" : "var(--color-blue)" }}
       />
     ));
 

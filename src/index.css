@@ -4,7 +4,8 @@
    ESTILOS GLOBALES - FONDO PRINCIPAL
    ======================================== */
 
-html, body {
+html,
+body {
   background-color: var(--color-bone); /* #FFFFF0 */
   margin: 0;
   padding: 0;
@@ -18,24 +19,24 @@ html, body {
 
 /* Fuentes SF Pro Display */
 @font-face {
-  font-family: 'SF Pro Display';
-  src: url('./assets/fonts/SF-Pro-Display-Regular.woff2') format('woff2');
+  font-family: "SF Pro Display";
+  src: url("./assets/fonts/SF-Pro-Display-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'SF Pro Display';
-  src: url('./assets/fonts/SF-Pro-Display-Medium.woff2') format('woff2');
+  font-family: "SF Pro Display";
+  src: url("./assets/fonts/SF-Pro-Display-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'SF Pro Display';
-  src: url('./assets/fonts/SF-Pro-Display-Bold.woff2') format('woff2');
+  font-family: "SF Pro Display";
+  src: url("./assets/fonts/SF-Pro-Display-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -50,50 +51,82 @@ html, body {
      PALETA DE COLORES DEFINITIVA - KODOTAKAI
      Solo 4 colores: Blue, Green, Beige, Bone
      ======================================== */
-  
+
   /* 🎨 COLORES PRIMARIOS */
-  --color-blue:      #295B72;  /* Blue principal */
-  --color-green:     #D1DC5A;  /* Green principal */
-  --color-beige:     #FDE7C2;  /* Beige principal */
-  --color-bone:      #FFFFF0;  /* Bone principal */
+  --color-blue: #295b72; /* Blue principal */
+  --color-green: #d1dc5a; /* Green principal */
+  --color-beige: #fde7c2; /* Beige principal */
+  --color-bone: #fffff0; /* Bone principal */
 
   /* 🎨 VARIACIONES (derivadas de los 4 colores base) */
-  --color-blue-dark:    #1E3F4F;  /* Blue más oscuro */
-  --color-blue-light:   #4A7A8A;  /* Blue más claro */
-  --color-green-dark:   #B8C84A;  /* Green más oscuro */
-  --color-green-light:  #E8F06A;  /* Green más claro */
-  --color-beige-dark:   #F5D4A0;  /* Beige más oscuro */
-  --color-beige-light:  #FFF4E0;  /* Beige más claro */
+  --color-blue-dark: #1e3f4f; /* Blue más oscuro */
+  --color-blue-darker: #0e222c; /* Blue más oscuro */
+  --color-blue-light: rgba(94, 131, 144, 0.474); /* Blue más claro */
+  --color-green-dark: #9baa3b; /* Green más oscuro */
+  --color-green-darker: #747e31; /* Green más oscuro */
+  --color-green-light: #e8f06a; /* Green más claro */
+  --color-beige-dark: #dfbe8b; /* Beige más oscuro */
+  --color-beige-light: #fff4e0; /* Beige más claro */
 
   /* 🎨 COLORES SEMÁNTICOS (usando la paleta base) */
   --color-success: var(--color-green);
-  --color-error:   var(--color-blue);
+  --color-error: var(--color-blue);
   --color-warning: var(--color-beige);
-  --color-info:    var(--color-blue);
+  --color-info: var(--color-blue);
 
   /* 🎨 COLORES DE TEXTO */
-  --color-text-primary:   var(--color-blue);
+  --color-text-primary: var(--color-blue);
   --color-text-secondary: var(--color-blue-dark);
-  --color-text-muted:     var(--color-blue-light);
-  --color-text-white:     var(--color-bone);
+  --color-text-muted: var(--color-blue-light);
+  --color-text-white: var(--color-bone);
 
   /* 🎨 COLORES DE FONDO */
-  --color-bg-primary:   var(--color-bone);
+  --color-bg-primary: var(--color-bone);
   --color-bg-secondary: var(--color-beige);
-  --color-bg-muted:     var(--color-beige-light);
+  --color-bg-muted: var(--color-beige-light);
 
   /* 🎨 COLORES DE BOTONES */
-  --color-btn-primary:   var(--color-blue);
+  --color-btn-primary: var(--color-blue);
   --color-btn-secondary: var(--color-green);
-  --color-btn-accent:    var(--color-beige);
-  --color-btn-neutral:   var(--color-bone);
+  --color-btn-accent: var(--color-beige);
+  --color-btn-neutral: var(--color-bone);
 
   /* 🎨 COMPATIBILIDAD (mapeo de nombres antiguos) */
-  --color-primary-dark:     var(--color-blue);
-  --color-primary-accent:   var(--color-green);
-  --color-primary-light:    var(--color-beige);
-  --color-background-main:  var(--color-bone);
-  --color-white:            var(--color-bone);
+  --color-primary-dark: var(--color-blue);
+  --color-primary-accent: var(--color-green);
+  --color-primary-light: var(--color-beige);
+  --color-background-main: var(--color-bone);
+  --color-white: var(--color-bone);
+}
+
+/* ========================================
+   ESTILOS GLOBALES PARA INPUTS Y PLACEHOLDERS
+   ======================================== */
+
+/* Estilos para placeholders en inputs */
+input::placeholder {
+  color: var(--color-beige-dark);
+  opacity: 1; /* Asegura que el color se aplique correctamente */
+}
+
+/* Estilos específicos para el componente Search */
+input[type="text"]::placeholder {
+  color: var(--color-beige-dark);
+  opacity: 1;
+}
+
+/* Estilos más específicos para el componente Search */
+.search-input::placeholder {
+  color: var(--color-beige-dark);
+  opacity: 1;
+}
+
+/* Estilos para inputs de formularios */
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="tel"]::placeholder {
+  color: var(--color-beige-dark);
+  opacity: 1;
 }
 
 @keyframes bubble-in {

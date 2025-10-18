@@ -105,7 +105,7 @@ export default function TopRatedCarousel({
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-800 mb-4 ">{title}</h2>
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">{title}</h2>
 
       <div className="top-rated-carousel">
         {filteredPlaces.map((place, index) => (

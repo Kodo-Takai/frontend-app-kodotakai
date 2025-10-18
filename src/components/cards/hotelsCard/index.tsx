@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { FiMoreVertical } from "react-icons/fi";
 import { usePlaces, type Place, type EnrichedPlace } from "../../../hooks/places";
 import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
@@ -19,8 +18,6 @@ interface HotelsCardProps {
 const HotelCard = ({ 
   hotel, 
   onOpenModal,
-  onNavigate,
-  onAgenda
 }: { 
   hotel: EnrichedPlace,
   onOpenModal: (hotel: EnrichedPlace) => void,
@@ -28,20 +25,7 @@ const HotelCard = ({
   onAgenda: (hotel: EnrichedPlace) => void,
 }) => {
   const [imageError, setImageError] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const handleImageError = () => setImageError(true);
-
-  const handleVisitFromMenu = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setMenuOpen(false);
-    onNavigate(hotel);
-  };
-
-  const handleAgendarFromMenu = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setMenuOpen(false);
-    onAgenda(hotel);
-  };
 
   return (
     <div
@@ -61,75 +45,61 @@ const HotelCard = ({
         />
 
         <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-[var(--color-blue)] to-transparent" />
-        
-        {/* --- MENÚ DESPLEGABLE AÑADIDO --- */}
-        <button
-          className="absolute top-2 right-2 z-20 p-1.5 bg-white/80 rounded-full shadow"
-          onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
-        >
-          <FiMoreVertical size={16} />
-        </button>
-        {menuOpen && (
-          <div className="absolute right-2 top-10 z-30 w-40 rounded-lg bg-white shadow-xl border" onClick={e => e.stopPropagation()}>
-            <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleVisitFromMenu}>
-              Visitar en Mapa
-            </button>
-            <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleAgendarFromMenu}>
-              Agendar
-            </button>
-          </div>
-        )}
 
         <div className="absolute top-2 left-2 flex gap-1">
-          <div className="flex items-center gap-3 bg-[var(--color-primary-light)] rounded-xl px-3 py-1 text-lg font-medium text-[var(--color-primary-dark)]">
+          <div className="flex items-center gap-3 bg-[var(--color-primary-light)] rounded-2xl px-3 py-1 text-lg font-medium text-[var(--color-primary-dark)]">
             <FaStar className="text-[var(--color-primary-dark)]" />
             {hotel.rating ?? "-"}
           </div>
         </div>
 
         <div className="absolute bottom-3 right-2 text-[var(--color-primary-light)] rounded-md px-3 py-1 text-xs font-semibold flex flex-col items-end">
-          <span className="text-2xl font-extrabold text-[var(--color-primary-accent)] leading-none">
-            {(() => {
-              const businessStatus = hotel.business_status;
-              const isOpenNow = hotel.opening_hours?.open_now;
+            <span className="text-2xl font-extrabold text-[var(--color-primary-accent)] leading-none">
+              {(() => {
+                const businessStatus = (hotel as any).business_status;
+                const isOpenNow = (hotel as any).is_open_now;
 
-              if (businessStatus === "CLOSED_PERMANENTLY") {
-                return "Cerrado permanentemente";
-              }
-              if (businessStatus === "CLOSED_TEMPORARILY") {
-                return "Cerrado temporalmente";
-              }
-              if (businessStatus === "OPERATIONAL") {
-                if (isOpenNow === true) {
-                  return "Abierto ahora";
-                } else if (isOpenNow === false) {
-                  return "Cerrado ahora";
-                } else {
-                  return "Consulta aquí"; // Si no hay info de open_now
+                if (businessStatus === "CLOSED_PERMANENTLY") {
+                  return "Cerrado permanentemente";
                 }
-              }
-              // Fallback si no hay business_status
-              if (isOpenNow === true) {
-                return "Abierto ahora";
-              } else if (isOpenNow === false) {
-                return "Cerrado ahora";
-              }
 
-              return "Consulta aquí";
-            })()}
-          </span>
-        </div>
+                if (businessStatus === "CLOSED_TEMPORARILY") {
+                  return "Cerrado temporalmente";
+                }
+
+                if (businessStatus === "OPERATIONAL") {
+                  if (isOpenNow === true) {
+                    return "ABIERTO AHORA";
+                  } else if (isOpenNow === false) {
+                    return "CERRADO AHORA";
+                  } else {
+                    return "ABIERTO AHORA";
+                  }
+                }
+
+                if (isOpenNow === true) {
+                  return "ABIERTO AHORA";
+                } else if (isOpenNow === false) {
+                  return "CERRADO AHORA";
+                }
+
+                return "CONSULTA AQUÍ";
+              })()}
+            </span>
+          </div>
       </div>
 
       <div className="px-3 py-4">
-        <h3 className="text-xl font-extrabold text-[var(--color-primary-beige)] line-clamp-1 uppercase">
-          {hotel.name}
-        </h3>
-        <p className="text-sm text-[var(--color-primary-beige)] mt-1 pb- hotel-location-text">
-          {hotel.formatted_address || hotel.vicinity || "Ubicación no disponible"}
-        </p>
+          <h3 className="text-xl font-extrabold text-[var(--color-blue-dark)] line-clamp-1 uppercase">
+            {hotel.name}
+          </h3>
+          <p className="text-sm text-[var(--color-blue-dark)] mt-1 font-medium hotel-location-text">
+            {(hotel as any).formatted_address ||
+              hotel.vicinity ||
+              "Ubicación no disponible"}
+          </p>
+        </div>
       </div>
-    </div>
   );
 };
 
@@ -196,13 +166,9 @@ export default function HotelCards({
         </h2>
         <div className="hotel-scroll shadow-sm">
           {Array.from({ length: 5 }, (_, i) => (
-            <div key={`hotel-skeleton-${i}`} className="hotel-card-width">
+            <div key={`hotel-skeleton-${i}`} className="hotel-card-width-skeleton">
               <div className="rounded-xl overflow-hidden animate-pulse">
-                <div className="h-60 bg-[var(--color-primary-beige)]" />
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-[var(--color-primary-beige)] rounded w-3/4" />
-                  <div className="h-3 bg-[var(--color-primary-beige)] rounded w-full" />
-                </div>
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}
@@ -247,7 +213,7 @@ export default function HotelCards({
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-[var(--color-primary-dark)] mb-4">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         A descansar un momento
       </h2>
       <div className="hotel-scroll">

@@ -47,16 +47,7 @@ export default function HeaderNavigationExplore({
       </div>
 
       <div className="flex items-center justify-end flex-1">
-        <button
-          onClick={handleNotificationsClick}
-          className="w-10 h-10 bg-black/55 hover:bg-black/70 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-black/30"
-        >
-          <img
-            src="/icons/Light-Bell-White.svg"
-            alt="Notificaciones"
-            className="w-5 h-5 filter brightness-0 invert"
-          />
-        </button>
+
       </div>
     </div>
   );

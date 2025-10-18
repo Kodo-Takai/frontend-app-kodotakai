@@ -12,15 +12,7 @@ export default function Explorar() {
   const [selectedOption, setSelectedOption] = useState("Todo");
   const navigate = useNavigate();
 
-  // Función para manejar la búsqueda
-  const handleSearch = (_query: string) => {
-    // Búsqueda implementada
-  };
 
-  // Función para navegar a notificaciones
-  const handleNotificationsClick = () => {
-    navigate("/notifications");
-  };
 
   // Función para navegar a categorías
   const handleCategoryClick = (category: string) => {
@@ -35,13 +27,14 @@ export default function Explorar() {
   >
     <PageWrapper>
       {/* Header */}
-      <div className="flex justify-between items-center mt-5">
-        <div className="flex flex-col gap-2.5">
+      <div className="flex justify-between items-center mt-7">
+        <div className="flex flex-col gap-1">
           <h1
             style={{
               color: "var(--color-primary-dark)",
               fontSize: "40px",
               fontStyle: "normal",
+              height: "40px",
               fontWeight: "800",
               lineHeight: "26px",
             }}
@@ -53,7 +46,7 @@ export default function Explorar() {
               color: "var(--color-primary-dark)",
               fontSize: "15px",
               fontStyle: "normal",
-              fontWeight: "500",
+              fontWeight: "700",
               lineHeight: "22px",
             }}
           >
@@ -62,19 +55,17 @@ export default function Explorar() {
         </div>
 
         <button
-          onClick={handleNotificationsClick}
-          className="w-10 h-10 border-[2px] rounded-xl flex items-center justify-center hover:scale-105 hover:shadow-lg transition-all duration-300 ease-out cursor-pointer"
-          style={{ 
-            backgroundColor: 'var(--color-blue)', 
-            borderColor: 'var(--color-blue-dark)'
-          }}
-        >
-          <img
-            src="./icons/notification-bell.svg"
-            alt="Notificaciones"
-            className="w-6 h-6"
-          />
-        </button>
+              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer animate-bubble-in"
+              style={{
+                backgroundColor: "var(--color-green)",
+              }}
+            >
+              <img
+                src="./icons/ai-function-icon-2.svg"
+                alt="Notificaciones"
+                className="w-8 h-8 opacity-85"
+              />
+            </button>
       </div>
 
       <SegmentedControl
@@ -88,8 +79,7 @@ export default function Explorar() {
         {/* Restaurants */}
         <div
           onClick={() => handleCategoryClick("restaurants")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[8%] left-[1.3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
-          style={{ borderColor: 'var(--color-blue-dark)' }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[8%] left-[1.3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
         >
           <img
             src="./restaurants-image.svg"
@@ -106,8 +96,8 @@ export default function Explorar() {
         {/* Playas */}
         <div
           onClick={() => handleCategoryClick("playas")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-20 h-20 top-[3%] right-[39%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
-          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.1s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-20 h-20 top-[3%] right-[39%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          style={{ animationDelay: "0.1s" }}
         >
           <img
             src="./playas-image.svg"
@@ -124,8 +114,8 @@ export default function Explorar() {
         {/* Hoteles */}
         <div
           onClick={() => handleCategoryClick("hoteles")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[3%] right-[2%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
-          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.2s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-28 h-28 top-[3%] right-[2%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          style={{ animationDelay: "0.2s" }}
         >
           <img
             src="./hotels-image.svg"
@@ -142,8 +132,8 @@ export default function Explorar() {
         {/* Discos */}
         <div
           onClick={() => handleCategoryClick("discos")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-22 h-22 top-[60%] left-[1%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
-          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.3s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-22 h-22 top-[60%] left-[1%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          style={{ animationDelay: "0.3s" }}
         >
           <img
             src="./discos-image.svg"
@@ -160,8 +150,8 @@ export default function Explorar() {
         {/* Estudiar*/}
         <div
           onClick={() => handleCategoryClick("estudiar")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-34 h-34 top-[40%] left-[31%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
-          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.4s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-34 h-34 top-[40%] left-[31%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          style={{ animationDelay: "0.4s" }}
         >
           <img
             src="./estudiar-image.svg"
@@ -178,8 +168,8 @@ export default function Explorar() {
         {/* Más */}
         <div
           onClick={() => handleCategoryClick("parques")}
-          className="absolute rounded-full overflow-hidden cursor-pointer group w-19 h-19 top-[55%] right-[3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out border-3"
-          style={{ borderColor: 'var(--color-blue-dark)', animationDelay: "0.5s" }}
+          className="absolute rounded-full overflow-hidden cursor-pointer group w-19 h-19 top-[55%] right-[3%] animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
+          style={{ animationDelay: "0.5s" }}
         >
           <img
             src="./parques-image.svg"
@@ -194,11 +184,6 @@ export default function Explorar() {
         </div>
       </div>
 
-      <Search
-        onSearch={handleSearch}
-        placeholder="Buscar lugares, hoteles, restaurantes..."
-        className="mb-4"
-      />
       <DestinationCards />
       <RestaurantMenuCard />
       <HotelsCard />
