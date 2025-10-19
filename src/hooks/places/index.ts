@@ -5,6 +5,7 @@ export * from "./search/usePlacesSearch";
 export * from "./filter/usePlacesFilter";
 export * from "./photos/usePlacesPhotos";
 export * from "./photos/useMapImageByCoords";
+export * from "./photos/usePlacePhotoByQuery";
 
 export {
   CategoryConfigFactory,

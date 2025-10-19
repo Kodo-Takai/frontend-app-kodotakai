@@ -1,12 +1,31 @@
 import { useState } from 'react';
 import { useConfetti } from '../context/confettiContext';
+import { useLazyGetRecommendationsQuery, useLazyGetDestinationByIdQuery } from '../redux/api/recommendationsApi';
+import { useLazyGetDestinationsQuery } from '../redux/api/destinationsApi';
 
 export const useItineraryGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentMessage, setCurrentMessage] = useState('');
   const [itineraryGenerated, setItineraryGenerated] = useState(false);
-  const [destinations, setDestinations] = useState<any[]>([]);
+  type UIDestination = {
+    id: number;
+    name: string;
+    type: string;
+    duration: string;
+    description: string;
+    image: string; // resolved later
+    latitude: number;
+    longitude: number;
+  };
+
+  const [destinations, setDestinations] = useState<UIDestination[]>([]);
   const { triggerConfetti } = useConfetti();
+  // Podemos guardar recomendaciones si se requieren más adelante (omitir por ahora)
+
+  // RTK Query lazy hooks
+  const [fetchRecommendations, { error: recsError }] = useLazyGetRecommendationsQuery();
+  const [fetchDestinationById] = useLazyGetDestinationByIdQuery();
+  const [fetchAllDestinations] = useLazyGetDestinationsQuery();
 
   const generateItinerary = async () => {
     setIsGenerating(true);
@@ -32,43 +51,82 @@ export const useItineraryGeneration = () => {
       }
     }, 1000);
 
-    // Simular tiempo de generación (3-5 segundos)
-    setTimeout(() => {
+    try {
+      // Paso 1: Traer recomendaciones de IA
+      const recs = await fetchRecommendations().unwrap();
+
+      // Mensajes progresivos mientras hacemos fetch de detalles
+      setCurrentMessage('Analizando recomendaciones de IA...');
+
+      // Seleccionar hasta 3 recomendaciones únicas
+      const uniqueRecIds = Array.from(new Set(recs.map(r => r.destinationId))).slice(0, 3);
+
+      // Paso 2: Traer detalles de recomendados
+      const recommendedDetails = await Promise.all(
+        uniqueRecIds.map(async (destId, i) => {
+          try {
+            const dest = await fetchDestinationById(destId).unwrap();
+            return {
+              id: i + 1,
+              name: dest.name,
+              type: dest.category,
+              duration: 'Sugerido',
+              description: dest.description,
+              image: '',
+              latitude: Number(dest.latitude),
+              longitude: Number(dest.longitude),
+              location: dest.location,
+            };
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      let valid = recommendedDetails.filter(Boolean) as (UIDestination & { location?: string })[];
+
+      // Completar hasta 3 si faltan con destinos generales
+      if (valid.length < 3) {
+        setCurrentMessage('Buscando más destinos para completar tu itinerario...');
+        const all = await fetchAllDestinations().unwrap();
+        const usedIds = new Set(uniqueRecIds);
+        const fillers = all
+          .filter(d => !usedIds.has(d.id))
+          .slice(0, 3 - valid.length)
+          .map((dest, i) => ({
+            id: valid.length + i + 1,
+            name: dest.name,
+            type: dest.category,
+            duration: 'Sugerido',
+            description: dest.description,
+            image: '',
+            latitude: NaN, // no tenemos coordenadas seguras en este endpoint simple
+            longitude: NaN,
+            location: dest.location,
+          }));
+        valid = [...valid, ...fillers];
+      }
+
+      // Paso 3: Asignar imágenes de mapa en segundo plano usando el primer elemento para iniciar
+      setDestinations(
+        valid.map((v) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { location, ...rest } = v;
+          return rest;
+        })
+      );
+
       clearInterval(messageInterval);
       setIsGenerating(false);
       setItineraryGenerated(true);
-      
-      // Activar confetti inmediatamente con explosión
       triggerConfetti();
-      
-      // Datos de ejemplo para las cards (esto será reemplazado por datos reales de la API)
-      setDestinations([
-        {
-          id: 1,
-          name: "Playa del Carmen",
-          type: "Playa",
-          duration: "2 días",
-          description: "Hermosa playa con aguas cristalinas",
-          image: "/playa-image.svg"
-        },
-        {
-          id: 2,
-          name: "Tulum",
-          type: "Arqueológico",
-          duration: "1 día",
-          description: "Ruinas mayas junto al mar",
-          image: "/tulum-image.svg"
-        },
-        {
-          id: 3,
-          name: "Cenote Dos Ojos",
-          type: "Aventura",
-          duration: "Medio día",
-          description: "Cenote para bucear y explorar",
-          image: "/cenote-image.svg"
-        }
-      ]);
-    }, 5000);
+    } catch (error) {
+      clearInterval(messageInterval);
+      setIsGenerating(false);
+      setItineraryGenerated(false);
+      setCurrentMessage('Ocurrió un error al generar el itinerario');
+      console.error('Error fetching recommendations/destinations', error, recsError);
+    }
   };
 
   const resetToLobby = () => {
