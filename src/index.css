@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
 
 /* ========================================
@@ -10,11 +11,21 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
 }
 
 #root {
   background-color: var(--color-bone); /* #FFFFF0 */
   min-height: 100vh;
+  font-family: inherit;
+}
+
+/* Asegura que controles de formulario hereden la fuente por defecto */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 
 /* Fuentes SF Pro Display */
