@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
 
 interface AIContextType {
   isAIActive: boolean;
@@ -12,7 +14,7 @@ const AIContext = createContext<AIContextType | undefined>(undefined);
 export const useAI = () => {
   const context = useContext(AIContext);
   if (!context) {
-    throw new Error('useAI must be used within an AIProvider');
+    throw new Error("useAI must be used within an AIProvider");
   }
   return context;
 };
@@ -21,9 +23,12 @@ interface AIProviderProps {
   children: ReactNode;
 }
 
-export const AIProvider: React.FC<AIProviderProps> = ({ children }) => {
+export function AIProvider({ children }: AIProviderProps) {
   const [isAIActive, setIsAIActive] = useState(false);
-  const [buttonPosition, setButtonPosition] = useState<{ x: number; y: number } | null>(null);
+  const [buttonPosition, setButtonPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   const showAIOverlay = (position: { x: number; y: number }) => {
     setButtonPosition(position);
@@ -39,13 +44,15 @@ export const AIProvider: React.FC<AIProviderProps> = ({ children }) => {
   };
 
   return (
-    <AIContext.Provider value={{
-      isAIActive,
-      showAIOverlay,
-      hideAIOverlay,
-      buttonPosition
-    }}>
+    <AIContext.Provider
+      value={{
+        isAIActive,
+        showAIOverlay,
+        hideAIOverlay,
+        buttonPosition,
+      }}
+    >
       {children}
     </AIContext.Provider>
   );
-};
+}

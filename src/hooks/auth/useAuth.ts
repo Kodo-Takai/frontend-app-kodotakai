@@ -7,6 +7,51 @@ import {
   logout as logoutAction,
 } from "../../redux/slice/authSlice";
 import { required, useField } from "../useField";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import type { SerializedError } from "@reduxjs/toolkit";
+
+// Tipos basados en la respuesta de authApi.login
+interface LoginApiResponse {
+  status_code: number;
+  message: string;
+  data: {
+    message: string;
+    access_token: string;
+    refresh_token: string;
+  };
+}
+
+// Payload mínimo del JWT si queremos extraer datos adicionales con seguridad
+type JwtPayload = {
+  sub?: string;
+  userId?: string;
+  email?: string;
+  username?: string;
+};
+
+const parseJwt = (token: string): JwtPayload | null => {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    const payload = atob(parts[1]);
+    const data = JSON.parse(payload) as unknown;
+    if (data && typeof data === "object") {
+      return data as JwtPayload;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const isFetchError = (err: unknown): err is FetchBaseQueryError => {
+  return typeof err === "object" && err !== null && "status" in err;
+};
+
+const hasMessage = (err: unknown): err is { message: string } => {
+  if (typeof err !== "object" || err === null) return false;
+  return typeof (err as { message?: unknown }).message === "string";
+};
 
 interface LoginCredentials {
   username: string;
@@ -53,13 +98,10 @@ export const useAuth = () => {
         password: loginData.password,
       };
 
-      const result = await loginMutation(loginRequest).unwrap();
+      const result: LoginApiResponse = await loginMutation(loginRequest).unwrap();
 
-      // Normalizar la carga útil: algunos endpoints devuelven { data: { ... } } otros devuelven la carga raíz.
-      const payload: any = (result as any)?.data ?? (result as any);
-
-      // Extraer token
-      const userToken = payload?.access_token || payload?.accessToken || payload?.token;
+      // Extraer token desde la estructura tipada
+      const userToken = result?.data?.access_token;
 
       if (!userToken) {
         return {
@@ -68,48 +110,11 @@ export const useAuth = () => {
         };
       }
 
-      // IMPORTANTE: Extraer userId de la respuesta del backend
-      // El backend probablemente devuelve:
-      // 1. payload.user.id (si devuelve el usuario)
-      // 2. payload.userId (si es un campo separado)
-      // 3. payload.profile.userId (si devuelve el perfil)
-      // 4. payload.data.user.id (si está anidado en data)
-      
-      let userId: string | undefined;
-      let userEmail: string | undefined;
-      let userName: string | undefined;
-
-      console.log('DEBUG: Full login response:', result);
-      console.log('DEBUG: Payload structure:', payload);
-
-      // Intentar extraer en el orden correcto
-      if (payload?.user?.id) {
-        userId = payload.user.id;
-        userEmail = payload.user.email;
-        userName = payload.user.username;
-      } else if (payload?.userId) {
-        userId = payload.userId;
-        userEmail = payload.email;
-        userName = payload.username;
-      } else if (payload?.profile?.userId) {
-        userId = payload.profile.userId;
-        userEmail = payload.profile.email;
-        userName = payload.profile.name;
-      } else if (payload?.data?.user?.id) {
-        userId = payload.data.user.id;
-        userEmail = payload.data.user.email;
-        userName = payload.data.user.username;
-      } else if (payload?.data?.userId) {
-        userId = payload.data.userId;
-        userEmail = payload.data.email;
-        userName = payload.data.username;
-      }
-
-      // Fallback: si no encontramos userId, usar username
-      if (!userId) {
-        console.warn('No se encontró userId en la respuesta, usando username como fallback');
-        userId = loginData.username;
-      }
+      // Intentar extraer userId/email del JWT si existe
+      const decoded = userToken ? parseJwt(userToken) : null;
+      const userId = decoded?.userId || decoded?.sub || loginData.username;
+      const userEmail = decoded?.email || loginData.username;
+      const userName = decoded?.username || loginData.username;
 
       // Lanzar error si no se encuentra userId
       if (!userId) {
@@ -138,109 +143,29 @@ export const useAuth = () => {
         })
       );
 
-      // Estrategia alternativa: intentar obtener userId del endpoint de perfiles
-      try {
-        // Primero intentar con /api/profiles/me
-        let profileResponse = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/profiles/me`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${userToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
+      // Navegación estándar sin llamadas adicionales a perfiles (evita 404 de /profiles/me)
+      const isFirstTime = checkIfFirstTime(userId);
+      console.log('DEBUG: isFirstTime =', isFirstTime, 'for userId:', userId);
 
-        let profileData = null;
-        let realUserId = null;
-
-        if (profileResponse.ok) {
-          profileData = await profileResponse.json();
-          console.log('DEBUG: Profile response from /me:', profileData);
-          realUserId = profileData.userId;
-        } else {
-          console.log('DEBUG: /api/profiles/me failed, trying /api/profiles');
-          
-          // Si /me falla, intentar con /api/profiles y filtrar por email
-          profileResponse = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/profiles`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${userToken}`,
-              'Content-Type': 'application/json',
-            },
-          });
-
-          if (profileResponse.ok) {
-            const profiles = await profileResponse.json();
-            console.log('DEBUG: All profiles:', profiles);
-            
-            // Buscar el perfil que coincida con el email del usuario
-            const userProfile = profiles.find((profile: any) => 
-              profile.email === loginData.username || profile.email === userEmail
-            );
-            
-            if (userProfile) {
-              profileData = userProfile;
-              realUserId = userProfile.userId;
-              console.log('DEBUG: Found user profile:', userProfile);
-            }
-          }
-        }
-
-        if (realUserId) {
-          console.log('DEBUG: Real userId from profile:', realUserId);
-          
-          // Actualizar el usuario en Redux con el userId real
-          const updatedUserData = {
-            ...userData,
-            id: realUserId,
-          };
-          
-          dispatch(
-            setCredentials({
-              user: updatedUserData,
-              token: userToken,
-            })
-          );
-          
-          // Verificar si es primera vez con el userId real
-          const isFirstTime = checkIfFirstTime(realUserId);
-          console.log('DEBUG: isFirstTime =', isFirstTime, 'for userId:', realUserId);
-
-          if (isFirstTime) {
-            setShowWelcomeScreens(true);
-          } else {
-            navigate("/home");
-          }
-        } else {
-          // Fallback si no se puede obtener el perfil
-          console.warn('No se pudo obtener el perfil, usando userId temporal');
-          const isFirstTime = checkIfFirstTime(userId);
-          console.log('DEBUG: isFirstTime =', isFirstTime, 'for userId:', userId);
-
-          if (isFirstTime) {
-            setShowWelcomeScreens(true);
-          } else {
-            navigate("/home");
-          }
-        }
-      } catch (profileError) {
-        console.error('Error obteniendo perfil:', profileError);
-        // Fallback si hay error al obtener el perfil
-        const isFirstTime = checkIfFirstTime(userId);
-        console.log('DEBUG: isFirstTime =', isFirstTime, 'for userId:', userId);
-
-        if (isFirstTime) {
-          setShowWelcomeScreens(true);
-        } else {
-          navigate("/home");
-        }
+      if (isFirstTime) {
+        setShowWelcomeScreens(true);
+      } else {
+        navigate("/home");
       }
 
       return { success: true, data: result };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
+      let message = "Error al iniciar sesión";
+      if (isFetchError(error)) {
+        const maybeData = (error as FetchBaseQueryError).data as { message?: string } | undefined;
+        if (maybeData?.message) message = maybeData.message;
+      } else if (hasMessage(error)) {
+        message = error.message;
+      }
       return {
         success: false,
-        error: error.data?.message || "Error al iniciar sesión",
+        error: message,
       };
     }
   };
@@ -287,12 +212,14 @@ export const useAuth = () => {
   };
 
   const getErrorMessage = () => {
-    if (loginError) {
-      return "data" in loginError
-        ? (loginError.data as any)?.message || "Error en login"
-        : "Error de conexión";
+    const err = loginError as FetchBaseQueryError | SerializedError | undefined;
+    if (!err) return null;
+    if (isFetchError(err)) {
+      const data = err.data as { message?: string } | undefined;
+      return data?.message || "Error en login";
     }
-    return null;
+    if (hasMessage(err)) return err.message;
+    return "Error de conexión";
   };
 
   return {
