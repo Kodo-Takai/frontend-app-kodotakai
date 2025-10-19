@@ -19,7 +19,7 @@ export const apiSlice = createApi({
       return headers
     },
   }),
-  tagTypes: ['User', 'Auth'], // Tags para cache invalidation
+  tagTypes: ['User', 'Auth', 'Agenda', 'Destinations'], // Tags para cache invalidation
   endpoints: () => ({}), // Los endpoints los agregaremos después
 })
 

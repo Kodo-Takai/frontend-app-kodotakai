@@ -19,6 +19,7 @@ export default function Agenda() {
   >("agendados");
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const [isPostponeModalOpen, setIsPostponeModalOpen] = useState(false);
   const [selectedItemToMove, setSelectedItemToMove] =
     useState<AgendaItem | null>(null);
   const { showAIOverlay, isAIActive } = useAI();
@@ -40,8 +41,16 @@ export default function Agenda() {
     selectDay,
   } = useDateNavigation();
 
-  const { selectDate, itemsForSelectedDate, updateItem, moveItem } =
+  const { selectDate, itemsForSelectedDate, moveItem, removeItem } =
     useAgenda();
+
+  useEffect(() => {
+    selectDate(selectedDate);
+  }, [selectedDate, selectDate]);
+
+  useEffect(() => {
+    selectDate(selectedDate);
+  }, []);
 
   // Filtrar items por sección (Ahora vs Más Tarde)
   const ahoraItems = itemsForSelectedDate.filter((item) => {
@@ -55,15 +64,27 @@ export default function Agenda() {
   });
 
   // Funciones para manejar acciones
-  const handleMarkAsVisited = (id: string) => {
-    updateItem(id, { status: "completed" });
-  };
-
-  const handleMoveItem = (id: string) => {
+  const handlePostpone = (id: string) => {
     const item = itemsForSelectedDate.find((item) => item.id === id);
     if (item) {
       setSelectedItemToMove(item);
-      setIsMoveModalOpen(true);
+      setIsPostponeModalOpen(true);
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    if (
+      window.confirm("¿Estás seguro de que quieres eliminar esta actividad?")
+    ) {
+      removeItem(id);
+    }
+  };
+
+  const handlePostponeConfirm = (newDate: Date, newTime?: string) => {
+    if (selectedItemToMove && newTime) {
+      moveItem(selectedItemToMove.id, newDate, newTime);
+      setIsPostponeModalOpen(false);
+      setSelectedItemToMove(null);
     }
   };
 
@@ -102,6 +123,7 @@ export default function Agenda() {
     setIsMoveModalOpen(false);
     setSelectedItemToMove(null);
   };
+
   return (
     <div
       className="min-h-screen relative pb-20"
@@ -243,8 +265,8 @@ export default function Agenda() {
                   <AgendaCard
                     key={item.id}
                     item={item}
-                    onMarkAsVisited={handleMarkAsVisited}
-                    onMoveItem={handleMoveItem}
+                    onPostpone={handlePostpone}
+                    onDelete={handleDelete}
                   />
                 ))}
               </div>
@@ -265,8 +287,8 @@ export default function Agenda() {
                   <AgendaCard
                     key={item.id}
                     item={item}
-                    onMarkAsVisited={handleMarkAsVisited}
-                    onMoveItem={handleMoveItem}
+                    onPostpone={handlePostpone}
+                    onDelete={handleDelete}
                   />
                 ))}
               </div>
@@ -311,6 +333,27 @@ export default function Agenda() {
             }}
             item={selectedItemToMove}
             onMoveDestination={handleMoveDestination}
+          />
+        )}
+
+        {selectedItemToMove && (
+          <CalendarModal
+            isOpen={isPostponeModalOpen}
+            onClose={() => {
+              setIsPostponeModalOpen(false);
+              setSelectedItemToMove(null);
+            }}
+            selectedDate={new Date(selectedItemToMove.scheduledDate)}
+            onDateSelect={(date) => {
+              // Actualizar la fecha seleccionada
+              setSelectedItemToMove({
+                ...selectedItemToMove,
+                scheduledDate: date.toISOString(),
+              });
+            }}
+            mode="postpone"
+            onConfirm={handlePostponeConfirm}
+            currentTime={selectedItemToMove.scheduledTime}
           />
         )}
       </PageWrapper>

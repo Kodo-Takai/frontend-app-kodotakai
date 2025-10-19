@@ -13,8 +13,8 @@ export interface AgendaItem {
   image: string;
   description?: string;
   notes?: string;
-  // Datos completos del lugar
-  placeData: EnrichedPlace;
+  // Datos del lugar (serializable)
+  placeData: Partial<EnrichedPlace> | Record<string, any>;
 }
 
 export interface AgendaState {
@@ -61,11 +61,11 @@ const agendaSlice = createSlice({
       state.items = state.items.filter(item => item.id !== action.payload);
     },
     
-    moveAgendaItem: (state, action: PayloadAction<{ id: string; newDate: Date; newTime?: string }>) => {
+    moveAgendaItem: (state, action: PayloadAction<{ id: string; newDate: string; newTime?: string }>) => {
       const { id, newDate, newTime } = action.payload;
       const item = state.items.find(item => item.id === id);
       if (item) {
-        item.scheduledDate = newDate.toISOString();
+        item.scheduledDate = newDate; // Ya viene como string ISO
         if (newTime) {
           item.scheduledTime = newTime;
         }

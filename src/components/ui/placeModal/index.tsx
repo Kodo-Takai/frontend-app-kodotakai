@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import type { EnrichedPlace } from "../../../hooks/places";
 import { FaStar, FaPhoneAlt, FaMapMarkerAlt, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useAgenda } from "../../../hooks/useAgenda";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../redux/store";
+import { useCreateDestinationMutation } from "../../../redux/api/destinationApi";
+import { useCreateAgendaItemMutation } from "../../../redux/api/agendaApi";
+import { useToast } from "../../../hooks/useToast";
 
 export type PlaceModalProps = {
   isOpen: boolean;
@@ -14,7 +18,18 @@ export type PlaceModalProps = {
 
 export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVisit }: PlaceModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { addItem } = useAgenda();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const [createDestination] = useCreateDestinationMutation();
+  const [createAgendaItem] = useCreateAgendaItemMutation();
+  const { success: showSuccess, error: showError } = useToast();
+  
+  // Obtener userId del estado de autenticación
+  const userId = useSelector((state: RootState) => {
+    const auth = (state as any).auth;
+    return auth?.user?.id || null;
+  });
 
   useEffect(() => {
     if (!isOpen) return;
@@ -65,23 +80,64 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
   
-  const handleAgendar = () => {
+  // Función mejorada para agendar con integración de API
+  const handleAgendar = async () => {
     if (!place) return;
-    const agendaItem = {
-      destinationId: place.place_id || place.id || `place_${Date.now()}`,
-      destinationName: place.name,
-      location: (place as EnrichedPlace).formatted_address || place.vicinity || 'Ubicación no disponible',
-      scheduledDate: new Date().toISOString(),
-      scheduledTime: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      status: 'pending' as const,
-      category: 'restaurant' as const,
-      image: place.photo_url || images[0] || 'https://picsum.photos/400/300?random=agenda',
-      description: (place as EnrichedPlace).editorial_summary?.overview || `Visita a ${place.name}`,
-      placeData: place as EnrichedPlace,
-    };
-    addItem(agendaItem);
-    onClose();
-    alert(`¡${place.name} ha sido agregado a tu agenda!`);
+    
+    if (!userId) {
+      setError('No se pudo obtener el ID del usuario. Por favor, inicie sesión nuevamente.');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // PASO 1: Crear destino en la API
+      const latitude = (place as any).geometry?.location?.lat ?? (place as any).lat ?? (place as any).latitude ?? 0;
+      const longitude = (place as any).geometry?.location?.lng ?? (place as any).lng ?? (place as any).longitude ?? 0;
+
+      const destinationData = {
+        name: place.name,
+        description: (place as EnrichedPlace).editorial_summary?.overview || `Visita a ${place.name}`,
+        location: (place as EnrichedPlace).formatted_address || place.vicinity || 'Ubicación no disponible',
+        latitude,
+        longitude,
+        precio: 0, // Valor por defecto, ajusta según necesites
+        category: 'restaurant', // Ajusta según el tipo de lugar
+        status: true,
+      };
+
+      console.log('DEBUG: Creating destination:', destinationData);
+      const destinationResponse = await createDestination(destinationData).unwrap();
+      const destinationId = destinationResponse.id;
+      console.log('DEBUG: Destination created with ID:', destinationId);
+
+      // PASO 2: Crear agenda en la API
+      const agendaData = {
+        userId: userId,
+        destinationId: destinationId,
+        scheduledAt: new Date().toISOString(),
+        status: 'PENDING' as const,
+      };
+
+      console.log('DEBUG: Creating agenda item:', agendaData);
+      const agendaResponse = await createAgendaItem(agendaData).unwrap();
+      console.log('DEBUG: Agenda item created:', agendaResponse);
+
+      // PASO 3: No agregar a Redux localmente aquí
+      // El useEffect en useAgenda se encargará de sincronizar automáticamente
+      // cuando la API se actualice, evitando duplicaciones
+      
+      onClose();
+      showSuccess(`¡${place.name} ha sido agregado a tu agenda!`);
+    } catch (err: any) {
+      console.error('Error al agendar:', err);
+      setError(err?.message || 'Error al agendar el destino');
+      showError(`Error: ${err?.message || 'No se pudo agendar el destino'}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleVisit = () => {
@@ -251,23 +307,37 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
               </span>
             </div>
           )}
+
+          {error && (
+            <div 
+              className="mt-4 p-3 rounded-lg text-sm"
+              style={{ 
+                backgroundColor: "rgba(255, 0, 0, 0.1)",
+                color: "var(--color-blue)"
+              }}
+            >
+              {error}
+            </div>
+          )}
           
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold shadow animate-bubble-in transition-all duration-200 hover:scale-102"
+              disabled={isLoading}
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold shadow animate-bubble-in transition-all duration-200 hover:scale-102 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ 
                 backgroundColor: "var(--color-blue)", 
                 color: "var(--color-bone)" 
               }}
               onClick={handleAgendar}
             >
-              Agendar
+              {isLoading ? "Agendando..." : "Agendar"}
             </button>
             <button
               type="button"
+              disabled={isLoading}
               onClick={handleVisit}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 px-4 py-2 font-semibold shadow-sm transition-all duration-200 animate-bubble-in hover:scale-102"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 px-4 py-2 font-semibold shadow-sm transition-all duration-200 animate-bubble-in hover:scale-102 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ 
                 borderColor: "var(--color-green-dark)", 
                 backgroundColor: "var(--color-green)", 
