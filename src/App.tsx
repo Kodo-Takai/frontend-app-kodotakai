@@ -27,7 +27,11 @@ import MainLayout from "./components/layout/mainLayout";
 import AuthLayout from "./components/layout/authLayout";
 import Agenda from "./pages/Agenda";
 import { NavigationProvider } from "./context/navigationContext";
+import { AIProvider } from "./context/aiContext";
+import AIOverlay from "./components/ui/AIOverlay";
 import CustomToastContainer from "./components/ui/toast";
+import ConfettiEffect from "./components/ui/AIOverlay/ConfettiEffect";
+import { ConfettiProvider, useConfetti } from "./context/confettiContext";
 
 function AppContent() {
   const isLoading = useSplashScreen();
@@ -36,32 +40,51 @@ function AppContent() {
     <>
       <CustomToastContainer />
       <SplashScreen visible={!isLoading} />
-      <NavigationProvider>
-        <Routes>
-          <Route path="/" element={<Welcome />} />
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/register" element={<Register />} />
-          </Route>
+      <ConfettiProvider>
+        <AppWithConfetti />
+      </ConfettiProvider>
+    </>
+  );
+}
 
-          <Route element={<MainLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/explorar" element={<Explorar />} />
-            <Route path="/agenda" element={<Agenda />} />
-            <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
-            <Route path="/explorar/playas" element={<PlayasPage />} />
-            <Route path="/explorar/hoteles" element={<HotelesPage />} />
-            <Route path="/explorar/discos" element={<DiscosPage />} />
-            <Route path="/explorar/estudiar" element={<EstudiarPage />} />
-            <Route path="/explorar/parques" element={<ParquesPage />} />
-            <Route path="/maps" element={<Maps />} />
-            <Route path="/custom-profile" element={<CustomProfile />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
-        </Routes>
-      </NavigationProvider>
+function AppWithConfetti() {
+  const { showConfetti } = useConfetti();
+
+  return (
+    <>
+      <AIProvider>
+        <AIOverlay>
+          <NavigationProvider>
+            <Routes>
+              <Route path="/" element={<Welcome />} />
+              <Route element={<AuthLayout />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/register" element={<Register />} />
+              </Route>
+
+              <Route element={<MainLayout />}>
+                <Route path="/home" element={<Home />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/explorar" element={<Explorar />} />
+                <Route path="/agenda" element={<Agenda />} />
+                <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
+                <Route path="/explorar/playas" element={<PlayasPage />} />
+                <Route path="/explorar/hoteles" element={<HotelesPage />} />
+                <Route path="/explorar/discos" element={<DiscosPage />} />
+                <Route path="/explorar/estudiar" element={<EstudiarPage />} />
+                <Route path="/explorar/parques" element={<ParquesPage />} />
+                <Route path="/maps" element={<Maps />} />
+                <Route path="/custom-profile" element={<CustomProfile />} />
+                <Route path="/profile" element={<Profile />} />
+              </Route>
+            </Routes>
+          </NavigationProvider>
+        </AIOverlay>
+      </AIProvider>
+      
+      {/* Confetti global - por encima de todo */}
+      <ConfettiEffect show={showConfetti} />
     </>
   );
 }

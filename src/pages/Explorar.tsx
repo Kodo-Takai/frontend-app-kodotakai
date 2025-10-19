@@ -7,16 +7,44 @@ import BeachCards from "../components/cards/beachCard";
 import DestinationCards from "../components/cards/destinationsCard";
 import RestaurantMenuCard from "../components/cards/restaurantMenuCard";
 import PageWrapper from "../components/layout/SmoothPageWrapper";
+import { useAI } from "../context/aiContext";
 
 export default function Explorar() {
   const [selectedOption, setSelectedOption] = useState("Todo");
   const navigate = useNavigate();
+  const { showAIOverlay, isAIActive } = useAI();
 
 
 
   // Función para navegar a categorías
   const handleCategoryClick = (category: string) => {
     navigate(`/explorar/${category}`);
+  };
+
+  const handleAIClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevenir click si el overlay ya está activo
+    if (isAIActive) return;
+    
+    const button = event.currentTarget;
+    
+    // Efecto de bounce/encogimiento del botón
+    button.style.transform = 'scale(0.9)';
+    button.style.transition = 'transform 0.1s ease-out';
+    
+    // Después del bounce, restaurar y activar overlay
+    setTimeout(() => {
+      button.style.transform = 'scale(1)';
+      button.style.transition = 'transform 0.2s ease-out';
+      
+      // Activar overlay después del bounce
+      setTimeout(() => {
+        const rect = button.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        showAIOverlay({ x: centerX, y: centerY });
+      }, 100);
+    }, 100);
   };
 
   return (
@@ -55,15 +83,17 @@ export default function Explorar() {
         </div>
 
         <button
-              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer animate-bubble-in"
+              onClick={handleAIClick}
+              className="w-12 h-12 rounded-xl flex items-center justify-center hover:scale-90 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] cursor-pointer animate-bubble-in relative z-[9998]"
               style={{
                 backgroundColor: "var(--color-green)",
+                border: "3px solid var(--color-green-dark)",
               }}
             >
               <img
                 src="./icons/ai-function-icon-2.svg"
-                alt="Notificaciones"
-                className="w-8 h-8 opacity-85"
+                alt="IA Assistant"
+                className="w-8 h-8 opacity-85 hover:scale-80 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
               />
             </button>
       </div>

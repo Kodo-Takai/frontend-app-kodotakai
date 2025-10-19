@@ -1,5 +1,5 @@
-import { useState } from "react";
-import React from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import PageWrapper from "../components/layout/SmoothPageWrapper";
 import DaySelector from "../components/ui/daySelector/DaySelector";
 import WeekDaysSelector from "../components/ui/weekdaySelector/WeekDaysSelector";
@@ -8,18 +8,29 @@ import MoveDestinationModal from "../components/ui/moveDestinationModal/MoveDest
 import AgendaCard from "../components/cards/agendaCard/AgendaCard";
 import { useDateNavigation } from "../hooks/useDateNavigation";
 import { useAgenda } from "../hooks/useAgenda";
+import { useAI } from "../context/aiContext";
 import { isToday } from "date-fns";
 import type { AgendaItem } from "../redux/slice/agendaSlice";
 
 export default function Agenda() {
+  const [searchParams] = useSearchParams();
   const [selectedSection, setSelectedSection] = useState<
-    "agendados" | "itinerarios"
+    "agendado s" | "itinerarios"
   >("agendados");
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [isPostponeModalOpen, setIsPostponeModalOpen] = useState(false);
   const [selectedItemToMove, setSelectedItemToMove] =
     useState<AgendaItem | null>(null);
+  const { showAIOverlay, isAIActive } = useAI();
+
+  // Manejar parámetro de sección desde URL
+  useEffect(() => {
+    const section = searchParams.get('section');
+    if (section === 'itinerarios') {
+      setSelectedSection('itinerarios');
+    }
+  }, [searchParams]);
 
   const {
     selectedDate,
@@ -77,6 +88,32 @@ export default function Agenda() {
     }
   };
 
+  const handleAIClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevenir click si el overlay ya está activo
+    if (isAIActive) return;
+    
+    const button = event.currentTarget;
+    
+    // Efecto de bounce/encogimiento del botón
+    button.style.transform = 'scale(0.9)';
+    button.style.transition = 'transform 0.1s ease-out';
+    
+    // Después del bounce, restaurar y activar overlay
+    setTimeout(() => {
+      button.style.transform = 'scale(1)';
+      button.style.transition = 'transform 0.2s ease-out';
+      
+      // Activar overlay después del bounce
+      setTimeout(() => {
+        const rect = button.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        showAIOverlay({ x: centerX, y: centerY });
+      }, 100);
+    }, 100);
+  };
+
   const handleMoveDestination = (
     id: string,
     newDate: Date,
@@ -117,15 +154,17 @@ export default function Agenda() {
             </div>
 
           <button
+              onClick={handleAIClick}
               className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer animate-bubble-in"
-              style={{ 
+              style={{
                 backgroundColor: "var(--color-green)",
+                border: "3px solid var(--color-green-dark)",
               }}
             >
               <img
                 src="./icons/ai-function-icon-2.svg"
-                alt="Notificaciones"
-                className="w-8 h-8 opacity-85"
+                alt="IA Assistant"
+                className="w-8 h-8 opacity-85 hover:scale-80 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
               />
             </button>
             </div>
