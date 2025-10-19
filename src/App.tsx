@@ -67,8 +67,14 @@ function AppWithConfetti() {
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/register-travel" element={<TravelerType />} />
-                  <Route path="/register-activities" element={<TravelActivities />} />
-                  <Route path="/register-preferences" element={<TravelPreferences />} />
+                  <Route
+                    path="/register-activities"
+                    element={<TravelActivities />}
+                  />
+                  <Route
+                    path="/register-preferences"
+                    element={<TravelPreferences />}
+                  />
                 </Route>
 
                 <Route element={<MainLayout />}>
@@ -76,7 +82,10 @@ function AppWithConfetti() {
                   <Route path="/notifications" element={<Notifications />} />
                   <Route path="/explorar" element={<Explorar />} />
                   <Route path="/agenda" element={<Agenda />} />
-                  <Route path="/explorar/restaurants" element={<RestaurantsPage />} />
+                  <Route
+                    path="/explorar/restaurants"
+                    element={<RestaurantsPage />}
+                  />
                   <Route path="/explorar/playas" element={<PlayasPage />} />
                   <Route path="/explorar/hoteles" element={<HotelesPage />} />
                   <Route path="/explorar/discos" element={<DiscosPage />} />
@@ -91,7 +100,7 @@ function AppWithConfetti() {
           </NavigationProvider>
         </AIOverlay>
       </AIProvider>
-      
+
       {/* Confetti global - por encima de todo */}
       <ConfettiEffect show={showConfetti} />
     </>
