@@ -155,7 +155,7 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
 
   const modalContent = (
       <div
-        className="fixed inset-0 z-[1000] flex items-center justify-center backdrop-blur-sm overflow-y-auto"
+        className="fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-sm overflow-y-auto"
         style={{ backgroundColor: "rgba(41, 91, 114, 0.6)" }}
         onClick={onClose}
         aria-modal

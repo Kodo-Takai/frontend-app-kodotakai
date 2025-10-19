@@ -1,5 +1,5 @@
-import { useState } from "react";
-import React from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import PageWrapper from "../components/layout/SmoothPageWrapper";
 import DaySelector from "../components/ui/daySelector/DaySelector";
 import WeekDaysSelector from "../components/ui/weekdaySelector/WeekDaysSelector";
@@ -8,18 +8,28 @@ import MoveDestinationModal from "../components/ui/moveDestinationModal/MoveDest
 import AgendaCard from "../components/cards/agendaCard/AgendaCard";
 import { useDateNavigation } from "../hooks/useDateNavigation";
 import { useAgenda } from "../hooks/useAgenda";
+import { useAI } from "../context/aiContext";
 import { isToday } from "date-fns";
 import type { AgendaItem } from "../redux/slice/agendaSlice";
 
 export default function Agenda() {
+  const [searchParams] = useSearchParams();
   const [selectedSection, setSelectedSection] = useState<
     "agendados" | "itinerarios"
   >("agendados");
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
-  const [isPostponeModalOpen, setIsPostponeModalOpen] = useState(false);
   const [selectedItemToMove, setSelectedItemToMove] =
     useState<AgendaItem | null>(null);
+  const { showAIOverlay, isAIActive } = useAI();
+
+  // Manejar parámetro de sección desde URL
+  useEffect(() => {
+    const section = searchParams.get("section");
+    if (section === "itinerarios") {
+      setSelectedSection("itinerarios");
+    }
+  }, [searchParams]);
 
   const {
     selectedDate,
@@ -30,18 +40,8 @@ export default function Agenda() {
     selectDay,
   } = useDateNavigation();
 
-  const { selectDate, itemsForSelectedDate, moveItem, removeItem } =
+  const { selectDate, itemsForSelectedDate, updateItem, moveItem } =
     useAgenda();
-
-  // Sincronizar la fecha seleccionada entre useDateNavigation y useAgenda
-  React.useEffect(() => {
-    selectDate(selectedDate);
-  }, [selectedDate, selectDate]);
-
-  // Sincronizar también cuando se carga la página por primera vez
-  React.useEffect(() => {
-    selectDate(selectedDate);
-  }, []); // Solo ejecutar una vez al montar el componente
 
   // Filtrar items por sección (Ahora vs Más Tarde)
   const ahoraItems = itemsForSelectedDate.filter((item) => {
@@ -55,26 +55,42 @@ export default function Agenda() {
   });
 
   // Funciones para manejar acciones
-  const handlePostpone = (id: string) => {
+  const handleMarkAsVisited = (id: string) => {
+    updateItem(id, { status: "completed" });
+  };
+
+  const handleMoveItem = (id: string) => {
     const item = itemsForSelectedDate.find((item) => item.id === id);
     if (item) {
       setSelectedItemToMove(item);
-      setIsPostponeModalOpen(true);
+      setIsMoveModalOpen(true);
     }
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta actividad?')) {
-      removeItem(id);
-    }
-  };
+  const handleAIClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevenir click si el overlay ya está activo
+    if (isAIActive) return;
 
-  const handlePostponeConfirm = (newDate: Date, newTime?: string) => {
-    if (selectedItemToMove && newTime) {
-      moveItem(selectedItemToMove.id, newDate, newTime);
-      setIsPostponeModalOpen(false);
-      setSelectedItemToMove(null);
-    }
+    const button = event.currentTarget;
+
+    // Efecto de bounce/encogimiento del botón
+    button.style.transform = "scale(0.9)";
+    button.style.transition = "transform 0.1s ease-out";
+
+    // Después del bounce, restaurar y activar overlay
+    setTimeout(() => {
+      button.style.transform = "scale(1)";
+      button.style.transition = "transform 0.2s ease-out";
+
+      // Activar overlay después del bounce
+      setTimeout(() => {
+        const rect = button.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        showAIOverlay({ x: centerX, y: centerY });
+      }, 100);
+    }, 100);
   };
 
   const handleMoveDestination = (
@@ -86,49 +102,50 @@ export default function Agenda() {
     setIsMoveModalOpen(false);
     setSelectedItemToMove(null);
   };
-
   return (
-    <div 
+    <div
       className="min-h-screen relative pb-20"
-      style={{ backgroundColor: 'var(--color-bg-primary)' }}
+      style={{ backgroundColor: "var(--color-bg-primary)" }}
     >
       <PageWrapper
         backgroundColor="bg-transparent"
         minHeight="min-h-full"
         className="relative"
       >
-          <div className="flex justify-between items-center mt-7">
+        <div className="flex justify-between items-center mt-7">
           <div className="flex flex-col gap-2.5">
             <h1
               className="text-[40px] font-extrabold leading-[26px] tracking-[-2px]"
-              style={{ 
-                color: 'var(--color-text-primary)',
+              style={{
+                color: "var(--color-text-primary)",
                 height: "30px",
               }}
             >
               Agenda
             </h1>
-            <p 
+            <p
               className="text-[15px] font-normal leading-[22px]"
-              style={{ color: 'var(--color-text-primary)', fontWeight: "700" }}
+              style={{ color: "var(--color-text-primary)", fontWeight: "700" }}
             >
               Qué tenemos planeado hoy?
             </p>
-            </div>
+          </div>
 
           <button
-              className="w-12 h-12 border-3 border-[var(--color-green-dark)]/30 rounded-xl flex items-center justify-center hover:scale-105 hover:bg-[var(--color-green-dark)] transition-all shadow-sm duration-300 ease-out cursor-pointer animate-bubble-in"
-              style={{ 
-                backgroundColor: "var(--color-green)",
-              }}
-            >
-              <img
-                src="./icons/ai-function-icon-2.svg"
-                alt="Notificaciones"
-                className="w-8 h-8 opacity-85"
-              />
-            </button>
-            </div>
+            onClick={handleAIClick}
+            className="w-12 h-12 rounded-xl flex items-center justify-center hover:scale-90 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] cursor-pointer animate-bubble-in relative z-[9997]"
+            style={{
+              backgroundColor: "var(--color-green)",
+              border: "3px solid var(--color-green-dark)",
+            }}
+          >
+            <img
+              src="./icons/ai-function-icon-2.svg"
+              alt="IA Assistant"
+              className="w-8 h-8 opacity-85 hover:scale-80 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+            />
+          </button>
+        </div>
 
         <DaySelector
           weekDays={weekDays}
@@ -142,14 +159,12 @@ export default function Agenda() {
 
         <div className="w-full flex flex-col gap-3 mt-3">
           <div className="flex justify-between items-center">
-            <h2 
-              className="text-lg font-extrabold text-[var(--color-text-primary)]"
-            >
+            <h2 className="text-lg font-extrabold text-[var(--color-text-primary)]">
               Elige tu sección
             </h2>
             <svg
               className="w-5 h-5"
-              style={{ color: 'var(--color-blue)' }}
+              style={{ color: "var(--color-blue)" }}
               fill="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
@@ -162,14 +177,16 @@ export default function Agenda() {
               id="agendados-btn"
               onClick={() => setSelectedSection("agendados")}
               className="group flex items-center gap-2 px-6 py-3 rounded-[20px] font-bold animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
-              style={{ 
+              style={{
                 animationDelay: "0.1s",
-                color: selectedSection === "agendados" 
-                  ? 'var(--color-beige)' 
-                  : 'var(--color-blue)',
-                backgroundColor: selectedSection === "agendados" 
-                  ? 'var(--color-blue)' 
-                  : 'var(--color-beige)'
+                color:
+                  selectedSection === "agendados"
+                    ? "var(--color-beige)"
+                    : "var(--color-blue)",
+                backgroundColor:
+                  selectedSection === "agendados"
+                    ? "var(--color-blue)"
+                    : "var(--color-beige)",
               }}
             >
               <img
@@ -185,14 +202,16 @@ export default function Agenda() {
             </button>
             <button
               id="itinerarios-btn"
-              style={{ 
+              style={{
                 animationDelay: "0.3s",
-                color: selectedSection === "itinerarios" 
-                  ? 'var(--color-beige)' 
-                  : 'var(--color-blue)',
-                backgroundColor: selectedSection === "itinerarios" 
-                  ? 'var(--color-blue)' 
-                  : 'var(--color-beige)'
+                color:
+                  selectedSection === "itinerarios"
+                    ? "var(--color-beige)"
+                    : "var(--color-blue)",
+                backgroundColor:
+                  selectedSection === "itinerarios"
+                    ? "var(--color-blue)"
+                    : "var(--color-beige)",
               }}
               onClick={() => setSelectedSection("itinerarios")}
               className="group flex items-center gap-2 px-6 py-2.5 rounded-[20px] font-medium animate-bubble-in hover:scale-105 transition-transform duration-300 ease-out"
@@ -216,9 +235,7 @@ export default function Agenda() {
           {/* Sección "Ahora" */}
           {ahoraItems.length > 0 && (
             <div className="flex flex-col gap-3">
-              <h3 
-                className="text-lg font-extrabold text-[var(--color-text-primary)]"
-              >
+              <h3 className="text-lg font-extrabold text-[var(--color-text-primary)]">
                 Ahora
               </h3>
               <div className="flex flex-col gap-4">
@@ -226,8 +243,8 @@ export default function Agenda() {
                   <AgendaCard
                     key={item.id}
                     item={item}
-                    onPostpone={handlePostpone}
-                    onDelete={handleDelete}
+                    onMarkAsVisited={handleMarkAsVisited}
+                    onMoveItem={handleMoveItem}
                   />
                 ))}
               </div>
@@ -237,9 +254,9 @@ export default function Agenda() {
           {/* Sección "Más Tarde" */}
           {masTardeItems.length > 0 && (
             <div className="flex flex-col gap-3">
-              <h3 
+              <h3
                 className="text-lg font-bold"
-                style={{ color: 'var(--color-text-primary)' }}
+                style={{ color: "var(--color-text-primary)" }}
               >
                 Más Tarde
               </h3>
@@ -248,8 +265,8 @@ export default function Agenda() {
                   <AgendaCard
                     key={item.id}
                     item={item}
-                    onPostpone={handlePostpone}
-                    onDelete={handleDelete}
+                    onMarkAsVisited={handleMarkAsVisited}
+                    onMoveItem={handleMoveItem}
                   />
                 ))}
               </div>
@@ -259,21 +276,21 @@ export default function Agenda() {
           {/* Mensaje cuando no hay items */}
           {itemsForSelectedDate.length === 0 && (
             <div className="text-center py-15">
-              <p 
+              <p
                 className="text-md font-extrabold"
-                style={{ color: 'var(--color-blue)' }}
+                style={{ color: "var(--color-blue)" }}
               >
                 No tienes destinos agendados para hoy :c
               </p>
-              <p 
+              <p
                 className="text-xs font-medium mt-2"
-                style={{ color: 'var(--color-blue)' }}
+                style={{ color: "var(--color-blue)" }}
               >
                 Dale un vistazo a unos destinos y agregalos a tu agenda
               </p>
             </div>
           )}
-      </div>
+        </div>
 
         <CalendarModal
           isOpen={isCalendarModalOpen}
@@ -294,27 +311,6 @@ export default function Agenda() {
             }}
             item={selectedItemToMove}
             onMoveDestination={handleMoveDestination}
-          />
-        )}
-
-        {selectedItemToMove && (
-          <CalendarModal
-            isOpen={isPostponeModalOpen}
-            onClose={() => {
-              setIsPostponeModalOpen(false);
-              setSelectedItemToMove(null);
-            }}
-            selectedDate={new Date(selectedItemToMove.scheduledDate)}
-            onDateSelect={(date) => {
-              // Actualizar la fecha seleccionada
-              setSelectedItemToMove({
-                ...selectedItemToMove,
-                scheduledDate: date.toISOString()
-              });
-            }}
-            mode="postpone"
-            onConfirm={handlePostponeConfirm}
-            currentTime={selectedItemToMove.scheduledTime}
           />
         )}
       </PageWrapper>
