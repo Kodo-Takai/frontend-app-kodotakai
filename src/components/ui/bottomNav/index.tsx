@@ -22,15 +22,18 @@ type BottomNavProps = {
 
 const HIDDEN_ROUTES = ["/", "/login", "/register", "/onboarding", "/terms"];
 
+// --- ESTILOS MODIFICADOS ---
 const NAV_STYLES = {
-  container: "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden",
-  list: "flex items-center gap-2 h-18 px-7 bg-[var(--color-blue-dark)] border-2 rounded-full border-[var(--color-beige)]/80 relative",
-  indicator:
-    "absolute w-12 h-12 bg-[var(--color-green)] rounded-full transition-all duration-300 ease-out",
+  // Ahora es 'sticky' para que se quede abajo, y ocupa todo el ancho (w-full).
+  container: "sticky bottom-0 w-full z-50 md:hidden",
+  // Se eliminó 'rounded-full' y se usa 'justify-around' para distribuir los iconos.
+  // Se cambió el borde a solo un borde superior para un look más limpio.
+  list: "flex items-center justify-around h-18 bg-[var(--color-blue-dark)] border-t-2 border-[var(--color-beige)]/80",
   link: {
-    base: "group flex items-center justify-center select-none transition-all duration-200 w-12 h-12 rounded-full relative z-10 flex-shrink-0",
-    active: "text-[var(--color-blue-dark)]",
-    inactive: "text-[var(--color-green)] hover:text-[var(--color-green-dark)]",
+    // El 'flex-grow' ayuda a que cada item ocupe el espacio disponible.
+    base: "group flex flex-grow items-center justify-center select-none transition-all duration-200 h-full relative z-10",
+    active: "text-[var(--color-green)]", // El color del icono activo ahora es el verde.
+    inactive: "text-[var(--color-beige)]/80 hover:text-[var(--color-green)]",
   },
 } as const;
 
@@ -45,14 +48,6 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
     [pathname]
   );
 
-  const activeIndex = useMemo(
-    () =>
-      items.findIndex(
-        (item) => pathname === item.to || pathname.startsWith(`${item.to}/`)
-      ),
-    [pathname, items]
-  );
-
   if (isHidden) return null;
 
   return (
@@ -61,34 +56,15 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
         aria-label="Navegación inferior"
         className={`${NAV_STYLES.container} ${className}`}
       >
-        <ul
-          role="tablist"
-          className={NAV_STYLES.list}
-          style={{
-            boxShadow:
-              "0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)",
-          }}
-        >
-          {/* Indicador único que se mueve */}
-          {activeIndex >= 0 && (
-            <div
-              className={NAV_STYLES.indicator}
-              style={{
-                left: `calc(1.75rem + ${activeIndex * 56}px)`,
-                top: "50%",
-                transform: "translateY(-50%)",
-              }}
-              aria-hidden="true"
-            />
-          )}
-
+        <ul role="tablist" className={NAV_STYLES.list}>
+          {/* SE ELIMINÓ EL INDICADOR DESLIZANTE */}
           {items.map((item) => {
             const isActive =
               pathname === item.to || pathname.startsWith(`${item.to}/`);
             const Icon = item.icon;
 
             return (
-              <li key={item.id} role="presentation">
+              <li key={item.id} role="presentation" className="flex-grow">
                 <NavLink
                   to={item.to}
                   className={`${NAV_STYLES.link.base} ${
@@ -98,8 +74,8 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
                   aria-label={item.label}
                 >
                   <Icon
-                    size={24}
-                    className={`transition-transform duration-200 hover:scale-120 ${
+                    size={28} // Ligeramente más grande para mejor visibilidad
+                    className={`transition-transform duration-200 group-hover:scale-110 ${
                       isActive ? "scale-125" : "scale-100"
                     }`}
                   />
@@ -113,7 +89,7 @@ export function BottomNav({ items, className = "" }: BottomNavProps) {
   );
 }
 
-// Items por defecto usando react-icons (io5)
+// Items por defecto (sin cambios)
 export const defaultItems: NavItem[] = [
   { id: "home", label: "Inicio", to: "/home", icon: IoHome },
   { id: "agenda", label: "Agenda", to: "/agenda", icon: IoCalendar },

@@ -84,11 +84,11 @@ export default function Home() {
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",
                 maxWidth: "100%",
-                fontSize: "40px",
+                fontSize: "30px",
                 fontStyle: "normal",
                 fontWeight: "800",
                 lineHeight: "26px",
-                letterSpacing: "-0.9px",
+                letterSpacing: "-0.9px",  
               }}
             >
               {userName}
