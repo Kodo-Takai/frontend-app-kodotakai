@@ -2,11 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import type { EnrichedPlace } from "../../../hooks/places";
 import { FaStar, FaPhoneAlt, FaMapMarkerAlt, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../../redux/store";
 import { useCreateDestinationMutation } from "../../../redux/api/destinationApi";
 import { useCreateAgendaItemMutation } from "../../../redux/api/agendaApi";
 import { useToast } from "../../../hooks/useToast";
+import { useUserId } from "../../../hooks/useUserId";
 
 export type PlaceModalProps = {
   isOpen: boolean;
@@ -25,11 +24,8 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
   const [createAgendaItem] = useCreateAgendaItemMutation();
   const { success: showSuccess, error: showError } = useToast();
   
-  // Obtener userId del estado de autenticación
-  const userId = useSelector((state: RootState) => {
-    const auth = (state as any).auth;
-    return auth?.user?.id || null;
-  });
+  // Usar el hook personalizado para obtener userId
+  const userId = useUserId();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -103,38 +99,48 @@ export default function PlaceModal({ isOpen, onClose, place, maxImages = 5, onVi
         location: (place as EnrichedPlace).formatted_address || place.vicinity || 'Ubicación no disponible',
         latitude,
         longitude,
-        precio: 0, // Valor por defecto, ajusta según necesites
-        category: 'restaurant', // Ajusta según el tipo de lugar
+        precio: 0,
+        category: 'restaurant',
         status: true,
       };
 
-      console.log('DEBUG: Creating destination:', destinationData);
       const destinationResponse = await createDestination(destinationData).unwrap();
       const destinationId = destinationResponse.id;
-      console.log('DEBUG: Destination created with ID:', destinationId);
 
       // PASO 2: Crear agenda en la API
       const agendaData = {
-        userId: userId,
+        userId: userId.trim(),
         destinationId: destinationId,
         scheduledAt: new Date().toISOString(),
         status: 'PENDING' as const,
       };
 
-      console.log('DEBUG: Creating agenda item:', agendaData);
-      const agendaResponse = await createAgendaItem(agendaData).unwrap();
-      console.log('DEBUG: Agenda item created:', agendaResponse);
-
-      // PASO 3: No agregar a Redux localmente aquí
-      // El useEffect en useAgenda se encargará de sincronizar automáticamente
-      // cuando la API se actualice, evitando duplicaciones
+      await createAgendaItem(agendaData).unwrap();
+      
+      // Guardar datos del destino en localStorage para uso posterior
+      const destinationInfo = {
+        id: destinationId,
+        name: place.name,
+        location: (place as EnrichedPlace).formatted_address || place.vicinity || 'Ubicación no disponible',
+        description: (place as EnrichedPlace).editorial_summary?.overview || `Visita a ${place.name}`,
+        image: (place as EnrichedPlace).photos?.[0]?.photo_reference ? 
+          `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${(place as EnrichedPlace).photos?.[0]?.photo_reference}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}` :
+          'https://picsum.photos/400/300?random=agenda',
+        category: 'restaurant',
+        rating: (place as EnrichedPlace).rating || 0,
+        user_ratings_total: (place as EnrichedPlace).user_ratings_total || 0,
+      };
+      
+      // Guardar en localStorage con clave única
+      const storageKey = `destination_${destinationId}`;
+      localStorage.setItem(storageKey, JSON.stringify(destinationInfo));
       
       onClose();
       showSuccess(`¡${place.name} ha sido agregado a tu agenda!`);
     } catch (err: any) {
-      console.error('Error al agendar:', err);
-      setError(err?.message || 'Error al agendar el destino');
-      showError(`Error: ${err?.message || 'No se pudo agendar el destino'}`);
+      const errorMessage = err?.data?.message || err?.message || 'Error al agendar el destino';
+      setError(errorMessage);
+      showError(`Error: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
