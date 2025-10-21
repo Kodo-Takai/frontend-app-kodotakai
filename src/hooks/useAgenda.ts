@@ -17,16 +17,14 @@ import {
   useDeleteAgendaItemMutation,
 } from '../redux/api/agendaApi';
 import { isSameDay } from 'date-fns';
+import { useUserId } from './useUserId';
 
 export const useAgenda = () => {
   const dispatch = useDispatch();
   const agenda = useSelector((state: RootState) => state.agenda);
   
-  // Obtener userId del estado de autenticación
-  const userId = useSelector((state: RootState) => {
-    const auth = (state as any).auth;
-    return auth?.user?.id || null;
-  });
+  // Usar el hook personalizado para obtener userId
+  const userId = useUserId();
 
   // RTK Query hooks - usar endpoint que funciona y filtrar por userId
   const { data: allAgendaItems = [], isLoading: isLoadingFromApi, isError } = useGetAgendaItemsQuery(
@@ -54,9 +52,16 @@ export const useAgenda = () => {
 
       if (response.ok) {
         const destinationData = await response.json();
+        
+        // Si es un array, buscar el destino específico por ID
+        if (Array.isArray(destinationData)) {
+          const specificDestination = destinationData.find(dest => dest.id === destinationId);
+          return specificDestination || null;
+        }
+        
         return destinationData;
       } else {
-        console.warn(`No se pudo obtener el destino con ID: ${destinationId}`);
+        console.warn(`No se pudo obtener el destino con ID: ${destinationId}, status: ${response.status}`);
         return null;
       }
     } catch (error) {
@@ -82,47 +87,85 @@ export const useAgenda = () => {
             // Obtener datos completos del destino
             const destinationData = await getDestinationData(item.destinationId);
             
-            return {
+            // Intentar obtener datos del localStorage como fallback
+            let localDestinationData = null;
+            try {
+              const storageKey = `destination_${item.destinationId}`;
+              const storedData = localStorage.getItem(storageKey);
+              if (storedData) {
+                localDestinationData = JSON.parse(storedData);
+              }
+            } catch (error) {
+              console.warn('Error leyendo datos del destino desde localStorage:', error);
+            }
+            
+            // Usar datos de la API o localStorage como fallback
+            const finalDestinationData = destinationData || localDestinationData;
+            
+            const processedItem = {
               id: item.id,
               destinationId: item.destinationId,
-              destinationName: destinationData?.name || item.destinationName || 'Sin nombre',
-              location: destinationData?.location || item.location || 'Ubicación no disponible',
+              destinationName: finalDestinationData?.name || item.destinationName || 'Sin nombre',
+              location: finalDestinationData?.location || item.location || 'Ubicación no disponible',
               scheduledDate: item.scheduledAt, // API usa scheduledAt, Redux usa scheduledDate
               scheduledTime: new Date(item.scheduledAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
               status: item.status?.toLowerCase() || 'pending',
-              category: destinationData?.category || item.category || 'restaurant',
-              image: destinationData?.image || item.image || 'https://picsum.photos/400/300?random=agenda',
-              description: destinationData?.description || item.description || '',
+              category: finalDestinationData?.category || item.category || 'restaurant',
+              image: finalDestinationData?.image || item.image || 'https://picsum.photos/400/300?random=agenda',
+              description: finalDestinationData?.description || item.description || '',
               placeData: {
                 ...item.placeData,
                 // Agregar datos del destino si están disponibles
-                ...(destinationData && {
-                  name: destinationData.name,
-                  location: destinationData.location,
-                  description: destinationData.description,
-                  category: destinationData.category,
-                  precio: destinationData.precio,
-                  latitude: destinationData.latitude,
-                  longitude: destinationData.longitude,
+                ...(finalDestinationData && {
+                  name: finalDestinationData.name,
+                  location: finalDestinationData.location,
+                  description: finalDestinationData.description,
+                  category: finalDestinationData.category,
+                  precio: finalDestinationData.precio,
+                  latitude: finalDestinationData.latitude,
+                  longitude: finalDestinationData.longitude,
+                  rating: finalDestinationData.rating,
+                  user_ratings_total: finalDestinationData.user_ratings_total,
                 })
               },
             };
+            
+            return processedItem;
           })
         );
         
-        dispatch(setAgendaItems(convertedItems));
+        // Ordenar por fecha de creación (más reciente primero)
+        const sortedItems = convertedItems.sort((a, b) => {
+          const dateA = new Date(a.scheduledDate);
+          const dateB = new Date(b.scheduledDate);
+          return dateB.getTime() - dateA.getTime(); // Más reciente primero
+        });
+        
+        dispatch(setAgendaItems(sortedItems));
       };
 
       processAgendaItems();
     }
   }, [apiAgendaItems, dispatch, agenda.items, getDestinationData]);
 
+  // Función para comparar fechas ignorando la hora
+  const isSameDate = useCallback((date1: Date, date2: Date) => {
+    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    return d1.getTime() === d2.getTime();
+  }, []);
+
   // Obtener items del día seleccionado
   const getItemsForSelectedDate = useCallback(() => {
-    return agenda.items.filter(item => 
-      isSameDay(new Date(item.scheduledDate), new Date(agenda.selectedDate))
-    );
-  }, [agenda.items, agenda.selectedDate]);
+    const filteredItems = agenda.items.filter(item => {
+      const itemDate = new Date(item.scheduledDate);
+      const selectedDate = new Date(agenda.selectedDate);
+      
+      return isSameDate(itemDate, selectedDate);
+    });
+    
+    return filteredItems;
+  }, [agenda.items, agenda.selectedDate, isSameDate]);
 
   // Obtener items por categoría
   const getItemsByCategory = useCallback((category: string) => {
@@ -231,16 +274,30 @@ export const useAgenda = () => {
   // Mover item a otra fecha/hora
   const moveItem = useCallback(async (id: string, newDate: Date, newTime?: string) => {
     try {
+      console.log('DEBUG: Moviendo item:', { id, newDate, newTime });
+      
+      // Combinar fecha y hora si se proporciona nueva hora
+      let scheduledAt = newDate.toISOString();
+      if (newTime) {
+        const [hours, minutes] = newTime.split(':');
+        const combinedDateTime = new Date(newDate);
+        combinedDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        scheduledAt = combinedDateTime.toISOString();
+        console.log('DEBUG: Fecha y hora combinadas:', scheduledAt);
+      }
+
       // Actualizar en Redux - pasar fecha como string ISO
-      dispatch(moveAgendaItem({ id, newDate: newDate.toISOString(), newTime }));
+      dispatch(moveAgendaItem({ id, newDate: scheduledAt, newTime }));
 
       // Actualizar en API
       await updateAgendaItemApi({
         id,
         body: {
-          scheduledAt: newDate.toISOString(),
+          scheduledAt: scheduledAt,
         },
       }).unwrap();
+      
+      console.log('DEBUG: Item movido exitosamente');
     } catch (error) {
       console.error('Error moving agenda item:', error);
     }
@@ -257,6 +314,17 @@ export const useAgenda = () => {
       isSameDay(new Date(item.scheduledDate), date)
     );
   }, [agenda.items]);
+
+  // Función para eliminar un item de agenda
+  const deleteAgendaItem = useCallback(async (id: string) => {
+    try {
+      await deleteAgendaItemApi(id).unwrap();
+      dispatch(removeAgendaItem(id));
+    } catch (error) {
+      console.error('Error eliminando item de agenda:', error);
+      throw error;
+    }
+  }, [deleteAgendaItemApi, dispatch]);
 
   return {
     // Estado
@@ -277,5 +345,6 @@ export const useAgenda = () => {
     selectDate,
     hasItemsOnDate,
     getDestinationData,
+    deleteAgendaItem,
   };
 };

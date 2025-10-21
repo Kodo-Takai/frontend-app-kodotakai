@@ -2,6 +2,7 @@ import React from 'react';
 import { type AgendaItem } from '../../../redux/slice/agendaSlice';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { FaTrash, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
 
 interface AgendaCardProps {
   item: AgendaItem;
@@ -20,6 +21,12 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
     const monthName = format(date, 'MMMM', { locale: es });
     
     return `${time} - ${dayName} ${dayNumber} de ${monthName}`;
+  };
+
+  const handleDelete = () => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este elemento de tu agenda?')) {
+      onDelete(item.id);
+    }
   };
 
   return (
@@ -63,60 +70,55 @@ const AgendaCard: React.FC<AgendaCardProps> = ({
       {/* Sección Central - Información del destino */}
       <div className="py-1">
         <h3 
-          className="font-extrabold text-lg uppercase truncate"
+          className="font-extrabold text-lg uppercase truncate mb-1"
           style={{ color: 'var(--color-text-primary)' }}
         >
           {item.destinationName}
         </h3>
-        <p 
-          className="text-sm font-medium mb-2"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
-          {item.location}
-        </p>
+        <div className="flex items-center gap-2 mb-2">
+          <FaMapMarkerAlt className="w-3 h-3 text-gray-600" />
+          <p 
+            className="text-sm font-medium truncate"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            {item.location}
+          </p>
+        </div>
+        {item.description && (
+          <p 
+            className="text-xs text-gray-600 line-clamp-2"
+          >
+            {item.description}
+          </p>
+        )}
       </div>
 
       {/* Sección Inferior - Botones horizontales */}
-      <div className="flex gap-5 pt-0">
+      <div className="flex gap-3 pt-0">
         {/* Botón Postergar */}
         <button
           onClick={() => onPostpone(item.id)}
-          className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-normal transition-all duration-200 hover:scale-105"
+          className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
           style={{ 
             backgroundColor: 'var(--color-blue-dark)',
             color: 'var(--color-bone)'
           }}
         >
+          <FaCalendarAlt className="w-4 h-4" />
           <span>Postergar</span>
-          {/* Icono de calendario */}
-          <svg
-            className="w-4 h-4"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-          </svg>
         </button>
 
         {/* Botón Eliminar */}
         <button
-          onClick={() => onDelete(item.id)}
+          onClick={handleDelete}
           className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105 hover:opacity-90"
           style={{ 
             backgroundColor: 'var(--color-green)',
             color: 'var(--color-blue)'
           }}
         >
+          <FaTrash className="w-4 h-4" />
           <span>Eliminar</span>
-          {/* Icono de eliminar */}
-          <svg
-            className="w-4 h-4"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-          </svg>
         </button>
       </div>
     </div>

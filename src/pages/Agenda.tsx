@@ -40,7 +40,7 @@ export default function Agenda() {
     selectDay,
   } = useDateNavigation();
 
-  const { selectDate, itemsForSelectedDate, updateItem, moveItem } =
+  const { selectDate, itemsForSelectedDate, moveItem, deleteAgendaItem } =
     useAgenda();
 
   // Filtrar items por sección (Ahora vs Más Tarde)
@@ -55,16 +55,28 @@ export default function Agenda() {
   });
 
   // Funciones para manejar acciones
-  const handleMarkAsVisited = (id: string) => {
-    updateItem(id, { status: "completed" });
-  };
-
   const handleMoveItem = (id: string) => {
     const item = itemsForSelectedDate.find((item) => item.id === id);
     if (item) {
       setSelectedItemToMove(item);
       setIsMoveModalOpen(true);
     }
+  };
+
+  const handleDeleteItem = async (id: string) => {
+    try {
+      await deleteAgendaItem(id);
+    } catch (error) {
+      console.error('Error eliminando item:', error);
+    }
+  };
+
+  const handleDaySelect = (date: Date) => {
+    // Crear una nueva fecha sin problemas de zona horaria
+    const correctedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    
+    selectDay(correctedDate); // Para el navegador de fechas
+    selectDate(correctedDate); // Para la agenda
   };
 
   const handleAIClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -149,13 +161,13 @@ export default function Agenda() {
 
         <DaySelector
           weekDays={weekDays}
-          onDaySelect={selectDay}
+          onDaySelect={handleDaySelect}
           onPreviousWeek={goToPreviousWeek}
           onNextWeek={goToNextWeek}
           currentWeekText={currentWeekText}
         />
 
-        <WeekDaysSelector weekDays={weekDays} onDaySelect={selectDay} />
+        <WeekDaysSelector weekDays={weekDays} onDaySelect={handleDaySelect} />
 
         <div className="w-full flex flex-col gap-3 mt-3">
           <div className="flex justify-between items-center">
@@ -243,8 +255,8 @@ export default function Agenda() {
                   <AgendaCard
                     key={item.id}
                     item={item}
-                    onMarkAsVisited={handleMarkAsVisited}
-                    onMoveItem={handleMoveItem}
+                    onPostpone={handleMoveItem}
+                    onDelete={handleDeleteItem}
                   />
                 ))}
               </div>
@@ -265,8 +277,8 @@ export default function Agenda() {
                   <AgendaCard
                     key={item.id}
                     item={item}
-                    onMarkAsVisited={handleMarkAsVisited}
-                    onMoveItem={handleMoveItem}
+                    onPostpone={handleMoveItem}
+                    onDelete={handleDeleteItem}
                   />
                 ))}
               </div>
