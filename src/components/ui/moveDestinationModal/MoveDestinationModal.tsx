@@ -15,7 +15,10 @@ const MoveDestinationModal: React.FC<MoveDestinationModalProps> = ({
   item,
   onMoveDestination,
 }) => {
-  const [selectedDate, setSelectedDate] = useState(new Date(item.scheduledDate));
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const date = new Date(item.scheduledDate);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  });
   const [selectedTime, setSelectedTime] = useState(item.scheduledTime);
 
   // Prevenir scroll del fondo cuando el modal está abierto
@@ -41,7 +44,9 @@ const MoveDestinationModal: React.FC<MoveDestinationModalProps> = ({
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(new Date(e.target.value));
+    const dateValue = e.target.value;
+    const [year, month, day] = dateValue.split('-').map(Number);
+    setSelectedDate(new Date(year, month - 1, day));
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
