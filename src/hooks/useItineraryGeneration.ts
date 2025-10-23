@@ -20,8 +20,9 @@ export const useItineraryGeneration = () => {
   };
 
   const [destinations, setDestinations] = useState<UIDestination[]>([]);
+  const [allRecommendations, setAllRecommendations] = useState<string[]>([]); // Guardar todos los IDs de recomendaciones
+  const [usedDestinationIds, setUsedDestinationIds] = useState<Set<string>>(new Set()); // IDs ya usados
   const { triggerConfetti } = useConfetti();
-  // Podemos guardar recomendaciones si se requieren más adelante (omitir por ahora)
 
   // Obtener userId del hook personalizado
   const userId = useUserId();
@@ -66,11 +67,18 @@ export const useItineraryGeneration = () => {
       // Paso 1: Traer recomendaciones personalizadas de IA usando el userId
       const recs = await fetchPersonalizedRecommendations(userId).unwrap();
 
+      // Guardar todas las recomendaciones para usar después en "regenerar"
+      const allRecIds = Array.from(new Set(recs.map((r) => r.destinationId)));
+      setAllRecommendations(allRecIds);
+
       // Mensajes progresivos mientras hacemos fetch de detalles
       setCurrentMessage('Analizando recomendaciones de IA...');
 
       // Seleccionar hasta 3 recomendaciones únicas
-      const uniqueRecIds = Array.from(new Set(recs.map((r) => r.destinationId))).slice(0, 3);
+      const uniqueRecIds = allRecIds.slice(0, 3);
+
+      // Marcar los IDs usados
+      setUsedDestinationIds(new Set(uniqueRecIds));
 
       // Paso 2: Traer detalles de recomendados
       const recommendedDetails = await Promise.all(
@@ -145,12 +153,65 @@ export const useItineraryGeneration = () => {
     setDestinations([]);
     setIsGenerating(false);
     setCurrentMessage('');
+    setAllRecommendations([]);
+    setUsedDestinationIds(new Set());
   };
 
-  const regenerateDestination = (destinationId: number) => {
-    // Aquí se implementará la lógica para regenerar un destino específico
-    console.log('Regenerando destino:', destinationId);
-    // TODO: Implementar llamada a API para regenerar destino específico
+  const regenerateDestination = async (destinationId: number) => {
+    try {
+      // Encontrar el destino a reemplazar
+      const destinationIndex = destinations.findIndex(d => d.id === destinationId);
+      if (destinationIndex === -1) return;
+
+      // Buscar un destino no usado de las recomendaciones
+      const availableRecommendations = allRecommendations.filter(
+        recId => !usedDestinationIds.has(recId)
+      );
+
+      let newDestId: string | null = null;
+
+      // Si hay recomendaciones disponibles, usar una
+      if (availableRecommendations.length > 0) {
+        newDestId = availableRecommendations[0];
+      } else {
+        // Si no hay más recomendaciones, buscar de la lista general
+        const allDests = await fetchAllDestinations().unwrap();
+        const availableFromAll = allDests.filter(d => !usedDestinationIds.has(d.id));
+
+        if (availableFromAll.length > 0) {
+          newDestId = availableFromAll[0].id;
+        } else {
+          console.warn('No hay más destinos disponibles para regenerar');
+          return;
+        }
+      }
+
+      // Obtener detalles del nuevo destino
+      const newDest = await fetchDestinationById(newDestId).unwrap();
+
+      // Crear el nuevo destino con el mismo ID (posición)
+      const newDestination: UIDestination = {
+        id: destinationId, // Mantener el mismo ID para la posición
+        name: newDest.name,
+        type: newDest.category,
+        duration: 'Sugerido',
+        description: newDest.description,
+        image: newDest.photo || '',
+        latitude: Number(newDest.latitude),
+        longitude: Number(newDest.longitude),
+      };
+
+      // Actualizar la lista de destinos
+      const updatedDestinations = [...destinations];
+      updatedDestinations[destinationIndex] = newDestination;
+      setDestinations(updatedDestinations);
+
+      // Marcar el nuevo destino como usado
+      setUsedDestinationIds(prev => new Set([...prev, newDestId!]));
+
+    } catch (error) {
+      console.error('Error regenerando destino:', error);
+    }
   };
 
   return {

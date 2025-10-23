@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { useAI } from '../../context/aiContext';
 import { useNavigate } from 'react-router-dom';
 import { useItineraryGeneration } from '../../hooks/useItineraryGeneration';
+import { useAgenda } from '../../hooks/useAgenda';
 import LoadingState from './AIOverlay/LoadingState';
 import ItineraryGenerated from './AIOverlay/ItineraryGenerated';
 import InitialContent from './AIOverlay/InitialContent';
@@ -31,6 +32,9 @@ const AIOverlay: React.FC<AIOverlayProps> = ({ children }) => {
     resetToLobby,
     regenerateDestination
   } = useItineraryGeneration();
+
+  // Hook de agenda para agregar destinos
+  const { addItem } = useAgenda();
 
   const handleClose = () => {
     if (isAnimatingRef.current) return; // Prevenir múltiples clicks
@@ -90,10 +94,70 @@ const AIOverlay: React.FC<AIOverlayProps> = ({ children }) => {
     setIsAccordionOpen(!isAccordionOpen);
   };
 
-  const handleShowInAgenda = () => {
-    // Navegar a Agenda.tsx en la sección de itinerarios
-    navigate('/agenda?section=itinerarios');
-    hideAIOverlay();
+  const handleShowInAgenda = async () => {
+    // Agregar todos los destinos a la agenda antes de navegar
+    try {
+      await Promise.all(
+        destinations.map(async (destination) => {
+          const category = ['restaurant', 'hotel', 'beach', 'park', 'disco', 'study'].includes(destination.type?.toLowerCase())
+            ? (destination.type.toLowerCase() as 'restaurant' | 'hotel' | 'beach' | 'park' | 'disco' | 'study')
+            : 'restaurant';
+          
+          await addItem({
+            destinationId: String(destination.id),
+            destinationName: destination.name,
+            location: destination.description || 'Ubicación no disponible',
+            scheduledDate: new Date().toISOString(), // Fecha actual
+            scheduledTime: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+            status: 'pending',
+            category,
+            image: destination.image || 'https://picsum.photos/400/300?random=agenda',
+            description: destination.description || '',
+            placeData: {
+              name: destination.name,
+              latitude: destination.latitude,
+              longitude: destination.longitude,
+            },
+          });
+        })
+      );
+      
+      // Navegar a Agenda.tsx en la sección de agendados
+      navigate('/agenda?section=agendados');
+      hideAIOverlay();
+    } catch (error) {
+      console.error('Error agregando destinos a la agenda:', error);
+    }
+  };
+
+  const handleAddToAgenda = async (destination: { id: number; name: string; type: string; description: string; image: string; latitude?: number; longitude?: number }) => {
+    try {
+      const category = ['restaurant', 'hotel', 'beach', 'park', 'disco', 'study'].includes(destination.type?.toLowerCase())
+        ? (destination.type.toLowerCase() as 'restaurant' | 'hotel' | 'beach' | 'park' | 'disco' | 'study')
+        : 'restaurant';
+      
+      await addItem({
+        destinationId: String(destination.id),
+        destinationName: destination.name,
+        location: destination.description || 'Ubicación no disponible',
+        scheduledDate: new Date().toISOString(), // Fecha actual
+        scheduledTime: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+        status: 'pending',
+        category,
+        image: destination.image || 'https://picsum.photos/400/300?random=agenda',
+        description: destination.description || '',
+        placeData: {
+          name: destination.name,
+          latitude: destination.latitude,
+          longitude: destination.longitude,
+        },
+      });
+      
+      console.log('Destino agregado a la agenda:', destination.name);
+    } catch (error) {
+      console.error('Error agregando destino a la agenda:', error);
+      throw error;
+    }
   };
 
   const handleGoToLobby = () => {
@@ -238,6 +302,7 @@ const AIOverlay: React.FC<AIOverlayProps> = ({ children }) => {
                 <ItineraryGenerated
                   destinations={destinations}
                   onRegenerateDestination={regenerateDestination}
+                  onAddToAgenda={handleAddToAgenda}
                   onShowInAgenda={handleShowInAgenda}
                   onGoToLobby={handleGoToLobby}
                 />

@@ -1,9 +1,21 @@
 import React from 'react';
 import DestinationItineraryCard from '../../cards/destinationItineraryCard';
 
+interface Destination {
+  id: number;
+  name: string;
+  type: string;
+  duration: string;
+  description: string;
+  image: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 interface ItineraryGeneratedProps {
-  destinations: any[];
-  onRegenerateDestination: (id: number) => void;
+  destinations: Destination[];
+  onRegenerateDestination: (id: number) => Promise<void>;
+  onAddToAgenda: (destination: Destination) => Promise<void>;
   onShowInAgenda: () => void;
   onGoToLobby: () => void;
 }
@@ -11,6 +23,7 @@ interface ItineraryGeneratedProps {
 const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
   destinations,
   onRegenerateDestination,
+  onAddToAgenda,
   onShowInAgenda,
   onGoToLobby
 }) => {
@@ -47,6 +60,7 @@ const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
             key={destination.id}
             destination={destination}
             onRegenerate={onRegenerateDestination}
+            onAddToAgenda={onAddToAgenda}
           />
         ))}
       </div>

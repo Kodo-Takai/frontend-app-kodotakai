@@ -40,6 +40,11 @@ export function useMapImageByCoords(
         | string
         | undefined;
 
+    // Crear una clave estable para las opciones
+    const optionsKey = useMemo(() => {
+        return JSON.stringify(options || {});
+    }, [options]);
+
     const opts = useMemo<MapImageOptions>(() => {
         return {
             size: "600x400",
@@ -53,7 +58,8 @@ export function useMapImageByCoords(
                 ...(options?.streetView || {}),
             },
         };
-    }, [options]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [optionsKey]);
 
     useEffect(() => {
         if (lat == null || lng == null || Number.isNaN(lat) || Number.isNaN(lng)) {

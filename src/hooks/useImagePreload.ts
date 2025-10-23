@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 /**
  * Hook para preload de imágenes críticas
@@ -12,12 +12,16 @@ export const useImagePreload = (imageUrls: string[]) => {
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
+  // Crear una clave estable para las URLs
+  const urlsKey = useMemo(() => imageUrls.join(','), [imageUrls]);
+
   useEffect(() => {
     if (!imageUrls.length) {
       setIsLoading(false);
       return;
     }
 
+    let cancelled = false;
     let loadedCount = 0;
     const totalImages = imageUrls.length;
     const newLoadedImages = new Set<string>();
@@ -27,22 +31,26 @@ export const useImagePreload = (imageUrls: string[]) => {
         const img = new Image();
         
         img.onload = () => {
+          if (cancelled) return;
+          
           newLoadedImages.add(url);
           loadedCount++;
           
           if (loadedCount === totalImages) {
-            setLoadedImages(newLoadedImages);
+            setLoadedImages(new Set(newLoadedImages));
             setIsLoading(false);
           }
           resolve();
         };
         
         img.onerror = () => {
+          if (cancelled) return;
+          
           console.warn(`Failed to load image: ${url}`);
           loadedCount++;
           
           if (loadedCount === totalImages) {
-            setLoadedImages(newLoadedImages);
+            setLoadedImages(new Set(newLoadedImages));
             setIsLoading(false);
           }
           reject(new Error(`Failed to load image: ${url}`));
@@ -56,7 +64,11 @@ export const useImagePreload = (imageUrls: string[]) => {
     // Cargar todas las imágenes en paralelo
     Promise.allSettled(imageUrls.map(loadImage));
 
-  }, [imageUrls]);
+    return () => {
+      cancelled = true;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlsKey]);
 
   return {
     loadedImages,
