@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useConfetti } from '../context/confettiContext';
-import { useLazyGetRecommendationsQuery, useLazyGetDestinationByIdQuery } from '../redux/api/recommendationsApi';
+import { useLazyGetPersonalizedRecommendationsQuery, useLazyGetDestinationByIdQuery } from '../redux/api/recommendationsApi';
 import { useLazyGetDestinationsQuery } from '../redux/api/destinationsApi';
+import { useUserId } from './useUserId';
 
 export const useItineraryGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -22,8 +23,11 @@ export const useItineraryGeneration = () => {
   const { triggerConfetti } = useConfetti();
   // Podemos guardar recomendaciones si se requieren más adelante (omitir por ahora)
 
+  // Obtener userId del hook personalizado
+  const userId = useUserId();
+
   // RTK Query lazy hooks
-  const [fetchRecommendations, { error: recsError }] = useLazyGetRecommendationsQuery();
+  const [fetchPersonalizedRecommendations, { error: recsError }] = useLazyGetPersonalizedRecommendationsQuery();
   const [fetchDestinationById] = useLazyGetDestinationByIdQuery();
   const [fetchAllDestinations] = useLazyGetDestinationsQuery();
 
@@ -31,6 +35,13 @@ export const useItineraryGeneration = () => {
     setIsGenerating(true);
     setItineraryGenerated(false);
     setDestinations([]);
+
+    // Verificar que tengamos userId
+    if (!userId) {
+      setCurrentMessage('Error: No se pudo obtener el ID de usuario');
+      setIsGenerating(false);
+      return;
+    }
 
     // Mensajes de carga que cambian cada segundo
     const loadingMessages = [
@@ -52,27 +63,27 @@ export const useItineraryGeneration = () => {
     }, 1000);
 
     try {
-      // Paso 1: Traer recomendaciones de IA
-      const recs = await fetchRecommendations().unwrap();
+      // Paso 1: Traer recomendaciones personalizadas de IA usando el userId
+      const recs = await fetchPersonalizedRecommendations(userId).unwrap();
 
       // Mensajes progresivos mientras hacemos fetch de detalles
       setCurrentMessage('Analizando recomendaciones de IA...');
 
       // Seleccionar hasta 3 recomendaciones únicas
-      const uniqueRecIds = Array.from(new Set(recs.map(r => r.destinationId))).slice(0, 3);
+      const uniqueRecIds = Array.from(new Set(recs.map((r) => r.destinationId))).slice(0, 3);
 
       // Paso 2: Traer detalles de recomendados
       const recommendedDetails = await Promise.all(
-        uniqueRecIds.map(async (destId, i) => {
+        uniqueRecIds.map(async (destId, i: number) => {
           try {
-            const dest = await fetchDestinationById(destId).unwrap();
+            const dest = await fetchDestinationById(String(destId)).unwrap();
             return {
               id: i + 1,
               name: dest.name,
               type: dest.category,
               duration: 'Sugerido',
               description: dest.description,
-              image: '',
+              image: dest.photo || '',
               latitude: Number(dest.latitude),
               longitude: Number(dest.longitude),
               location: dest.location,

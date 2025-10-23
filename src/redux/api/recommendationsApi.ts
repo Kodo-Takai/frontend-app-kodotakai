@@ -31,6 +31,13 @@ export const recommendationsApi = apiSlice.injectEndpoints({
             query: () => ({ url: "/api/recomendaciones-ia", method: "GET" }),
             providesTags: ["Destinations"],
         }),
+        getPersonalizedRecommendations: builder.query<Recommendation[], string>({
+            query: (userId) => ({
+                url: `/api/recomendaciones-ia/user/${userId}`,
+                method: "GET"
+            }),
+            providesTags: ["Destinations"],
+        }),
         getDestinationById: builder.query<DestinationDetails, string>({
             query: (id) => ({ url: `/api/destinations/${id}`, method: "GET" }),
             providesTags: ["Destinations"],
@@ -38,4 +45,11 @@ export const recommendationsApi = apiSlice.injectEndpoints({
     }),
 });
 
-export const { useGetRecommendationsQuery, useLazyGetRecommendationsQuery, useGetDestinationByIdQuery, useLazyGetDestinationByIdQuery } = recommendationsApi;
+export const {
+    useGetRecommendationsQuery,
+    useLazyGetRecommendationsQuery,
+    useGetPersonalizedRecommendationsQuery,
+    useLazyGetPersonalizedRecommendationsQuery,
+    useGetDestinationByIdQuery,
+    useLazyGetDestinationByIdQuery
+} = recommendationsApi;

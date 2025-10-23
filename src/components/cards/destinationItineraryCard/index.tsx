@@ -161,19 +161,17 @@ function CardHeroImage({
 }: {
   destination: DestinationItineraryCardProps["destination"];
 }) {
-  // Primero, intentamos foto real del lugar usando nombre + ubicación
-  const query = [
-    destination.name,
-    destination.description?.includes("Visita a")
-      ? ""
-      : destination.description,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const { url: placePhotoUrl } = usePlacePhotoByQuery(query, {
-    maxWidth: 800,
-    maxHeight: 320,
-  });
+  // Construir una consulta más específica para Google Places
+  // Priorizar el nombre del lugar
+  const query = destination.name;
+
+  const { url: placePhotoUrl, loading: photoLoading } = usePlacePhotoByQuery(
+    query,
+    {
+      maxWidth: 800,
+      maxHeight: 320,
+    }
+  );
 
   const hasCoords =
     typeof destination.latitude === "number" &&
@@ -187,13 +185,37 @@ function CardHeroImage({
     { size: "800x320", zoom: 15, markerColor: "green", preferStreetView: true }
   );
 
-  const src = placePhotoUrl || destination.image || imageUrl || "";
+  // Prioridad: foto de Google Places > imagen del destino > mapa por coordenadas
+  const src =
+    placePhotoUrl ||
+    destination.image ||
+    imageUrl ||
+    "https://picsum.photos/800/320?random=1";
+
+  // Mostrar un placeholder mientras carga
+  if (photoLoading && !placePhotoUrl && !destination.image) {
+    return (
+      <div
+        className="w-full h-full rounded-lg animate-pulse"
+        style={{ backgroundColor: "var(--color-beige-dark)" }}
+      />
+    );
+  }
 
   return (
     <img
       src={src}
       alt={destination.name}
       className="w-full h-full object-cover rounded-lg brightness-60"
+      onError={(e) => {
+        // Si la imagen falla, intentar con el mapa o placeholder
+        const target = e.target as HTMLImageElement;
+        if (target.src !== imageUrl && imageUrl) {
+          target.src = imageUrl;
+        } else if (target.src !== "https://picsum.photos/800/320?random=1") {
+          target.src = "https://picsum.photos/800/320?random=1";
+        }
+      }}
     />
   );
 }
