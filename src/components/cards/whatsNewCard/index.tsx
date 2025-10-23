@@ -230,7 +230,7 @@ export default function WhatsNewCards() {
             onClick={prevSlide}
             className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all z-10 opacity-0 group-hover:opacity-100"
             style={{
-              backgroundColor: "var(--color-green)",
+              backgroundColor: "transparent",
               color: "var(--color-blue)",
             }}
             onMouseEnter={(e) => {
