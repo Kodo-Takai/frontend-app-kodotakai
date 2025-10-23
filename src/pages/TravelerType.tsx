@@ -92,24 +92,9 @@ export default function TravelerType() {
 
   return (
     <section
-      className="mx-auto p-6 rounded-lg justify-center"
+      className="mx-auto mt-5 p-6 rounded-lg justify-center"
       style={{ backgroundColor: "var(--color-bone)" }}
     >
-      <div
-        className="cursor-pointer"
-        onClick={() => navigate(-1)}
-        aria-label="Regresar"
-      >
-        <div
-          className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
-          style={{
-            backgroundColor: "var(--color-blue)",
-            color: "var(--color-bone)",
-          }}
-        >
-          <FaArrowLeft className="w-4 h-4" />
-        </div>
-      </div>
 
       <h2
         className="text-[40px] font-extrabold mb-4 mt-4 font-sf-pro tracking-tight leading-10"
@@ -119,37 +104,37 @@ export default function TravelerType() {
         <span style={{ color: "var(--color-green)" }}>perfecto</span>
       </h2>
 
-      <p className="text-sm mb-6" style={{ color: "var(--color-blue-light)" }}>
+      <p className="text-sm font-semibold mb-3" style={{ color: "var(--color-blue)" }}>
         Cuéntanos un poco sobre ti para hacer que tus aventuras sean
         inolvidables, solo tomará un minuto
       </p>
-      <div className="flex gap-2 mt-10">
+      <div className="flex gap-2 mt-5 justify-center">
         <div
-          className="px-6.5 py-1.5 rounded-full"
+          className="px-13 py-1 rounded-full"
           style={{ backgroundColor: "var(--color-green)" }}
         ></div>
         <div
-          className="px-6.5 py-1.5 rounded-full"
+          className="px-13 py-1 rounded-full"
           style={{ backgroundColor: "var(--color-beige)" }}
         >
           {" "}
         </div>
         <div
-          className="px-6.5 py-1.5 rounded-full"
+          className="px-13 py-1 rounded-full"
           style={{ backgroundColor: "var(--color-beige)" }}
         ></div>
       </div>
       <div className="mt-6">
         <div className="">
           <span
-            className="text-lg font-bold"
+            className="text-lg font-extrabold"
             style={{ color: "var(--color-blue)" }}
           >
             ¡Cuéntanos un poco sobre ti viajando!
           </span>
           <p
-            className="text-sm mb-6"
-            style={{ color: "var(--color-blue-light)" }}
+            className="text-sm mb-6 mt-2"
+            style={{ color: "var(--color-blue)" }}
           >
             Así sabremos qué tipo de experiencias te harán feliz
           </p>
@@ -157,7 +142,7 @@ export default function TravelerType() {
         <div className="space-y-8">
           <div>
             <span
-              className="font-medium text-[16px]"
+              className="font-bold text-[16px]"
               style={{ color: "var(--color-blue)" }}
             >
               Eres un viajero...
@@ -172,22 +157,22 @@ export default function TravelerType() {
               {travelerTypes.map((type) => {
                 const isSelected = selectedTypes.includes(type);
                 return (
-                  <div
-                    key={type}
-                    onClick={() => toggleType(type)}
-                    className="px-4 py-1.5 rounded-xl cursor-pointer text-[14px]"
-                    style={{
-                      backgroundColor: isSelected
-                        ? "var(--color-green-light)"
-                        : "var(--color-beige-light)",
-                      border: `1px solid ${
-                        isSelected
-                          ? "var(--color-green-dark)"
-                          : "var(--color-beige-dark)"
-                      }`,
-                      color: "var(--color-blue)",
-                    }}
-                  >
+                   <div
+                     key={type}
+                     onClick={() => toggleType(type)}
+                     className="animate-bubble-in px-4 py-1.5 rounded-xl cursor-pointer text-[14px] transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
+                     style={{
+                       backgroundColor: isSelected
+                         ? "var(--color-green-light)"
+                         : "var(--color-beige-light)",
+                       border: `1px solid ${
+                         isSelected
+                           ? "var(--color-green-dark)"
+                           : "var(--color-beige-dark)"
+                       }`,
+                       color: "var(--color-blue)",
+                     }}
+                   >
                     {type}
                   </div>
                 );
@@ -196,7 +181,7 @@ export default function TravelerType() {
           </div>
           <div>
             <span
-              className="font-medium text-[16px]"
+              className="font-bold text-[16px]"
               style={{ color: "var(--color-blue)" }}
             >
               Viajas normalmente...
@@ -211,22 +196,22 @@ export default function TravelerType() {
               {travelingTypes.map((type, index) => {
                 const isSelected = selectedTypes.includes(type);
                 return (
-                  <div
-                    key={type}
-                    onClick={() => toggleType(type)}
-                    className="w-full px-4 py-1.5 rounded-xl cursor-pointer text-[14px]"
-                    style={{
-                      backgroundColor: isSelected
-                        ? "var(--color-green-light)"
-                        : "var(--color-beige-light)",
-                      border: `1px solid ${
-                        isSelected
-                          ? "var(--color-green-dark)"
-                          : "var(--color-beige-dark)"
-                      }`,
-                      color: "var(--color-blue)",
-                    }}
-                  >
+                   <div
+                     key={type}
+                     onClick={() => toggleType(type)}
+                     className="animate-bubble-in w-full px-4 py-1.5 rounded-xl cursor-pointer text-[14px] transition-all duration-300 ease-in-out transform hover:scale-[1.02] active:scale-[0.98]"
+                     style={{
+                       backgroundColor: isSelected
+                         ? "var(--color-green-light)"
+                         : "var(--color-beige-light)",
+                       border: `1px solid ${
+                         isSelected
+                           ? "var(--color-green-dark)"
+                           : "var(--color-beige-dark)"
+                       }`,
+                       color: "var(--color-blue)",
+                     }}
+                   >
                     {type} -{" "}
                     <span style={{ color: "var(--color-blue-light)" }}>
                       {travelingDescription[index]}
@@ -238,7 +223,7 @@ export default function TravelerType() {
           </div>
           <div>
             <span
-              className="font-medium text-[16px]"
+              className="font-bold text-[16px]"
               style={{ color: "var(--color-blue)" }}
             >
               Tus viajes suelen durar...
@@ -253,22 +238,22 @@ export default function TravelerType() {
               {travelTime.map((type) => {
                 const isSelected = selectedTypes.includes(type);
                 return (
-                  <div
-                    key={type}
-                    onClick={() => toggleType(type)}
-                    className="w-full px-4 py-1.5 rounded-xl cursor-pointer text-[14px]"
-                    style={{
-                      backgroundColor: isSelected
-                        ? "var(--color-green-light)"
-                        : "var(--color-beige-light)",
-                      border: `1px solid ${
-                        isSelected
-                          ? "var(--color-green-dark)"
-                          : "var(--color-beige-dark)"
-                      }`,
-                      color: "var(--color-blue)",
-                    }}
-                  >
+                   <div
+                     key={type}
+                     onClick={() => toggleType(type)}
+                     className="animate-bubble-in w-full px-4 py-1.5 rounded-xl cursor-pointer text-[14px] transition-all duration-300 ease-in-out transform hover:scale-[1.02] active:scale-[0.98]"
+                     style={{
+                       backgroundColor: isSelected
+                         ? "var(--color-green-light)"
+                         : "var(--color-beige-light)",
+                       border: `1px solid ${
+                         isSelected
+                           ? "var(--color-green-dark)"
+                           : "var(--color-beige-dark)"
+                       }`,
+                       color: "var(--color-blue)",
+                     }}
+                   >
                     {type}
                   </div>
                 );
@@ -277,16 +262,16 @@ export default function TravelerType() {
           </div>
         </div>
       </div>
-      <button
-        className="w-full py-3 rounded-2xl mt-7 font-medium"
-        style={{
-          backgroundColor: "var(--color-green)",
-          color: "var(--color-blue)",
-          border: "1px solid var(--color-green-dark)",
-          opacity: isFormValid ? 1 : 0.6,
-          cursor: isFormValid ? "pointer" : "not-allowed",
-        }}
-        disabled={!isFormValid}
+       <button
+         className="w-full py-3 rounded-2xl mt-7 font-medium transition-all duration-300 ease-in-out transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100"
+         style={{
+           backgroundColor: "var(--color-green)",
+           color: "var(--color-blue)",
+           border: "1px solid var(--color-green-dark)",
+           opacity: isFormValid ? 1 : 0.6,
+           cursor: isFormValid ? "pointer" : "not-allowed",
+         }}
+         disabled={!isFormValid}
         onClick={() => {
           // Split selectedTypes into the three groups based on available options
           const travelerTypesSet = new Set(travelerTypes);

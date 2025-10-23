@@ -123,7 +123,7 @@ export default function RegisterForm({
         {isLoading ? 'Creando cuenta...' : 'Crear cuenta'} <LuBookCheck />
       </Button>
 
-      <p className="mt-4 text-sm font-medium text-[var(--color-blue)] text-center">
+      <p className="mt-4 text-sm font-bold text-[var(--color-blue)] text-center">
         ¿Ya tienes cuenta?{" "}
         <Link to="/login" className="text-[var(--color-green)] hover:underline">
           Inicia sesión
