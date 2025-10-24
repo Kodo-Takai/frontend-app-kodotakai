@@ -251,9 +251,6 @@ export default function PlayasPage() {
             places={places}
             loading={loading}
             error={error}
-            onPlaceClick={(place) => {
-              console.log("Playa seleccionada:", place);
-            }}
             itemsPerPage={4}
             userLocation={mapCenter || undefined}
           />

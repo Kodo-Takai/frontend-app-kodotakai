@@ -254,9 +254,6 @@ export default function ParquesPage() {
             places={places}
             loading={loading}
             error={error}
-            onPlaceClick={(place) => {
-              console.log("Parque seleccionado:", place);
-            }}
             itemsPerPage={4}
             userLocation={mapCenter || undefined}
           />

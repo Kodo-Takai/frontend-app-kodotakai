@@ -257,9 +257,6 @@ export default function RestaurantsPage() {
             places={places}
             loading={loading}
             error={error}
-            onPlaceClick={(place) => {
-              console.log("Restaurante seleccionado:", place);
-            }}
             itemsPerPage={4}
             userLocation={mapCenter || undefined}
           />
