@@ -34,24 +34,24 @@ export default function Home() {
   const handleAIClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // Prevenir click si el overlay ya está activo
     if (isAIActive) return;
-    
+
     const button = event.currentTarget;
-    
+
     // Efecto de bounce/encogimiento del botón
-    button.style.transform = 'scale(0.9)';
-    button.style.transition = 'transform 0.1s ease-out';
-    
+    button.style.transform = "scale(0.9)";
+    button.style.transition = "transform 0.1s ease-out";
+
     // Después del bounce, restaurar y activar overlay
     setTimeout(() => {
-      button.style.transform = 'scale(1)';
-      button.style.transition = 'transform 0.2s ease-out';
-      
+      button.style.transform = "scale(1)";
+      button.style.transition = "transform 0.2s ease-out";
+
       // Activar overlay después del bounce
       setTimeout(() => {
         const rect = button.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        
+
         showAIOverlay({ x: centerX, y: centerY });
       }, 100);
     }, 100);
@@ -87,7 +87,7 @@ export default function Home() {
                 fontSize: "40px",
                 fontStyle: "normal",
                 fontWeight: "800",
-                lineHeight: "26px",
+                lineHeight: "32px",
                 letterSpacing: "-0.9px",
               }}
             >

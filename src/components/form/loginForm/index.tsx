@@ -83,7 +83,7 @@ export default function LoginForm({
       </div>
 
       <p
-        className="mt-6 text-center text-sm font-medium"
+        className="mt-6 text-center text-sm font-bold"
         style={{ color: "var(--color-blue)" }}
       >
         ¿No tienes una cuenta?{" "}

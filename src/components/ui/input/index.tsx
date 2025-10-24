@@ -55,44 +55,44 @@ export default function Input({
       >
         <div className="grid grid-cols-2 gap-1">
           <div
-            className={`flex items-center gap-1 ${hasMinLength ? "" : ""}`}
+            className={`flex font-bold items-center gap-1 ${hasMinLength ? "" : ""}`}
             style={{
               color: hasMinLength
                 ? "var(--color-green)"
-                : "var(--color-beige-dark)",
+                : "var(--color-blue)",
             }}
           >
             <span>{hasMinLength ? "✓" : "○"}</span>
             <span>Mínimo 8 caracteres</span>
           </div>
           <div
-            className={`flex items-center gap-1 ${hasUpperCase ? "" : ""}`}
+            className={`flex font-bold items-center gap-1 ${hasUpperCase ? "" : ""}`}
             style={{
               color: hasUpperCase
                 ? "var(--color-green)"
-                : "var(--color-beige-dark)",
+                : "var(--color-blue)",
             }}
           >
             <span>{hasUpperCase ? "✓" : "○"}</span>
             <span>Una mayúscula</span>
           </div>
           <div
-            className={`flex items-center gap-1 ${hasNumber ? "" : ""}`}
+            className={`flex font-bold items-center gap-1 ${hasNumber ? "" : ""}`}
             style={{
               color: hasNumber
                 ? "var(--color-green)"
-                : "var(--color-beige-dark)",
+                : "var(--color-blue)",
             }}
           >
             <span>{hasNumber ? "✓" : "○"}</span>
             <span>Un número</span>
           </div>
           <div
-            className={`flex items-center gap-1 ${hasSpecialChar ? "" : ""}`}
+            className={`flex font-bold items-center gap-1 ${hasSpecialChar ? "" : ""}`}
             style={{
               color: hasSpecialChar
                 ? "var(--color-green)"
-                : "var(--color-beige-dark)",
+                : "var(--color-blue)",
             }}
           >
             <span>{hasSpecialChar ? "✓" : "○"}</span>
@@ -124,11 +124,11 @@ export default function Input({
           onBlur={onBlur}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className={`block w-full px-4 py-4 pr-10 text-sm rounded-2xl border focus:outline-none ${
+          className={`block font-bold w-full px-4 py-4 pr-10 text-sm rounded-2xl border focus:outline-none ${
             invalid ? "" : ""
           }`}
           style={{
-            borderColor: invalid ? "var(--color-blue)" : "var(--color-beige)",
+            borderColor: invalid ? "var(--color-blue)" : "var(--color-beige-dark)",
             backgroundColor: "var(--color-beige)",
             color: "var(--color-blue)",
           }}

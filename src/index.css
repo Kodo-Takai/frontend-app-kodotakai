@@ -77,6 +77,7 @@ textarea {
   --color-green-darker: #747e31; /* Green más oscuro */
   --color-green-light: #e8f06a; /* Green más claro */
   --color-beige-dark: #dfbe8b; /* Beige más oscuro */
+  --color-beige-darker: #ba9968; /* Beige más oscuro */
   --color-beige-light: #fff4e0; /* Beige más claro */
 
   /* 🎨 COLORES SEMÁNTICOS (usando la paleta base) */
@@ -116,19 +117,19 @@ textarea {
 
 /* Estilos para placeholders en inputs */
 input::placeholder {
-  color: var(--color-beige-dark);
+  color: var(--color-beige-darker);
   opacity: 1; /* Asegura que el color se aplique correctamente */
 }
 
 /* Estilos específicos para el componente Search */
 input[type="text"]::placeholder {
-  color: var(--color-beige-dark);
+  color: var(--color-beige-darker);
   opacity: 1;
 }
 
 /* Estilos más específicos para el componente Search */
 .search-input::placeholder {
-  color: var(--color-beige-dark);
+  color: var(--color-beige-darker);
   opacity: 1;
 }
 
@@ -136,7 +137,7 @@ input[type="text"]::placeholder {
 input[type="email"]::placeholder,
 input[type="password"]::placeholder,
 input[type="tel"]::placeholder {
-  color: var(--color-beige-dark);
+  color: var(--color-beige-darker);
   opacity: 1;
 }
 

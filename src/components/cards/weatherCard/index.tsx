@@ -168,9 +168,12 @@ export default function WeatherPill({
             )}
           >
             {loading ? (
-              <div className="h-8 w-12 rounded bg-white/20 animate-pulse" />
+              <div className="h-8 w-18 rounded bg-white/20 animate-pulse" />
             ) : error ? (
-              <span className="text-sm font-bold text-[var(--color-green)]" title={error}>
+              <span
+                className="text-sm font-bold text-[var(--color-green)]"
+                title={error}
+              >
                 ⚠️
               </span>
             ) : (
