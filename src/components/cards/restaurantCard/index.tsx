@@ -38,7 +38,7 @@ export default function RestaurantCards() {
 
   const handleNavigation = (restaurant: Restaurant) => {
     setInitialDestination(restaurant);
-    navigate('/maps');
+    navigate("/maps");
   };
 
   const displayedRestaurants = restaurants.slice(0, 6);
@@ -49,55 +49,76 @@ export default function RestaurantCards() {
     const handleImageError = () => setImageError(true);
 
     const renderStars = (rating?: number) => {
-        if (!rating) return null;
-        const fullStars = Math.floor(rating);
-        const stars = Array.from({ length: 5 }, (_, i) => (
-          <FaStar
-            key={`restaurant-star-${i}`}
-            className="w-3 h-3"
-            color={i < fullStars ? "var(--color-green)" : "var(--color-bone)"}
-          />
-        ));
-        return (
-          <div className="flex items-center gap-1">
-            {stars}
-            <span className="text-[var(--color-bone)] text-xs font-semibold ml-1">
-              {rating.toFixed(1)}
-            </span>
-          </div>
-        );
+      if (!rating) return null;
+      const fullStars = Math.floor(rating);
+      const stars = Array.from({ length: 5 }, (_, i) => (
+        <FaStar
+          key={`restaurant-star-${i}`}
+          className="w-3 h-3"
+          color={i < fullStars ? "var(--color-green)" : "var(--color-bone)"}
+        />
+      ));
+      return (
+        <div className="flex items-center gap-1">
+          {stars}
+          <span className="text-[var(--color-bone)] text-xs font-semibold ml-1">
+            {rating.toFixed(1)}
+          </span>
+        </div>
+      );
     };
 
     return (
-      <div className="restaurant-card-width" onClick={() => handleOpenModal(restaurant)}>
+      <div
+        className="restaurant-card-width"
+        onClick={() => handleOpenModal(restaurant)}
+      >
         <div className="restaurant-card-container">
           <div className="restaurant-card-header">
             <div className="restaurant-card-title-section">
               <div className="restaurant-card-experience-text">
-                <img src="/icons/rest_icon3.svg" alt="Compass" width="30" height="30" className="restaurant-card-compass-icon" />
+                <img
+                  src="/icons/rest_icon3.svg"
+                  alt="Compass"
+                  width="30"
+                  height="30"
+                  className="restaurant-card-compass-icon"
+                />
               </div>
               <div className="restaurant-card-name-section">
-                <div className="restaurant-card-experience-label">EXPERIMENTA NUEVOS SABORES</div>
-                <h3 className="restaurant-card-restaurant-name">{restaurant.name}</h3>
+                <div className="restaurant-card-experience-label">
+                  EXPERIMENTA NUEVOS SABORES
+                </div>
+                <h3 className="restaurant-card-restaurant-name">
+                  {restaurant.name}
+                </h3>
               </div>
             </div>
             <div className="restaurant-card-description-row">
               <MdPlace className="w-3 h-3 text-gray-400 flex-shrink-0" />
-              <span className="line-clamp-2">{restaurant.vicinity || "Descubre este increíble restaurante"}</span>
+              <span className="line-clamp-2">
+                {restaurant.vicinity || "Descubre este increíble restaurante"}
+              </span>
             </div>
           </div>
 
           <div className="restaurant-card-image-section">
             <div className="restaurant-card-image-container">
               <img
-                src={imageError ? "https://picsum.photos/400/200?random=restaurant-error" : restaurant.photo_url}
+                src={
+                  imageError
+                    ? "https://picsum.photos/400/200?random=restaurant-error"
+                    : restaurant.photo_url
+                }
                 alt={restaurant.name}
                 className="restaurant-card-image"
                 loading="lazy"
                 onError={handleImageError}
               />
-              
-              <div className="restaurant-card-rating-overlay">{renderStars(restaurant.rating)}</div>
+
+              <div className="restaurant-card-rating-overlay">
+                {renderStars(restaurant.rating)}
+              </div>
               <div className="restaurant-card-type-overlay">
                 <img
                   src="/icons/rest_icon3.svg"
@@ -120,9 +141,14 @@ export default function RestaurantCards() {
               }}
             >
               <TbLocationFilled className="w-4 h-4 text-white" />
-              <span className="text-white text-sm font-medium">Visítalo ahora</span>
+              <span className="text-white text-sm font-medium">
+                Visítalo ahora
+              </span>
             </button>
-            <button className="restaurant-card-red-button" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="restaurant-card-red-button"
+              onClick={(e) => e.stopPropagation()}
+            >
               <FaHeart className="w-4 h-4 text-[var(--color-blue)]" />
             </button>
           </div>
@@ -168,7 +194,10 @@ export default function RestaurantCards() {
     return (
       <div className="restaurant-scroll">
         {displayedRestaurants.map((restaurant) => (
-          <RestaurantCard key={restaurant.place_id || restaurant.id} restaurant={restaurant as Restaurant} />
+          <RestaurantCard
+            key={restaurant.place_id || restaurant.id}
+            restaurant={restaurant as Restaurant}
+          />
         ))}
       </div>
     );
@@ -180,7 +209,7 @@ export default function RestaurantCards() {
         Restaurantes mejor valorados
       </h2>
       {renderContent()}
-      
+
       {selectedPlace && (
         <PlaceModal
           isOpen={isModalOpen}

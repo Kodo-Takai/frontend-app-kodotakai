@@ -115,7 +115,8 @@ export default function PasswordRecoveryForm() {
         <div>
           <div className="flex flex-col gap-4 mb-6">
             <h1 className="text-4xl font-extrabold font-sf-pro">
-              Crea una nueva <span className="text-red-500">contraseña</span>
+              Crea una nueva{" "}
+              <span className="text-[var(--color-green)]">contraseña</span>
             </h1>
             <p className="text-gray-500 text-sm">
               Ingresa una nueva contraseña para restablecer el acceso a tu
