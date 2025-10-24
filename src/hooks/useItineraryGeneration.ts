@@ -23,6 +23,7 @@ export const useItineraryGeneration = () => {
   const [allRecommendations, setAllRecommendations] = useState<string[]>([]); // Guardar todos los IDs de recomendaciones
   const [usedDestinationIds, setUsedDestinationIds] = useState<Set<string>>(new Set()); // IDs ya usados
   const { triggerConfetti } = useConfetti();
+  // Podemos guardar recomendaciones si se requieren más adelante (omitir por ahora)
 
   // Obtener userId del hook personalizado
   const userId = useUserId();
@@ -67,7 +68,7 @@ export const useItineraryGeneration = () => {
       // Paso 1: Traer recomendaciones personalizadas de IA usando el userId
       const recs = await fetchPersonalizedRecommendations(userId).unwrap();
 
-      // Guardar todas las recomendaciones para usar después en "regenerar"
+      // Guardar todas las recomendaciones para uso futuro
       const allRecIds = Array.from(new Set(recs.map((r) => r.destinationId)));
       setAllRecommendations(allRecIds);
 
@@ -76,8 +77,8 @@ export const useItineraryGeneration = () => {
 
       // Seleccionar hasta 3 recomendaciones únicas
       const uniqueRecIds = allRecIds.slice(0, 3);
-
-      // Marcar los IDs usados
+      
+      // Guardar los IDs que estamos usando
       setUsedDestinationIds(new Set(uniqueRecIds));
 
       // Paso 2: Traer detalles de recomendados
@@ -159,58 +160,89 @@ export const useItineraryGeneration = () => {
 
   const regenerateDestination = async (destinationId: number) => {
     try {
-      // Encontrar el destino a reemplazar
+      // Encontrar el índice del destino a reemplazar
       const destinationIndex = destinations.findIndex(d => d.id === destinationId);
       if (destinationIndex === -1) return;
 
-      // Buscar un destino no usado de las recomendaciones
-      const availableRecommendations = allRecommendations.filter(
+      // Obtener el nombre actual del destino que se va a reemplazar
+      const currentDestName = destinations[destinationIndex].name;
+
+      // Buscar destinos no usados de las recomendaciones
+      const unusedRecommendations = allRecommendations.filter(
         recId => !usedDestinationIds.has(recId)
       );
 
-      let newDestId: string | null = null;
+      let newDestination: UIDestination | null = null;
 
-      // Si hay recomendaciones disponibles, usar una
-      if (availableRecommendations.length > 0) {
-        newDestId = availableRecommendations[0];
-      } else {
-        // Si no hay más recomendaciones, buscar de la lista general
-        const allDests = await fetchAllDestinations().unwrap();
-        const availableFromAll = allDests.filter(d => !usedDestinationIds.has(d.id));
+      // Si hay recomendaciones sin usar, usar una de ellas
+      if (unusedRecommendations.length > 0) {
+        const newDestId = unusedRecommendations[0];
+        
+        try {
+          const dest = await fetchDestinationById(String(newDestId)).unwrap();
+          newDestination = {
+            id: destinationId,
+            name: dest.name,
+            type: dest.category,
+            duration: 'Sugerido',
+            description: dest.description,
+            image: dest.photo || '',
+            latitude: Number(dest.latitude),
+            longitude: Number(dest.longitude),
+          };
 
-        if (availableFromAll.length > 0) {
-          newDestId = availableFromAll[0].id;
-        } else {
-          console.warn('No hay más destinos disponibles para regenerar');
-          return;
+          // Actualizar los IDs usados
+          setUsedDestinationIds(prev => new Set([...prev, newDestId]));
+        } catch (error) {
+          console.error('Error fetching recommended destination:', error);
         }
       }
 
-      // Obtener detalles del nuevo destino
-      const newDest = await fetchDestinationById(newDestId).unwrap();
+      // Si no hay recomendaciones o falló, buscar en todos los destinos
+      if (!newDestination) {
+        const all = await fetchAllDestinations().unwrap();
+        
+        // Filtrar destinos que no estén actualmente en uso
+        const currentNames = new Set(destinations.map(d => d.name));
+        const availableDestinations = all.filter(d => 
+          !currentNames.has(d.name) && 
+          !usedDestinationIds.has(d.id)
+        );
 
-      // Crear el nuevo destino con el mismo ID (posición)
-      const newDestination: UIDestination = {
-        id: destinationId, // Mantener el mismo ID para la posición
-        name: newDest.name,
-        type: newDest.category,
-        duration: 'Sugerido',
-        description: newDest.description,
-        image: newDest.photo || '',
-        latitude: Number(newDest.latitude),
-        longitude: Number(newDest.longitude),
-      };
+        if (availableDestinations.length > 0) {
+          // Seleccionar un destino aleatorio
+          const randomDest = availableDestinations[Math.floor(Math.random() * availableDestinations.length)];
+          
+          newDestination = {
+            id: destinationId,
+            name: randomDest.name,
+            type: randomDest.category,
+            duration: 'Sugerido',
+            description: randomDest.description,
+            image: '',
+            latitude: NaN,
+            longitude: NaN,
+          };
 
-      // Actualizar la lista de destinos
-      const updatedDestinations = [...destinations];
-      updatedDestinations[destinationIndex] = newDestination;
-      setDestinations(updatedDestinations);
+          // Actualizar los IDs usados
+          setUsedDestinationIds(prev => new Set([...prev, randomDest.id]));
+        }
+      }
 
-      // Marcar el nuevo destino como usado
-      setUsedDestinationIds(prev => new Set([...prev, newDestId!]));
+      // Si encontramos un nuevo destino, actualizar el array
+      if (newDestination) {
+        setDestinations(prev => {
+          const newDestinations = [...prev];
+          newDestinations[destinationIndex] = newDestination!;
+          return newDestinations;
+        });
 
+        console.log(`Destino regenerado: "${currentDestName}" → "${newDestination.name}"`);
+      } else {
+        console.log('No hay más destinos disponibles para regenerar');
+      }
     } catch (error) {
-      console.error('Error regenerando destino:', error);
+      console.error('Error regenerating destination:', error);
     }
   };
 

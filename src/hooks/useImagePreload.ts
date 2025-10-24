@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Hook para preload de imágenes críticas
@@ -12,16 +12,12 @@ export const useImagePreload = (imageUrls: string[]) => {
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
-  // Crear una clave estable para las URLs
-  const urlsKey = useMemo(() => imageUrls.join(','), [imageUrls]);
-
   useEffect(() => {
     if (!imageUrls.length) {
       setIsLoading(false);
       return;
     }
 
-    let cancelled = false;
     let loadedCount = 0;
     const totalImages = imageUrls.length;
     const newLoadedImages = new Set<string>();
@@ -29,33 +25,29 @@ export const useImagePreload = (imageUrls: string[]) => {
     const loadImage = (url: string): Promise<void> => {
       return new Promise((resolve, reject) => {
         const img = new Image();
-        
+
         img.onload = () => {
-          if (cancelled) return;
-          
           newLoadedImages.add(url);
           loadedCount++;
-          
+
           if (loadedCount === totalImages) {
-            setLoadedImages(new Set(newLoadedImages));
+            setLoadedImages(newLoadedImages);
             setIsLoading(false);
           }
           resolve();
         };
-        
+
         img.onerror = () => {
-          if (cancelled) return;
-          
           console.warn(`Failed to load image: ${url}`);
           loadedCount++;
-          
+
           if (loadedCount === totalImages) {
-            setLoadedImages(new Set(newLoadedImages));
+            setLoadedImages(newLoadedImages);
             setIsLoading(false);
           }
           reject(new Error(`Failed to load image: ${url}`));
         };
-        
+
         // Iniciar carga
         img.src = url;
       });
@@ -64,11 +56,7 @@ export const useImagePreload = (imageUrls: string[]) => {
     // Cargar todas las imágenes en paralelo
     Promise.allSettled(imageUrls.map(loadImage));
 
-    return () => {
-      cancelled = true;
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlsKey]);
+  }, [imageUrls]);
 
   return {
     loadedImages,

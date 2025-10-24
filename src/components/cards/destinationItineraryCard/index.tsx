@@ -15,64 +15,49 @@ interface DestinationItineraryCardProps {
     latitude?: number;
     longitude?: number;
   };
-  onRegenerate: (id: number) => Promise<void>;
-  onAddToAgenda: (destination: DestinationItineraryCardProps['destination']) => Promise<void>;
+  onRegenerate: (id: number) => void;
   loading?: boolean;
 }
 
 const DestinationItineraryCard: React.FC<DestinationItineraryCardProps> = ({
   destination,
   onRegenerate,
-  onAddToAgenda,
   loading = false,
 }) => {
   const [isRegenerating, setIsRegenerating] = useState(false);
-  const [isAddingToAgenda, setIsAddingToAgenda] = useState(false);
 
   const handleRegenerate = async () => {
     setIsRegenerating(true);
     try {
       await onRegenerate(destination.id);
     } finally {
-      setIsRegenerating(false);
-    }
-  };
-
-  const handleAddToAgenda = async () => {
-    setIsAddingToAgenda(true);
-    try {
-      await onAddToAgenda(destination);
-    } finally {
-      setIsAddingToAgenda(false);
+      // Delay para mostrar el cambio de manera más fluida
+      setTimeout(() => {
+        setIsRegenerating(false);
+      }, 500);
     }
   };
 
   // Skeleton loading state
-  if (loading || isRegenerating) {
+  if (loading) {
     return (
       <div
         className="rounded-2xl overflow-hidden p-4 animate-pulse mb-4"
         style={{ backgroundColor: "var(--color-bone)" }}
       >
         <div
-          className="w-full h-80 rounded-lg flex items-center justify-center"
+          className="w-full h-80 rounded-lg"
           style={{ backgroundColor: "var(--color-green-dark)" }}
-        >
-          {isRegenerating && (
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-2" style={{ borderColor: "var(--color-bone)" }}></div>
-              <p className="text-sm font-medium" style={{ color: "var(--color-bone)" }}>
-                Buscando nuevo destino...
-              </p>
-            </div>
-          )}
-        </div>
+        />
       </div>
     );
   }
   return (
     <div
-      className="rounded-2xl overflow-hidden p-4 animate-bubble-in hover:scale-101 transition-transform duration-300 ease-out mb-4"
+      key={`${destination.id}-${destination.name}`}
+      className={`rounded-2xl overflow-hidden p-4 hover:scale-101 transition-all duration-300 ease-out mb-4 ${
+        isRegenerating ? 'opacity-50 scale-95' : 'animate-bubble-in'
+      }`}
       style={{ backgroundColor: "var(--color-bone)" }}
     >
       {/* Sección Superior - Imagen con burbuja de tipo/duración */}
@@ -144,21 +129,15 @@ const DestinationItineraryCard: React.FC<DestinationItineraryCardProps> = ({
       <div className="flex gap-5 pt-0">
         {/* Botón Agregar a Agenda */}
         <button
-          onClick={handleAddToAgenda}
-          disabled={isAddingToAgenda || isRegenerating}
-          className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-normal transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-normal transition-all duration-200 hover:scale-105"
           style={{
             backgroundColor: "var(--color-blue-dark)",
             color: "var(--color-bone)",
           }}
         >
-          <span>{isAddingToAgenda ? 'Agregando...' : 'Agregar a Agenda'}</span>
+          <span>Agregar a Agenda</span>
           {/* Icono de calendario */}
-          <svg 
-            className={`w-4 h-4 ${isAddingToAgenda ? 'animate-pulse' : ''}`} 
-            fill="currentColor" 
-            viewBox="0 0 20 20"
-          >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"

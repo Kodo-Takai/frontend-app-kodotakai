@@ -14,8 +14,7 @@ interface Destination {
 
 interface ItineraryGeneratedProps {
   destinations: Destination[];
-  onRegenerateDestination: (id: number) => Promise<void>;
-  onAddToAgenda: (destination: Destination) => Promise<void>;
+  onRegenerateDestination: (id: number) => void;
   onShowInAgenda: () => void;
   onGoToLobby: () => void;
 }
@@ -23,7 +22,6 @@ interface ItineraryGeneratedProps {
 const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
   destinations,
   onRegenerateDestination,
-  onAddToAgenda,
   onShowInAgenda,
   onGoToLobby
 }) => {
@@ -60,7 +58,6 @@ const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
             key={destination.id}
             destination={destination}
             onRegenerate={onRegenerateDestination}
-            onAddToAgenda={onAddToAgenda}
           />
         ))}
       </div>
