@@ -2,6 +2,7 @@ export * from "./types";
 export * from "./base/useGoogleMaps";
 export * from "./base/useGeolocation";
 export * from "./search/usePlacesSearch";
+export * from "./search/useNearbyPlaces";
 export * from "./filter/usePlacesFilter";
 export * from "./photos/usePlacesPhotos";
 export * from "./photos/useMapImageByCoords";
