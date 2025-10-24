@@ -56,7 +56,7 @@ export default function Register() {
       </div>
 
       <h2
-        className="text-[40px] font-extrabold mb-4 mt-4 font-sf-pro tracking-tight leading-10"
+        className="text-[40px] font-black mb-4 mt-4 font-sf-pro tracking-tight leading-10"
         style={{ color: "var(--color-blue)" }}
       >
         Crea tu <span style={{ color: "var(--color-green)" }}>nueva</span>{" "}
@@ -65,7 +65,7 @@ export default function Register() {
 
       <p
         className="text-sm mb-6 font-medium"
-        style={{ color: "var(--color-blue-light)" }}
+        style={{ color: "var(--color-blue)" }}
       >
         Crea una cuenta para que puedas comenzar una nueva aventura y disfrutar
         la experiencia al máximo

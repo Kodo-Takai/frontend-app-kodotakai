@@ -67,24 +67,9 @@ export default function TravelActivities() {
   const isFormValid = activitiesValid && placeTypesValid;
   return (
     <section
-      className="mx-auto p-6 rounded-lg justify-center"
+      className="mx-auto mt-5 p-6 rounded-lg justify-center"
       style={{ backgroundColor: "var(--color-bone)" }}
     >
-      <div
-        className="cursor-pointer"
-        onClick={() => navigate(-1)}
-        aria-label="Regresar"
-      >
-        <div
-          className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
-          style={{
-            backgroundColor: "var(--color-blue)",
-            color: "var(--color-bone)",
-          }}
-        >
-          <FaArrowLeft className="w-4 h-4" />
-        </div>
-      </div>
 
       <h2
         className="text-[40px] font-extrabold mb-4 mt-4 font-sf-pro tracking-tight leading-10"
@@ -94,37 +79,37 @@ export default function TravelActivities() {
         <span style={{ color: "var(--color-green)" }}>perfecto</span>
       </h2>
 
-      <p className="text-sm mb-6" style={{ color: "var(--color-blue-light)" }}>
+      <p className="text-sm font-semibold mb-3" style={{ color: "var(--color-blue)" }}>
         Cuéntanos un poco sobre ti para hacer que tus aventuras sean
         inolvidables, solo tomará un minuto
       </p>
-      <div className="flex gap-2 mt-10">
+      <div className="flex gap-2 mt-5 justify-center">
         <div
-          className="px-6.5 py-1.5 rounded-full"
+          className="px-13 py-1 rounded-full"
           style={{ backgroundColor: "var(--color-green)" }}
         ></div>
         <div
-          className="px-6.5 py-1.5 rounded-full"
+          className="px-13 py-1 rounded-full"
           style={{ backgroundColor: "var(--color-green)" }}
         >
           {" "}
         </div>
         <div
-          className="px-6.5 py-1.5 rounded-full"
+          className="px-13 py-1 rounded-full"
           style={{ backgroundColor: "var(--color-beige)" }}
         ></div>
       </div>
       <div className="mt-6">
         <div className="">
           <span
-            className="text-lg font-bold"
+            className="text-lg font-extrabold"
             style={{ color: "var(--color-blue)" }}
           >
             ¿Qué te gusta hacer cuando viajas?
           </span>
           <p
-            className="text-sm mb-6 font-medium"
-            style={{ color: "var(--color-blue-light)" }}
+            className="text-sm mb-6 font-semibold mt-2"
+            style={{ color: "var(--color-blue)" }}
           >
             Marca todo lo que te llame la atención, ¡no hay límites!
           </p>
@@ -150,7 +135,7 @@ export default function TravelActivities() {
                   <div
                     key={type}
                     onClick={() => toggleType(type)}
-                    className="px-4 py-1.5 rounded-xl cursor-pointer text-[14px]"
+                    className="animate-bubble-in px-4 py-1.5 rounded-xl cursor-pointer text-[14px] transition-all duration-300 ease-in-out transform hover:scale-[1.02] active:scale-[0.98]"
                     style={{
                       backgroundColor: isSelected
                         ? "var(--color-green-light)"
@@ -189,7 +174,7 @@ export default function TravelActivities() {
                   <div
                     key={type}
                     onClick={() => toggleType(type)}
-                    className="px-4 py-1.5 rounded-xl cursor-pointer text-[14px]"
+                    className="animate-bubble-in px-4 py-1.5 rounded-xl cursor-pointer text-[14px] transition-all duration-300 ease-in-out transform hover:scale-[1.02] active:scale-[0.98]"
                     style={{
                       backgroundColor: isSelected
                         ? "var(--color-green-light)"
