@@ -14,12 +14,12 @@ Hook personalizado para obtener lugares cercanos a una ubicación específica us
 ## 🚀 Uso Básico
 
 ```typescript
-import { useNearbyPlaces } from '../hooks/places';
+import { useNearbyPlaces } from "../hooks/places";
 
 function MyComponent() {
   const { places, loading, error, fetchNearbyPlaces } = useNearbyPlaces({
     radius: 2000, // 2km de radio
-    type: 'restaurant', // Buscar restaurantes
+    type: "restaurant", // Buscar restaurantes
     limit: 10, // Máximo 10 resultados
     minRating: 4.0, // Rating mínimo de 4.0
   });
@@ -32,11 +32,11 @@ function MyComponent() {
   return (
     <div>
       <button onClick={handleSearch}>Buscar lugares cercanos</button>
-      
+
       {loading && <p>Cargando...</p>}
       {error && <p>Error: {error}</p>}
-      
-      {places.map(place => (
+
+      {places.map((place) => (
         <div key={place.id}>
           <h3>{place.name}</h3>
           <p>Rating: {place.rating}</p>
@@ -55,11 +55,11 @@ function MyComponent() {
 Hook pre-configurado para buscar restaurantes cercanos.
 
 ```typescript
-import { useNearbyRestaurants } from '../hooks/places';
+import { useNearbyRestaurants } from "../hooks/places";
 
 function RestaurantsFinder() {
   const location = { lat: -12.0464, lng: -77.0428 };
-  
+
   const { places, loading } = useNearbyRestaurants(location, {
     radius: 3000,
     limit: 15,
@@ -72,7 +72,7 @@ function RestaurantsFinder() {
       {loading ? (
         <p>Buscando restaurantes...</p>
       ) : (
-        places.map(restaurant => (
+        places.map((restaurant) => (
           <RestaurantCard key={restaurant.id} restaurant={restaurant} />
         ))
       )}
@@ -86,11 +86,11 @@ function RestaurantsFinder() {
 Hook pre-configurado para buscar hoteles cercanos.
 
 ```typescript
-import { useNearbyHotels } from '../hooks/places';
+import { useNearbyHotels } from "../hooks/places";
 
 function HotelsFinder() {
   const location = { lat: -12.0464, lng: -77.0428 };
-  
+
   const { places, loading } = useNearbyHotels(location, {
     radius: 5000,
     limit: 10,
@@ -99,7 +99,7 @@ function HotelsFinder() {
 
   return (
     <div>
-      {places.map(hotel => (
+      {places.map((hotel) => (
         <HotelCard key={hotel.id} hotel={hotel} />
       ))}
     </div>
@@ -112,11 +112,11 @@ function HotelsFinder() {
 Hook pre-configurado para buscar atracciones turísticas cercanas.
 
 ```typescript
-import { useNearbyAttractions } from '../hooks/places';
+import { useNearbyAttractions } from "../hooks/places";
 
 function AttractionsFinder() {
   const location = { lat: -12.0464, lng: -77.0428 };
-  
+
   const { places, loading } = useNearbyAttractions(location, {
     radius: 10000, // 10km
     limit: 20,
@@ -125,7 +125,7 @@ function AttractionsFinder() {
   return (
     <div>
       <h2>Atracciones turísticas cercanas</h2>
-      {places.map(attraction => (
+      {places.map((attraction) => (
         <AttractionCard key={attraction.id} attraction={attraction} />
       ))}
     </div>
@@ -138,14 +138,14 @@ function AttractionsFinder() {
 Ejemplo de integración con el sistema de itinerarios:
 
 ```typescript
-import { useNearbyPlaces } from '../hooks/places';
-import NearbyPlacesCard from '../components/itinerary/NearbyPlacesCard';
+import { useNearbyPlaces } from "../hooks/places";
+import NearbyPlacesCard from "../components/itinerary/NearbyPlacesCard";
 
 function ItineraryWithNearbyPlaces({ destination }) {
   return (
     <div>
       <DestinationCard destination={destination} />
-      
+
       {/* Restaurantes cercanos */}
       <NearbyPlacesCard
         destination={destination}
@@ -153,7 +153,7 @@ function ItineraryWithNearbyPlaces({ destination }) {
         radius={2000}
         limit={5}
       />
-      
+
       {/* Hoteles cercanos */}
       <NearbyPlacesCard
         destination={destination}
@@ -161,7 +161,7 @@ function ItineraryWithNearbyPlaces({ destination }) {
         radius={3000}
         limit={5}
       />
-      
+
       {/* Atracciones cercanas */}
       <NearbyPlacesCard
         destination={destination}
@@ -224,16 +224,17 @@ interface UseNearbyPlacesOptions {
 ## 🎨 Ejemplo Completo de Componente
 
 ```typescript
-import React from 'react';
-import { useNearbyPlaces } from '../hooks/places';
+import React from "react";
+import { useNearbyPlaces } from "../hooks/places";
 
 function NearbyPlacesExplorer({ destination }) {
-  const { places, loading, error, fetchNearbyPlaces, clearPlaces } = useNearbyPlaces({
-    radius: 2000,
-    type: 'restaurant',
-    limit: 10,
-    minRating: 4.0,
-  });
+  const { places, loading, error, fetchNearbyPlaces, clearPlaces } =
+    useNearbyPlaces({
+      radius: 2000,
+      type: "restaurant",
+      limit: 10,
+      minRating: 4.0,
+    });
 
   React.useEffect(() => {
     if (destination.latitude && destination.longitude) {
@@ -245,7 +246,7 @@ function NearbyPlacesExplorer({ destination }) {
   }, [destination, fetchNearbyPlaces]);
 
   const formatDistance = (meters?: number) => {
-    if (!meters) return '';
+    if (!meters) return "";
     if (meters < 1000) return `${Math.round(meters)}m`;
     return `${(meters / 1000).toFixed(1)}km`;
   };
@@ -256,12 +257,14 @@ function NearbyPlacesExplorer({ destination }) {
 
   if (error) {
     return (
-      <ErrorMessage 
-        message={error} 
-        onRetry={() => fetchNearbyPlaces({ 
-          lat: destination.latitude, 
-          lng: destination.longitude 
-        })} 
+      <ErrorMessage
+        message={error}
+        onRetry={() =>
+          fetchNearbyPlaces({
+            lat: destination.latitude,
+            lng: destination.longitude,
+          })
+        }
       />
     );
   }
@@ -269,15 +272,13 @@ function NearbyPlacesExplorer({ destination }) {
   return (
     <div className="nearby-places">
       <h2>Lugares cercanos a {destination.name}</h2>
-      
+
       <button onClick={clearPlaces}>Limpiar resultados</button>
-      
+
       <div className="places-grid">
-        {places.map(place => (
+        {places.map((place) => (
           <div key={place.id} className="place-card">
-            {place.photo_url && (
-              <img src={place.photo_url} alt={place.name} />
-            )}
+            {place.photo_url && <img src={place.photo_url} alt={place.name} />}
             <h3>{place.name}</h3>
             {place.rating && (
               <div className="rating">
@@ -292,13 +293,11 @@ function NearbyPlacesExplorer({ destination }) {
                 📍 {formatDistance(place.distance)} de distancia
               </p>
             )}
-            {place.vicinity && (
-              <p className="vicinity">{place.vicinity}</p>
-            )}
+            {place.vicinity && <p className="vicinity">{place.vicinity}</p>}
           </div>
         ))}
       </div>
-      
+
       {places.length === 0 && (
         <EmptyState message="No se encontraron lugares cercanos" />
       )}
@@ -315,8 +314,8 @@ export default NearbyPlacesExplorer;
 
 ```typescript
 function MultiTypeSearch() {
-  const [selectedType, setSelectedType] = React.useState('restaurant');
-  
+  const [selectedType, setSelectedType] = React.useState("restaurant");
+
   const { places, loading, fetchNearbyPlaces } = useNearbyPlaces({
     radius: 3000,
     type: selectedType,
@@ -331,14 +330,17 @@ function MultiTypeSearch() {
 
   return (
     <div>
-      <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+      <select
+        value={selectedType}
+        onChange={(e) => setSelectedType(e.target.value)}
+      >
         <option value="restaurant">Restaurantes</option>
         <option value="lodging">Hoteles</option>
         <option value="cafe">Cafés</option>
         <option value="bar">Bares</option>
         <option value="tourist_attraction">Atracciones</option>
       </select>
-      
+
       {/* Renderizar places */}
     </div>
   );

@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { useNearbyPlaces } from '../../hooks/places';
-import type { LatLng } from '../../hooks/places/types';
+import React, { useEffect } from "react";
+import { useNearbyPlaces } from "../../hooks/places";
+import type { LatLng } from "../../hooks/places/types";
 
 interface NearbyPlacesCardProps {
   destination: {
@@ -15,7 +15,7 @@ interface NearbyPlacesCardProps {
 
 const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
   destination,
-  type = 'restaurant',
+  type = "restaurant",
   radius = 2000,
   limit = 5,
 }) => {
@@ -54,19 +54,19 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
 
   const getTypeLabel = (type: string): string => {
     const labels: Record<string, string> = {
-      restaurant: 'Restaurantes',
-      lodging: 'Hoteles',
-      tourist_attraction: 'Atracciones',
-      cafe: 'Cafés',
-      bar: 'Bares',
-      museum: 'Museos',
-      park: 'Parques',
+      restaurant: "Restaurantes",
+      lodging: "Hoteles",
+      tourist_attraction: "Atracciones",
+      cafe: "Cafés",
+      bar: "Bares",
+      museum: "Museos",
+      park: "Parques",
     };
-    return labels[type] || 'Lugares';
+    return labels[type] || "Lugares";
   };
 
   const formatDistance = (meters?: number): string => {
-    if (!meters) return '';
+    if (!meters) return "";
     if (meters < 1000) {
       return `${Math.round(meters)}m`;
     }
@@ -76,21 +76,21 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
   return (
     <div
       className="rounded-2xl p-4 mb-4"
-      style={{ backgroundColor: 'var(--color-bone)' }}
+      style={{ backgroundColor: "var(--color-bone)" }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <h3
           className="text-lg font-bold"
-          style={{ color: 'var(--color-blue-dark)' }}
+          style={{ color: "var(--color-blue-dark)" }}
         >
           {getTypeLabel(type)} cerca de {destination.name}
         </h3>
         <span
           className="text-sm font-medium px-3 py-1 rounded-lg"
           style={{
-            backgroundColor: 'var(--color-green)',
-            color: 'var(--color-blue-dark)',
+            backgroundColor: "var(--color-green)",
+            color: "var(--color-blue-dark)",
           }}
         >
           {radius < 1000 ? `${radius}m` : `${radius / 1000}km`} de radio
@@ -104,15 +104,15 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
             <div
               key={i}
               className="animate-pulse rounded-xl p-3"
-              style={{ backgroundColor: 'var(--color-beige-dark)' }}
+              style={{ backgroundColor: "var(--color-beige-dark)" }}
             >
               <div
                 className="h-4 rounded w-3/4 mb-2"
-                style={{ backgroundColor: 'var(--color-green-dark)' }}
+                style={{ backgroundColor: "var(--color-green-dark)" }}
               />
               <div
                 className="h-3 rounded w-1/2"
-                style={{ backgroundColor: 'var(--color-green-dark)' }}
+                style={{ backgroundColor: "var(--color-green-dark)" }}
               />
             </div>
           ))}
@@ -124,8 +124,8 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
         <div
           className="rounded-xl p-3 text-center"
           style={{
-            backgroundColor: 'var(--color-beige-dark)',
-            color: 'var(--color-blue-dark)',
+            backgroundColor: "var(--color-beige-dark)",
+            color: "var(--color-blue-dark)",
           }}
         >
           <p className="text-sm">No se pudieron cargar los lugares cercanos</p>
@@ -139,7 +139,7 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
             <div
               key={place.id}
               className="rounded-xl p-3 flex items-start gap-3 transition-all duration-200 hover:scale-102"
-              style={{ backgroundColor: 'var(--color-beige-dark)' }}
+              style={{ backgroundColor: "var(--color-beige-dark)" }}
             >
               {/* Photo */}
               {place.photo_url && (
@@ -154,7 +154,7 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
               <div className="flex-1 min-w-0">
                 <h4
                   className="font-bold text-sm truncate"
-                  style={{ color: 'var(--color-blue-dark)' }}
+                  style={{ color: "var(--color-blue-dark)" }}
                 >
                   {place.name}
                 </h4>
@@ -165,7 +165,7 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
                     <div className="flex items-center gap-1">
                       <svg
                         className="w-4 h-4"
-                        style={{ color: 'var(--color-green)' }}
+                        style={{ color: "var(--color-green)" }}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -173,7 +173,7 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
                       </svg>
                       <span
                         className="text-xs font-medium"
-                        style={{ color: 'var(--color-blue)' }}
+                        style={{ color: "var(--color-blue)" }}
                       >
                         {place.rating.toFixed(1)}
                       </span>
@@ -182,10 +182,10 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
 
                   {place.distance && (
                     <>
-                      <span style={{ color: 'var(--color-blue)' }}>•</span>
+                      <span style={{ color: "var(--color-blue)" }}>•</span>
                       <span
                         className="text-xs"
-                        style={{ color: 'var(--color-blue)' }}
+                        style={{ color: "var(--color-blue)" }}
                       >
                         {formatDistance(place.distance)}
                       </span>
@@ -197,7 +197,7 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
                 {place.vicinity && (
                   <p
                     className="text-xs mt-1 truncate"
-                    style={{ color: 'var(--color-blue)' }}
+                    style={{ color: "var(--color-blue)" }}
                   >
                     {place.vicinity}
                   </p>
@@ -213,8 +213,8 @@ const NearbyPlacesCard: React.FC<NearbyPlacesCardProps> = ({
         <div
           className="rounded-xl p-4 text-center"
           style={{
-            backgroundColor: 'var(--color-beige-dark)',
-            color: 'var(--color-blue)',
+            backgroundColor: "var(--color-beige-dark)",
+            color: "var(--color-blue)",
           }}
         >
           <p className="text-sm">
