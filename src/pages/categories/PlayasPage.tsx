@@ -117,158 +117,169 @@ export default function PlayasPage() {
       backgroundSize="170%"
       backgroundPosition="top center"
     >
-        <HeaderNavigationExplore />
+      <HeaderNavigationExplore />
 
-        <div className="justify-center items-center text-center">
-          <h1 className="text-[65px] font-black pb-1 leading-none" style={{ color: 'var(--color-blue)' }}>
-            PLAYAS
-          </h1>
-          <p className="text-xl font-extrabold" style={{ color: 'var(--color-bone)' }}>CERCA DE TI</p>
-        </div>
+      <div className="justify-center items-center text-center">
+        <h1
+          className="text-[65px] font-black pb-1 leading-none"
+          style={{ color: "var(--color-blue)" }}
+        >
+          PLAYAS
+        </h1>
+        <p
+          className="text-xl font-extrabold"
+          style={{ color: "var(--color-bone)" }}
+        >
+          CERCA DE TI
+        </p>
+      </div>
 
-        <SegmentedControl
-          options={["Mostrar Todo", "Sugerencias IA"]}
-          selected={selectedOption}
-          onChange={setSelectedOption}
+      <div className="w-full h-50 rounded-2xl mt-2 border-white border-4 relative overflow-hidden mb-1">
+        <img
+          src={BEACH_CAROUSEL_CONFIG.slides[currentSlide].image}
+          className="w-full h-full object-cover rounded-2xl transition-opacity duration-500"
+          alt="PLAYAS NEWS"
         />
 
-        <div className="w-full h-50 rounded-2xl mt-2 border-white border-4 relative overflow-hidden mb-1">
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-2xl"></div>
+
+        <div
+          className="absolute top-3 right-3 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2"
+          style={{ backgroundColor: "var(--color-bone)" }}
+        >
           <img
-            src={BEACH_CAROUSEL_CONFIG.slides[currentSlide].image}
-            className="w-full h-full object-cover rounded-2xl transition-opacity duration-500"
-            alt="PLAYAS NEWS"
+            src="/icons/red-compass.svg"
+            alt="Location"
+            className="w-4 h-4"
           />
+          <span
+            className="text-xs font-semibold"
+            style={{ color: "var(--color-blue)" }}
+          >
+            Usamos tu ubicación!
+          </span>
+        </div>
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-2xl"></div>
+        <div className="absolute bottom-7 left-4 text-left">
+          <h2
+            className="text-2xl font-extrabold mb-1 leading-none"
+            style={{ color: "var(--color-bone)" }}
+          >
+            {BEACH_CAROUSEL_CONFIG.slides[currentSlide].titleFirst} <br />
+            {BEACH_CAROUSEL_CONFIG.slides[currentSlide].titleRest}
+          </h2>
+          <p className="text-sm" style={{ color: "var(--color-beige-light)" }}>
+            {BEACH_CAROUSEL_CONFIG.slides[currentSlide].subtitle}
+          </p>
+        </div>
 
-          <div className="absolute top-3 right-3 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2" style={{ backgroundColor: 'var(--color-bone)' }}>
-            <img
-              src="/icons/red-compass.svg"
-              alt="Location"
-              className="w-4 h-4"
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
+          {BEACH_CAROUSEL_CONFIG.slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentSlide ? "scale-125" : "hover:opacity-70"
+              }`}
+              style={{
+                backgroundColor:
+                  currentSlide === index
+                    ? "var(--color-bone)"
+                    : "var(--color-beige-light)",
+              }}
             />
-            <span className="text-xs font-semibold" style={{ color: 'var(--color-blue)' }}>
-              Usamos tu ubicación!
-            </span>
-          </div>
-
-          <div className="absolute bottom-7 left-4 text-left">
-            <h2 className="text-2xl font-extrabold mb-1 leading-none" style={{ color: 'var(--color-bone)' }}>
-              {BEACH_CAROUSEL_CONFIG.slides[currentSlide].titleFirst} <br />
-              {BEACH_CAROUSEL_CONFIG.slides[currentSlide].titleRest}
-            </h2>
-            <p className="text-sm" style={{ color: 'var(--color-beige-light)' }}>
-              {BEACH_CAROUSEL_CONFIG.slides[currentSlide].subtitle}
-            </p>
-          </div>
-
-          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
-            {BEACH_CAROUSEL_CONFIG.slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentSlide
-                    ? "scale-125"
-                    : "hover:opacity-70"
-                }`}
-                style={{ 
-                  backgroundColor: currentSlide === index ? 'var(--color-bone)' : 'var(--color-beige-light)'
-                }}
-              />
-            ))}
-          </div>
+          ))}
         </div>
+      </div>
 
-        <Search
-          onSearch={handleSearch}
-          placeholder="Buscar playas cerca de ti..."
+      <div className="w-full mb-3">
+        <div className="flex flex-wrap gap-2">
+          {BEACH_BADGE_CONFIG.map((badge) => (
+            <BadgeWithIcon
+              key={badge.id}
+              id={badge.id}
+              icon={
+                <img
+                  src={`/icons/playas_icons/${badge.icon}`}
+                  alt={badge.label}
+                  className="w-5 h-5"
+                />
+              }
+              hoverIcon={
+                <img
+                  src={`/icons/playas_icons/${badge.hoverIcon}`}
+                  alt={badge.label}
+                  className="w-5 h-5"
+                />
+              }
+              label={badge.label}
+              isActive={selectedBadge === badge.id}
+              onClick={handleBadgeClick}
+              activeColor="var(--color-blue)"
+              activeBorderColor={
+                badge.id === "todo"
+                  ? "var(--color-beige-dark)"
+                  : "var(--color-beige-light)"
+              }
+            />
+          ))}
+        </div>
+      </div>
+
+      <FilterableContent isVisible={!isFilterActive}>
+        <PlaceCards
+          places={places}
+          category="beaches"
+          title="Playas mejor valoradas"
+          loading={loading}
+          error={error}
+          onPlaceClick={(place) => {
+            console.log("Playa seleccionada:", place);
+          }}
+          itemsPerPage={6}
         />
+        <BeachCards />
 
-        <div className="w-full mb-3">
-          <div className="flex flex-wrap gap-2">
-            {BEACH_BADGE_CONFIG.map((badge) => (
-              <BadgeWithIcon
-                key={badge.id}
-                id={badge.id}
-                icon={
-                  <img
-                    src={`/icons/playas_icons/${badge.icon}`}
-                    alt={badge.label}
-                    className="w-5 h-5"
-                  />
-                }
-                hoverIcon={
-                  <img
-                    src={`/icons/playas_icons/${badge.hoverIcon}`}
-                    alt={badge.label}
-                    className="w-5 h-5"
-                  />
-                }
-                label={badge.label}
-                isActive={selectedBadge === badge.id}
-                onClick={handleBadgeClick}
-                activeColor="var(--color-blue)"
-                activeBorderColor={badge.id === "todo" ? "var(--color-beige-dark)" : "var(--color-beige-light)"}
-              />
-            ))}
-          </div>
-        </div>
-
-        <FilterableContent isVisible={!isFilterActive}>
-          <PlaceCards
+        <div className="mt-10">
+          <h2
+            className="text-2xl font-extrabold mb-2 text-[var(--color-text-primary)] text-center"
+            style={{ color: "var(--color-blue)" }}
+          >
+            Explora más playas
+          </h2>
+          <LocationMultiGrid
             places={places}
-            category="beaches"
-            title="Playas mejor valoradas"
             loading={loading}
             error={error}
             onPlaceClick={(place) => {
               console.log("Playa seleccionada:", place);
             }}
-            itemsPerPage={6}
-          />
-          <BeachCards />
-
-          <div className="mt-10">
-            <h2 className="text-2xl font-extrabold mb-2 text-[var(--color-text-primary)] text-center" style={{ color: 'var(--color-blue)' }}>
-              Explora más playas
-            </h2>
-            <LocationMultiGrid
-              places={places}
-              loading={loading}
-              error={error}
-              onPlaceClick={(place) => {
-                console.log("Playa seleccionada:", place);
-              }}
-              itemsPerPage={4}
-              userLocation={mapCenter || undefined}
-            />
-          </div>
-        </FilterableContent>
-
-        <FilterableContent isVisible={isFilterActive}>
-          <FilteredResults
-            places={filteredPlaces}
-            loading={loading}
-            error={error}
-            filterName={
-              BEACH_BADGE_CONFIG.find((b) => b.id === activeFilter)?.label ||
-              "filtro"
-            }
-            totalMatches={totalMatches}
-            onPlaceClick={(place) => {
-              console.log("Playa filtrada seleccionada:", place);
-              if (activeFilter) {
-                const contentAnalysis = analyzeContentMatch(
-                  place,
-                  activeFilter
-                );
-                console.log("Análisis de contenido:", contentAnalysis);
-              }
-            }}
+            itemsPerPage={4}
             userLocation={mapCenter || undefined}
           />
-        </FilterableContent>
+        </div>
+      </FilterableContent>
+
+      <FilterableContent isVisible={isFilterActive}>
+        <FilteredResults
+          places={filteredPlaces}
+          loading={loading}
+          error={error}
+          filterName={
+            BEACH_BADGE_CONFIG.find((b) => b.id === activeFilter)?.label ||
+            "filtro"
+          }
+          totalMatches={totalMatches}
+          onPlaceClick={(place) => {
+            console.log("Playa filtrada seleccionada:", place);
+            if (activeFilter) {
+              const contentAnalysis = analyzeContentMatch(place, activeFilter);
+              console.log("Análisis de contenido:", contentAnalysis);
+            }
+          }}
+          userLocation={mapCenter || undefined}
+        />
+      </FilterableContent>
     </CategoryWrapper>
   );
 }
