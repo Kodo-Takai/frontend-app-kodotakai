@@ -1,5 +1,5 @@
-import React from 'react';
-import DestinationItineraryCard from '../../cards/destinationItineraryCard';
+import React from "react";
+import DestinationItineraryCard from "../../cards/destinationItineraryCard";
 
 interface Destination {
   id: number;
@@ -23,7 +23,7 @@ const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
   destinations,
   onRegenerateDestination,
   onShowInAgenda,
-  onGoToLobby
+  onGoToLobby,
 }) => {
   return (
     <div className="w-full">
@@ -36,17 +36,14 @@ const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
             className="w-20 h-20 object-contain"
           />
         </div>
-        
-        <h2 
+
+        <h2
           className="text-3xl font-extrabold mb-2"
-          style={{ color: 'var(--color-blue-dark)' }}
+          style={{ color: "var(--color-blue-dark)" }}
         >
           ¡Itinerario creado!
         </h2>
-        <p 
-          className="text-lg font-bold"
-          style={{ color: 'var(--color-blue)' }}
-        >
+        <p className="text-lg font-bold" style={{ color: "var(--color-blue)" }}>
           Tu itinerario personalizado está aquí
         </p>
       </div>
@@ -68,19 +65,19 @@ const ItineraryGenerated: React.FC<ItineraryGeneratedProps> = ({
           onClick={onShowInAgenda}
           className="w-70 px-8 py-3 rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-200 shadow-lg"
           style={{
-            backgroundColor: 'var(--color-blue-dark)',
-            color: 'var(--color-green)'
+            backgroundColor: "var(--color-blue-dark)",
+            color: "var(--color-green)",
           }}
         >
           Mostrar en agenda
         </button>
-        
+
         <button
           onClick={onGoToLobby}
           className="w-70 px-8 py-3 rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-200 shadow-lg"
           style={{
-            backgroundColor: 'var(--color-beige)',
-            color: 'var(--color-blue-dark)'
+            backgroundColor: "var(--color-beige)",
+            color: "var(--color-blue-dark)",
           }}
         >
           Ir al lobby IA

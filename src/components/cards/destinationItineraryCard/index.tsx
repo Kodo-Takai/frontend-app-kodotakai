@@ -56,7 +56,7 @@ const DestinationItineraryCard: React.FC<DestinationItineraryCardProps> = ({
     <div
       key={`${destination.id}-${destination.name}`}
       className={`rounded-2xl overflow-hidden p-4 hover:scale-101 transition-all duration-300 ease-out mb-4 ${
-        isRegenerating ? 'opacity-50 scale-95' : 'animate-bubble-in'
+        isRegenerating ? "opacity-50 scale-95" : "animate-bubble-in"
       }`}
       style={{ backgroundColor: "var(--color-bone)" }}
     >
@@ -156,11 +156,11 @@ const DestinationItineraryCard: React.FC<DestinationItineraryCardProps> = ({
             color: "var(--color-blue-dark)",
           }}
         >
-          <span>{isRegenerating ? 'Generando...' : 'Generar otro'}</span>
+          <span>{isRegenerating ? "Generando..." : "Generar otro"}</span>
           {/* Icono de refresh */}
-          <svg 
-            className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} 
-            fill="currentColor" 
+          <svg
+            className={`w-4 h-4 ${isRegenerating ? "animate-spin" : ""}`}
+            fill="currentColor"
             viewBox="0 0 20 20"
           >
             <path

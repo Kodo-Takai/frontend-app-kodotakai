@@ -77,7 +77,7 @@ export const useItineraryGeneration = () => {
 
       // Seleccionar hasta 3 recomendaciones únicas
       const uniqueRecIds = allRecIds.slice(0, 3);
-      
+
       // Guardar los IDs que estamos usando
       setUsedDestinationIds(new Set(uniqueRecIds));
 
@@ -177,7 +177,7 @@ export const useItineraryGeneration = () => {
       // Si hay recomendaciones sin usar, usar una de ellas
       if (unusedRecommendations.length > 0) {
         const newDestId = unusedRecommendations[0];
-        
+
         try {
           const dest = await fetchDestinationById(String(newDestId)).unwrap();
           newDestination = {
@@ -201,18 +201,18 @@ export const useItineraryGeneration = () => {
       // Si no hay recomendaciones o falló, buscar en todos los destinos
       if (!newDestination) {
         const all = await fetchAllDestinations().unwrap();
-        
+
         // Filtrar destinos que no estén actualmente en uso
         const currentNames = new Set(destinations.map(d => d.name));
-        const availableDestinations = all.filter(d => 
-          !currentNames.has(d.name) && 
+        const availableDestinations = all.filter(d =>
+          !currentNames.has(d.name) &&
           !usedDestinationIds.has(d.id)
         );
 
         if (availableDestinations.length > 0) {
           // Seleccionar un destino aleatorio
           const randomDest = availableDestinations[Math.floor(Math.random() * availableDestinations.length)];
-          
+
           newDestination = {
             id: destinationId,
             name: randomDest.name,
