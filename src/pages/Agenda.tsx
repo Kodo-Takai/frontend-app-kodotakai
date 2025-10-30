@@ -67,14 +67,18 @@ export default function Agenda() {
     try {
       await deleteAgendaItem(id);
     } catch (error) {
-      console.error('Error eliminando item:', error);
+      console.error("Error eliminando item:", error);
     }
   };
 
   const handleDaySelect = (date: Date) => {
     // Crear una nueva fecha sin problemas de zona horaria
-    const correctedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    
+    const correctedDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
+
     selectDay(correctedDate); // Para el navegador de fechas
     selectDate(correctedDate); // Para la agenda
   };
