@@ -25,29 +25,29 @@ export const useImagePreload = (imageUrls: string[]) => {
     const loadImage = (url: string): Promise<void> => {
       return new Promise((resolve, reject) => {
         const img = new Image();
-        
+
         img.onload = () => {
           newLoadedImages.add(url);
           loadedCount++;
-          
+
           if (loadedCount === totalImages) {
             setLoadedImages(newLoadedImages);
             setIsLoading(false);
           }
           resolve();
         };
-        
+
         img.onerror = () => {
           console.warn(`Failed to load image: ${url}`);
           loadedCount++;
-          
+
           if (loadedCount === totalImages) {
             setLoadedImages(newLoadedImages);
             setIsLoading(false);
           }
           reject(new Error(`Failed to load image: ${url}`));
         };
-        
+
         // Iniciar carga
         img.src = url;
       });
