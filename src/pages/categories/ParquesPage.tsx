@@ -121,75 +121,79 @@ export default function ParquesPage() {
       backgroundSize="150%"
       backgroundPosition="top center"
     >
-        <HeaderNavigationExplore />
+      <HeaderNavigationExplore />
 
-        <div className="justify-center items-center text-center mt-3 mb-5">
-          <h1 className="text-[60px] font-black pb-1 leading-none tracking-[-0.03em]" style={{ color: 'var(--color-green)' }}>
-            PARQUES
-          </h1>
-          <p className="text-xl font-bold" style={{ color: 'var(--color-bone)' }}>CERCA DE TI</p>
-        </div>
+      <div className="justify-center items-center text-center mt-3 mb-5">
+        <h1
+          className="text-[60px] font-black pb-1 leading-none tracking-[-0.03em]"
+          style={{ color: "var(--color-green)" }}
+        >
+          PARQUES
+        </h1>
+        <p className="text-xl font-bold" style={{ color: "var(--color-bone)" }}>
+          CERCA DE TI
+        </p>
+      </div>
 
-        <SegmentedControl
-          options={["Mostrar Todo", "Sugerencias IA"]}
-          selected={selectedOption}
-          onChange={setSelectedOption}
+      <div className="w-full h-50 rounded-3xl mt-2 border-white border-4 relative overflow-hidden mb-1">
+        <img
+          src={CAROUSEL_CONFIG.slides[currentSlide].image}
+          className="w-full h-full object-cover rounded-3xl transition-opacity duration-500"
+          alt="PARQUES NEWS"
         />
 
-        <div className="w-full h-50 rounded-3xl mt-2 border-white border-4 relative overflow-hidden mb-1">
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-3xl"></div>
+
+        <div
+          className="absolute top-3 right-3 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2"
+          style={{ backgroundColor: "var(--color-bone)" }}
+        >
           <img
-            src={CAROUSEL_CONFIG.slides[currentSlide].image}
-            className="w-full h-full object-cover rounded-3xl transition-opacity duration-500"
-            alt="PARQUES NEWS"
+            src="/icons/red-compass.svg"
+            alt="Location"
+            className="w-4 h-4"
           />
-
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-3xl"></div>
-
-          <div className="absolute top-3 right-3 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2" style={{ backgroundColor: 'var(--color-bone)' }}>
-            <img
-              src="/icons/red-compass.svg"
-              alt="Location"
-              className="w-4 h-4"
-            />
-            <span className="text-xs font-semibold" style={{ color: 'var(--color-blue)' }}>
-              Usamos tu ubicación!
-            </span>
-          </div>
-
-          <div className="absolute bottom-7 left-4 text-left">
-            <h2 className="text-2xl font-extrabold mb-1 leading-none" style={{ color: 'var(--color-bone)' }}>
-              {CAROUSEL_CONFIG.slides[currentSlide].titleFirst} <br />
-              {CAROUSEL_CONFIG.slides[currentSlide].titleRest}
-            </h2>
-            <p className="text-sm" style={{ color: 'var(--color-beige-light)' }}>
-              {CAROUSEL_CONFIG.slides[currentSlide].subtitle}
-            </p>
-          </div>
-
-          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
-            {CAROUSEL_CONFIG.slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentSlide
-                    ? "scale-125"
-                    : "hover:opacity-70"
-                }`}
-                style={{ 
-                  backgroundColor: currentSlide === index ? 'var(--color-bone)' : 'var(--color-beige-light)'
-                }}
-              />
-            ))}
-          </div>
+          <span
+            className="text-xs font-semibold"
+            style={{ color: "var(--color-blue)" }}
+          >
+            Usamos tu ubicación!
+          </span>
         </div>
 
-        <Search
-          onSearch={handleSearch}
-          placeholder="Buscar parques cerca de ti..."
-        />
+        <div className="absolute bottom-7 left-4 text-left">
+          <h2
+            className="text-2xl font-extrabold mb-1 leading-none"
+            style={{ color: "var(--color-bone)" }}
+          >
+            {CAROUSEL_CONFIG.slides[currentSlide].titleFirst} <br />
+            {CAROUSEL_CONFIG.slides[currentSlide].titleRest}
+          </h2>
+          <p className="text-sm" style={{ color: "var(--color-beige-light)" }}>
+            {CAROUSEL_CONFIG.slides[currentSlide].subtitle}
+          </p>
+        </div>
 
-        {/* <div className="w-full mb-3">
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
+          {CAROUSEL_CONFIG.slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentSlide ? "scale-125" : "hover:opacity-70"
+              }`}
+              style={{
+                backgroundColor:
+                  currentSlide === index
+                    ? "var(--color-bone)"
+                    : "var(--color-beige-light)",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* <div className="w-full mb-3">
           <div className="flex flex-wrap gap-2">
             {BADGE_CONFIG.map((badge) => (
               <BadgeWithIcon
@@ -219,44 +223,44 @@ export default function ParquesPage() {
           </div>
         </div> */}
 
-        <FilterableContent isVisible={true}>
-          <TopRatedSection
-            category="parques"
-            title="Top Parques mejor valorados"
-            limit={5}
-            minRating={4.0}
-          />
+      <FilterableContent isVisible={true}>
+        <TopRatedSection
+          category="parques"
+          title="Top Parques mejor valorados"
+          limit={5}
+          minRating={4.0}
+        />
 
-          <PlaceCards
+        <PlaceCards
+          places={places}
+          category="parques"
+          title="Parques recomendados"
+          loading={loading}
+          error={error}
+          onPlaceClick={(place) => {
+            console.log("Parque seleccionado:", place);
+          }}
+          itemsPerPage={6}
+        />
+
+        <div className="mt-10">
+          <h2
+            className="text-2xl font-extrabold mb-2 text-[var(--color-text-primary)] text-center"
+            style={{ color: "var(--color-blue)" }}
+          >
+            Explora más parques
+          </h2>
+          <LocationMultiGrid
             places={places}
-            category="parques"
-            title="Parques recomendados"
             loading={loading}
             error={error}
-            onPlaceClick={(place) => {
-              console.log("Parque seleccionado:", place);
-            }}
-            itemsPerPage={6}
+            itemsPerPage={4}
+            userLocation={mapCenter || undefined}
           />
+        </div>
+      </FilterableContent>
 
-          <div className="mt-10">
-            <h2 className="text-2xl font-extrabold mb-2 text-[var(--color-text-primary)] text-center" style={{ color: 'var(--color-blue)' }}>
-              Explora más parques
-            </h2>
-            <LocationMultiGrid
-              places={places}
-              loading={loading}
-              error={error}
-              onPlaceClick={(place) => {
-                console.log("Parque seleccionado:", place);
-              }}
-              itemsPerPage={4}
-              userLocation={mapCenter || undefined}
-            />
-          </div>
-        </FilterableContent>
-
-        {/* <FilterableContent isVisible={isFilterActive}>
+      {/* <FilterableContent isVisible={isFilterActive}>
           <FilteredResults
             places={filteredPlaces}
             loading={loading}
