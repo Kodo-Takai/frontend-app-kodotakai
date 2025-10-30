@@ -1,107 +1,76 @@
-# Kodotakai - Professional Authentication App
+### ViajaYa — Frontend (frontend-app-kodotakai)
 
-A modern, professional authentication system built with React, TypeScript, and Vite.
+Descripción
+- ViajaYa Frontend es una SPA en React + TypeScript (Vite) con diseño responsivo, PWA opcional y componentes reutilizables para explorar destinos, gestionar agenda y perfiles.
 
-## 🚀 Quick Start
+Características
+- React + TS + Vite
+- PWA (service worker opcional)
+- Estilos modulares (SCSS/CSS)
+- Hooks de datos y contexto global
+- Integración con API Backend
+- Docker listo para producción
 
-For detailed installation instructions, please see [INSTALLATION.md](./INSTALLATION.md)
+Arquitectura
+- **Framework**: React + Vite
+- **Estado**: Context/Redux (según carpeta `redux`)
+- **Ruteo**: React Router
+- **Build**: Vite
+- **CI/CD**: GitHub Actions (si aplica)
 
+Requisitos
+- Node.js 18+
+- PNPM o NPM
+- Docker (opcional)
+
+Variables de entorno (archivo `.env`)
+- `VITE_API_BASE_URL=https://api.viajaya.com`
+- `VITE_ENV=production`
+- `VITE_MAPS_API_KEY=...` (si usa mapas)
+- `VITE_SENTRY_DSN=...` (opcional)
+
+Instalación y uso (desarrollo)
 ```bash
-# Install dependencies
 pnpm install
-
-# Start development server
-pnpm run dev
-
-# Open browser to http://localhost:5173/
+pnpm dev
 ```
 
-## ✨ Features
-
-- **Professional Splash Screen** with branding
-- **Complete Authentication System** (Login/Register)
-- **Session Management** with localStorage
-- **Form Validation** with real-time feedback
-- **Responsive Design** for all devices
-- **TypeScript** for type safety
-- **Modern React 19** with hooks
-
-## 🏗️ Technical Stack
-
-- **React 19** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **CSS3** - Styling and animations
-- **localStorage** - Data persistence
-
----
-
-# Original Vite Template Documentation
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Build y preview
+```bash
+pnpm build
+pnpm preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Docker (producción)
+```bash
+docker build -t viajaya/frontend .
+docker run -d --name viajaya-frontend -p 8080:80 -e VITE_API_BASE_URL=https://api.viajaya.com viajaya/frontend
 ```
+
+Estructura principal
+- `src/components`, `src/pages`, `src/hooks`, `src/context`, `src/redux`
+- `public/` (assets estáticos, manifest)
+- `vite.config.ts`
+
+Buenas prácticas
+- Rutas basadas en `pages/`
+- `.env` por entorno (no commitear secretos)
+- Lint y formateo antes de commit
+- Evitar llamadas directas: usar utils/hooks
+
+PWA
+- `serviceWorkerRegistration.js` y `manifest.json`
+- Activar sólo en producción y medir caché
+
+Accesibilidad y SEO
+- Etiquetas semánticas
+- Metadatos por página
+- Imágenes optimizadas (ver `IMAGE_OPTIMIZATION.md`)
+
+Despliegue
+- Servir `dist/` detrás de Nginx/CDN
+- Configurar `nginx.conf` para SPA (fallback a `index.html`)
+- Inyectar `VITE_API_BASE_URL` en build o usar variables en runtime con un `config.json`
+
+Licencia
+- Ver `LICENSE` en el repositorio.
