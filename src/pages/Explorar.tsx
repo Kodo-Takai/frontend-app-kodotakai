@@ -95,12 +95,6 @@ export default function Explorar() {
           </button>
         </div>
 
-        <SegmentedControl
-          options={["Todo", "Sugerencias IA"]}
-          selected={selectedOption}
-          onChange={setSelectedOption}
-        />
-
         {/* Categorías de exploración */}
         <div className="relative w-full h-[250px] overflow-hidden">
           {/* Restaurants */}
