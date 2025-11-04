@@ -5,12 +5,12 @@ import { required, emailValidator, passwordValidator, nameValidator, useField } 
 // Validador para confirmar contraseña
 const passwordConfirmValidator =
   (password: string) =>
-  (value: string): string | undefined => {
-    if (value !== password) {
-      return "Las contraseñas no coinciden";
-    }
-    return undefined;
-  };
+    (value: string): string | undefined => {
+      if (value !== password) {
+        return "Las contraseñas no coinciden";
+      }
+      return undefined;
+    };
 
 interface RegisterCredentials {
   username: string;
@@ -23,14 +23,14 @@ interface RegisterCredentials {
 
 export const useRegister = () => {
   // Campos del formulario según lo que espera el backend
-  const username = useField("", [required, emailValidator]); 
-  const email = useField("", [required, emailValidator]); 
+  const username = useField("", [required, emailValidator]);
+  const email = useField("", [required, emailValidator]);
   const password = useField("", [required, passwordValidator]);
   const confirmPassword = useField("", [
     required,
     passwordConfirmValidator(password.value),
   ]);
-  const name = useField("", [required, nameValidator]); 
+  const name = useField("", [required, nameValidator]);
   const lastName = useField("", [required, nameValidator]);
 
   const isValid =
