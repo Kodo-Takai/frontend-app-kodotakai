@@ -22,7 +22,12 @@ export default defineConfig({
     },
     workbox: {
       globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
-      globIgnores: ['**/icons/pictures.svg'],
+      globIgnores: [
+        '**/icons/pictures.svg',
+        '**/beach-background-section-explore.svg',
+        '**/icons/restaurants/restaurant-background-section-explore.svg',
+        '**/parques-image.svg'
+      ],
       navigateFallback: '/index.html',
       maximumFileSizeToCacheInBytes: 3 * 1024 * 1024 // 3 MB (default es 2 MB)
     }

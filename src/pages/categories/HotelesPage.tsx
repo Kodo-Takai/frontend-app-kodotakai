@@ -258,9 +258,6 @@ export default function HotelesPage() {
             places={places}
             loading={loading}
             error={error}
-            onPlaceClick={(place) => {
-              console.log("Hotel seleccionado:", place);
-            }}
             itemsPerPage={4}
             userLocation={mapCenter || undefined}
           />

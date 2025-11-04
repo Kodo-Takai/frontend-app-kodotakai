@@ -29,6 +29,7 @@ export interface EnrichedPlace extends Place {
   formatted_address?: string;
   website?: string;
   formatted_phone_number?: string;
+  international_phone_number?: string;
   editorial_summary?: { overview?: string };
   reviews?: Review[];
   types?: string[];
@@ -40,6 +41,8 @@ export interface EnrichedPlace extends Place {
   price_level?: number;
   user_ratings_total?: number;
   price_info?: PriceInfo;
+  amenities?: string[];
+  services?: string[];
 }
 
 export interface Review {
@@ -69,7 +72,7 @@ export interface ContactInfo {
   website?: string;
   phone?: string;
   email?: string;
-  social_media?: Record<string, string>; 
+  social_media?: Record<string, string>;
 }
 
 export interface AIAnalysis {

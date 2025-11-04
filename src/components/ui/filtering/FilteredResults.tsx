@@ -94,7 +94,6 @@ export const FilteredResults: React.FC<FilteredResultsProps> = ({
         places={places}
         loading={false}
         error={null}
-        onPlaceClick={onPlaceClick}
         itemsPerPage={6}
         userLocation={userLocation}
       />
