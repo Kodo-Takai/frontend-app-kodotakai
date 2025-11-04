@@ -1,6 +1,6 @@
-import React from 'react';
-import { LocationMultiGrid } from '../../cards/locationMultiCard';
-import type { EnrichedPlace } from '../../../hooks/places';
+import React from "react";
+import { LocationMultiGrid } from "../../cards/locationMultiCard";
+import type { EnrichedPlace } from "../../../hooks/places";
 
 interface FilteredResultsProps {
   places: EnrichedPlace[];
@@ -19,7 +19,7 @@ export const FilteredResults: React.FC<FilteredResultsProps> = ({
   filterName,
   totalMatches,
   onPlaceClick,
-  userLocation
+  userLocation,
 }) => {
   if (loading) {
     return (
@@ -72,7 +72,8 @@ export const FilteredResults: React.FC<FilteredResultsProps> = ({
             No se encontraron lugares
           </h3>
           <p className="text-gray-600 text-sm">
-            No encontramos lugares que coincidan con "{filterName}" en este momento.
+            No encontramos lugares que coincidan con "{filterName}" en este
+            momento.
           </p>
         </div>
       </div>
@@ -89,7 +90,7 @@ export const FilteredResults: React.FC<FilteredResultsProps> = ({
           Total Encontrado {totalMatches}
         </div>
       </div>
-      
+
       <LocationMultiGrid
         places={places}
         loading={false}
