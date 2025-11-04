@@ -1,72 +1,168 @@
-import React, { useState } from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Usar iconos de React Icons
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface InputProps {
+  id?: string;
   label?: string;
   icon?: React.ReactNode;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: () => void;
   error?: string;
-  type?: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel' | 'url';
+  type?: "text" | "password" | "email" | "number" | "search" | "tel" | "url";
   placeholder?: string;
   name?: string;
   autoComplete?: string;
+  disabled?: boolean;
+  showPasswordRequirements?: boolean;
 }
 
 export default function Input({
+  id,
   label,
   icon,
   value,
   onChange,
   onBlur,
   error,
-  type = 'text',
+  type = "text",
   placeholder,
   name,
-  autoComplete
+  autoComplete,
+  disabled = false,
+  showPasswordRequirements = false,
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const inputId = name || label || placeholder || 'input';
+  const inputId = id || name || label || placeholder || "input";
   const invalid = !!error;
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
 
+  const getPasswordRequirements = () => {
+    if (type !== "password" || !showPasswordRequirements) return null;
+
+    const hasMinLength = value.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(value);
+    const hasNumber = /[0-9]/.test(value);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
+
+    return (
+      <div
+        className="mt-2 text-xs"
+        style={{ color: "var(--color-blue-light)" }}
+      >
+        <div className="grid grid-cols-2 gap-1">
+          <div
+            className={`flex font-bold items-center gap-1 ${hasMinLength ? "" : ""}`}
+            style={{
+              color: hasMinLength
+                ? "var(--color-green)"
+                : "var(--color-blue)",
+            }}
+          >
+            <span>{hasMinLength ? "✓" : "○"}</span>
+            <span>Mínimo 8 caracteres</span>
+          </div>
+          <div
+            className={`flex font-bold items-center gap-1 ${hasUpperCase ? "" : ""}`}
+            style={{
+              color: hasUpperCase
+                ? "var(--color-green)"
+                : "var(--color-blue)",
+            }}
+          >
+            <span>{hasUpperCase ? "✓" : "○"}</span>
+            <span>Una mayúscula</span>
+          </div>
+          <div
+            className={`flex font-bold items-center gap-1 ${hasNumber ? "" : ""}`}
+            style={{
+              color: hasNumber
+                ? "var(--color-green)"
+                : "var(--color-blue)",
+            }}
+          >
+            <span>{hasNumber ? "✓" : "○"}</span>
+            <span>Un número</span>
+          </div>
+          <div
+            className={`flex font-bold items-center gap-1 ${hasSpecialChar ? "" : ""}`}
+            style={{
+              color: hasSpecialChar
+                ? "var(--color-green)"
+                : "var(--color-blue)",
+            }}
+          >
+            <span>{hasSpecialChar ? "✓" : "○"}</span>
+            <span>Carácter especial</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="mb-6">
-      {/* Si se pasa un label, lo muestra */}
       <div className="relative">
-        {icon && <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">{icon}</span>}
+        {icon && (
+          <span
+            className="absolute left-3 top-1/2 transform -translate-y-1/2"
+            style={{ color: "var(--color-blue)" }}
+          >
+            {icon}
+          </span>
+        )}
 
         <input
           id={inputId}
           name={name}
-          type={showPassword && type === 'password' ? 'text' : type}  // Cambia el tipo si es contraseña y se debe mostrar
+          type={showPassword && type === "password" ? "text" : type}
           value={value}
           onChange={onChange}
           onBlur={onBlur}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className={`block w-full px-4 py-4 pr-10 text-sm rounded-2xl border focus:outline-none ${invalid ? 'border-red-500' : 'border-[#DEDEDE]'} bg-[#EEEEEE] text-[#AEAEAE]`}  // Fondo gris y texto blanco
+          className={`block font-bold w-full px-4 py-4 pr-10 text-sm rounded-2xl border focus:outline-none ${
+            invalid ? "" : ""
+          }`}
+          style={{
+            borderColor: invalid ? "var(--color-blue)" : "var(--color-beige-dark)",
+            backgroundColor: "var(--color-beige)",
+            color: "var(--color-blue)",
+          }}
           aria-invalid={invalid}
           aria-describedby={invalid ? `${inputId}-error` : undefined}
+          disabled={disabled}
         />
 
-        {/* Icono para mostrar/ocultar la contraseña */}
-        {type === 'password' && (
+        {type === "password" && (
           <span
-            onClick={handleTogglePassword}  // Hacemos que el ícono cambie de estado sin necesidad de un botón
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+            onClick={handleTogglePassword}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+            style={{ color: "var(--color-blue)" }}
           >
-            {showPassword ? <FaEyeSlash className="h-5 w-5" /> : <FaEye className="h-5 w-5" />}
+            {showPassword ? (
+              <FaEye className="h-5 w-5" />
+            ) : (
+              <FaEyeSlash className="h-5 w-5" />
+            )}
           </span>
         )}
       </div>
 
-      {/* Mostrar error si existe */}
-      {invalid && <span className="text-sm text-red-500 mt-2" id={`${inputId}-error`}>{error}</span>}
+      {getPasswordRequirements()}
+
+      {invalid && (
+        <span
+          className="text-sm mt-2"
+          style={{ color: "var(--color-blue)" }}
+          id={`${inputId}-error`}
+        >
+          {error}
+        </span>
+      )}
     </div>
   );
 }

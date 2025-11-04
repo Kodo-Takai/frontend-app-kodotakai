@@ -2,11 +2,13 @@ import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
 import "../../../styles/_index.scss";
-import { useNavigate } from "react-router-dom";
 
-export default function WelcomeScreens() {
+interface WelcomeScreensProps {
+  onComplete: () => void;
+}
+
+export default function WelcomeScreens({ onComplete }: WelcomeScreensProps) {
   const [index, setIndex] = useState(0);
-  const navigate = useNavigate();
 
   const screens = [
     {
@@ -35,7 +37,7 @@ export default function WelcomeScreens() {
   const next = () => {
     if (index < screens.length - 1) setIndex((i) => i + 1);
     else{
-      navigate("/home")
+      onComplete();
     };
   };
 
@@ -54,7 +56,7 @@ export default function WelcomeScreens() {
             className={`absolute inset-0 bg-gradient-to-br ${s.tint} opacity-70 mix-blend-multiply`}
           />
           {/* Ligero oscurecido extra */}
-          <div className="absolute inset-0 bg-black/10" />
+          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }} />
         </div>
         {/* IMAGEN SUPERPUESTA  - Solo para el primer screen */}
         {s.overlayImage && (
@@ -76,7 +78,11 @@ export default function WelcomeScreens() {
                 <button
                   onClick={back}
                   aria-label="Atrás"
-                  className="rounded-xl bg-white/20 p-3 text-white backdrop-blur-md transition hover:scale-105 hover:bg-white/30"
+                  className="rounded-xl p-3 backdrop-blur-md transition hover:scale-105"
+                  style={{ 
+                    backgroundColor: 'rgba(255, 255, 240, 0.2)',
+                    color: 'var(--color-bone)'
+                  }}
                 >
                   <FaArrowLeft size={20} />
                 </button>
@@ -96,29 +102,36 @@ export default function WelcomeScreens() {
                 aria-label={`Ir a pantalla ${i + 1}`}
                 aria-current={i === index}
                 className={`h-2 rounded-full transition-all ${
-                  i === index ? "w-6 bg-white" : "w-2 bg-white/60"
+                  i === index ? "w-6" : "w-2"
                 }`}
+                style={{
+                  backgroundColor: i === index ? 'var(--color-bone)' : 'rgba(255, 255, 240, 0.6)'
+                }}
               />
             ))}
           </div>
 
           {/* CONTENIDO PRINCIPAL */}
-          <div className="bg-white rounded-t-3xl p-8 shadow-2xl min-h-[45vh]">
+          <div className="rounded-t-3xl p-8 shadow-2xl min-h-[45vh]" style={{ backgroundColor: 'var(--color-bone)' }}>
             <div className="flex flex-col gap-4 text-left">
-              <h1 className="flex flex-col items-baseline gap-x-2 text-5xl font-extrabold  text-[var(--color-blueDark)] leading-tight">
+              <h1 className="flex flex-col items-baseline gap-x-2 text-5xl font-extrabold leading-tight" style={{ color: 'var(--color-blue)' }}>
                 {s.title && <span>{s.title}</span>}
                 {s.title1 && <span>{s.title1}</span>}
-                {s.title3 && <span className="text-red-600">{s.title3}</span>}
+                {s.title3 && <span style={{ color: 'var(--color-green)' }}>{s.title3}</span>}
               </h1>
 
-              <p className="text-sm text-[var(--color-blueLight)] leading-relaxed">
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--color-blue-light)' }}>
                 {s.subtitle}
               </p>
             </div>
 
             <button
               onClick={next}
-              className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-red-600 py-4 font-semibold text-white transition-colors hover:bg-red-700"
+              className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl py-4 font-semibold transition-colors"
+              style={{ 
+                backgroundColor: 'var(--color-green)',
+                color: 'var(--color-bone)'
+              }}
             >
               <span>
                 {index === screens.length - 1 ? "Comenzar" : "Siguiente"}

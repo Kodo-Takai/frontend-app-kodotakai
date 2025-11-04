@@ -1,57 +1,60 @@
-// Variables
-$primary-color: #3b82f6;
-$secondary-color: #6366f1;
-$light-bg: #dbeafe;
-$lighter-bg: #e0e7ff;
-$text-dark: #1f2937;
-$text-light: #6b7280;
+// Variables adaptadas para app de turismo
+$primary-color: var(--color-blue);
+$secondary-color: var(--color-green);
+$accent-color: var(--color-beige);
+$light-bg: var(--color-beige-light);
+$lighter-bg: var(--color-bg-secondary);
+$text-dark: var(--color-text-primary);
+$text-light: var(--color-text-muted);
+$text-blue: var(--color-blue-dark);
+$text-white:  var(--color-bone);
 $transition-duration: 0.7s;
-$ring-size-outer: 6rem;
-$ring-size-inner: 4rem;
-$logo-size: 7rem;
+$ring-size-outer: 7rem;
+$ring-size-inner: 6rem;
+$logo-size: 9rem;
 
-// Keyframes
+// Keyframes mejorados para turismo
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg); 
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
   }
-  25% { 
-    transform: translateY(-10px) rotate(1deg); 
+  25% {
+    transform: translateY(-12px) rotate(1deg);
   }
-  50% { 
-    transform: translateY(-5px) rotate(0deg); 
+  50% {
+    transform: translateY(-6px) rotate(0deg);
   }
-  75% { 
-    transform: translateY(-15px) rotate(-1deg); 
+  75% {
+    transform: translateY(-18px) rotate(-1deg);
   }
 }
 
 @keyframes progress {
-  0% { 
-    transform: translateX(-100%); 
+  0% {
+    transform: translateX(-100%);
   }
-  100% { 
-    transform: translateX(100%); 
+  100% {
+    transform: translateX(100%);
   }
 }
 
 @keyframes fade-in {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes spin-slow {
-  from { 
-    transform: rotate(0deg); 
+  from {
+    transform: rotate(0deg);
   }
-  to { 
-    transform: rotate(360deg); 
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -82,17 +85,76 @@ $logo-size: 7rem;
   }
 }
 
+// Nueva animación: destello de viaje mejorado
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(41, 91, 114, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(41, 91, 114, 0.8), 0 0 80px rgba(209, 220, 90, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.2);
+  }
+}
+
+// Nueva animación: zoom y escala dinámica
+@keyframes zoom-bounce {
+  0% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(0.9);
+  }
+}
+
+// Animación: rotación suave del logo
+@keyframes soft-rotate {
+  0%, 100% {
+    transform: rotateZ(-2deg);
+  }
+  50% {
+    transform: rotateZ(2deg);
+  }
+}
+
+// Animación: brillo movil
+@keyframes shine-sweep {
+  0% {
+    transform: translateX(-100%) translateY(-100%);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%);
+  }
+}
+
+// Animación: aura expansiva
+@keyframes aura-expand {
+  0% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
 // Componente principal
 .splash-screen {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, $light-bg 0%, white 50%, $lighter-bg 100%);
+  background: $light-bg;
   transition: all $transition-duration ease-in-out;
+  overflow: hidden;
 
   &--visible {
     opacity: 1;
@@ -106,7 +168,7 @@ $logo-size: 7rem;
     transform: scale(0.95);
   }
 
-  // Elementos de fondo
+  // Elementos de fondo mejorados
   &__background {
     position: absolute;
     inset: 0;
@@ -115,24 +177,62 @@ $logo-size: 7rem;
 
   &__background-circle {
     position: absolute;
-    width: 20rem;
-    height: 20rem;
     border-radius: 50%;
-    mix-blend-mode: multiply;
-    filter: blur(40px);
-    animation: pulse-gentle 3s ease-in-out infinite;
+    mix-blend-mode: screen;
+    filter: blur(50px);
+    animation: pulse-gentle 4s ease-in-out infinite;
 
     &--top {
-      top: -10rem;
-      right: -10rem;
-      background-color: lighten($primary-color, 35%);
+      width: 25rem;
+      height: 25rem;
+      top: -12rem;
+      right: -12rem;
+      background: radial-gradient(circle, rgba(41, 91, 114, 0.15), transparent);
     }
 
     &--bottom {
-      bottom: -10rem;
-      left: -10rem;
-      background-color: lighten($secondary-color, 35%);
-      animation-delay: 1s;
+      width: 22rem;
+      height: 22rem;
+      bottom: -11rem;
+      left: -11rem;
+      background: radial-gradient(circle, rgba(209, 220, 90, 0.12), transparent);
+      animation-delay: 1.5s;
+    }
+
+    &--accent {
+      width: 18rem;
+      height: 18rem;
+      top: 50%;
+      right: -9rem;
+      background: radial-gradient(circle, rgba(253, 231, 194, 0.1), transparent);
+      animation-delay: 0.75s;
+    }
+  }
+
+  // Líneas decorativas (representan rutas de viaje)
+  &__accent-line {
+    position: absolute;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(209, 220, 90, 0.2),
+      transparent
+    );
+    animation: float 6s ease-in-out infinite;
+
+    &--horizontal {
+      width: 100%;
+      height: 1px;
+      top: 25%;
+      left: 0;
+    }
+
+    &--vertical {
+      width: 1px;
+      height: 100%;
+      left: 50%;
+      top: 0;
+      animation-delay: 0.3s;
     }
   }
 
@@ -146,10 +246,10 @@ $logo-size: 7rem;
     z-index: 10;
   }
 
-  // Logo y anillos
+  // Logo y anillos mejorados
   &__logo-wrapper {
     position: relative;
-    margin-bottom: 2rem;
+    margin-bottom: 5rem;
   }
 
   &__ring {
@@ -158,76 +258,170 @@ $logo-size: 7rem;
 
     &--outer {
       inset: -$ring-size-outer / 2;
-      border: 2px solid lighten($primary-color, 20%);
-      opacity: 0.3;
-      animation: spin-slow 8s linear infinite;
+      border: 2px solid rgba(41, 91, 114, 0.25);
+      opacity: 0.6;
+      animation: spin-slow 12s linear infinite;
     }
 
     &--inner {
       inset: -$ring-size-inner / 2;
-      border: 1px solid lighten($primary-color, 10%);
-      opacity: 0.2;
-      animation: ping-soft 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+      border: 1px dashed rgba(209, 220, 90, 0.4);
+      opacity: 0.5;
+      animation: spin-slow 8s linear infinite reverse;
     }
   }
 
   &__logo {
     position: relative;
-
-    &:hover {
-      transform: scale(1.05);
-    }
+    z-index: 2;
   }
 
   &__logo-image {
     width: $logo-size;
     height: $logo-size;
-    border-radius: 1.5rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    padding: 0.5rem;
+    background-color: $primary-color;
+    border-radius: 3rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     transition: transform $transition-duration ease-in-out;
-    animation: float 3s ease-in-out infinite;
+    animation: float 3s ease-in-out infinite, glow-pulse 3s ease-in-out infinite;
+    object-fit: contain;
   }
 
   &__logo-shine {
     position: absolute;
     inset: 0;
-    border-radius: 1.5rem;
-    background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+    border-radius: 2rem;
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%
+    );
     pointer-events: none;
+    animation: pulse-gentle 4s ease-in-out infinite;
   }
 
-  // Texto
+  // Decoradores de esquina (estilo viaje/mapa)
+  &__corner-accent {
+    position: absolute;
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(
+      to bottom,
+      rgba(41, 91, 114, 0.6),
+      transparent
+    );
+
+    &--top-left {
+      top: 20px;
+      left: 20px;
+      transform: rotate(-45deg);
+    }
+
+    &--top-right {
+      top: 20px;
+      right: 20px;
+      transform: rotate(45deg);
+    }
+
+    &--bottom-left {
+      bottom: 20px;
+      left: 20px;
+      transform: rotate(45deg);
+    }
+
+    &--bottom-right {
+      bottom: 20px;
+      right: 20px;
+      transform: rotate(-45deg);
+    }
+  }
+
+  // Texto mejorado
   &__text {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
   }
 
   &__title {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: $text-dark;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.75rem;
     animation: fade-in 0.8s ease-out;
+    background: $primary-color;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   &__subtitle {
-    color: $text-light;
+    color: linear-gradient(90deg, $primary-color, $secondary-color);
     font-weight: 500;
     font-size: 1rem;
-    animation: fade-in 0.8s ease-out 0.3s both;
+    letter-spacing: 0.03em;
+    animation: fade-in 0.8s ease-out 0.2s both;
   }
 
-  // Barra de progreso
+  &__tagline {
+    color: $text-dark;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    animation: fade-in 0.8s ease-out 0.4s both;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  &__indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    &__icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: rgba(209, 220, 90, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      animation: pulse-gentle 2s ease-in-out infinite;
+
+      &--primary {
+        background: rgba(41, 91, 114, 0.1);
+        color: $primary-color;
+      }
+
+      &--secondary {
+        background: rgba(209, 220, 90, 0.2);
+        color: $secondary-color;
+      }
+    }
+
+    &__label {
+      font-size: 0.75rem;
+      color: $text-light;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+  }
+
+  // Barra de progreso mejorada
   &__progress {
     width: 16rem;
     margin-bottom: 1.5rem;
   }
 
   &__progress-bar {
-    height: 0.25rem;
+    height: 3px;
     width: 100%;
-    background-color: #e5e7eb;
+    background-color: rgba(41, 91, 114, 0.1);
     border-radius: 9999px;
     overflow: hidden;
   }
@@ -236,13 +430,14 @@ $logo-size: 7rem;
     height: 100%;
     background: linear-gradient(90deg, $primary-color 0%, $secondary-color 100%);
     border-radius: 9999px;
-    animation: progress 2s ease-in-out infinite;
+    animation: progress 2.5s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(209, 220, 90, 0.5);
   }
 
-  // Puntos de carga
+  // Puntos de carga animados
   &__dots {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.5rem;
     margin-bottom: 2rem;
   }
 
@@ -252,6 +447,7 @@ $logo-size: 7rem;
     background-color: $primary-color;
     border-radius: 50%;
     animation: bounce-dot 1.4s ease-in-out infinite both;
+    box-shadow: 0 0 5px rgba(41, 91, 114, 0.4);
 
     &--1 {
       animation-delay: 0s;
@@ -276,21 +472,37 @@ $logo-size: 7rem;
 @media (max-width: 768px) {
   .splash-screen {
     &__logo-image {
-      width: 6rem;
-      height: 6rem;
+      width: 6.5rem;
+      height: 6.5rem;
     }
 
     &__title {
-      font-size: 1.75rem;
+      font-size: 2rem;
+    }
+
+    &__subtitle {
+      font-size: 0.95rem;
     }
 
     &__progress {
-      width: 12rem;
+      width: 14rem;
     }
 
     &__background-circle {
-      width: 16rem;
-      height: 16rem;
+      &--top {
+        width: 20rem;
+        height: 20rem;
+      }
+
+      &--bottom {
+        width: 18rem;
+        height: 18rem;
+      }
+
+      &--accent {
+        width: 15rem;
+        height: 15rem;
+      }
     }
   }
 }
@@ -298,16 +510,28 @@ $logo-size: 7rem;
 @media (max-width: 480px) {
   .splash-screen {
     &__logo-image {
-      width: 5rem;
-      height: 5rem;
+      width: 5.5rem;
+      height: 5.5rem;
     }
 
     &__title {
       font-size: 1.5rem;
     }
 
+    &__subtitle {
+      font-size: 0.9rem;
+    }
+
     &__progress {
-      width: 10rem;
+      width: 12rem;
+    }
+
+    &__text {
+      margin-bottom: 1.5rem;
+    }
+
+    &__travel-indicators {
+      gap: 1.5rem;
     }
   }
 }

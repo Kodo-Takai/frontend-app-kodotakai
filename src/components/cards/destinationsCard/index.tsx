@@ -1,58 +1,59 @@
-// src/components/cards/DestinationCard.tsx
 import { useState } from "react";
 import { TbLocationFilled } from "react-icons/tb";
-import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
+import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
 import { MdPlace } from "react-icons/md";
-import { usePlaces } from "../../../hooks/usePlaces";
+import { usePlaces, type EnrichedPlace } from "../../../hooks/places";
+import PlaceModal from "../../ui/placeModal";
 import "./index.scss";
 
-interface Place {
-  name: string;
-  rating?: number;
-  vicinity?: string;
-  place_id: string;
-  photo_url: string;
-  location?: { lat: number; lng: number };
-}
+import { useNavigate } from "react-router-dom";
+import { useNavigationContext } from "../../../context/navigationContext";
 
 export default function DestinationCards() {
   const { places, loading } = usePlaces({
-    type: "tourist_attraction",
-    radius: 15000,
+    category: "tourist_attraction",
+    enableEnrichment: true,
+    maxResults: 6,
   });
 
-  const handleVisit = (place: Place) => {
-    console.log("Visitando:", place.name);
-    // Aquí puedes agregar lógica de navegación
+  const { setInitialDestination } = useNavigationContext();
+  const navigate = useNavigate();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<EnrichedPlace | null>(null);
+
+  const handleOpenModal = (place: EnrichedPlace) => {
+    setSelectedPlace(place);
+    setIsModalOpen(true);
+  };
+  
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlace(null);
   };
 
-  // Limitar a máximo 6 lugares
+  const handleNavigation = (place: EnrichedPlace) => {
+    setInitialDestination(place);
+    navigate('/maps');
+  };
+
   const displayedPlaces = places.slice(0, 6);
 
-  // Componente interno para cada card
-  const DestinationCard = ({ place }: { place: Place }) => {
+  const DestinationCard = ({ place }: { place: EnrichedPlace }) => {
     const [imageError, setImageError] = useState(false);
-
-    const handleImageError = () => {
-      setImageError(true);
-    };
-
-    const handleVisitClick = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      handleVisit(place);
-    };
-
-    // Generar estrellas basadas en el rating
+    const handleImageError = () => setImageError(true);
+    
     const renderStars = (rating?: number) => {
       if (!rating) return null;
 
       const fullStars = Math.floor(rating);
       const stars = Array.from({ length: 5 }, (_, i) => (
         <FaStar
-          key={i}
+          key={`star-${i}`}
           className={`w-3 h-3 ${
-            i < fullStars ? "text-yellow-400" : "text-gray-300"
+            i < fullStars
+              ? "text-[var(--color-primary-accent)]"
+              : "text-[var(--color-bone)]"
           }`}
         />
       ));
@@ -68,60 +69,37 @@ export default function DestinationCards() {
     };
 
     return (
-      <div className="relative rounded-xl overflow-hidden shadow-lg group cursor-pointer transition-transform duration-300 hover:scale-105 destination-card-width">
-        {/* Imagen de fondo */}
+      <div
+        className="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer destination-card-width border-1 border-[var(--color-primary-dark)]"
+        onClick={() => handleOpenModal(place)} // Clic general abre el modal
+      >
         <div className="relative h-72 w-full overflow-hidden">
           <img
-            src={
-              imageError
-                ? "https://via.placeholder.com/280x288/3B82F6/ffffff?text=📍+Sin+Imagen"
-                : place.photo_url
-            }
+            src={imageError ? "..." : place.photo_url || "..."}
             alt={place.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
             onError={handleImageError}
           />
-
-          {/* Gradiente overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-          {/* Badge de rating en esquina superior izquierda */}
-          {typeof place.rating === "number" && (
-            <div className="absolute top-3 left-3 z-10">
-              <div className="flex items-center gap-1 bg-yellow-500/20 backdrop-blur-md px-2 py-1 rounded-full border border-yellow-400/30">
-                <FaStar className="w-3 h-3 text-yellow-400" />
-                <span className="text-xs font-bold text-yellow-100">
-                  {place.rating.toFixed(1)}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Contenido superpuesto */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/80 to-transparent group-hover:from-black/85 group-hover:via-black/65 transition-all duration-1500 ease-in-out" />
+          
           <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-            {/* Rating con estrellas */}
             {renderStars(place.rating)}
-
-            {/* Nombre del lugar */}
-            <h3 className="text-lg font-bold mb-2 line-clamp-2 leading-tight">
-              {place.name}
-            </h3>
-
-            {/* Descripción/ubicación */}
+            <h3 className="text-lg font-bold ...">{place.name}</h3>
             <div className="flex items-center gap-1 mb-3">
-              <MdPlace className="w-4 h-4 text-gray-300 flex-shrink-0" />
-              <p className="text-xs text-gray-200 line-clamp-1">
-                {place.vicinity || "Ciudad de México"}
-              </p>
+              <MdPlace className="w-4 h-4 text-gray-300" />
+              <p className="text-xs text-gray-200 ...">{place.vicinity || "Ubicación destacada"}</p>
             </div>
-
-            {/* Botón de visitar */}
+            
+            {/* --- CAMBIO PRINCIPAL: Este botón ahora abre el modal --- */}
+            
             <button
-              onClick={handleVisitClick}
-              className="w-full bg-white/90 hover:bg-white text-gray-800 font-semibold py-2 px-4 rounded-lg transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2 text-sm"
-            >
-              Visitar <TbLocationFilled className="w-4 h-4" />
+              className="w-full bg-[var(--color-primary-accent)] hover:bg-[var(--color-green-dark)] text-[var(--color-blue-dark)] font-semibold py-2 px-4 rounded-2xl transition-all duration-200 backdrop-blur-sm flex items-center justify-center gap-2 text-lg"
+              onClick={(e) => {
+                e.stopPropagation(); // Evita que el clic se propague al div padre
+                handleOpenModal(place); // Abre el modal en lugar de navegar
+              }}
+            ><TbLocationFilled />
+              Visitar 
             </button>
           </div>
         </div>
@@ -129,15 +107,14 @@ export default function DestinationCards() {
     );
   };
 
-  // Renderizar contenido según el estado
   const renderContent = () => {
     if (loading) {
       return (
         <div className="destination-scroll">
           {Array.from({ length: 3 }, (_, i) => (
-            <div key={i} className="destination-card-width">
-              <div className="rounded-xl overflow-hidden shadow-lg animate-pulse">
-                <div className="h-72 bg-gray-200" />
+            <div key={`skeleton-${i}`} className="destination-card-width">
+              <div className="rounded-xl overflow-hidden animate-pulse">
+                <div className="h-72 bg-[var(--color-blue-light)]" />
               </div>
             </div>
           ))}
@@ -172,10 +149,19 @@ export default function DestinationCards() {
 
   return (
     <div className="w-full ">
-      <h2 className="text-xl font-bold text-gray-900 mt-10 mb-4 ">
+      <h2 className="text-lg font-extrabold mb-2 text-[var(--color-text-primary)]">
         Lugares que debes visitar
       </h2>
       {renderContent()}
+      
+      {selectedPlace && (
+        <PlaceModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          place={selectedPlace}
+          onVisit={handleNavigation}
+        />
+      )}
     </div>
   );
 }

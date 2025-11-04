@@ -22,29 +22,32 @@ export default function CalendarCard() {
     monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
   return (
-    <div className="w-full flex flex-col gap-1">
-        {/* Espirales del calendario */}
-      <div className="flex justify-between items-center -mb-2 px-4">
-        <div className="w-3 h-4.5 bg-gray-800 rounded-full"></div>
-        <div className="w-3 h-4.5 bg-gray-800 rounded-full"></div>
+    <div className="w-full relative">
+      {/* Espirales del calendario superpuestas */}
+      <div className="absolute -top-[6px] left-0 right-0 flex justify-between items-center px-4 z-30">
+        <div className="w-3 h-5 bg-[var(--color-blue-dark)] rounded-full"></div>
+        <div className="w-3 h-5 bg-[var(--color-blue-dark)] rounded-full"></div>
       </div>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden h-full flex flex-col">
+      {/* Calendario */}
+      <div
+        className="rounded-2xl bg-[var(--color-green)] overflow-hidden h-full flex flex-col border-4 border-[var(--color-green-dark)]/30 relative"
+        style={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.07)" }}
+      >
         {/* Header con día de la semana */}
-        <div className="bg-[#073247] px-2 py-1 border-b border-gray-200 flex-shrink-0">
-          <p className="text-xs font-medium text-white text-center uppercase tracking-wide">
+        <div className="flex-shrink-0">
+          <p className="text-xs py-1 font-medium text-[var(--color-blue)] text-center tracking-wide">
             {capitalizedMonth}
           </p>
         </div>
 
         {/* Contenido principal */}
-        <div className=" bg-white flex flex-col py-1 justify-center items-center ">
-             <p className="text-md font-bold text-blue-900 text-center ">
-              {capitalizedDay}
-            </p>
-            <span className="text-4xl font-extrabold text-red-500 leading-none">
-              {dayNumber}
-            </span>
-        
+        <div className="flex flex-col justify-center items-center ">
+          <p className="text-lg py-1 font-extrabold leading-0 text-[var(--color-blue)] text-center ">
+            {capitalizedDay}
+          </p>
+          <span className="text-6xl py-1 font-extrabold text-[var(--color-blue-dark)] leading-none">
+            {dayNumber}
+          </span>
         </div>
       </div>
     </div>

@@ -1,0 +1,128 @@
+/* Modal de fondo */
+.calendar-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+/* Contenedor del calendario */
+.calendar-container {
+  width: 100%;
+}
+
+/* Días de la semana */
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.weekday {
+  padding: 8px 4px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Semanas del calendario */
+.calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+/* Días individuales */
+.calendar-day {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  position: relative;
+}
+
+.calendar-day:hover {
+  background-color: #f3f4f6;
+}
+
+.day-number {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* Día actual */
+.calendar-day.today {
+  background-color: #000;
+  color: #BACB2C;
+  font-weight: bold;
+}
+
+.calendar-day.today .day-number {
+  color: #BACB2C;
+}
+
+/* Día seleccionado */
+.calendar-day.selected {
+  background-color: #BACB2C;
+  color: #000;
+  font-weight: bold;
+}
+
+.calendar-day.selected .day-number {
+  color: #000;
+}
+
+/* Días de otros meses */
+.calendar-day.other-month {
+  color: #9ca3af;
+}
+
+.calendar-day.other-month .day-number {
+  color: #9ca3af;
+}
+
+/* Días de fin de semana */
+.calendar-day.weekend {
+  color: #ef4444;
+}
+
+.calendar-day.weekend .day-number {
+  color: #ef4444;
+}
+
+.calendar-day.weekend.today .day-number {
+  color: #BACB2C;
+}
+
+.calendar-day.weekend.selected .day-number {
+  color: #000;
+}
+
+/* Estados combinados */
+.calendar-day.other-month.weekend .day-number {
+  color: #9ca3af;
+}
+
+.calendar-day.other-month.today .day-number {
+  color: #BACB2C;
+}
+
+.calendar-day.other-month.selected .day-number {
+  color: #000;
+}

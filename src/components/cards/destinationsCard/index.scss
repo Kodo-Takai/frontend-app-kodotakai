@@ -1,5 +1,3 @@
-// src/components/cards/DestinationCard/index.scss
-
 // Estilos para el scroll horizontal del carrusel - Optimizado para móvil
 .destination-scroll {
   display: flex;
@@ -61,7 +59,7 @@
   }
 
   .destination-card-width {
-    width: 16rem; // 256px - Más pequeño para móvil
+    width: 14rem; // 256px - Más pequeño para móvil
   }
 }
 

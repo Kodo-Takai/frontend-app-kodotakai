@@ -1,0 +1,144 @@
+import { NavLink, useLocation } from "react-router-dom";
+import { useMemo, useEffect, useRef, useState } from "react";
+import {
+  IoHome,
+  IoCalendar,
+  IoLocationSharp,
+  IoCompass,
+  IoPerson,
+} from "react-icons/io5";
+
+type NavItem = {
+  id: string;
+  label: string;
+  to: string;
+  icon: React.ElementType;
+};
+
+type BottomNavProps = {
+  items: NavItem[];
+  className?: string;
+};
+
+const HIDDEN_ROUTES = ["/", "/login", "/register", "/onboarding", "/terms"];
+
+const NAV_STYLES = {
+  container:
+    "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden transition-transform duration-500 ease-in-out",
+  list: "flex items-center gap-2 h-18 px-7 bg-[var(--color-blue-dark)] border-2 rounded-full border-[var(--color-beige)]/80 relative",
+  indicator:
+    "absolute w-12 h-12 bg-[var(--color-green)] rounded-full transition-all duration-300 ease-out",
+  link: {
+    base: "group flex items-center justify-center select-none transition-all duration-200 w-12 h-12 rounded-full relative z-10 flex-shrink-0",
+    active: "text-[var(--color-blue-dark)]",
+    inactive: "text-[var(--color-green)] hover:text-[var(--color-green-dark)]",
+  },
+} as const;
+
+export function BottomNav({ items, className = "" }: BottomNavProps) {
+  const { pathname } = useLocation();
+  const [show, setShow] = useState(true);
+  const lastScrollY = useRef(0);
+
+  const isHidden = useMemo(
+    () =>
+      HIDDEN_ROUTES.some(
+        (route) => pathname === route || pathname.startsWith(`${route}/`)
+      ),
+    [pathname]
+  );
+
+  const activeIndex = useMemo(
+    () =>
+      items.findIndex(
+        (item) => pathname === item.to || pathname.startsWith(`${item.to}/`)
+      ),
+    [pathname, items]
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY.current && currentScrollY > 40) {
+        setShow(false); // Scroll hacia abajo, ocultar
+      } else {
+        setShow(true); // Scroll hacia arriba, mostrar
+      }
+      lastScrollY.current = currentScrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  if (isHidden) return null;
+
+  return (
+    <>
+      <nav
+        aria-label="Navegación inferior"
+        className={`${NAV_STYLES.container} ${className}`}
+        style={{
+          transform: show ? "translateY(0)" : "translateY(120%)",
+          pointerEvents: show ? "auto" : "none",
+        }}
+      >
+        <ul
+          role="tablist"
+          className={NAV_STYLES.list}
+          style={{
+            boxShadow:
+              "0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)",
+          }}
+        >
+          {/* Indicador único que se mueve */}
+          {activeIndex >= 0 && (
+            <div
+              className={NAV_STYLES.indicator}
+              style={{
+                left: `calc(1.75rem + ${activeIndex * 56}px)`,
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
+              aria-hidden="true"
+            />
+          )}
+
+          {items.map((item) => {
+            const isActive =
+              pathname === item.to || pathname.startsWith(`${item.to}/`);
+            const Icon = item.icon;
+
+            return (
+              <li key={item.id} role="presentation">
+                <NavLink
+                  to={item.to}
+                  className={`${NAV_STYLES.link.base} ${
+                    isActive ? NAV_STYLES.link.active : NAV_STYLES.link.inactive
+                  }`}
+                  aria-current={isActive ? "page" : undefined}
+                  aria-label={item.label}
+                >
+                  <Icon
+                    size={24}
+                    className={`transition-transform duration-200 hover:scale-120 ${
+                      isActive ? "scale-125" : "scale-100"
+                    }`}
+                  />
+                </NavLink>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </>
+  );
+}
+
+// Items por defecto usando react-icons (io5)
+export const defaultItems: NavItem[] = [
+  { id: "home", label: "Inicio", to: "/home", icon: IoHome },
+  { id: "agenda", label: "Agenda", to: "/agenda", icon: IoCalendar },
+  { id: "maps", label: "Mapas", to: "/maps", icon: IoLocationSharp },
+  { id: "explore", label: "Explorar", to: "/explorar", icon: IoCompass },
+  { id: "profile", label: "Mi Perfil", to: "/profile", icon: IoPerson },
+];

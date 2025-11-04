@@ -1,0 +1,293 @@
+.restaurant-menu-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.25rem;
+  margin-bottom: 15px;
+
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.restaurant-menu-card-width {
+  margin-left: 0.3rem;
+  width: 340px;
+  height: 300px;
+  flex-shrink: 0;
+  background-color: var(--color-primary-dark);
+  border: 6px solid var(--color-primary-light);
+  border-radius: 20px;
+  padding: 15px;
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.15);
+
+
+  &:hover {
+    transform: scale(1.01);
+  }
+
+  @media (max-width: 640px) {
+    width: 300px;
+    height: 280px;
+  }
+}
+
+// Clase para skeleton loading - solo dimensiones, sin colores
+.restaurant-menu-card-width-skeleton {
+  margin-left: 0.3rem;
+  width: 340px;
+  height: 300px;
+  flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    width: 300px;
+    height: 280px;
+  }
+}
+
+.restaurant-menu-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.restaurant-menu-card-header {
+  display: grid;
+  grid-template-columns: 10% 60% 20%;
+  width: 100%;
+  height: 52px;
+  gap: 15px;
+  align-items: center;
+}
+
+.restaurant-menu-card-icon-column {
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.restaurant-menu-card-food-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.restaurant-menu-card-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
+.restaurant-menu-card-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary-light);
+  line-height: 20px;
+  letter-spacing: -0.5px;
+  margin: 0;
+  overflow: hidden;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  word-break: break-word;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.restaurant-menu-card-location {
+  font-size: 12px;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-primary-light) 70%, transparent);
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.restaurant-menu-card-rating-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.restaurant-menu-card-rating-container {
+  background-color: var(--color-green);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.restaurant-menu-card-star-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.restaurant-menu-card-star-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-blue);
+}
+
+.restaurant-menu-card-rating-text {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-blue);
+  line-height: 16px;
+}
+
+.restaurant-menu-card-images-section {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.restaurant-menu-card-main-image {
+  border: 3px solid var(--color-primary-light);
+  flex: 0 0 45%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.restaurant-menu-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0.7rem;
+  background: linear-gradient(
+    to top,
+    rgb(0, 0, 0) 0%,
+    rgb(0, 0, 0) 30%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
+.restaurant-menu-card-overlay-title {
+  font-size: 1.5rem;
+  color: var(--color-primary-light);
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.restaurant-menu-card-overlay-text {
+  color: var(--color-primary-light);
+  margin: 0.2rem 0 0 0;
+  font-size: 0.9rem;
+}
+
+.restaurant-menu-card-overlay-price {
+  color: var(--color-primary-accent);
+  font-weight: 800;
+  font-size: 1rem;
+  margin: 0.2rem 0 0 0;
+}
+
+.restaurant-menu-card-secondary-images {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+}
+
+.restaurant-menu-card-secondary-image {
+  flex: 1;
+  border: 3px solid var(--color-primary-light);
+
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+}
+
+.restaurant-menu-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 480px) {
+  .restaurant-menu-scroll {
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+  }
+
+  .restaurant-menu-card-width {
+    width: 330px;
+    height: 280px;
+  }
+
+  .restaurant-menu-card-header {
+    width: 100%;
+    height: 48px;
+  }
+
+  .restaurant-menu-card-images-section {
+    gap: 10px;
+  }
+
+  .restaurant-menu-card-secondary-images {
+    gap: 8px;
+  }
+
+  .restaurant-menu-card-name {
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 18px;
+    text-transform: uppercase;
+  }
+
+  .restaurant-menu-card-overlay {
+    padding: 0.8rem;
+  }
+
+  .restaurant-menu-card-overlay-title {
+    font-size: 1.2rem;
+  }
+
+  .restaurant-menu-card-overlay-text {
+    font-size: 0.8rem;
+  }
+
+  .restaurant-menu-card-overlay-price {
+    font-size: 0.9rem;
+  }
+}
